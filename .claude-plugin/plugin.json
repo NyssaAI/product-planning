@@ -1,0 +1,18 @@
+{
+  "name": "ja-dev",
+  "description": "Development workflow skills: TDD, debugging, bugfix loops, standards-aware brainstorming, and product planning",
+  "version": "1.0.0",
+  "author": {
+    "name": "Devjoy Digital"
+  },
+  "based-on": "superpowers 5.0.7 by Jesse Vincent (https://github.com/obra/superpowers)",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "tdd",
+    "debugging",
+    "collaboration",
+    "best-practices",
+    "workflows"
+  ]
+}
