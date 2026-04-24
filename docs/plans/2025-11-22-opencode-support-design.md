@@ -6,11 +6,11 @@
 
 ## Overview
 
-Add full superpowers support for OpenCode.ai using a native OpenCode plugin architecture that shares core functionality with the existing Codex implementation.
+Add full dev-tools support for OpenCode.ai using a native OpenCode plugin architecture that shares core functionality with the existing Codex implementation.
 
 ## Background
 
-OpenCode.ai is a coding agent similar to Claude Code and Codex. Previous attempts to port superpowers to OpenCode (PR #93, PR #116) used file-copying approaches. This design takes a different approach: building a native OpenCode plugin using their JavaScript/TypeScript plugin system while sharing code with the Codex implementation.
+OpenCode.ai is a coding agent similar to Claude Code and Codex. Previous attempts to port dev-tools to OpenCode (PR #93, PR #116) used file-copying approaches. This design takes a different approach: building a native OpenCode plugin using their JavaScript/TypeScript plugin system while sharing code with the Codex implementation.
 
 ### Key Differences Between Platforms
 
@@ -80,7 +80,7 @@ Loads a specific skill's content into the conversation (equivalent to Claude's S
   name: 'use_skill',
   description: 'Load and read a specific skill to guide your work',
   schema: z.object({
-    skill_name: z.string().describe('Name of skill (e.g., "superpowers:brainstorming")')
+    skill_name: z.string().describe('Name of skill (e.g., "dev-tools:brainstorming")')
   }),
   execute: async ({ skill_name }) => {
     const { skillPath, content, frontmatter } = resolveAndReadSkill(skill_name);
@@ -120,8 +120,8 @@ Lists all available skills with metadata.
 
 When a new session starts (`session.started` event):
 
-1. **Inject using-superpowers content**
-   - Full content of the using-superpowers skill
+1. **Inject using-dev-tools content**
+   - Full content of the using-dev-tools skill
    - Establishes mandatory workflows
 
 2. **Run find_skills automatically**

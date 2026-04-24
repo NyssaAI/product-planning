@@ -113,6 +113,6 @@ CRITICAL: Do NOT output the promise unless ALL of these are true:
 
 **References:**
 - **bug-workflow standard** — bug detail and resolution file format
-- **superpowers:systematic-debugging** — root cause investigation principles used in Phase 1
-- **superpowers:verification-before-completion** — evidence-before-claims principle used in Phase 4-6
-- **superpowers:test-driven-development** — failing test first in Phase 3
+- **dev-tools:systematic-debugging** — root cause investigation principles used in Phase 1
+- **dev-tools:verification-before-completion** — evidence-before-claims principle used in Phase 4-6
+- **dev-tools:test-driven-development** — failing test first in Phase 3
