@@ -29,13 +29,13 @@ dev-tools is based on **superpowers 5.0.7 by Jesse Vincent** (https://github.com
 In Claude Code, register the marketplace first:
 
 ```bash
-/plugin marketplace add jamaynor/plugin-marketplace
+/plugin marketplace add https://github.com/jamaynor/plugin-marketplace.git
 ```
 
-Then install the plugin from this marketplace:
+Then install the plugin from this marketplace (the marketplace is named `jamaynor`):
 
 ```bash
-/plugin install dev-tools@plugin-marketplace
+/plugin install dev-tools@jamaynor
 ```
 
 ### Cursor (via Plugin Marketplace)

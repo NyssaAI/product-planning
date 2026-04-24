@@ -1036,8 +1036,8 @@ This release includes:
 
 ```bash
 # In Claude Code
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install dev-tools@plugin-marketplace
+/plugin marketplace add https://github.com/jamaynor/plugin-marketplace.git
+/plugin install dev-tools@jamaynor
 ```
 
 The plugin handles everything automatically.

@@ -35,7 +35,7 @@ cd test/claude-code
 
 - Must run from the **dev-tools plugin directory** (not from temp directories)
 - Claude Code must be installed and available as `claude` command
-- Local dev marketplace must be enabled: `"dev-tools@plugin-marketplace": true` in `~/.claude/settings.json`
+- Local dev marketplace must be enabled: `"dev-tools@jamaynor": true` in `~/.claude/settings.json`
 
 ## Integration Test: subagent-driven-development
 
@@ -183,7 +183,7 @@ ls -lt "$SESSION_DIR"/*.jsonl | head -5
 
 **Solutions**:
 1. Ensure you're running FROM the dev-tools directory: `cd /path/to/dev-tools && test/...`
-2. Check `~/.claude/settings.json` has `"dev-tools@plugin-marketplace": true` in `enabledPlugins`
+2. Check `~/.claude/settings.json` has `"dev-tools@jamaynor": true` in `enabledPlugins`
 3. Verify skill exists in `skills/` directory
 
 ### Permission Errors

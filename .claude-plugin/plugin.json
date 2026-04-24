@@ -1,11 +1,10 @@
 {
   "name": "dev-tools",
   "description": "Development workflow skills: TDD, debugging, bugfix loops, standards-aware brainstorming, and product planning",
-  "version": "1.0.0",
   "author": {
-    "name": "Devjoy Digital"
+    "name": "jamaynor"
   },
-  "based-on": "superpowers 5.0.7 by Jesse Vincent (https://github.com/obra/superpowers)",
+  "repository": "https://github.com/jamaynor/dev-tools",
   "license": "MIT",
   "keywords": [
     "skills",
