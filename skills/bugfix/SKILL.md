@@ -8,14 +8,14 @@ description: Use when fixing a documented bug that has a detail file in docs/bug
 Fix a documented bug through an iterative Ralph loop. Each iteration examines the current state, works toward a fix, runs tests, and critiques the result. The loop continues until the fix is verified and all tests pass.
 
 <HARD-GATE>
-A bug detail file MUST exist at `docs/bugs/{slug}/{slug}-detail.md` before this skill can run. If no bug is documented yet, tell the user to create the bug detail file first per the bug-workflow standard, then re-invoke this skill.
+A bug detail file MUST exist at `docs/bugs/{slug}/{slug}-detail.md` before this skill can run. If no bug is documented yet, invoke the `dev-tools:bug-workflow` skill first — it produces the detail file and commits it per the bug-workflow standard — then re-invoke this skill with the resulting slug.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST complete these steps in order:
 
-1. **Get bug slug** — ask the user which bug to fix, or accept it as an argument. The slug follows the format `{timestamp}-{description}` (e.g., `2026-04-13-broken-auth`).
+1. **Get bug slug** — ask the user which bug to fix, or accept it as an argument. The slug follows the canonical timestamp format `{YYYY.MM.DD-HHMMSS}-{description}` (e.g., `2026.04.13-143207-broken-auth`). See the `timestamp-format` standard in dev-standards.
 2. **Validate bug file** — confirm `docs/bugs/{slug}/{slug}-detail.md` exists. If not, stop.
 3. **Read bug detail** — read the full bug description (symptom, root cause if known, contributing factors).
 4. **Detect test runner** — identify the project's test command by checking for `package.json` (npm test), `pyproject.toml`/`pytest.ini` (pytest), `*.csproj` (dotnet test), `go.mod` (go test ./...), `Makefile` (make test), or ask the user.
@@ -112,7 +112,9 @@ CRITICAL: Do NOT output the promise unless ALL of these are true:
 ## Integration
 
 **References:**
-- **bug-workflow standard** — bug detail and resolution file format
-- **dev-tools:systematic-debugging** — root cause investigation principles used in Phase 1
-- **dev-tools:verification-before-completion** — evidence-before-claims principle used in Phase 4-6
-- **dev-tools:test-driven-development** — failing test first in Phase 3
+- **bug-workflow standard** (in `dev-standards`) — bug detail and resolution file format, directory layout, and the "no batching" rule requiring separate discovery and resolution commits.
+- **timestamp-format standard** (in `dev-standards`) — canonical `YYYY.MM.DD-HHMMSS` format for the slug prefix.
+- **dev-tools:bug-workflow** — upstream skill that produces the detail file this skill requires. Invoke it first if the detail file doesn't exist.
+- **dev-tools:systematic-debugging** — root cause investigation principles used in Phase 1.
+- **dev-tools:verification-before-completion** — evidence-before-claims principle used in Phase 4-6.
+- **dev-tools:test-driven-development** — failing test first in Phase 3.
