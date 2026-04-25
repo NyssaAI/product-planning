@@ -1,5 +1,24 @@
 # Changelog
 
+## [5.0.7] - 2026-04-24
+
+### Added
+
+- **plan-product skill**: Establishes foundational product documentation (full PRD, roadmap, tech stack) for new projects through interactive conversation, conforming to the dev-standards project-structure layout.
+- **bug-workflow skill**: Formally documents a newly discovered bug in `docs/bugs/{timestamp}-{slug}/` with a detail file and scoped discovery commit. Paired with the bugfix skill for the resolution step.
+- **bugfix skill**: Reads a bug detail file and drives an iterative Ralph loop (examine → plan → implement → test → critique → resolve) until the fix is verified and all tests pass.
+- **backlog-workflow skill**: Adds a planned work item to `docs/backlog/{timestamp}-{slug}/` with a detail file, ready to be turned into a plan later.
+
+### Changed
+
+- **Rebrand**: Project forked from superpowers 5.0.7 by Jesse Vincent and renamed to dev-tools, maintained by jamaynor. Plugin identity, install paths, and marketplace entries updated across Claude Code, Cursor, OpenCode, Codex, and Gemini CLI manifests. Upstream attribution preserved in README and this CHANGELOG.
+- **Standards surfacing**: The brainstorming skill now invokes `dev-standards:using-*-standards` peer-plugin skills instead of reading hardcoded filesystem paths, making the skill portable across machines.
+
+### Fixed
+
+- **plugin.json validation and install instructions**: Corrected manifest fields and installation docs following the rebrand.
+- **bugfix terminology**: Renamed `{slug}` → `{bug_id}` throughout the skill to remove a naming collision with `bug-workflow` (where `slug` is the short descriptor, not the full identifier). Pinned `--max-iterations 20` on the Ralph loop and removed a duplicated "plan a failing test" step.
+
 ## [5.0.5] - 2026-03-17
 
 ### Fixed

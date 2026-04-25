@@ -32,7 +32,7 @@ Ask these questions one at a time:
 
 ## Step 2: Generate paths
 
-Use the canonical timestamp format from the dev-standards `timestamp-format` standard: `YYYY.MM.DD-HHMMSS` (24-hour local time at the moment of creation). Example: `2026.04.24-102847`.
+Use the `YYYY.MM.DD-HHMMSS` variant of the dev-standards `timestamp-format` standard — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-102847`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
 
 Construct the directory and file paths:
 
@@ -115,6 +115,6 @@ Tell the user:
 ## Integration
 
 - **backlog-workflow standard** — from `dev-standards`; defines directory structure and required file contents.
-- **timestamp-format standard** — from `dev-standards`; defines the canonical `YYYY.MM.DD-HHMMSS` format used for directory names.
+- **timestamp-format standard** — from `dev-standards`; defines both the `YYYY.MM.DD-HHMMSS` time-component variant (used here) and the `YYYY-MM-DD` date-only variant (used by specs and plans).
 - **dev-tools:writing-plans** — turns a backlog item into a bite-sized implementation plan when work starts.
 - **dev-tools:brainstorming** — for design-heavy backlog items that need exploration before planning.

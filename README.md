@@ -109,6 +109,12 @@ Start a new session in your chosen platform and ask for something that should tr
 - **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
 - **verification-before-completion** - Ensure it's actually fixed
 
+**Artifact-producing workflows**
+- **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
+- **bug-workflow** - Document a newly discovered bug (detail file, scoped discovery commit)
+- **bugfix** - Fix a documented bug via iterative Ralph loop (read detail, write failing test, fix, verify)
+- **backlog-workflow** - Add a planned work item to `docs/backlog/` with a detail file
+
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans

@@ -84,7 +84,7 @@ To pin a specific version, use a branch or tag:
 
 ```json
 {
-  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v5.0.3"]
+  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v5.0.7"]
 }
 ```
 

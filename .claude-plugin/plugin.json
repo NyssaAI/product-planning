@@ -1,5 +1,6 @@
 {
   "name": "dev-tools",
+  "version": "5.0.7",
   "description": "Development workflow skills: TDD, debugging, bugfix loops, standards-aware brainstorming, and product planning",
   "author": {
     "name": "jamaynor"

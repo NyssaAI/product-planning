@@ -32,7 +32,7 @@ Ask these questions one at a time:
 
 ## Step 2: Generate paths
 
-Use the canonical timestamp format from the dev-standards `timestamp-format` standard: `YYYY.MM.DD-HHMMSS` (24-hour local time at the moment of creation). Example: `2026.04.24-094512`.
+Use the `YYYY.MM.DD-HHMMSS` variant of the dev-standards `timestamp-format` standard — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-094512`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
 
 Construct the directory and file paths:
 
@@ -111,5 +111,5 @@ Tell the user:
 ## Integration
 
 - **bug-workflow standard** — from `dev-standards`; defines directory structure, file contents, and the "no batching" rule.
-- **timestamp-format standard** — from `dev-standards`; defines the canonical `YYYY.MM.DD-HHMMSS` format used for directory names.
+- **timestamp-format standard** — from `dev-standards`; defines both the `YYYY.MM.DD-HHMMSS` time-component variant (used here) and the `YYYY-MM-DD` date-only variant (used by specs and plans).
 - **dev-tools:bugfix** — the follow-on skill that reads the detail file, runs the fix loop, and writes the resolution file in a separate commit.

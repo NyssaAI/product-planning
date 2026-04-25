@@ -70,28 +70,26 @@ digraph brainstorming {
 
 ## Standards Surfacing
 
-During step 2, detect the project's tech stack and read the applicable standards from `D:/Workspace/Repos/jamaynor/dev-standards/`.
+During step 2, detect the project's tech stack and surface the applicable standards by invoking the matching skills from the `dev-standards` peer plugin. Do NOT attempt to read dev-standards files from the filesystem — the skill invocations load the content for you, and filesystem paths are not portable across machines.
 
 **Detection:** Scan the project for files that indicate the tech stack:
 
-| Files detected                          | Standards directory to read     |
-|-----------------------------------------|---------------------------------|
-| `.cs`, `.csproj`, `.razor`, `.sln`      | `standards/dotnet/*.md`         |
-| `.tsx`, `.ts`, `next.config.*`          | `standards/nextjs/*.md`         |
-| `.sql`, or Postgres-related config      | `standards/postgres/*.md`       |
-| `.py`, `pyproject.toml`, `setup.py`    | `standards/python/*.md`         |
+| Files detected                          | Skill to invoke                           |
+|-----------------------------------------|-------------------------------------------|
+| `.cs`, `.csproj`, `.razor`, `.sln`      | `dev-standards:using-dotnet-standards`    |
+| `.tsx`, `.ts`, `next.config.*`          | `dev-standards:using-nextjs-standards`    |
+| `.sql`, or Postgres-related config      | `dev-standards:using-postgres-standards`  |
+| `.py`, `pyproject.toml`, `setup.py`    | `dev-standards:using-python-standards`    |
 
-**Always read** the applicable global standards from `standards/*.md` (top-level files). Use the table in the user's CLAUDE.md to determine which globals apply based on the work being done (e.g., `error-handling` if adding error handling, `testing-principles` if writing tests).
+**Always invoke** `dev-standards:using-core-standards` in addition to any tech-specific skill above — it covers cross-cutting concerns (project structure, error handling, logging, testing, workflow artifacts) that apply regardless of stack.
 
 **Process:**
 
-1. Read `D:/Workspace/Repos/jamaynor/dev-standards/manifest.json` to discover available standards
-2. Match detected project files to the technology-specific directories above
-3. Read all standards in the matched directories
-4. Identify which global standards apply based on the feature being designed
-5. Briefly tell the user which standards you've loaded and will follow — don't dump the content, just list names
-6. Let these standards inform your approach proposals and design decisions
-7. If a standard contradicts a design choice, flag the conflict explicitly
+1. Detect tech stack from file patterns above
+2. Invoke the matching `dev-standards:using-*-standards` skill(s) plus `dev-standards:using-core-standards`
+3. Briefly tell the user which standards skills you've loaded — don't dump the content, just list the skill names
+4. Let the surfaced standards inform your approach proposals and design decisions
+5. If a standard contradicts a design choice, flag the conflict explicitly
 
 **In the design doc:** Include a "Standards Applied" section listing which standards informed the design and any key constraints they impose. This ensures the implementation plan and implementer know which rules to follow.
 
