@@ -113,6 +113,7 @@ Start a new session in your chosen platform and ask for something that should tr
 - **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
 - **bug-workflow** - Document a newly discovered bug (detail file, scoped discovery commit)
 - **bugfix** - Fix a documented bug via iterative Ralph loop (read detail, write failing test, fix, verify)
+- **bugfix-lifecycle** - Single canonical bug entrypoint (discovery -> root-cause -> fix -> resolution)
 - **backlog-workflow** - Add a planned work item to `docs/backlog/` with a detail file
 
 **Collaboration** 
