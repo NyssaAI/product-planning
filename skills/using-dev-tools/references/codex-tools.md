@@ -22,7 +22,7 @@ Add to your Codex config (`~/.codex/config.toml`):
 multi_agent = true
 ```
 
-This enables `spawn_agent`, `wait`, and `close_agent` for skills like `dispatching-parallel-agents` and `subagent-driven-development`.
+This enables `spawn_agent`, `wait`, and `close_agent` for skills like `dispatching-parallel-agents` and `execute-plan-run`.
 
 ## Named agent dispatch
 
@@ -85,7 +85,7 @@ BRANCH=$(git branch --show-current)
 - `GIT_DIR != GIT_COMMON` → already in a linked worktree (skip creation)
 - `BRANCH` empty → detached HEAD (cannot branch/push/PR from sandbox)
 
-See `using-git-worktrees` Step 0 and `finishing-a-development-branch`
+See `using-git-worktrees` Step 0 and `execute-plan-finish`
 Step 1 for how each skill uses these signals.
 
 ## Codex App Finishing

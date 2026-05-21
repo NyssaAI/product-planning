@@ -1,9 +1,30 @@
 ---
 name: systematic-debugging
-description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+description: Internal root-cause discipline for bugs (via fix-bug only). Standalone for non-bug technical failures — test/build/integration/perf issues during other work. Never propose fixes before Phase 1 completes.
 ---
 
 # Systematic Debugging
+
+## How this skill is reached
+
+**Not an entry point for bugs.** All bug work starts at **`dev-tools:fix-bug`**. Step 2 (**Analyze**) invokes this skill after **`fix-bug-log`** documents the bug.
+
+**Standalone invocation** is for **non-bug technical failures** while doing other work — e.g. a test fails during `execute-plan`, CI breaks on your branch, build errors after a dependency change. No `docs/bugs/` artifact required.
+
+| Situation | Entry | This skill's role |
+|-----------|-------|-----------------|
+| Bug discovered or needs fixing | **`fix-bug`** | Step 2 (Analyze) — do not invoke directly for bugs |
+| Test/build/integration failure during feature work | This skill directly | Root-cause before any fix |
+| Performance or unexpected behavior (not filed as bug) | This skill directly | Root-cause before any fix |
+
+**Peers in the bug path (internal — invoke only via fix-bug):**
+
+| Skill | Step | What it does |
+|-------|------|--------------|
+| `fix-bug-log` | 1 | Write `docs/bugs/{bug_id}/…-detail.md`, discovery commit |
+| **`systematic-debugging`** | **2 (Analyze)** | **Root-cause investigation** |
+| `fix-bug-resolve` | 3 | Ralph loop — failing test, fix, resolution commit |
+| `fix-bug-complete` | 4 | Verify gates and final report |
 
 ## Overview
 
@@ -23,13 +44,14 @@ If you haven't completed Phase 1, you cannot propose fixes.
 
 ## When to Use
 
-Use for ANY technical issue:
-- Test failures
-- Bugs in production
-- Unexpected behavior
-- Performance problems
-- Build failures
+**Bugs (production, reported defect, `docs/bugs/` work):** invoke **`dev-tools:fix-bug` only**. Step 2 invokes this skill. Do not skip fix-bug or invoke this skill directly for bug work.
+
+**Non-bug technical issues** — invoke this skill directly:
+- Test failures during implementation (not yet filed as a bug)
+- Build or CI failures
 - Integration issues
+- Unexpected behavior while executing a plan
+- Performance problems
 
 **Use this ESPECIALLY when:**
 - Under time pressure (emergencies make guessing tempting)

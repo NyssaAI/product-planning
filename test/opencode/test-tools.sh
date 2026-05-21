@@ -36,7 +36,7 @@ output=$(timeout 60s opencode run --print-logs "Use the find_skills tool to list
 }
 
 # Check for expected patterns in output
-if echo "$output" | grep -qi "dev-tools:brainstorming\|dev-tools:using-dev-tools\|Available skills"; then
+if echo "$output" | grep -qi "dev-tools:design-spec\|dev-tools:using-dev-tools\|Available skills"; then
     echo "  [PASS] find_skills tool discovered dev-tools skills"
 else
     echo "  [FAIL] find_skills did not return expected skills"
@@ -79,9 +79,9 @@ fi
 # Test 3: Test use_skill with dev-tools: prefix
 echo ""
 echo "Test 3: Testing use_skill with dev-tools: prefix..."
-echo "  Running opencode with dev-tools:brainstorming skill..."
+echo "  Running opencode with dev-tools:design-spec skill..."
 
-output=$(timeout 60s opencode run --print-logs "Use the use_skill tool to load dev-tools:brainstorming and tell me the first few lines of what you received." 2>&1) || {
+output=$(timeout 60s opencode run --print-logs "Use the use_skill tool to load dev-tools:design-spec and tell me the first few lines of what you received." 2>&1) || {
     exit_code=$?
     if [ $exit_code -eq 124 ]; then
         echo "  [FAIL] OpenCode timed out after 60s"
@@ -90,11 +90,11 @@ output=$(timeout 60s opencode run --print-logs "Use the use_skill tool to load d
     echo "  [WARN] OpenCode returned non-zero exit code: $exit_code"
 }
 
-# Check for expected content from brainstorming skill
-if echo "$output" | grep -qi "brainstorming\|Launching skill\|skill.*loaded"; then
-    echo "  [PASS] use_skill loaded dev-tools:brainstorming skill"
+# Check for expected content from design-spec skill
+if echo "$output" | grep -qi "design-spec\|Design Spec\|Launching skill\|skill.*loaded"; then
+    echo "  [PASS] use_skill loaded dev-tools:design-spec skill"
 else
-    echo "  [FAIL] use_skill did not load dev-tools:brainstorming correctly"
+    echo "  [FAIL] use_skill did not load dev-tools:design-spec correctly"
     echo "  Output was:"
     echo "$output" | head -50
     exit 1

@@ -1,14 +1,14 @@
 ---
-description: "Explain Ralph Loop plugin and available commands"
+description: "Explain Ralph Loop infrastructure (not a bug entry point)"
 ---
 
-# Ralph Loop Plugin Help
+# Ralph Loop Help
 
 Please explain the following to the user:
 
 ## What is Ralph Loop?
 
-Ralph Loop implements the Ralph Wiggum technique - an iterative development methodology based on continuous AI loops, pioneered by Geoffrey Huntley.
+Ralph Loop implements the Ralph Wiggum technique — an iterative development methodology based on continuous AI loops, pioneered by Geoffrey Huntley.
 
 **Core concept:**
 ```bash
@@ -27,18 +27,27 @@ The same prompt is fed to Claude repeatedly. The "self-referential" aspect comes
 5. Claude sees its previous work in the files
 6. Iteratively improves until completion
 
-The technique is described as "deterministically bad in an undeterministic world" - failures are predictable, enabling systematic improvement through prompt tuning.
+## Not a workflow entry point
 
-## Available Commands
+Ralph is **infrastructure** (Stop hook + `setup-ralph-loop.sh`), not a skill and not how you start bug work.
+
+| Task | Entry | Ralph's role |
+|------|-------|--------------|
+| **Bug** | **`fix-bug`** | Used automatically inside **fix-bug-resolve** (Claude Code) |
+| **Non-bug iterative task** | Your normal workflow, or optional `/ralph-loop` (advanced) | Manual loop via slash command |
+
+**For bugs:** invoke **`fix-bug`** only. Do not use `/ralph-loop` — you skip log, analyze, and separate discovery/resolution commits.
+
+## Available commands (Claude Code, advanced)
 
 ### /ralph-loop <PROMPT> [OPTIONS]
 
-Start a Ralph loop in your current session.
+Optional iterative loop for **non-bug** tasks with clear success criteria. Hidden from default slash-command discovery.
 
 **Usage:**
 ```
-/ralph-loop "Refactor the cache layer" --max-iterations 20
-/ralph-loop "Add tests" --completion-promise "TESTS COMPLETE"
+/ralph-loop "Refactor the cache layer for clarity" --max-iterations 20
+/ralph-loop "Add integration tests for the export pipeline" --completion-promise "TESTS COMPLETE"
 ```
 
 **Options:**
@@ -48,10 +57,8 @@ Start a Ralph loop in your current session.
 **How it works:**
 1. Creates `.claude/ralph-loop.local.md` state file
 2. You work on the task
-3. When you try to exit, stop hook intercepts
-4. Same prompt fed back
-5. You see your previous work
-6. Continues until promise detected or max iterations
+3. When you try to exit, Stop hook intercepts
+4. Same prompt fed back until promise detected or max iterations
 
 ---
 
@@ -64,16 +71,11 @@ Cancel an active Ralph loop (removes the loop state file).
 /cancel-ralph
 ```
 
-**How it works:**
-- Checks for active loop state file
-- Removes `.claude/ralph-loop.local.md`
-- Reports cancellation with iteration count
-
 ---
 
-## Key Concepts
+## Key concepts
 
-### Completion Promises
+### Completion promises
 
 To signal completion, Claude must output a `<promise>` tag:
 
@@ -81,46 +83,29 @@ To signal completion, Claude must output a `<promise>` tag:
 <promise>TASK COMPLETE</promise>
 ```
 
-The stop hook looks for this specific tag. Without it (or `--max-iterations`), Ralph runs infinitely.
+The Stop hook looks for this tag. Without it (and without `--max-iterations`), Ralph can run until cancelled.
 
-### Self-Reference Mechanism
+## Example (non-bug)
 
-The "loop" doesn't mean Claude talks to itself. It means:
-- Same prompt repeated
-- Claude's work persists in files
-- Each iteration sees previous attempts
-- Builds incrementally toward goal
-
-## Example
-
-### Interactive Bug Fix
+### Iterative refactor
 
 ```
-/ralph-loop "Fix the token refresh logic in auth.ts. Output <promise>FIXED</promise> when all tests pass." --completion-promise "FIXED" --max-iterations 10
+/ralph-loop "Refactor src/cache/ to split read and write paths. Output <promise>REFACTOR DONE</promise> when all tests pass." --completion-promise "REFACTOR DONE" --max-iterations 10
 ```
 
-You'll see Ralph:
-- Attempt fixes
-- Run tests
-- See failures
-- Iterate on solution
-- In your current session
+## When to use `/ralph-loop`
 
-## When to Use Ralph
-
-**Good for:**
+**Good for (non-bug only):**
 - Well-defined tasks with clear success criteria
-- Tasks requiring iteration and refinement
-- Iterative development with self-correction
-- Greenfield projects
+- Iterative refinement where the same prompt should repeat
+- Greenfield or refactor loops with objective completion checks
 
-**Not good for:**
-- Tasks requiring human judgment or design decisions
-- One-shot operations
+**Not for:**
+- **Bugs** — use **`fix-bug`**
+- Design or product decisions — use **brainstorming** / **plan-product**
 - Tasks with unclear success criteria
-- Debugging production issues (use targeted debugging instead)
 
-## Learn More
+## Learn more
 
 - Original technique: https://ghuntley.com/ralph/
 - Ralph Orchestrator: https://github.com/mikeyobrien/ralph-orchestrator

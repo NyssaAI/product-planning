@@ -1,6 +1,6 @@
 # dev-tools
 
-dev-tools is a complete software development workflow for your coding agents: **process skills** (brainstorm → plan → TDD → PR), **jamaynor development standards** (bundled — no separate dev-standards plugin), and **ai-plan** code/module graph generators.
+dev-tools is a complete software development workflow for your coding agents: **process skills** (design-spec → write-plan → execute-plan → PR), **jamaynor development standards** (bundled — no separate dev-standards plugin), and **ai-plan** code/module graph generators.
 
 ## How it works
 
@@ -10,7 +10,7 @@ Once it's teased a spec out of the conversation, it shows it to you in chunks sh
 
 After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
 
-Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+Next up, once you say "go", it launches **execute-plan**, having agents work through each engineering task, inspecting and reviewing their work, and opening a PR when done. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
 
 There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has dev-tools skills.
 
@@ -75,7 +75,7 @@ cmd /c mklink /J "$env:USERPROFILE\.agents\skills\dev-tools" "$env:USERPROFILE\.
 
 3. Restart Codex (skills are discovered at startup).
 
-**Optional — subagent skills:** `dispatching-parallel-agents` and `subagent-driven-development` need Codex multi-agent:
+**Optional — subagent skills:** `dispatching-parallel-agents` and `execute-plan-run` (inside `execute-plan`) need Codex multi-agent:
 
 ```toml
 [features]
@@ -112,7 +112,7 @@ Restart OpenCode. The plugin auto-installs and registers all skills.
 
 **Verify:** Ask "Tell me about your dev-tools skills".
 
-**Usage:** OpenCode's native `skill` tool — `use skill tool to list skills`, `use skill tool to load dev-tools/brainstorming`.
+**Usage:** OpenCode's native `skill` tool — `use skill tool to list skills`, `use skill tool to load dev-tools/design-spec`.
 
 **Personal skills:** `~/.config/opencode/skills/<name>/SKILL.md`. **Project skills:** `.opencode/skills/` in your repo. Priority: project > personal > dev-tools.
 
@@ -156,29 +156,54 @@ gemini extensions update dev-tools
 
 ### Verify Installation
 
-Start a new session in your chosen platform and ask for something that should trigger a skill (for example, "help me plan this feature" or "let's debug this issue"). The agent should automatically invoke the relevant dev-tools skill.
+Start a new session in your chosen platform and ask for something that should trigger a skill:
+
+- **Feature work:** "help me plan this feature" → **`design-spec`**
+- **Backlog item:** "add this to the backlog" → **`add-backlog`**
+- **Implement plan:** "implement the plan" / path under `docs/plans/` → **`execute-plan`**
+- **Bug work:** "I found a bug in login" → **`fix-bug`** (not `systematic-debugging` directly)
+
+The agent should automatically invoke the relevant dev-tools skill.
 
 ### Platform notes
 
-**Ralph loop (Claude Code only):** `/ralph-loop`, `/cancel-ralph`, and the `bugfix` sub-skill depend on Claude Code's **Stop** hook (`hooks/hooks.json`). Cursor registers only the session-start hook (`hooks/hooks-cursor.json`), so Ralph state files (`.claude/ralph-loop.local.md`) are not auto-continued on stop in Cursor. Use Claude Code for full Ralph loop behavior, or run fix iterations manually in Cursor.
+**Ralph loop (Claude Code only):** Ralph is **hook + script infrastructure**, not a workflow entry point. **`fix-bug-resolve`** (inside **`fix-bug`**) uses Ralph automatically on Claude Code via the **Stop** hook (`hooks/hooks.json`). Cursor registers only the session-start hook (`hooks/hooks-cursor.json`), so Ralph state at `.claude/ralph-loop.local.md` is not auto-continued on stop in Cursor — use Claude Code for full bug fix loops, or iterate manually in Cursor.
+
+**Advanced (non-bug only):** `/ralph-loop` and `/cancel-ralph` exist for optional iterative non-bug tasks on Claude Code. **Do not use `/ralph-loop` for bugs** — use **`fix-bug`**, which runs log → analyze → resolve → complete with Ralph inside resolve.
+
+## Workflow entry points
+
+User-facing workflow starts (5 buttons):
+
+| Verb name | Skill folder | Purpose |
+|-----------|--------------|---------|
+| `plan-product` | `plan-product` | New project: product, roadmap, tech-stack |
+| `add-backlog` | `add-backlog` | Add backlog item with detail file |
+| `design-spec` | `design-spec` | Spec before code |
+| `execute-plan` | `execute-plan` | Implement written plan → PR |
+| `fix-bug` | `fix-bug` | Bug lifecycle → resolution |
+
+Automatic (not user buttons): `using-dev-tools` (session router), `using-ai-plan` during **design-spec** / **write-plan** when code exists.
+
+**Feature chain:** `design-spec` → `write-plan` (internal) → **`execute-plan`** (verify → run → finish)
+
+**Bug chain:** **`fix-bug`** only (log → analyze → resolve → complete)
+
+Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
 
 ## The Basic Workflow
 
-1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
+1. **design-spec** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
 2. **using-git-worktrees** - **Hard gate** after spec approval, before any plan. Creates feature branch + isolated worktree (never `main`/`master`), runs setup, verifies clean test baseline.
 
-3. **writing-plans** - Runs only inside that worktree. Uses **ai-plan** module graph (`docs/ai-plan/scopes/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
+3. **write-plan** - Invoked by design-spec inside that worktree. Uses **ai-plan** module graph (`docs/ai-plan/scopes/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
 
-**AI Plan:** Invoke **using-ai-plan** (canonical skill). Bundled generators: `scripts/code-map/`, `scripts/ai-plan/`. Run `/ai-plan` in Claude Code or `npm run ai-plan` in the project repo after init. Maintainer details: `scripts/ai-plan/README.md`.
+**AI Plan:** **using-ai-plan** runs automatically during design-spec and write-plan when the repo has code (regenerates when stale). Manual `/ai-plan` or `npm run ai-plan` after module structure changes. Bundled generators: `scripts/code-map/`, `scripts/ai-plan/`. Maintainer details: `scripts/ai-plan/README.md`.
 
-4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
+4. **execute-plan** - Single entry for implementation. **Verify** worktree → **run** tasks (`execute-plan-run` default, or `execute-plan-run-inline` fallback) → **finish** with tests, push, and PR (`execute-plan-finish`).
 
-5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
-
-6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
-
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, pushes the feature branch, and **opens a pull request** with `gh pr create` (required unless project docs explicitly override).
+During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **requesting-code-review** between tasks where applicable.
 
 **The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
 
@@ -190,25 +215,24 @@ Start a new session in your chosen platform and ask for something that should tr
 - **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
 
 **Debugging**
-- **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
+- **fix-bug** - Canonical entry for all bug work (see Artifact-producing workflows below)
+- **systematic-debugging** - Root-cause method. For bugs: fix-bug Step 2 only. Standalone for non-bug failures during feature work.
 - **verification-before-completion** - Ensure it's actually fixed
 
 **Artifact-producing workflows**
 - **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
-- **bugfix-lifecycle** - Canonical bug entrypoint (discovery → root-cause → fix → resolution). Invokes internal sub-skills `bug-workflow` and `bugfix`; do not call those directly.
-- **backlog-workflow** - Add a planned work item to `docs/backlog/` with a detail file
+- **add-backlog** - Add a planned work item to `docs/backlog/` with a detail file
+- **fix-bug** - Canonical bug entrypoint (log → analyze → resolve → complete). Sub-skills: `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`. Step 2 analyze uses `systematic-debugging`.
 
 **Collaboration** 
-- **brainstorming** - Socratic design refinement
-- **writing-plans** - Detailed implementation plans (ai-plan scope when available)
+- **design-spec** - Socratic design refinement (spec before code)
+- **write-plan** - Detailed implementation plans (internal; invoked by design-spec)
 - **using-ai-plan** - Code map + module graph for planning (`docs/ai-plan/`)
-- **executing-plans** - Batch execution with checkpoints
+- **execute-plan** - Canonical plan implementation entry (verify → run → finish + PR)
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist
 - **receiving-code-review** - Responding to feedback
 - **using-git-worktrees** - Parallel development branches
-- **finishing-a-development-branch** - Push branch and open PR (required integration path)
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
 
 **Standards** (bundled — `standards/` + `manifest.json`)
 - **using-core-standards** - Project structure, errors, logging, testing, DDD, workflow artifacts

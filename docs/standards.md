@@ -19,7 +19,7 @@ Documentation index: [README.md](README.md)
 | `dev-tools:using-postgres-standards` | PostgreSQL |
 | `dev-tools:using-python-standards` | Python |
 
-Workflow skills invoke these automatically (brainstorming, writing-plans). Agents may also invoke them directly when reviewing or implementing.
+Workflow skills invoke these automatically (design-spec, write-plan). Agents may also invoke them directly when reviewing or implementing.
 
 ## Repo layout
 

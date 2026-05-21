@@ -1,5 +1,19 @@
 # dev-tools Release Notes
 
+## Unreleased
+
+### Workflow entry points (verb-named skills)
+
+- **`design-spec`** (was `brainstorming`) — spec before code; invokes `write-plan` internally after worktree setup.
+- **`add-backlog`** (was `backlog-workflow`) — document planned work items.
+- **`write-plan`** (was `writing-plans`) — internal; plan authoring from approved spec.
+- **`execute-plan`** — verify worktree → run tasks → finish with PR. Sub-skills: `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`.
+- **`fix-bug`** — canonical bug entry (log → analyze → resolve → complete).
+
+### Ai-plan
+
+- **Automatic during design/plan** — `using-ai-plan` runs when **design-spec** or **write-plan** detects stale or missing index; manual `/ai-plan` after module structure changes only.
+
 ## v5.0.8 (2026-05-21)
 
 ### Consolidated plugin
@@ -9,14 +23,14 @@
 
 ### Workflow and git discipline
 
-- **Worktree hard gate** — after spec approval, brainstorming invokes `using-git-worktrees` before `writing-plans` (feature branch + isolated workspace, never main/master).
-- **PR required at finish** — `finishing-a-development-branch` pushes the feature branch and opens a PR with `gh pr create` unless project docs explicitly override.
+- **Worktree hard gate** — after spec approval, design-spec invokes `using-git-worktrees` before `write-plan` (feature branch + isolated workspace, never main/master).
+- **PR required at finish** — `execute-plan-finish` pushes the feature branch and opens a PR with `gh pr create` unless project docs explicitly override.
 - **Planning context** — one `docs/ai-plan/scopes/<module>.md` per plan; product docs at L2; no generated `BRIEF.md`.
 
 ### Codex App
 
 - **using-git-worktrees** — Step 0 detects linked worktrees (Codex App, prior worktree) and skips duplicate creation.
-- **finishing-a-development-branch** — Step 1.5 handoff for detached HEAD in externally managed workspaces; Step 5 skips `git worktree remove` when the host owns the workspace.
+- **execute-plan-finish** — Step 1.5 handoff for detached HEAD in externally managed workspaces; Step 5 skips `git worktree remove` when the host owns the workspace.
 
 ## v5.0.7 (2026-03-31)
 

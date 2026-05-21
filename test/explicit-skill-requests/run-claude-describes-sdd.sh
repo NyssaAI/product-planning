@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Test where Claude explicitly describes subagent-driven-development before user requests it
+# Test where Claude explicitly describes execute-plan before user requests it
 # This mimics the original failure scenario
 
 set -e
@@ -36,7 +36,7 @@ EOF
 
 # Turn 1: Have Claude describe execution options including SDD
 echo ">>> Turn 1: Ask Claude to describe execution options..."
-claude -p "I have a plan at docs/plans/auth-system.md. Tell me about my options for executing it, including what subagent-driven-development means and how it works." \
+claude -p "I have a plan at docs/plans/auth-system.md. Tell me about my options for executing it, including what execute-plan means and how it works." \
     --model haiku \
     --plugin-dir "$PLUGIN_DIR" \
     --dangerously-skip-permissions \
@@ -46,9 +46,9 @@ claude -p "I have a plan at docs/plans/auth-system.md. Tell me about my options 
 echo "Done."
 
 # Turn 2: THE CRITICAL TEST - now that Claude has explained it
-echo ">>> Turn 2: Request subagent-driven-development..."
+echo ">>> Turn 2: Request execute-plan..."
 FINAL_LOG="$OUTPUT_DIR/turn2.json"
-claude -p "subagent-driven-development, please" \
+claude -p "execute-plan, please" \
     --continue \
     --model haiku \
     --plugin-dir "$PLUGIN_DIR" \
@@ -69,7 +69,7 @@ echo "---"
 echo ""
 
 # Check final turn
-SKILL_PATTERN='"skill":"([^"]*:)?subagent-driven-development"'
+SKILL_PATTERN='"skill":"([^"]*:)?execute-plan"'
 if grep -q '"name":"Skill"' "$FINAL_LOG" && grep -qE "$SKILL_PATTERN" "$FINAL_LOG"; then
     echo "PASS: Skill was triggered after Claude described it"
     TRIGGERED=true

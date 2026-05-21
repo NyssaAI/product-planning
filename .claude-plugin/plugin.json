@@ -1,7 +1,7 @@
 {
   "name": "dev-tools",
   "version": "5.0.8",
-  "description": "Development workflow skills: TDD, debugging, brainstorming, ai-plan code/module graph, git worktrees, PR workflow, and product planning",
+  "description": "Development workflow skills: TDD, debugging, design-spec, execute-plan, ai-plan code/module graph, git worktrees, PR workflow, and product planning",
   "author": {
     "name": "jamaynor"
   },

@@ -13,8 +13,8 @@ Repository-agnostic **code map + module graph** for planning. Outputs live under
 
 ## When to Use
 
-- **writing-plans** — REQUIRED when `docs/ai-plan/INDEX.md` exists or the repo has `package.json` / polyglot source roots
-- **brainstorming** (existing codebases) — read `INDEX.md` and `MODULE_MAP.json` summary for module boundaries
+- **write-plan** — REQUIRED when `docs/ai-plan/INDEX.md` exists or the repo has `package.json` / polyglot source roots (invoked by design-spec)
+- **design-spec** (existing codebases) — read `INDEX.md` and `MODULE_MAP.json` summary for module boundaries; auto-regenerates index if stale
 - After **plan-product** or when `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` exist
 
 Do **not** use for greenfield repos with no source yet (skip until code exists).
@@ -26,7 +26,7 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task + `docs/specs/…-design.md` (if feature work) | Always |
-| L1 | **One** `docs/ai-plan/scopes/<module-id>.md` | **During writing-plans** — pick module from INDEX |
+| L1 | **One** `docs/ai-plan/scopes/<module-id>.md` | **During write-plan** — pick module from INDEX |
 | L2 | `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` | When product context needed |
 | L3 | `docs/ai-plan/CODE_MAP.json` | **After** plan names symbols — implementation only |
 
@@ -70,7 +70,7 @@ Replace `<PLUGIN_ROOT>` with `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the 
 
 If `--write-scripts` copied tooling into the repo, prefer `npm run ai-plan` from the project root.
 
-## Pick a Module Scope (writing-plans)
+## Pick a Module Scope (write-plan)
 
 1. Read `docs/ai-plan/INDEX.md` — module table links to `scopes/<id>.md`
 2. Match the spec / roadmap item to **one** module (ask if ambiguous)
@@ -102,10 +102,10 @@ Generated artifacts live under `docs/ai-plan/` per **`standards/project-structur
 | Skill | Role |
 |-------|------|
 | **plan-product** | Creates docs that feed ai-plan |
-| **brainstorming** | Spec + roadmap item; optional INDEX for boundaries |
+| **design-spec** | Auto-regenerates index if stale; reads INDEX + MODULE_MAP; **single primary module per spec** |
 | **using-core-standards** | Project structure, test layout, timestamp rules |
-| **using-git-worktrees** | Before writing-plans |
-| **writing-plans** | Consumes L1 scope + MODULE_MAP edges + standards from spec |
-| **subagent-driven-development** / **executing-plans** | L3 CODE_MAP for named symbols only |
+| **using-git-worktrees** | Before write-plan |
+| **write-plan** | Consumes L1 scope + MODULE_MAP edges + standards from spec |
+| **execute-plan** / **execute-plan-run** / **execute-plan-run-inline** | L3 CODE_MAP for named symbols only |
 
 See `scripts/ai-plan/README.md` and `docs/standards.md` in the plugin for details.

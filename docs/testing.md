@@ -14,7 +14,7 @@ Testing skills that involve subagents, workflows, and complex interactions requi
 test/
 ├── claude-code/
 │   ├── test-helpers.sh                    # Shared test utilities
-│   ├── test-subagent-driven-development-integration.sh
+│   ├── test-execute-plan-integration.sh
 │   ├── analyze-token-usage.py             # Token analysis tool
 │   └── run-skill-tests.sh                 # Test runner (if exists)
 ```
@@ -26,9 +26,9 @@ test/
 Integration tests execute real Claude Code sessions with actual skills:
 
 ```bash
-# Run the subagent-driven-development integration test
+# Run the execute-plan integration test
 cd test/claude-code
-./test-subagent-driven-development-integration.sh
+./test-execute-plan-integration.sh
 ```
 
 **Note:** Integration tests can take 10-30 minutes as they execute real implementation plans with multiple subagents.
@@ -39,11 +39,11 @@ cd test/claude-code
 - Claude Code must be installed and available as `claude` command
 - Local dev marketplace must be enabled: `"dev-tools@jamaynor": true` in `~/.claude/settings.json`
 
-## Integration Test: subagent-driven-development
+## Integration Test: execute-plan
 
 ### What It Tests
 
-The integration test verifies the `subagent-driven-development` skill correctly:
+The integration test verifies the **execute-plan** orchestrator (via **execute-plan-run**) correctly:
 
 1. **Plan Loading**: Reads the plan once at the beginning
 2. **Full Task Text**: Provides complete task descriptions to subagents (doesn't make them read files)
@@ -69,7 +69,7 @@ The integration test verifies the `subagent-driven-development` skill correctly:
 
 ```
 ========================================
- Integration Test: subagent-driven-development
+ Integration Test: execute-plan
 ========================================
 
 Test project: /tmp/tmp.xyz123
@@ -77,7 +77,7 @@ Test project: /tmp/tmp.xyz123
 === Verification Tests ===
 
 Test 1: Skill tool invoked...
-  [PASS] subagent-driven-development skill was invoked
+  [PASS] execute-plan skill was invoked
 
 Test 2: Subagents dispatched...
   [PASS] 7 subagents dispatched

@@ -7,6 +7,8 @@ hide-from-slash-command-tool: "true"
 
 # Ralph Loop Command
 
+**Not for bugs.** Use **`fix-bug`** — **fix-bug-resolve** runs Ralph internally. This command is for optional **non-bug** iterative tasks on Claude Code only.
+
 Execute the setup script to initialize the Ralph loop:
 
 ```!

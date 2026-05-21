@@ -41,7 +41,7 @@ Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-too
 
 ## Platform limitations
 
-**Ralph loop:** `/ralph-loop`, `/cancel-ralph`, and the internal `bugfix` sub-skill (invoked by `bugfix-lifecycle`) use a Stop hook to re-feed the same prompt each iteration. That hook is registered only for Claude Code (`hooks/hooks.json`). Cursor uses `hooks/hooks-cursor.json`, which has session-start only — Ralph state at `.claude/ralph-loop.local.md` is not continued on stop. On Cursor, prefer `bugfix-lifecycle` without expecting automatic loop continuation, or use Claude Code for full Ralph behavior.
+**Ralph loop:** Infrastructure (Stop hook + `setup-ralph-loop.sh`), **not** a workflow entry point. **`fix-bug-resolve`** uses Ralph automatically when **fix-bug** runs on Claude Code. Do **not** use `/ralph-loop` for bugs — use **fix-bug** only. `/ralph-loop` and `/cancel-ralph` are optional for **non-bug** iterative tasks on Claude Code (advanced). Cursor has session-start hook only — Ralph state at `.claude/ralph-loop.local.md` is not auto-continued on stop.
 
 # Using Skills
 
@@ -56,8 +56,8 @@ digraph skill_flow {
     "About to write implementation plan?" [shape=doublecircle];
     "On feature branch in worktree?" [shape=diamond];
     "Invoke using-git-worktrees skill" [shape=box];
-    "Already brainstormed?" [shape=diamond];
-    "Invoke brainstorming skill" [shape=box];
+    "Already have approved spec?" [shape=diamond];
+    "Invoke design-spec skill" [shape=box];
     "Might any skill apply?" [shape=diamond];
     "Invoke Skill tool" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
@@ -66,14 +66,14 @@ digraph skill_flow {
     "Follow skill exactly" [shape=box];
     "Respond (including clarifications)" [shape=doublecircle];
 
-    "About to EnterPlanMode?" -> "Already brainstormed?";
+    "About to EnterPlanMode?" -> "Already have approved spec?";
     "About to write implementation plan?" -> "On feature branch in worktree?";
     "On feature branch in worktree?" -> "Invoke using-git-worktrees skill" [label="no"];
     "On feature branch in worktree?" -> "Might any skill apply?" [label="yes"];
     "Invoke using-git-worktrees skill" -> "Might any skill apply?";
-    "Already brainstormed?" -> "Invoke brainstorming skill" [label="no"];
-    "Already brainstormed?" -> "Might any skill apply?" [label="yes"];
-    "Invoke brainstorming skill" -> "Might any skill apply?";
+    "Already have approved spec?" -> "Invoke design-spec skill" [label="no"];
+    "Already have approved spec?" -> "Might any skill apply?" [label="yes"];
+    "Invoke design-spec skill" -> "Might any skill apply?";
 
     "User message received" -> "Might any skill apply?";
     "Might any skill apply?" -> "Invoke Skill tool" [label="yes, even 1%"];
@@ -109,12 +109,15 @@ These thoughts mean STOP—you're rationalizing:
 
 When multiple skills could apply, use this order:
 
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Planning context** (using-ai-plan) - before writing-plans when repo has code
+1. **Process skills first** (design-spec, fix-bug, debugging) - these determine HOW to approach the task
+2. **Planning context** (using-ai-plan) - before write-plan when repo has code
 3. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
 
-"Let's build X" → brainstorming first, then using-ai-plan + writing-plans, then implementation skills.
-"Fix this bug" → bugfix-lifecycle first (it invokes systematic-debugging and internal sub-skills), then domain-specific skills if needed.
+"Let's build X" → **design-spec** first (single-module spec when code exists), then write-plan (via design-spec) → **execute-plan** when ready to implement.
+"Work on backlog item X" / path under `docs/backlog/` → **add-backlog** if not documented; then **design-spec** (reads backlog detail) → write-plan → **execute-plan** when ready.
+"Add to backlog" / new planned work item → **add-backlog** only.
+"Implement the plan" / "go" / path under `docs/plans/` → **execute-plan** only (not execute-plan-run or execute-plan-finish directly).
+"Fix this bug" → fix-bug first (fix-bug-log → systematic-debugging → fix-bug-resolve → fix-bug-complete), then domain-specific skills if needed.
 
 ## Skill Types
 

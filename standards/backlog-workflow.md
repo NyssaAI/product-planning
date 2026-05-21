@@ -20,3 +20,7 @@ The detail file should include:
 - **Context** — why this work matters, what it unblocks
 - **Scope** — what's in and out of scope
 - **Acceptance criteria** — how to know when it's done
+
+## Starting work on a backlog item
+
+When work begins, invoke **dev-tools:design-spec** with the detail file as input. Design-spec reads summary, context, scope, and acceptance criteria, produces a spec in `docs/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement. Do not skip straight to planning without a spec.

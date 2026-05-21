@@ -4,7 +4,7 @@
 
 Follow **AGENTS.md** in this repo for ai-plan progressive disclosure (L0–L3), regenerate commands, and required product docs.
 
-With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the canonical workflow (module scope selection, staleness, integration with **writing-plans**).
+With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the canonical workflow (module scope selection, staleness, integration with **write-plan** via **design-spec**).
 
 ## Project structure
 
@@ -15,4 +15,5 @@ With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the 
 ## Workflow
 
 - Backlog items: `docs/backlog/{timestamp-slug}/`
-- Bugs: `docs/bugs/{timestamp-slug}/` — use **dev-tools:bugfix-lifecycle** (not internal bug-workflow/bugfix skills)
+- Plans: `docs/plans/` — use **dev-tools:execute-plan** to implement (not internal execute-plan-run / execute-plan-run-inline / execute-plan-finish)
+- Bugs: `docs/bugs/{timestamp-slug}/` — use **dev-tools:fix-bug** (not internal fix-bug-log / fix-bug-resolve / fix-bug-complete)

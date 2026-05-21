@@ -231,11 +231,10 @@ Ready to implement auth feature
 ## Integration
 
 **Called by:**
-- **brainstorming** - REQUIRED after spec approval, immediately before `writing-plans` (hard gate)
-- **writing-plans** - Prerequisite: must already be on the feature worktree before saving a plan
-- **subagent-driven-development** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
-- **executing-plans** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
+- **design-spec** - REQUIRED after spec approval, immediately before `write-plan` (hard gate)
+- **write-plan** - Prerequisite: must already be on the feature worktree before saving a plan
+- **execute-plan** - REQUIRED Step 1: ensures isolated workspace before run
 - Any skill needing isolated workspace
 
 **Pairs with:**
-- **finishing-a-development-branch** - REQUIRED after implementation: push branch and open PR (keep worktree through review)
+- **execute-plan** → **execute-plan-finish** - REQUIRED after implementation: push branch and open PR (keep worktree through review)

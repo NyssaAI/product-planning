@@ -67,11 +67,11 @@ Planning a roadmap item: **spec** (intent) + **one scope** (architecture for the
 
 | Path | Created by | Timestamp format |
 |------|------------|------------------|
-| `docs/specs/…-design.md` | brainstorming | `YYYY-MM-DD` |
-| `docs/plans/….md` | writing-plans | `YYYY-MM-DD` |
+| `docs/specs/…-design.md` | design-spec | `YYYY-MM-DD` |
+| `docs/plans/….md` | write-plan (via design-spec) | `YYYY-MM-DD` |
 | `docs/ai-plan/scopes/*.md` | ai-plan generate | regenerated when modules change |
-| `docs/backlog/…/` | backlog-workflow | `YYYY.MM.DD-HHMMSS` |
-| `docs/bugs/…/` | bug-workflow | `YYYY.MM.DD-HHMMSS` |
+| `docs/backlog/…/` | add-backlog | `YYYY.MM.DD-HHMMSS` |
+| `docs/bugs/…/` | fix-bug-log (via fix-bug) | `YYYY.MM.DD-HHMMSS` |
 
 For product/roadmap context during planning, read `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly — do not maintain duplicate excerpts under `ai-plan/`.
 

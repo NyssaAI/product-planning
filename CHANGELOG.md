@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **`execute-plan`** — single user-facing entry for plan implementation (verify → run → finish + PR). Sub-skills: `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`.
+- **`fix-bug`** — single user-facing entry for bug lifecycle (replaces `bugfix-lifecycle` / direct sub-skill invocation).
+
+### Changed
+
+- **Verb-named workflow skills** — `brainstorming` → **`design-spec`**, `backlog-workflow` → **`add-backlog`**, `writing-plans` → **`write-plan`** (internal, invoked by design-spec). Folder names match skill names.
+- **Execution chain** — `subagent-driven-development`, `executing-plans`, and `finishing-a-development-branch` → gated sub-skills under **`execute-plan`**.
+- **Ai-plan during design** — index regeneration is automatic during **design-spec** / **write-plan** when code exists; manual `/ai-plan` only after module structure changes.
+- **Router (`using-dev-tools`)** — routes feature work, backlog, plan implementation, and bugs to canonical entry points only.
+
 ## [5.0.8] - 2026-05-21
 
 ### Added

@@ -21,7 +21,7 @@ echo ""
 
 cd "$PROJECT_DIR"
 
-# Turn 1: Start brainstorming
+# Turn 1: Start design-spec
 echo ">>> Turn 1: Brainstorming request..."
 claude -p "I want to add user authentication to my app. Help me think through this." \
     --plugin-dir "$PLUGIN_DIR" \
@@ -31,7 +31,7 @@ claude -p "I want to add user authentication to my app. Help me think through th
     > "$OUTPUT_DIR/turn1.json" 2>&1 || true
 echo "Done."
 
-# Turn 2: Answer a brainstorming question
+# Turn 2: Answer a design-spec question
 echo ">>> Turn 2: Answering questions..."
 claude -p "Let's use JWT tokens with 24-hour expiry. Email/password registration." \
     --continue \
@@ -65,9 +65,9 @@ claude -p "The plan looks good. What are my options for executing it?" \
 echo "Done."
 
 # Turn 5: THE CRITICAL TEST
-echo ">>> Turn 5: Requesting subagent-driven-development..."
+echo ">>> Turn 5: Requesting execute-plan..."
 FINAL_LOG="$OUTPUT_DIR/turn5.json"
-claude -p "subagent-driven-development, please" \
+claude -p "execute-plan, please" \
     --continue \
     --plugin-dir "$PLUGIN_DIR" \
     --dangerously-skip-permissions \
@@ -80,7 +80,7 @@ echo ""
 echo "=== Results ==="
 
 # Check final turn
-SKILL_PATTERN='"skill":"([^"]*:)?subagent-driven-development"'
+SKILL_PATTERN='"skill":"([^"]*:)?execute-plan"'
 if grep -q '"name":"Skill"' "$FINAL_LOG" && grep -qE "$SKILL_PATTERN" "$FINAL_LOG"; then
     echo "PASS: Skill was triggered"
     TRIGGERED=true

@@ -5,7 +5,9 @@ dev-tools is maintained by jamaynor as a multi-platform agent workflow plugin (s
 ## Recent direction
 
 - Consolidated standards and ai-plan into a single plugin (v5.0.8)
-- Single entrypoints for bug workflow (`bugfix-lifecycle`) and ai-plan (`using-ai-plan`)
+- Single entrypoint for bug workflow (`fix-bug`)
+- Single entrypoint for plan execution (`execute-plan`)
+- Verb-named workflow skills (`design-spec`, `add-backlog`, `write-plan`, `execute-plan`, `fix-bug`)
 - Worktree hard gate and required PR at branch finish
 
 ## Conventions

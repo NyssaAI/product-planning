@@ -12,7 +12,7 @@ Dispatch dev-tools:code-reviewer subagent to catch issues before they cascade. T
 ## When to Request Review
 
 **Mandatory:**
-- After each task in subagent-driven development
+- After each task in execute-plan-run (subagent-driven execution)
 - After completing major feature
 - Before merge to main
 

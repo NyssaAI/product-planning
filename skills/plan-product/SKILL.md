@@ -22,7 +22,7 @@ You MUST complete these steps in order:
 5. **Scaffold docs subtree** (bugs/, backlog/)
 6. **Generate files**
 7. **Confirm completion**
-8. **Suggest ai-plan** — when the repo will contain source code, tell your human partner to run **using-ai-plan** / `/ai-plan` after the first meaningful code exists (generates `docs/ai-plan/`; ast-grep is provided by the plugin)
+8. **Ai-plan note** — when the repo will contain source code, tell your human partner that **using-ai-plan** runs automatically during **design-spec** and **write-plan** once code exists (regenerates `docs/ai-plan/` when stale). Manual `/ai-plan` or `npm run ai-plan` is only needed after structural module changes — not at project bootstrap.
 
 ## Step 1: Check for Existing Product Docs
 
@@ -143,8 +143,8 @@ Use AskUserQuestion:
 Per `standards/project-structure.md`, scaffold `docs/`:
 
 - `product.md`, `roadmap.md`, `tech-stack.md` (created in Step 6)
-- `bugs/`, `backlog/` — empty until bugfix-lifecycle / backlog-workflow
-- `specs/`, `plans/` — empty until brainstorming / writing-plans
+- `bugs/`, `backlog/` — empty until fix-bug / add-backlog
+- `specs/`, `plans/` — empty until design-spec / write-plan
 - `ai-plan/scopes/` — empty until ai-plan generate (after source code exists)
 
 Create directories with `.gitkeep` where needed:
@@ -278,7 +278,7 @@ After creating all files and directories, tell the user:
 > - `docs/tech-stack.md`
 > - `docs/bugs/`, `docs/backlog/`, `docs/specs/`, `docs/plans/`, `docs/ai-plan/scopes/` (scaffolded)
 >
-> After source code exists, run ai-plan generate (`/ai-plan` or `npm run ai-plan`) to populate `docs/ai-plan/`.
+> After source code exists, **design-spec** and **write-plan** invoke **using-ai-plan** automatically when the index is stale. Run `/ai-plan` or `npm run ai-plan` manually only after module structure changes.
 >
 > Review these files to ensure they capture your product vision.
 
@@ -288,5 +288,5 @@ After creating all files and directories, tell the user:
 - **Non-goals and out-of-scope items are the most valuable sections.** They prevent scope drift and force explicit decision-making.
 - **Functional requirements stay feature-level**, not implementation. "Support SSO" is a good FR; "integrate with Okta via SAML 2.0" is implementation detail that belongs in a design doc, not a PRD.
 - **Load-bearing assumptions should be surfaced early.** Every "if X changes, the whole plan changes" assumption deserves a line in the Assumptions section.
-- These files feed into the `brainstorming` and `writing-plans` skills for downstream context. A good PRD meaningfully reduces the clarifying-question burden at every subsequent skill invocation.
+- These files feed into **design-spec** and **write-plan** for downstream context. A good PRD meaningfully reduces the clarifying-question burden at every subsequent skill invocation.
 - Standards are bundled — invoke `dev-tools:using-core-standards` when unsure which conventions apply.
