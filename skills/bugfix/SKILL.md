@@ -1,9 +1,15 @@
 ---
 name: bugfix
-description: Use when fixing a documented bug that has a detail file in docs/bugs/. Reads the bug description, starts a Ralph loop that examines, plans, implements, tests, and critiques the fix iteratively until all tests pass.
+description: Internal sub-skill invoked by bugfix-lifecycle only. Do not invoke directly — use dev-tools:bugfix-lifecycle for all bug work.
+user-invocable: false
+disable-model-invocation: true
 ---
 
 # Bugfix
+
+<INTERNAL-SUB-SKILL>
+Invoked by `dev-tools:bugfix-lifecycle` at Step 3 (fix loop). Users should use **bugfix-lifecycle**, not this skill directly.
+</INTERNAL-SUB-SKILL>
 
 Fix a documented bug through an iterative Ralph loop. Each iteration examines the current state, works toward a fix, runs tests, and critiques the result. The loop continues until the fix is verified and all tests pass.
 

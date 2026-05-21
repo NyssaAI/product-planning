@@ -80,6 +80,10 @@ gemini extensions update dev-tools
 
 Start a new session in your chosen platform and ask for something that should trigger a skill (for example, "help me plan this feature" or "let's debug this issue"). The agent should automatically invoke the relevant dev-tools skill.
 
+### Platform notes
+
+**Ralph loop (Claude Code only):** `/ralph-loop`, `/cancel-ralph`, and the `bugfix` sub-skill depend on Claude Code's **Stop** hook (`hooks/hooks.json`). Cursor registers only the session-start hook (`hooks/hooks-cursor.json`), so Ralph state files (`.claude/ralph-loop.local.md`) are not auto-continued on stop in Cursor. Use Claude Code for full Ralph loop behavior, or run fix iterations manually in Cursor.
+
 ## The Basic Workflow
 
 1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
@@ -88,16 +92,7 @@ Start a new session in your chosen platform and ask for something that should tr
 
 3. **writing-plans** - Runs only inside that worktree. Uses **ai-plan** module graph (`docs/ai-plan/scopes/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
 
-**AI Plan (code & module graph):** Bundled under `scripts/code-map/` and `scripts/ai-plan/`. `@ast-grep/cli` ships with the plugin (auto-installs into the plugin directory on first use). From a project repo with `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --init --write-scripts
-npm run ai-plan   # after init copies scripts into the project
-```
-
-Or use the `/ai-plan` command in Claude Code. See **using-ai-plan** skill and `scripts/ai-plan/README.md`.
-
-**Plugin maintainers / git clone:** run `npm install` once at the dev-tools plugin root so `node_modules/@ast-grep/cli` exists before publishing; end users get the same via auto-install on first `code-map` run if the marketplace copy omits `node_modules`.
+**AI Plan:** Invoke **using-ai-plan** (canonical skill). Bundled generators: `scripts/code-map/`, `scripts/ai-plan/`. Run `/ai-plan` in Claude Code or `npm run ai-plan` in the project repo after init. Maintainer details: `scripts/ai-plan/README.md`.
 
 4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
 
@@ -122,9 +117,7 @@ Or use the `/ai-plan` command in Claude Code. See **using-ai-plan** skill and `s
 
 **Artifact-producing workflows**
 - **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
-- **bug-workflow** - Document a newly discovered bug (detail file, scoped discovery commit)
-- **bugfix** - Fix a documented bug via iterative Ralph loop (read detail, write failing test, fix, verify)
-- **bugfix-lifecycle** - Single canonical bug entrypoint (discovery -> root-cause -> fix -> resolution)
+- **bugfix-lifecycle** - Canonical bug entrypoint (discovery → root-cause → fix → resolution). Invokes internal sub-skills `bug-workflow` and `bugfix`; do not call those directly.
 - **backlog-workflow** - Add a planned work item to `docs/backlog/` with a detail file
 
 **Collaboration** 
@@ -146,7 +139,6 @@ Or use the `/ai-plan` command in Claude Code. See **using-ai-plan** skill and `s
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
 - **using-dev-tools** - Introduction to the skills system
-- **using-ai-plan** - Code map + module graph for planning
 
 ## Repo layout (your projects)
 

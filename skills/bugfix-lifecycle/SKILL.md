@@ -1,6 +1,6 @@
 ---
 name: bugfix-lifecycle
-description: Single canonical entrypoint for bug handling. Orchestrates discovery, root-cause investigation, fix loop, and resolution commit by invoking bug-workflow + systematic-debugging + bugfix in sequence.
+description: Use when a bug is discovered, documented, or needs fixing. Single canonical entrypoint for all bug work — orchestrates discovery, root-cause investigation, fix loop, and resolution commit.
 ---
 
 # Bugfix Lifecycle (single entrypoint)

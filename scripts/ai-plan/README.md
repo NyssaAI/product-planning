@@ -1,6 +1,12 @@
 # AI Plan
 
-**Shipped in the [jamaynor/dev-tools](https://github.com/jamaynor/dev-tools) plugin** at `scripts/code-map/` and `scripts/ai-plan/`. Workflow integration: **dev-tools:using-ai-plan** skill and **dev-tools:writing-plans**.
+**Agent workflow:** **dev-tools:using-ai-plan** skill (canonical — L0–L3 rules, module scope selection, staleness).
+
+**Maintainer / CLI reference** for generators and config. End users with the dev-tools plugin should follow the skill; use this file for script paths and `ai-plan.config.json` details.
+
+**Shipped in the [jamaynor/dev-tools](https://github.com/jamaynor/dev-tools) plugin** at `scripts/code-map/` and `scripts/ai-plan/`.
+
+**Plugin maintainers:** run `npm install` once at the dev-tools plugin root before publishing so `node_modules/@ast-grep/cli` exists; end users get auto-install on first code-map run if the marketplace copy omits `node_modules`.
 
 From a project repo with the dev-tools plugin installed:
 

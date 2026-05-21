@@ -2,16 +2,9 @@
 
 ## AI planning context
 
-Use progressive disclosure when planning features:
+Follow **AGENTS.md** in this repo for ai-plan progressive disclosure (L0–L3), regenerate commands, and required product docs.
 
-1. Task / backlog / bug detail (L0)
-2. **One** `docs/ai-plan/scopes/<module>.md` (L1)
-3. Optional `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` (L2)
-4. `docs/ai-plan/CODE_MAP.json` only after the plan names symbols (L3)
-
-Regenerate planning context: `devjoy ai-plan` or `npm run ai-plan`.
-
-Validate setup: `devjoy ai-plan doctor`.
+With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the canonical workflow (module scope selection, staleness, integration with **writing-plans**).
 
 ## Project structure
 
@@ -22,4 +15,4 @@ Validate setup: `devjoy ai-plan doctor`.
 ## Workflow
 
 - Backlog items: `docs/backlog/{timestamp-slug}/`
-- Bugs: `docs/bugs/{timestamp-slug}/` with detail + resolution files
+- Bugs: `docs/bugs/{timestamp-slug}/` — use **dev-tools:bugfix-lifecycle** (not internal bug-workflow/bugfix skills)

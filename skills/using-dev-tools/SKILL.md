@@ -39,6 +39,10 @@ If CLAUDE.md, GEMINI.md, or AGENTS.md says "don't use TDD" and a skill says "alw
 
 Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-tools.md` (Copilot CLI), `references/codex-tools.md` (Codex) for tool equivalents. Gemini CLI users get the tool mapping loaded automatically via GEMINI.md.
 
+## Platform limitations
+
+**Ralph loop:** `/ralph-loop`, `/cancel-ralph`, and the internal `bugfix` sub-skill (invoked by `bugfix-lifecycle`) use a Stop hook to re-feed the same prompt each iteration. That hook is registered only for Claude Code (`hooks/hooks.json`). Cursor uses `hooks/hooks-cursor.json`, which has session-start only — Ralph state at `.claude/ralph-loop.local.md` is not continued on stop. On Cursor, prefer `bugfix-lifecycle` without expecting automatic loop continuation, or use Claude Code for full Ralph behavior.
+
 # Using Skills
 
 ## The Rule
@@ -110,7 +114,7 @@ When multiple skills could apply, use this order:
 3. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
 
 "Let's build X" → brainstorming first, then using-ai-plan + writing-plans, then implementation skills.
-"Fix this bug" → debugging first, then domain-specific skills.
+"Fix this bug" → bugfix-lifecycle first (it invokes systematic-debugging and internal sub-skills), then domain-specific skills if needed.
 
 ## Skill Types
 

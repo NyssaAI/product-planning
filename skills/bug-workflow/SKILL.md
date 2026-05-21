@@ -1,11 +1,17 @@
 ---
 name: bug-workflow
-description: Use when a bug is discovered and needs to be formally documented before being worked on. Creates docs/bugs/{timestamp}-{slug}/{timestamp}-{slug}-detail.md per the bug-workflow standard, commits, and pushes. The resolution file is written later (typically by the bugfix skill) in a separate commit.
+description: Internal sub-skill invoked by bugfix-lifecycle only. Do not invoke directly — use dev-tools:bugfix-lifecycle for all bug work.
+user-invocable: false
+disable-model-invocation: true
 ---
 
 # Bug Workflow — Discovery
 
-Formally document a newly-discovered bug, conforming to `standards/bug-workflow.md` (bundled in dev-tools). Produces a dated directory and a detail file so the bug can be worked on systematically by the `bugfix` skill (or manually).
+<INTERNAL-SUB-SKILL>
+Invoked by `dev-tools:bugfix-lifecycle` at Step 1 (discovery gate). Users should use **bugfix-lifecycle**, not this skill directly.
+</INTERNAL-SUB-SKILL>
+
+Formally document a newly-discovered bug, conforming to `standards/bug-workflow.md` (bundled in dev-tools). Produces a dated directory and a detail file for the fix loop in `dev-tools:bugfix`.
 
 **Always use AskUserQuestion** when asking the user anything. One question at a time.
 
@@ -93,10 +99,10 @@ Tell the user:
 > - Commit: `{sha}`
 > - Pushed: yes / no (no remote configured)
 >
-> **Next step:** invoke the `bugfix` skill with this slug to start the fix loop:
+> **Next step:** continue with `dev-tools:bugfix-lifecycle` (or invoke `dev-tools:bugfix` if lifecycle already passed discovery and debugging gates):
 >
 > ```
-> bugfix {timestamp}-{slug}
+> bugfix-lifecycle {timestamp}-{slug}
 > ```
 >
 > Resolution will be committed separately per the bug-workflow standard (no batching).
@@ -112,4 +118,4 @@ Tell the user:
 
 - **bug-workflow** — `standards/bug-workflow.md`
 - **timestamp-format** — `standards/timestamp-format.md`
-- **dev-tools:bugfix** — the follow-on skill that reads the detail file, runs the fix loop, and writes the resolution file in a separate commit.
+- **dev-tools:bugfix-lifecycle** — user-facing follow-on after discovery; invokes `dev-tools:bugfix` internally at Step 3

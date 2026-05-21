@@ -5,6 +5,8 @@ description: Use when writing implementation plans in a repo with code — gener
 
 # Using AI Plan
 
+**Canonical source** for ai-plan behavior. The `/ai-plan` command, `install/bootstrap-templates/AGENTS.md`, and `.cursor/rules/ai-plan.mdc` are thin wrappers — update this skill first when rules change.
+
 Repository-agnostic **code map + module graph** for planning. Outputs live under `docs/ai-plan/` in the **target repository** (not inside the plugin).
 
 **Announce at start:** "I'm using the using-ai-plan skill to load planning context."
