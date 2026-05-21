@@ -2,8 +2,6 @@
 
 Manual integration tests that scaffold a minimal project with a design + plan, then run Claude Code with **`dev-tools:execute-plan`**.
 
-Formerly `test/subagent-driven-dev/` (retired `subagent-driven-development` skill name).
-
 ## Usage
 
 ```bash

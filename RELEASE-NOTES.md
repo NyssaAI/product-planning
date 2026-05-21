@@ -1,24 +1,51 @@
 # dev-tools Release Notes
 
-## Unreleased
+## v5.1.0 (2026-05-21)
 
-### Workflow entry-point audit (docs, tests, orchestrator parity)
+### Five workflow entry points
+
+User-facing skills (invoke these only):
+
+| Skill | Purpose |
+|-------|---------|
+| **`plan-product`** | Establish `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` |
+| **`add-backlog`** | Document planned work in `docs/backlog/` |
+| **`design-spec`** | Spec before code; invokes `write-plan` internally after worktree setup |
+| **`execute-plan`** | Verify worktree → run plan tasks → finish with PR |
+| **`fix-bug`** | Log → analyze → resolve → complete |
+
+Internal / gated (do not invoke directly): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
+
+### Migration from pre-5.1.0 skill names
+
+Update prompts, hooks, and project docs that reference retired skills:
+
+| Retired | Use instead |
+|---------|-------------|
+| `brainstorming` | **`design-spec`** |
+| `writing-plans` | **`write-plan`** (internal — normally reached via `design-spec`) |
+| `backlog-workflow` | **`add-backlog`** |
+| `subagent-driven-development` | **`execute-plan`** |
+| `executing-plans` | **`execute-plan`** (inline fallback is internal `execute-plan-run-inline`) |
+| `finishing-a-development-branch` | **`execute-plan`** (finish step is internal `execute-plan-finish`) |
+| `bug-workflow`, `bugfix`, `bugfix-lifecycle` | **`fix-bug`** |
+| Direct `fix-bug-log` / `fix-bug-resolve` / `fix-bug-complete` | **`fix-bug`** only |
+
+Maintainer test paths:
+
+| Old | New |
+|-----|-----|
+| `test/subagent-driven-dev/` | **`test/execute-plan-dev/`** |
+| `test/brainstorm-server/` | **`test/design-spec-server/`** |
+| `test/run-eval-suite.sh` | **`test/run-all.sh`** (`run-eval-suite.sh` aliases `--fast`) |
+
+### Workflow entry-point audit
 
 - **`design-spec` orchestrator parity** — Purpose, Hard policy, Required sub-skills, and `references/policy.md` aligned with `fix-bug` / `execute-plan`.
-- **Authoritative docs** — `docs/product.md` and `docs/roadmap.md` list the five user-facing entry points only (`plan-product`, `add-backlog`, `design-spec`, `execute-plan`, `fix-bug`); internal `write-plan` no longer listed as a button.
-- **Maintainer plans/specs** — `docs/plans/` and `docs/specs/` updated to current skill names, paths, and `dev-tools:execute-plan` plan headers (retired `brainstorming`, `writing-plans`, `executing-plans`, etc.).
-- **Archive collapsed** — removed `docs/archive/` (superseded plans); content remains in git history.
-- **Eval coverage** — skill-triggering and explicit-skill-request tests for `fix-bug`, `add-backlog`, `plan-product`; new `test/claude-code/test-fix-bug.sh`.
-- **Integration evals** — `test/subagent-driven-dev/` renamed to `test/execute-plan-dev/`; prompts use `dev-tools:execute-plan`.
-- **Misc** — `commands/ralph-help.md` design entry point; language cleanup in TDD / code-review skill descriptions.
-
-### Workflow entry points (verb-named skills)
-
-- **`design-spec`** (was `brainstorming`) — spec before code; invokes `write-plan` internally after worktree setup.
-- **`add-backlog`** (was `backlog-workflow`) — document planned work items.
-- **`write-plan`** (was `writing-plans`) — internal; plan authoring from approved spec.
-- **`execute-plan`** — verify worktree → run tasks → finish with PR. Sub-skills: `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`.
-- **`fix-bug`** — canonical bug entry (log → analyze → resolve → complete).
+- **Authoritative docs** — `docs/product.md` and `docs/roadmap.md` list the five user-facing entry points only.
+- **Eval coverage** — skill-triggering and explicit-skill-request tests for all entry points; `test/claude-code/test-execute-plan.sh` and `test-fix-bug.sh`.
+- **Unified test runner** — `test/run-all.sh` with `--fast`, `--all`, `--integration`, `--full`.
+- **Contributor docs** — bundled `@ast-grep/cli` dependency documented (auto-installs into plugin root; consumer repos need no npm deps).
 
 ### Ai-plan
 
@@ -54,4 +81,3 @@
 
 - **Skills path consistency** — the bootstrap text no longer advertises a misleading `configDir/skills/dev-tools/` path that didn't match the runtime path. The agent should use the native `skill` tool, not navigate to files by path. Tests now use consistent paths derived from a single source of truth. (#847, #916)
 - **Bootstrap as user message** — moved bootstrap injection from `experimental.chat.system.transform` to `experimental.chat.messages.transform`, prepending to the first user message instead of adding a system message. Avoids token bloat from system messages repeated every turn (#750) and fixes compatibility with Qwen and other models that break on multiple system messages (#894).
-

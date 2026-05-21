@@ -1,11 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [5.1.0] - 2026-05-21
 
 ### Added
 
 - **`execute-plan`** — single user-facing entry for plan implementation (verify → run → finish + PR). Sub-skills: `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`.
 - **`fix-bug`** — single user-facing entry for bug lifecycle (replaces `bugfix-lifecycle` / direct sub-skill invocation).
+- **`test/run-all.sh`** — unified maintainer test runner (`--fast`, `--all`, `--integration`, `--full`).
 
 ### Changed
 
@@ -13,6 +14,9 @@
 - **Execution chain** — `subagent-driven-development`, `executing-plans`, and `finishing-a-development-branch` → gated sub-skills under **`execute-plan`**.
 - **Ai-plan during design** — index regeneration is automatic during **design-spec** / **write-plan** when code exists; manual `/ai-plan` only after module structure changes.
 - **Router (`using-dev-tools`)** — routes feature work, backlog, plan implementation, and bugs to canonical entry points only.
+- **Contributor docs** — clarify bundled `@ast-grep/cli` dependency (plugin-root install; consumer repos need no npm deps).
+- **Test harness** — `test/run-all.sh` unified runner; PIPESTATUS fixes; resilient unit-test assertions; `design-spec-server` and OpenCode structure tests in `--all`.
+- **Tests and docs** — retire residual pre-rename skill references; expand eval coverage for all five entry points.
 
 ## [5.0.8] - 2026-05-21
 
@@ -24,11 +28,11 @@
 
 ### Changed
 
-- **Git workflow gates** — brainstorming requires `using-git-worktrees` after spec approval; `writing-plans`, `executing-plans`, and `subagent-driven-development` verify feature branch/worktree before implementation; `finishing-a-development-branch` requires push + `gh pr create` (override only via project CLAUDE.md/AGENTS.md).
-- **Standards surfacing** — brainstorming and writing-plans invoke bundled `dev-tools:using-*-standards` skills (replaces `dev-standards:` peer plugin).
+- **Git workflow gates** — design-spec requires `using-git-worktrees` after spec approval; execute-plan verifies feature branch/worktree before implementation; execute-plan-finish requires push + `gh pr create` (override only via project CLAUDE.md/AGENTS.md).
+- **Standards surfacing** — design-spec and write-plan invoke bundled `dev-tools:using-*-standards` skills.
 - **ai-plan output** — stops generating `docs/ai-plan/BRIEF.md`; L2 planning context reads `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly. Module scopes under `docs/ai-plan/scopes/` remain the primary planning artifact.
 - **project-structure standard** — documents authoritative docs vs generated ai-plan (`docs/specs/`, `docs/plans/`, `docs/ai-plan/scopes/`).
-- **Codex App compatibility** — `using-git-worktrees` Step 0 (linked worktree detection); `finishing-a-development-branch` Step 1.5 environment detection and guarded worktree cleanup.
+- **Codex App compatibility** — `using-git-worktrees` Step 0 (linked worktree detection); execute-plan-finish Step 1.5 environment detection and guarded worktree cleanup.
 
 ## [5.0.7] - 2026-04-24
 
@@ -53,8 +57,8 @@
 
 ### Fixed
 
-- **Brainstorm server ESM fix**: Renamed `server.js` → `server.cjs` so the brainstorming server starts correctly on Node.js 22+ where the root `package.json` `"type": "module"` caused `require()` to fail.
-- **Brainstorm owner-PID on Windows**: Skip `BRAINSTORM_OWNER_PID` lifecycle monitoring on Windows/MSYS2 where the PID namespace is invisible to Node.js. Prevents the server from self-terminating after 60 seconds. The 30-minute idle timeout remains as the safety net.
+- **Design-spec server ESM fix**: Renamed `server.js` → `server.cjs` so the visual companion server starts correctly on Node.js 22+ where the root `package.json` `"type": "module"` caused `require()` to fail.
+- **Design-spec owner-PID on Windows**: Skip owner-PID lifecycle monitoring on Windows/MSYS2 where the PID namespace is invisible to Node.js. Prevents the server from self-terminating after 60 seconds. The 30-minute idle timeout remains as the safety net.
 - **stop-server.sh reliability**: Verify the server process actually died before reporting success. Waits up to 2 seconds for graceful shutdown, escalates to `SIGKILL`, and reports failure if the process survives.
 
 ### Changed

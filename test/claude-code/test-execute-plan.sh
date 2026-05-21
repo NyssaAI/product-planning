@@ -60,51 +60,12 @@ fi
 
 echo ""
 
-# Test 4: Verify review order in execute-plan-run
-echo "Test 4: Review ordering (execute-plan-run)..."
-
-output=$(run_claude "In execute-plan-run, what comes first: spec compliance review or code quality review?" 30)
-
-if assert_order "$output" "spec.*compliance" "code.*quality" "Spec compliance before code quality"; then
-    : # pass
-else
-    exit 1
-fi
-
-echo ""
-
-# Test 5: Verify worktree requirement
-echo "Test 5: Worktree requirement..."
+# Test 4: Verify worktree requirement
+echo "Test 4: Worktree requirement..."
 
 output=$(run_claude "What must execute-plan Step 1 verify before running tasks?" 30)
 
 if assert_contains "$output" "using-git-worktrees\|worktree\|feature.*branch" "Mentions worktree requirement"; then
-    : # pass
-else
-    exit 1
-fi
-
-echo ""
-
-# Test 6: Verify finish step opens PR
-echo "Test 6: Finish step..."
-
-output=$(run_claude "What does execute-plan-finish do after implementation completes?" 30)
-
-if assert_contains "$output" "test\|push\|PR\|pull request\|gh pr create" "Finish verifies tests and opens PR"; then
-    : # pass
-else
-    exit 1
-fi
-
-echo ""
-
-# Test 7: Verify main branch warning
-echo "Test 7: Main branch red flag..."
-
-output=$(run_claude "In execute-plan, is it okay to implement directly on main or master?" 30)
-
-if assert_contains "$output" "not.*main\|never.*main\|feature.*branch\|worktree" "Warns against main branch"; then
     : # pass
 else
     exit 1

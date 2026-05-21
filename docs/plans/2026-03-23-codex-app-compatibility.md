@@ -557,8 +557,8 @@ If test runner exists:
 # Run skill-triggering tests
 ./tests/skill-triggering/run-all.sh 2>/dev/null || echo "Skill triggering tests not available in this environment"
 
-# Run SDD integration test
-./test/claude-code/test-execute-plan-run-integration.sh 2>/dev/null || echo "SDD integration test not available in this environment"
+# Run execute-plan integration test
+./test/claude-code/test-execute-plan-integration.sh 2>/dev/null || echo "execute-plan integration test not available in this environment"
 ```
 
 Note: these tests require Claude Code with `--dangerously-skip-permissions`. If not available, document that regression tests should be run manually.

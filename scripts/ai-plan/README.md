@@ -135,7 +135,7 @@ Install global defaults after bootstrap:
 devjoy ai-plan init --with-skills global
 ```
 
-Workflow skills (from `dev-tools` v5.0.8+) use generated context:
+Workflow skills (from `dev-tools` v5.1.0+) use generated context:
 
 - **Planning** — L0 task + spec + one `docs/ai-plan/scopes/<module>.md`; product docs at L2 if needed
 - **Backlog** — `docs/backlog/{YYYY.MM.DD-HHMMSS-slug}/{timestamp-slug}-detail.md`

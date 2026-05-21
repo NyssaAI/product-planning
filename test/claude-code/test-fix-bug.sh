@@ -39,7 +39,7 @@ else
     exit 1
 fi
 
-if assert_contains "$output" "not.*direct\|do not.*direct\|only.*fix-bug\|via fix-bug" "Sub-skills not invoked directly"; then
+if assert_contains "$output" "not.*direct\|do not.*direct\|never invoke\|only.*fix-bug\|via fix-bug\|single entry" "Sub-skills not invoked directly"; then
     : # pass
 else
     exit 1
@@ -77,7 +77,7 @@ else
     exit 1
 fi
 
-if assert_contains "$output" "not.*ralph\|do not.*ralph\|don't.*ralph\|avoid.*ralph" "Discourages /ralph-loop for bugs"; then
+if assert_contains "$output" "not.*ralph\|do not.*ralph\|don't.*ralph\|never.*ralph\|avoid.*ralph" "Discourages /ralph-loop for bugs"; then
     : # pass
 else
     exit 1

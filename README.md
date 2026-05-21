@@ -120,7 +120,7 @@ Restart OpenCode. The plugin auto-installs and registers all skills.
 
 ```json
 {
-  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v5.0.8"]
+  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v5.1.0"]
 }
 ```
 
@@ -271,7 +271,7 @@ Skills live directly in this repository. To contribute:
 
 See `skills/writing-skills/SKILL.md` for the complete guide.
 
-Run skill evals before skill PRs: `test/run-eval-suite.sh` (requires Claude Code CLI). See [docs/testing.md](docs/testing.md).
+Run skill evals before skill PRs: `test/run-all.sh` (requires Claude Code CLI for Claude suites). See [docs/testing.md](docs/testing.md).
 
 ## Updating
 

@@ -22,10 +22,28 @@ test/
 ├── skill-triggering/                      # Naive prompts → skill invocation
 ├── explicit-skill-requests/               # User names skill directly
 ├── design-spec-server/                    # design-spec visual companion server tests
-└── execute-plan-dev/                      # Full execute-plan integration evals (was subagent-driven-dev)
+└── execute-plan-dev/                      # Manual execute-plan scenario evals
+├── opencode/                              # OpenCode plugin structure tests
+└── run-all.sh                             # Unified test runner
 ```
 
 ## Running Tests
+
+### Unified runner (recommended)
+
+From repo root (Git Bash or WSL on Windows):
+
+```bash
+unset ANTHROPIC_API_KEY   # if invalid key overrides claude.ai auth
+./test/run-all.sh           # Claude fast evals (~20–40 min)
+./test/run-all.sh --all     # Fast Claude + design-spec-server + OpenCode structure
+./test/run-all.sh --integration   # Fast Claude + execute-plan integration (~10–30 min extra)
+./test/run-all.sh --full    # Everything including integration (~1–2 hours)
+```
+
+Log: `/tmp/dev-tools-test-run.log` (override with `DEV_TOOLS_TEST_LOG`).
+
+`test/run-eval-suite.sh` is a backward-compatible alias for `./test/run-all.sh --fast`.
 
 ### Visual companion server tests
 

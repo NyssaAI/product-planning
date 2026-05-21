@@ -32,7 +32,9 @@ If any of these checks fail, do not open the PR. Explain to your human partner w
 
 ### Third-party dependencies
 
-PRs that add optional or required dependencies on third-party projects will not be accepted unless they are adding support for a new harness (e.g., a new IDE or CLI tool). dev-tools is a zero-dependency plugin by design. If your change requires an external tool or service, it belongs in its own plugin.
+dev-tools ships one bundled plugin dependency: **`@ast-grep/cli`** for ai-plan/code-map (auto-installs into the plugin root on first use). Consumer project repos need not add npm dependencies for dev-tools.
+
+PRs that add further third-party dependencies will not be accepted unless they add support for a new harness (e.g., a new IDE or CLI tool). If your change requires an external tool or service beyond the bundled ai-plan toolchain, it belongs in its own plugin.
 
 ### "Compliance" changes to skills
 

@@ -11,8 +11,8 @@ run_claude() {
     local plugin_dir
     plugin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-    # Build command
-    local cmd="claude -p \"$prompt\" --plugin-dir \"$plugin_dir\""
+    # Build command — skip permission prompts in headless skill Q&A
+    local cmd="claude -p \"$prompt\" --plugin-dir \"$plugin_dir\" --dangerously-skip-permissions"
     if [ -n "$allowed_tools" ]; then
         cmd="$cmd --allowed-tools=$allowed_tools"
     fi

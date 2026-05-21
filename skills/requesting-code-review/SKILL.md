@@ -76,12 +76,12 @@ You: [Fix progress indicators]
 
 ## Integration with Workflows
 
-**Subagent-Driven Development:**
+**Execute-plan (subagent path):**
 - Review after EACH task
 - Catch issues before they compound
 - Fix before moving to next task
 
-**Executing Plans:**
+**Execute-plan (inline path):**
 - Review after each batch (3 tasks)
 - Get feedback, apply, continue
 
