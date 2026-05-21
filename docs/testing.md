@@ -21,10 +21,21 @@ test/
 │   └── run-skill-tests.sh                 # Test runner
 ├── skill-triggering/                      # Naive prompts → skill invocation
 ├── explicit-skill-requests/               # User names skill directly
+├── design-spec-server/                    # design-spec visual companion server tests
 └── execute-plan-dev/                      # Full execute-plan integration evals (was subagent-driven-dev)
 ```
 
 ## Running Tests
+
+### Visual companion server tests
+
+```bash
+cd test/design-spec-server
+npm install
+npm test
+```
+
+Runs HTTP/WebSocket integration tests against `skills/design-spec/scripts/server.cjs` (no Claude Code required).
 
 ### Integration Tests
 

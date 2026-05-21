@@ -280,7 +280,7 @@ After creating all files and directories, tell the user:
 >
 > After source code exists, **design-spec** and **write-plan** invoke **using-ai-plan** automatically when the index is stale. Run `/ai-plan` or `npm run ai-plan` manually only after module structure changes.
 >
-> Review these files to ensure they capture your product vision.
+> Review these files to ensure they capture your product vision. When you're ready to build, invoke **design-spec** for the first feature (or **add-backlog** first if the work belongs on the backlog).
 
 ## Tips
 

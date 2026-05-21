@@ -75,7 +75,7 @@ cmd /c mklink /J "$env:USERPROFILE\.agents\skills\dev-tools" "$env:USERPROFILE\.
 
 3. Restart Codex (skills are discovered at startup).
 
-**Optional — subagent skills:** `dispatching-parallel-agents` and `execute-plan-run` (inside `execute-plan`) need Codex multi-agent:
+**Optional — multi-agent for plan execution:** Enable Codex multi-agent so **`execute-plan`** can use subagents for task dispatch (internal `execute-plan-run`; fallback is inline via `execute-plan-run-inline`). `dispatching-parallel-agents` also benefits from multi-agent:
 
 ```toml
 [features]
@@ -158,6 +158,7 @@ gemini extensions update dev-tools
 
 Start a new session in your chosen platform and ask for something that should trigger a skill:
 
+- **Greenfield project:** "starting a new project" / missing product docs → **`plan-product`**
 - **Feature work:** "help me plan this feature" → **`design-spec`**
 - **Backlog item:** "add this to the backlog" → **`add-backlog`**
 - **Implement plan:** "implement the plan" / path under `docs/plans/` → **`execute-plan`**
@@ -187,6 +188,10 @@ Automatic (not user buttons): `using-dev-tools` (session router), `using-ai-plan
 
 **Feature chain:** `design-spec` → `write-plan` (internal) → **`execute-plan`** (verify → run → finish)
 
+**Backlog chain:** **`add-backlog`** → (when work begins) **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
+
+**Greenfield chain:** **`plan-product`** → **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
+
 **Bug chain:** **`fix-bug`** only (log → analyze → resolve → complete)
 
 Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
@@ -195,7 +200,7 @@ Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`,
 
 1. **design-spec** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
-2. **using-git-worktrees** - **Hard gate** after spec approval, before any plan. Creates feature branch + isolated worktree (never `main`/`master`), runs setup, verifies clean test baseline.
+2. **using-git-worktrees** - **Hard gate** inside **design-spec** after spec approval, before any plan (not a separate user entry point). Creates feature branch + isolated worktree (never `main`/`master`), runs setup, verifies clean test baseline.
 
 3. **write-plan** - Invoked by design-spec inside that worktree. Uses **ai-plan** module graph (`docs/ai-plan/scopes/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
 

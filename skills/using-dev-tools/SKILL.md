@@ -113,6 +113,7 @@ When multiple skills could apply, use this order:
 2. **Planning context** (using-ai-plan) - before write-plan when repo has code
 3. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
 
+"New project" / missing `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` → **plan-product** first; then **design-spec** when ready to build.
 "Let's build X" → **design-spec** first (single-module spec when code exists), then write-plan (via design-spec) → **execute-plan** when ready to implement.
 "Work on backlog item X" / path under `docs/backlog/` → **add-backlog** if not documented; then **design-spec** (reads backlog detail) → write-plan → **execute-plan** when ready.
 "Add to backlog" / new planned work item → **add-backlog** only.

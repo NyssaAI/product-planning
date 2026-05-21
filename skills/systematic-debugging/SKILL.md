@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Internal root-cause discipline for bugs (via fix-bug only). Standalone for non-bug technical failures — test/build/integration/perf issues during other work. Never propose fixes before Phase 1 completes.
+description: Use for non-bug technical failures during other work — test/build/integration/perf issues on a branch or in CI. For bugs, invoke fix-bug only (Step 2 Analyze runs this skill). Never propose fixes before Phase 1 completes.
 ---
 
 # Systematic Debugging

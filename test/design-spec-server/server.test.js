@@ -1,5 +1,5 @@
 /**
- * Integration tests for the brainstorm server.
+ * Integration tests for the design-spec visual companion server.
  *
  * Tests the full server behavior: HTTP serving, WebSocket communication,
  * file watching, and the design-spec visual companion workflow.
@@ -17,7 +17,7 @@ const assert = require('assert');
 
 const SERVER_PATH = path.join(__dirname, '../../skills/design-spec/scripts/server.cjs');
 const TEST_PORT = 3334;
-const TEST_DIR = '/tmp/brainstorm-test';
+const TEST_DIR = '/tmp/design-spec-visual-test';
 const CONTENT_DIR = path.join(TEST_DIR, 'content');
 const STATE_DIR = path.join(TEST_DIR, 'state');
 
@@ -47,7 +47,7 @@ async function fetch(url) {
 
 function startServer() {
   return spawn('node', [SERVER_PATH], {
-    env: { ...process.env, BRAINSTORM_PORT: TEST_PORT, BRAINSTORM_DIR: TEST_DIR }
+    env: { ...process.env, VISUAL_COMPANION_PORT: TEST_PORT, VISUAL_COMPANION_DIR: TEST_DIR }
   });
 }
 
@@ -128,7 +128,7 @@ async function runTests() {
       const res = await fetch(`http://localhost:${TEST_PORT}/`);
       assert(res.body.includes('WebSocket'), 'Should have helper.js injected');
       assert(res.body.includes('toggleSelect'), 'Should have toggleSelect from helper');
-      assert(res.body.includes('brainstorm'), 'Should have brainstorm API from helper');
+      assert(res.body.includes('visualCompanion'), 'Should have visualCompanion API from helper');
     });
 
     await test('returns Content-Type text/html', async () => {
@@ -392,7 +392,7 @@ async function runTests() {
       assert(helperContent.includes('toggleSelect'), 'Should define toggleSelect');
       assert(helperContent.includes('sendEvent'), 'Should define sendEvent');
       assert(helperContent.includes('selectedChoice'), 'Should track selectedChoice');
-      assert(helperContent.includes('brainstorm'), 'Should expose brainstorm API');
+      assert(helperContent.includes('visualCompanion'), 'Should expose visualCompanion API');
       return Promise.resolve();
     });
 

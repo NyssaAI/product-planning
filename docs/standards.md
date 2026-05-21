@@ -35,6 +35,10 @@ Canonical user-facing skills (verb name = folder name under `skills/`):
 
 **Feature chain:** `design-spec` → `write-plan` (internal) → `execute-plan` (verify → run → finish)
 
+**Backlog chain:** `add-backlog` → (when work begins) `design-spec` → `write-plan` (internal) → `execute-plan` when ready
+
+**Greenfield chain:** `plan-product` → `design-spec` → `write-plan` (internal) → `execute-plan` when ready
+
 **Bug chain:** `fix-bug` only (log → analyze → resolve → complete)
 
 **Internal sub-skills** (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
