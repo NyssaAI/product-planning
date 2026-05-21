@@ -88,7 +88,7 @@ Before proposing changes to skill design, workflow philosophy, or architecture, 
 
 ## Plugin repo layout
 
-This repository is the **dev-tools plugin** (skills, standards, hooks, scripts) — not a consumer application repo. It uses `docs/mission.md` instead of `docs/product.md`. Do not apply consumer-repo `plan-product` layout blindly to this repo.
+This repository is the **dev-tools plugin** (skills, standards, hooks, scripts) — not a consumer application repo, but it follows the same `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` layout as `standards/project-structure.md`. Do not apply consumer-repo `plan-product` scaffolding (e.g. `src/` trees, backlog folders) blindly to this repo.
 
 ## Bundled first-party content
 

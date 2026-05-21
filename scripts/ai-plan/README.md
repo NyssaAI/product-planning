@@ -143,4 +143,4 @@ Workflow skills (from `dev-tools` v5.0.8+) use generated context:
 
 Regenerate after module structure changes: `devjoy ai-plan`.
 
-See `install/skills-templates/dev-tools/AI_PLAN.md` for the integration contract.
+Bootstrap templates copied to consumer repos on `--init`: `scripts/bootstrap-templates/`. Agent workflow: **dev-tools:using-ai-plan** skill.

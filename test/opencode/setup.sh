@@ -19,21 +19,21 @@ export OPENCODE_CONFIG_DIR="$TEST_HOME/.config/opencode"
 #   $OPENCODE_CONFIG_DIR/dev-tools/.opencode/plugins/dev-tools.js ← plugin file
 #   $OPENCODE_CONFIG_DIR/plugins/dev-tools.js   ← symlink OpenCode reads
 
-SUPERPOWERS_DIR="$OPENCODE_CONFIG_DIR/dev-tools"
-SUPERPOWERS_SKILLS_DIR="$SUPERPOWERS_DIR/skills"
-SUPERPOWERS_PLUGIN_FILE="$SUPERPOWERS_DIR/.opencode/plugins/dev-tools.js"
+DEV_TOOLS_DIR="$OPENCODE_CONFIG_DIR/dev-tools"
+DEV_TOOLS_SKILLS_DIR="$DEV_TOOLS_DIR/skills"
+DEV_TOOLS_PLUGIN_FILE="$DEV_TOOLS_DIR/.opencode/plugins/dev-tools.js"
 
 # Install skills
-mkdir -p "$SUPERPOWERS_DIR"
-cp -r "$REPO_ROOT/skills" "$SUPERPOWERS_DIR/"
+mkdir -p "$DEV_TOOLS_DIR"
+cp -r "$REPO_ROOT/skills" "$DEV_TOOLS_DIR/"
 
 # Install plugin
-mkdir -p "$(dirname "$SUPERPOWERS_PLUGIN_FILE")"
-cp "$REPO_ROOT/.opencode/plugins/dev-tools.js" "$SUPERPOWERS_PLUGIN_FILE"
+mkdir -p "$(dirname "$DEV_TOOLS_PLUGIN_FILE")"
+cp "$REPO_ROOT/.opencode/plugins/dev-tools.js" "$DEV_TOOLS_PLUGIN_FILE"
 
 # Register plugin via symlink (what OpenCode actually reads)
 mkdir -p "$OPENCODE_CONFIG_DIR/plugins"
-ln -sf "$SUPERPOWERS_PLUGIN_FILE" "$OPENCODE_CONFIG_DIR/plugins/dev-tools.js"
+ln -sf "$DEV_TOOLS_PLUGIN_FILE" "$OPENCODE_CONFIG_DIR/plugins/dev-tools.js"
 
 # Create test skills in different locations for testing
 
@@ -67,9 +67,9 @@ EOF
 
 echo "Setup complete: $TEST_HOME"
 echo "OPENCODE_CONFIG_DIR:  $OPENCODE_CONFIG_DIR"
-echo "dev-tools dir:        $SUPERPOWERS_DIR"
-echo "Skills dir:           $SUPERPOWERS_SKILLS_DIR"
-echo "Plugin file:          $SUPERPOWERS_PLUGIN_FILE"
+echo "dev-tools dir:        $DEV_TOOLS_DIR"
+echo "Skills dir:           $DEV_TOOLS_SKILLS_DIR"
+echo "Plugin file:          $DEV_TOOLS_PLUGIN_FILE"
 echo "Plugin registered at: $OPENCODE_CONFIG_DIR/plugins/dev-tools.js"
 echo "Test project at:      $TEST_HOME/test-project"
 
@@ -83,6 +83,6 @@ cleanup_test_env() {
 # Export for use in tests
 export -f cleanup_test_env
 export REPO_ROOT
-export SUPERPOWERS_DIR
-export SUPERPOWERS_SKILLS_DIR
-export SUPERPOWERS_PLUGIN_FILE
+export DEV_TOOLS_DIR
+export DEV_TOOLS_SKILLS_DIR
+export DEV_TOOLS_PLUGIN_FILE

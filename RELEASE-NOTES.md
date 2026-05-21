@@ -1,7 +1,5 @@
 # dev-tools Release Notes
 
-> Pre-v5.0.7 (upstream superpowers) history: [docs/history/superpowers-release-notes.md](docs/history/superpowers-release-notes.md)
-
 ## v5.0.8 (2026-05-21)
 
 ### Consolidated plugin

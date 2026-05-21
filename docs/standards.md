@@ -2,6 +2,8 @@
 
 jamaynor development standards ship **inside the dev-tools plugin** — no separate `dev-standards` plugin required.
 
+Documentation index: [README.md](README.md)
+
 ## Index
 
 - **`manifest.json`** (plugin root) — machine-readable list of all standards

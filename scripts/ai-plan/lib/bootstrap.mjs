@@ -5,7 +5,7 @@ import { writeStarterConfigs } from './config.mjs';
 import { createLogger } from './logger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const TEMPLATES_DIR = path.resolve(__dirname, '../../../install/bootstrap-templates');
+const TEMPLATES_DIR = path.resolve(__dirname, '../../bootstrap-templates');
 
 const log = createLogger({ module: 'bootstrap' });
 

@@ -15,11 +15,6 @@ Next up, once you say "go", it launches a *subagent-driven-development* process,
 There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has dev-tools skills.
 
 
-## Credits
-
-dev-tools is based on **superpowers 5.0.7 by Jesse Vincent** (https://github.com/obra/superpowers), rebranded and maintained by jamaynor.
-
-
 ## Installation
 
 **Note:** Installation differs by platform. Claude Code or Cursor have built-in plugin marketplaces. Codex and OpenCode require manual setup.
@@ -50,18 +45,101 @@ or search for "dev-tools" in the plugin marketplace.
 
 ### Codex
 
-Tell Codex:
+Codex discovers skills from `~/.agents/skills/` at startup. dev-tools is exposed via one symlink:
 
+```text
+~/.agents/skills/dev-tools/ → ~/.codex/dev-tools/skills/
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/.codex/INSTALL.md
+
+**Prerequisites:** Git
+
+1. Clone the repo:
+
+```bash
+git clone https://github.com/jamaynor/dev-tools.git ~/.codex/dev-tools
+```
+
+2. Create the skills symlink:
+
+```bash
+mkdir -p ~/.agents/skills
+ln -s ~/.codex/dev-tools/skills ~/.agents/skills/dev-tools
+```
+
+**Windows (PowerShell):**
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\dev-tools" "$env:USERPROFILE\.codex\dev-tools\skills"
+```
+
+3. Restart Codex (skills are discovered at startup).
+
+**Optional — subagent skills:** `dispatching-parallel-agents` and `subagent-driven-development` need Codex multi-agent:
+
+```toml
+[features]
+multi_agent = true
+```
+
+**Verify:** `ls -la ~/.agents/skills/dev-tools` (symlink/junction to your skills directory).
+
+**Update:** `cd ~/.codex/dev-tools && git pull` (instant via symlink).
+
+**Uninstall:** `rm ~/.agents/skills/dev-tools` (Windows: `Remove-Item "$env:USERPROFILE\.agents\skills\dev-tools"`). Optionally remove `~/.codex/dev-tools`.
+
+**Migrating from an old bootstrap install:** Pull latest, create the symlink (step 2), remove any `dev-tools-codex bootstrap` block from `~/.codex/AGENTS.md`, restart Codex.
+
+**Troubleshooting:** If skills don't appear — check symlink, confirm `~/.codex/dev-tools/skills` exists, restart Codex. On Windows, run PowerShell as admin if junction creation fails.
+
+Tell Codex to read this section:
+
+```text
+Fetch and follow the Codex installation section from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/README.md
 ```
 
 ### OpenCode
 
-Tell OpenCode:
+Add dev-tools to the `plugin` array in `opencode.json` (global or project-level):
 
+```json
+{
+  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git"]
+}
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/.opencode/INSTALL.md
+
+Restart OpenCode. The plugin auto-installs and registers all skills.
+
+**Verify:** Ask "Tell me about your dev-tools skills".
+
+**Usage:** OpenCode's native `skill` tool — `use skill tool to list skills`, `use skill tool to load dev-tools/brainstorming`.
+
+**Personal skills:** `~/.config/opencode/skills/<name>/SKILL.md`. **Project skills:** `.opencode/skills/` in your repo. Priority: project > personal > dev-tools.
+
+**Update:** Restarts re-install from git. Pin a version:
+
+```json
+{
+  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v5.0.8"]
+}
+```
+
+**Migrating from symlink install:** Remove old symlinks (`~/.config/opencode/plugins/dev-tools.js`, `~/.config/opencode/skills/dev-tools`), optional clone under `~/.config/opencode/dev-tools`, and any `skills.paths` entry for dev-tools in `opencode.json`. Then use the plugin line above.
+
+**Tool mapping** (skills use Claude Code names; OpenCode adapts automatically):
+
+| Claude Code | OpenCode |
+|-------------|----------|
+| `TodoWrite` | `todowrite` |
+| `Task` (subagents) | `@mention` |
+| `Skill` | native `skill` tool |
+
+**Troubleshooting:** `opencode run --print-logs "hello" 2>&1 | grep -i dev-tools` — confirm plugin loads and `opencode.json` is correct. If bootstrap is missing, confirm your OpenCode version supports plugin hooks and restart after config changes.
+
+Tell OpenCode to read this section:
+
+```text
+Fetch and follow the OpenCode installation section from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/README.md
 ```
 
 ### Gemini CLI
@@ -142,7 +220,9 @@ Start a new session in your chosen platform and ask for something that should tr
 
 ## Repo layout (your projects)
 
-Consumer repos follow **`standards/project-structure.md`** (in the plugin). Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`. Workflow adds `docs/specs/`, `docs/plans/`, `docs/ai-plan/`, `docs/backlog/`, `docs/bugs/`. See `docs/standards.md` in this plugin.
+Consumer repos follow **`standards/project-structure.md`** (in the plugin). Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`. Workflow adds `docs/specs/`, `docs/plans/`, `docs/ai-plan/`, `docs/backlog/`, `docs/bugs/`. See [docs/standards.md](docs/standards.md).
+
+**This plugin repo** uses the same doc layout: [docs/product.md](docs/product.md), [docs/roadmap.md](docs/roadmap.md), [docs/tech-stack.md](docs/tech-stack.md). Maintainer index: [docs/README.md](docs/README.md). Skill evals live in `test/` (not shipped to end users).
 
 ## Philosophy
 
@@ -161,6 +241,8 @@ Skills live directly in this repository. To contribute:
 4. Submit a PR
 
 See `skills/writing-skills/SKILL.md` for the complete guide.
+
+Run skill evals before skill PRs: `test/run-eval-suite.sh` (requires Claude Code CLI). See [docs/testing.md](docs/testing.md).
 
 ## Updating
 

@@ -27,7 +27,7 @@
 
 ### Changed
 
-- **Rebrand**: Project forked from superpowers 5.0.7 by Jesse Vincent and renamed to dev-tools, maintained by jamaynor. Plugin identity, install paths, and marketplace entries updated across Claude Code, Cursor, OpenCode, Codex, and Gemini CLI manifests. Upstream attribution preserved in README and this CHANGELOG.
+- **Initial dev-tools release (5.0.7)**: Plugin identity, install paths, and marketplace entries for Claude Code, Cursor, OpenCode, Codex, and Gemini CLI. Added plan-product, bug-workflow, bugfix, and backlog-workflow skills.
 - **Standards surfacing**: The brainstorming skill now invokes `dev-standards:using-*-standards` peer-plugin skills instead of reading hardcoded filesystem paths, making the skill portable across machines.
 
 ### Fixed
@@ -39,9 +39,9 @@
 
 ### Fixed
 
-- **Brainstorm server ESM fix**: Renamed `server.js` → `server.cjs` so the brainstorming server starts correctly on Node.js 22+ where the root `package.json` `"type": "module"` caused `require()` to fail. ([PR #784](https://github.com/obra/superpowers/pull/784) by @sarbojitrana, fixes [#774](https://github.com/obra/superpowers/issues/774), [#780](https://github.com/obra/superpowers/issues/780), [#783](https://github.com/obra/superpowers/issues/783))
-- **Brainstorm owner-PID on Windows**: Skip `BRAINSTORM_OWNER_PID` lifecycle monitoring on Windows/MSYS2 where the PID namespace is invisible to Node.js. Prevents the server from self-terminating after 60 seconds. The 30-minute idle timeout remains as the safety net. ([#770](https://github.com/obra/superpowers/issues/770), docs from [PR #768](https://github.com/obra/superpowers/pull/768) by @lucasyhzhu-debug)
-- **stop-server.sh reliability**: Verify the server process actually died before reporting success. Waits up to 2 seconds for graceful shutdown, escalates to `SIGKILL`, and reports failure if the process survives. ([#723](https://github.com/obra/superpowers/issues/723))
+- **Brainstorm server ESM fix**: Renamed `server.js` → `server.cjs` so the brainstorming server starts correctly on Node.js 22+ where the root `package.json` `"type": "module"` caused `require()` to fail.
+- **Brainstorm owner-PID on Windows**: Skip `BRAINSTORM_OWNER_PID` lifecycle monitoring on Windows/MSYS2 where the PID namespace is invisible to Node.js. Prevents the server from self-terminating after 60 seconds. The 30-minute idle timeout remains as the safety net.
+- **stop-server.sh reliability**: Verify the server process actually died before reporting success. Waits up to 2 seconds for graceful shutdown, escalates to `SIGKILL`, and reports failure if the process survives.
 
 ### Changed
 

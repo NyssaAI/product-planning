@@ -1,6 +1,8 @@
 # Testing dev-tools Skills
 
-This document describes how to test dev-tools skills, particularly the integration tests for complex skills like `subagent-driven-development`.
+Maintainer-only: everything under `test/` validates plugin behavior and is **not** installed with dev-tools from the marketplace.
+
+Index: [README.md](README.md)
 
 ## Overview
 

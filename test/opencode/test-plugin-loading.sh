@@ -34,17 +34,17 @@ fi
 
 # Test 2: Verify skills directory is populated
 echo "Test 2: Checking skills directory..."
-skill_count=$(find "$SUPERPOWERS_SKILLS_DIR" -name "SKILL.md" | wc -l)
+skill_count=$(find "$DEV_TOOLS_SKILLS_DIR" -name "SKILL.md" | wc -l)
 if [ "$skill_count" -gt 0 ]; then
     echo "  [PASS] Found $skill_count skills"
 else
-    echo "  [FAIL] No skills found in $SUPERPOWERS_SKILLS_DIR"
+    echo "  [FAIL] No skills found in $DEV_TOOLS_SKILLS_DIR"
     exit 1
 fi
 
 # Test 3: Check using-dev-tools skill exists (critical for bootstrap)
 echo "Test 3: Checking using-dev-tools skill (required for bootstrap)..."
-if [ -f "$SUPERPOWERS_SKILLS_DIR/using-dev-tools/SKILL.md" ]; then
+if [ -f "$DEV_TOOLS_SKILLS_DIR/using-dev-tools/SKILL.md" ]; then
     echo "  [PASS] using-dev-tools skill exists"
 else
     echo "  [FAIL] using-dev-tools skill not found (required for bootstrap)"
@@ -53,7 +53,7 @@ fi
 
 # Test 4: Verify plugin JavaScript syntax (basic check)
 echo "Test 4: Checking plugin JavaScript syntax..."
-if node --check "$SUPERPOWERS_PLUGIN_FILE" 2>/dev/null; then
+if node --check "$DEV_TOOLS_PLUGIN_FILE" 2>/dev/null; then
     echo "  [PASS] Plugin JavaScript syntax is valid"
 else
     echo "  [FAIL] Plugin has JavaScript syntax errors"
@@ -62,7 +62,7 @@ fi
 
 # Test 5: Verify bootstrap text does not reference a hardcoded skills path
 echo "Test 5: Checking bootstrap does not advertise a wrong skills path..."
-if grep -q 'configDir}/skills/dev-tools/' "$SUPERPOWERS_PLUGIN_FILE"; then
+if grep -q 'configDir}/skills/dev-tools/' "$DEV_TOOLS_PLUGIN_FILE"; then
     echo "  [FAIL] Plugin still references old configDir skills path"
     exit 1
 else

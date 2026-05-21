@@ -1,15 +1,20 @@
 # Roadmap
 
-This is a fork of the [superpowers](https://github.com/obra/superpowers) plugin (v5.0.7) by Jesse Vincent, rebranded as dev-tools and customized to conform to local project structure standards.
+dev-tools is maintained by jamaynor as a multi-platform agent workflow plugin (skills, standards, ai-plan, hooks).
 
-## Fork Changes
+## Recent direction
 
-- Removed deprecated commands (`brainstorm`, `execute-plan`, `write-plan`)
-- Updated spec output path from `docs/dev-tools/specs/` to `docs/specs/`
-- Updated plan output path from `docs/dev-tools/plans/` to `docs/plans/`
-- Renamed `tests/` to `test/` per project structure standard
-- Added required docs (`mission.md`, `roadmap.md`, `tech-stack.md`)
+- Consolidated standards and ai-plan into a single plugin (v5.0.8)
+- Single entrypoints for bug workflow (`bugfix-lifecycle`) and ai-plan (`using-ai-plan`)
+- Worktree hard gate and required PR at branch finish
+
+## Conventions
+
+- Spec output: `docs/specs/`
+- Plan output: `docs/plans/`
+- Tests directory: `test/` (maintainer evals; not shipped to end users)
+- Plugin docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`
 
 ## Maintenance
 
-When upstream releases new versions, merge selectively — keeping local path conventions and structure overrides intact.
+Selective merges from upstream skill ecosystems when useful — keeping jamaynor path conventions and bundled standards intact.
