@@ -172,4 +172,16 @@ Skills update automatically when you update the plugin:
 
 ## License
 
-MIT License - see LICENSE file for details
+Jamaynor Commercial License v1.0 — see [LICENSE](LICENSE) for details.
+
+You may use the Software for your own purposes at no charge for Personal Use,
+or for other use when no Commercial License trigger applies. You may not
+redistribute the Software or grant others the right to use it.
+
+A separate Commercial License is required if either:
+
+- the Project's Associated Revenue exceeds USD $1,000,000 in the preceding
+  twelve months; or
+- a Business with Business Revenue exceeding USD $10,000,000 in the preceding
+  twelve months uses the Software for software development, internal or
+  external.

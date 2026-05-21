@@ -1,21 +1,141 @@
-MIT License
+Jamaynor Commercial License v1.0
 
-Copyright (c) 2025 Jesse Vincent
+Copyright (c) 2026 Jeremy Maynor. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+IMPORTANT: This is not a permissive open-source license. Read these terms
+carefully before using, copying, or modifying the Software.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Definitions
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+   "Software" means the dev-tools repository, including all source code,
+   skills, documentation, configuration, and other materials made available
+   by the copyright holder.
+
+   "You" means the individual or legal entity exercising permissions under
+   this license.
+
+   "Personal Use" means use of the Software for personal learning, hobby,
+   or non-commercial purposes where the Software is not used primarily to
+   produce revenue, commercial advantage, or monetary compensation.
+
+   "Project" means the product, service, organization, or undertaking for
+   which You use the Software.
+
+   "Business" means the legal entity on whose behalf You use the Software
+   for software development, including a company, partnership, nonprofit,
+   government agency, or other organization.
+
+   "Business Revenue" means the gross revenue of the Business, measured
+   over the preceding twelve (12) months.
+
+   "Software Development Use" means use of the Software in connection with
+   developing, maintaining, testing, deploying, or otherwise working on
+   software, whether for internal purposes, products offered to third
+   parties, or client work.
+
+   "Associated Revenue" means the gross revenue directly attributable to
+   the Project in which You use the Software, measured over the preceding
+   twelve (12) months.
+
+   "Commercial License" means a separate written license agreement issued
+   by the copyright holder.
+
+2. Grant of Rights
+
+   Subject to the terms of this license, the copyright holder grants You a
+   limited, non-exclusive, non-transferable, revocable license to:
+
+   (a) install and use the Software for Your own internal purposes;
+
+   (b) modify the Software and create derivative works solely for Your own
+       internal purposes; and
+
+   (c) make a reasonable number of copies of the Software solely for backup
+       or archival purposes for Your own use.
+
+   Internal use includes use by Your employees, officers, contractors, and
+   agents acting on Your behalf within the scope of their work for You.
+
+3. Restrictions
+
+   Except as expressly permitted in Section 2, You may not, and may not
+   permit any third party to:
+
+   (a) distribute, publish, transmit, sublicense, lease, lend, sell, or
+       otherwise make the Software, any copy of it, or any derivative work
+       available to any third party;
+
+   (b) grant or purport to grant any third party any right to use the
+       Software;
+
+   (c) include the Software or any derivative work in a product, service,
+       repository, package, or distribution made available to third
+       parties;
+
+   (d) remove or alter any copyright, trademark, or license notice; or
+
+   (e) use the Software in any manner that violates applicable law.
+
+4. Free Use
+
+   (a) Personal Use is permitted at no charge.
+
+   (b) Non-personal use is also permitted at no charge so long as all of
+       the following are true:
+
+       (i) the Associated Revenue of the Project does not exceed USD
+           $1,000,000 in the preceding twelve (12) months; and
+
+       (ii) You are not a Business with Business Revenue exceeding USD
+            $10,000,000 in the preceding twelve (12) months that uses the
+            Software for Software Development Use.
+
+5. Commercial License Required
+
+   You must obtain a Commercial License from the copyright holder before
+   continuing to use the Software if either of the following applies:
+
+   (a) the Associated Revenue of the Project exceeds USD $1,000,000 in the
+       preceding twelve (12) months; or
+
+   (b) You are a Business with Business Revenue exceeding USD $10,000,000
+       in the preceding twelve (12) months and You use the Software for
+       Software Development Use, whether that development is for internal
+       or external purposes.
+
+   To request a Commercial License, contact the copyright holder through
+   the repository at https://github.com/jamaynor/dev-tools.
+
+   Continued use after a trigger in this section applies without a
+   Commercial License is not permitted.
+
+6. No Implied Rights
+
+   Except for the limited rights expressly granted in Section 2, no other
+   rights are granted, whether by implication, estoppel, or otherwise. All
+   rights not expressly granted are reserved by the copyright holder.
+
+7. Termination
+
+   This license terminates automatically if You breach any of its terms.
+   Upon termination, You must stop using the Software and destroy all
+   copies in Your possession or control.
+
+8. Disclaimer of Warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+9. Limitation of Liability
+
+   IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES,
+   OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE,
+   ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   OTHER DEALINGS IN THE SOFTWARE.
+
+10. General
+
+    This license constitutes the entire agreement regarding use of the
+    Software. If any provision is held unenforceable, the remaining
+    provisions remain in effect.
