@@ -21,6 +21,30 @@ Documentation index: [README.md](README.md)
 
 Workflow skills invoke these automatically (design-spec, write-plan). Agents may also invoke them directly when reviewing or implementing.
 
+## Workflow entry points
+
+Canonical user-facing skills (verb name = folder name under `skills/`):
+
+| Verb | Folder | Purpose |
+|------|--------|---------|
+| `plan-product` | `plan-product` | New project: product, roadmap, tech-stack |
+| `add-backlog` | `add-backlog` | Add backlog item with detail file |
+| `design-spec` | `design-spec` | Spec before code |
+| `execute-plan` | `execute-plan` | Implement written plan → PR |
+| `fix-bug` | `fix-bug` | Bug lifecycle → resolution |
+
+**Feature chain:** `design-spec` → `write-plan` (internal) → `execute-plan` (verify → run → finish)
+
+**Bug chain:** `fix-bug` only (log → analyze → resolve → complete)
+
+**Internal sub-skills** (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
+
+**Automatic (not buttons):** `using-dev-tools` (session router), `using-ai-plan` during design-spec / write-plan when code exists.
+
+Do not invoke internal sub-skills directly — use the orchestrator entry points above.
+
+User-facing install overview: [README.md](../README.md#workflow-entry-points).
+
 ## Repo layout
 
 The canonical directory tree is **`standards/project-structure.md`**. All workflow artifacts (`docs/specs/`, `docs/plans/`, `docs/ai-plan/`, `docs/backlog/`, `docs/bugs/`) are defined there.

@@ -14,7 +14,7 @@ mkdir -p "$OUTPUT_DIR"
 PROJECT_DIR="$OUTPUT_DIR/project"
 mkdir -p "$PROJECT_DIR/docs/plans"
 
-echo "=== Test: Claude Describes SDD First ==="
+echo "=== Test: Claude Describes Execute-Plan First ==="
 echo "Output dir: $OUTPUT_DIR"
 echo ""
 
@@ -34,7 +34,7 @@ Create login and register endpoints.
 Protect routes with JWT validation.
 EOF
 
-# Turn 1: Have Claude describe execution options including SDD
+# Turn 1: Have Claude describe execution options including execute-plan
 echo ">>> Turn 1: Ask Claude to describe execution options..."
 claude -p "I have a plan at docs/plans/auth-system.md. Tell me about my options for executing it, including what execute-plan means and how it works." \
     --model haiku \
@@ -61,7 +61,7 @@ echo ""
 
 echo "=== Results ==="
 
-# Check Turn 1 to see if Claude described SDD
+# Check Turn 1 to see if Claude described execute-plan
 echo "Turn 1 - Claude's description of options (excerpt):"
 grep '"type":"assistant"' "$OUTPUT_DIR/turn1.json" | head -1 | jq -r '.message.content[0].text // .message.content' 2>/dev/null | head -c 800 || echo "  (could not extract)"
 echo ""

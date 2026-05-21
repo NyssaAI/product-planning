@@ -1,11 +1,11 @@
-[Previous assistant message]:
-Plan complete and saved to docs/plans/auth-system.md.
+I have a plan at docs/plans/auth-system.md ready to implement.
 
-Two execution options:
-1. Subagent-Driven (this session) - I dispatch a fresh subagent per task, review between tasks, fast iteration within this conversation
-2. Parallel Session (separate) - Open a new Claude Code session with the execute-plan skill, batch execution with review checkpoints
+Two options:
+1. execute-plan (default) - verify worktree, run tasks via subagents when available, open PR
+2. Inline only - if subagents unavailable, execute-plan uses execute-plan-run-inline
 
-Which approach do you want to use for implementation?
+Which approach do you want?
 
-[Your response]:
-subagent-driven-development, please
+---
+
+execute-plan, please

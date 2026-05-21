@@ -11,7 +11,7 @@ Documentation for the **dev-tools plugin repository**. Plugin overview docs foll
 | [product.md](product.md) | What dev-tools is (PRD) |
 | [roadmap.md](roadmap.md) | Maintenance and direction |
 | [tech-stack.md](tech-stack.md) | This repo's stack and conventions |
-| [standards.md](standards.md) | Bundled `standards/` layout for consumers |
+| [standards.md](standards.md) | Bundled `standards/` layout and **workflow entry points** for consumers |
 | [testing.md](testing.md) | Skill eval and integration tests (`test/`) |
 
 ## Design and implementation
