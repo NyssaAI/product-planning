@@ -1,5 +1,7 @@
 # Installing dev-tools for OpenCode
 
+**Full guide:** [docs/README.opencode.md](../docs/README.opencode.md) (usage, personal skills, troubleshooting).
+
 ## Prerequisites
 
 - [OpenCode.ai](https://opencode.ai) installed

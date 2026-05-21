@@ -1,5 +1,7 @@
 # dev-tools — Contributor Guidelines
 
+Same content as **AGENTS.md** (Codex/OpenCode/Gemini read AGENTS.md; Claude Code reads this file).
+
 ## If You Are an AI Agent
 
 Stop. Read this section before doing anything.
@@ -83,3 +85,11 @@ Before proposing changes to skill design, workflow philosophy, or architecture, 
 - One problem per PR
 - Test on at least one harness and report results in the environment table
 - Describe the problem you solved, not just what you changed
+
+## Plugin repo layout
+
+This repository is the **dev-tools plugin** (skills, standards, hooks, scripts) — not a consumer application repo. It uses `docs/mission.md` instead of `docs/product.md`. Do not apply consumer-repo `plan-product` layout blindly to this repo.
+
+## Bundled first-party content
+
+jamaynor **standards** and **ai-plan** ship inside dev-tools by design. This is first-party bundled content, not third-party plugin sprawl. Optional `@ast-grep/cli` in the plugin root supports ai-plan code-map generation.

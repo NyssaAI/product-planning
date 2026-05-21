@@ -2,49 +2,23 @@
 
 Guide for using dev-tools with OpenAI Codex via native skill discovery.
 
-## Quick Install
+## Quick install
 
-Tell Codex:
+Follow **[.codex/INSTALL.md](../.codex/INSTALL.md)** — clone, symlink, restart Codex.
+
+Or tell Codex:
 
 ```
 Fetch and follow instructions from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/.codex/INSTALL.md
 ```
 
-## Manual Installation
+### Subagent skills (optional)
 
-### Prerequisites
+Skills like `dispatching-parallel-agents` and `subagent-driven-development` require Codex's multi-agent feature:
 
-- OpenAI Codex CLI
-- Git
-
-### Steps
-
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/jamaynor/dev-tools.git ~/.codex/dev-tools
-   ```
-
-2. Create the skills symlink:
-   ```bash
-   mkdir -p ~/.agents/skills
-   ln -s ~/.codex/dev-tools/skills ~/.agents/skills/dev-tools
-   ```
-
-3. Restart Codex.
-
-4. **For subagent skills** (optional): Skills like `dispatching-parallel-agents` and `subagent-driven-development` require Codex's multi-agent feature. Add to your Codex config:
-   ```toml
-   [features]
-   multi_agent = true
-   ```
-
-### Windows
-
-Use a junction instead of a symlink (works without Developer Mode):
-
-```powershell
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
-cmd /c mklink /J "$env:USERPROFILE\.agents\skills\dev-tools" "$env:USERPROFILE\.codex\dev-tools\skills"
+```toml
+[features]
+multi_agent = true
 ```
 
 ## How It Works

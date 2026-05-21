@@ -1,5 +1,7 @@
 # Installing dev-tools for Codex
 
+**Full guide:** [docs/README.codex.md](../docs/README.codex.md) (usage, personal skills, troubleshooting).
+
 Enable dev-tools skills in Codex via native skill discovery. Just clone and symlink.
 
 ## Prerequisites

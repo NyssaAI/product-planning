@@ -5,17 +5,15 @@ description: Use when setting up project structure, designing error handling, co
 
 # Using Core Standards
 
-## Step 1 — Discover
+Follow **`../_shared/standards-discovery.md`** (Steps 1–3).
 
-Read `manifest.json` at the plugin root. Filter to entries whose `file` path has no subdirectory between `standards/` and the filename (i.e., matches `^standards/[^/]+\.md$`). That is the authoritative list of language-agnostic standards in this plugin.
+## Manifest filter
 
-## Step 2 — Select
+Entries whose `file` path has no subdirectory between `standards/` and the filename (matches `^standards/[^/]+\.md$`). That is the authoritative list of language-agnostic standards in this plugin.
 
-Match the task against the `description` of each entry. Read the `.md` files relevant to what you are about to do. Multiple standards may apply (e.g., building a new feature often pulls in `project-structure`, `error-handling`, `testing-principles`, and `logging` simultaneously).
+## Examples
 
-## Step 3 — Apply
-
-Treat each selected standard as prescriptive. If your proposed work diverges from a standard, flag it and get user sign-off before proceeding.
+Building a new feature often pulls in `project-structure`, `error-handling`, `testing-principles`, and `logging` simultaneously.
 
 ## Interaction with technology-specific standards
 

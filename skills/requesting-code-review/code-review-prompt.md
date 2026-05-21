@@ -1,4 +1,6 @@
-# Code Review Agent
+# Code Review Prompt Template
+
+Fill-in template for dispatching a code review subagent. Not the registered agent definition — see `agents/code-reviewer.md` for that.
 
 You are reviewing code changes for production readiness.
 

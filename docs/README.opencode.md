@@ -2,9 +2,9 @@
 
 Complete guide for using dev-tools with [OpenCode.ai](https://opencode.ai).
 
-## Installation
+## Quick install
 
-Add dev-tools to the `plugin` array in your `opencode.json` (global or project-level):
+Follow **[.opencode/INSTALL.md](../.opencode/INSTALL.md)** — add the plugin to `opencode.json` and restart.
 
 ```json
 {
@@ -12,26 +12,7 @@ Add dev-tools to the `plugin` array in your `opencode.json` (global or project-l
 }
 ```
 
-Restart OpenCode. The plugin auto-installs via Bun and registers all skills automatically.
-
 Verify by asking: "Tell me about your dev-tools skills"
-
-### Migrating from the old symlink-based install
-
-If you previously installed dev-tools using `git clone` and symlinks, remove the old setup:
-
-```bash
-# Remove old symlinks
-rm -f ~/.config/opencode/plugins/dev-tools.js
-rm -rf ~/.config/opencode/skills/dev-tools
-
-# Optionally remove the cloned repo
-rm -rf ~/.config/opencode/dev-tools
-
-# Remove skills.paths from opencode.json if you added one for dev-tools
-```
-
-Then follow the installation steps above.
 
 ## Usage
 
