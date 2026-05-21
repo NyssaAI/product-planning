@@ -6,7 +6,7 @@ Make dev-tools skills work in the Codex App's sandboxed worktree environment wit
 
 ## Motivation
 
-The Codex App runs agents inside git worktrees it manages — detached HEAD, located under `$CODEX_HOME/worktrees/`, with a Seatbelt sandbox that blocks `git checkout -b`, `git push`, and network access. Three dev-tools skills assume unrestricted git access: `using-git-worktrees` creates manual worktrees with named branches, `finishing-a-development-branch` merges/pushes/PRs by branch name, and `subagent-driven-development` requires both.
+The Codex App runs agents inside git worktrees it manages — detached HEAD, located under `$CODEX_HOME/worktrees/`, with a Seatbelt sandbox that blocks `git checkout -b`, `git push`, and network access. Three dev-tools skills assume unrestricted git access: `using-git-worktrees` creates manual worktrees with named branches, `execute-plan-finish` merges/pushes/PRs by branch name, and `execute-plan-run` requires both.
 
 The Codex CLI (open source terminal tool) does NOT have this conflict — it has no built-in worktree management. Our manual worktree approach fills an isolation gap there. The problem is specifically with the Codex App.
 
@@ -78,7 +78,7 @@ If `GIT_DIR == GIT_COMMON`, proceed with the full worktree creation flow (unchan
 
 Safety verification (.gitignore check) is skipped when Step 0 fires — irrelevant for externally-created worktrees.
 
-Update the Integration section's "Called by" entries. Change the description on each from context-specific text to: "Ensures isolated workspace (creates one or verifies existing)". For example, the `subagent-driven-development` entry changes from "REQUIRED: Set up isolated workspace before starting" to "REQUIRED: Ensures isolated workspace (creates one or verifies existing)".
+Update the Integration section's "Called by" entries. Change the description on each from context-specific text to: "Ensures isolated workspace (creates one or verifies existing)". For example, the `execute-plan-run` entry changes from "REQUIRED: Set up isolated workspace before starting" to "REQUIRED: Ensures isolated workspace (creates one or verifies existing)".
 
 **Sandbox fallback:** If `GIT_DIR == GIT_COMMON` and the skill proceeds to Creation Steps, but `git worktree add -b` fails with a permission error (e.g., Seatbelt sandbox denial), treat this as a late-detected restricted environment. Fall back to the Step 0 "already in workspace" behavior — skip creation, run setup and baseline tests in the current directory, report accordingly.
 
@@ -86,7 +86,7 @@ After reporting in Step 0, STOP. Do not continue to Directory Selection or Creat
 
 **Everything else unchanged:** Directory Selection, Safety Verification, Creation Steps, Project Setup, Baseline Tests, Quick Reference, Common Mistakes, Red Flags.
 
-### 2. `finishing-a-development-branch/SKILL.md` — Add Step 1.5 + cleanup guard (~20 lines)
+### 2. `execute-plan-finish/SKILL.md` — Add Step 1.5 + cleanup guard (~20 lines)
 
 **Step 1.5: Detect Environment** (after Step 1 "Verify Tests", before Step 2 "Determine Base Branch")
 
@@ -139,7 +139,7 @@ Otherwise, check and remove as today. Note: the existing Step 5 text says "For O
 
 **Everything else unchanged:** Options 1-4 logic, Quick Reference, Common Mistakes, Red Flags.
 
-### 3. `subagent-driven-development/SKILL.md` and `executing-plans/SKILL.md` — 1 line edit each
+### 3. `execute-plan-run/SKILL.md` and `execute-plan-run-inline/SKILL.md` — 1 line edit each
 
 Both skills have an identical Integration section line. Change from:
 ```
@@ -173,7 +173,7 @@ BRANCH=$(git branch --show-current)
 - `GIT_DIR != GIT_COMMON` → already in a linked worktree (skip creation)
 - `BRANCH` empty → detached HEAD (cannot branch/push/PR from sandbox)
 
-See `using-git-worktrees` Step 0 and `finishing-a-development-branch`
+See `using-git-worktrees` Step 0 and `execute-plan-finish`
 Step 1.5 for how each skill uses these signals.
 ```
 
@@ -196,7 +196,7 @@ names, commit messages, and PR descriptions for the user to copy.
 ## What Does NOT Change
 
 - `implementer-prompt.md`, `spec-reviewer-prompt.md`, `code-quality-reviewer-prompt.md` — subagent prompts untouched
-- `executing-plans/SKILL.md` — only the 1-line Integration description changes (same as `subagent-driven-development`); all runtime behavior is unchanged
+- `execute-plan-run-inline/SKILL.md` — only the 1-line Integration description changes (same as `execute-plan-run`); all runtime behavior is unchanged
 - `dispatching-parallel-agents/SKILL.md` — no worktree or finishing operations
 - `.codex/INSTALL.md` — installation process unchanged
 - The 4-option finishing menu — preserved exactly for Claude Code and Codex CLI
@@ -208,9 +208,9 @@ names, commit messages, and PR descriptions for the user to copy.
 | File | Change |
 |---|---|
 | `skills/using-git-worktrees/SKILL.md` | +12 lines (Step 0) |
-| `skills/finishing-a-development-branch/SKILL.md` | +20 lines (Step 1.5 + cleanup guard) |
-| `skills/subagent-driven-development/SKILL.md` | 1 line edit |
-| `skills/executing-plans/SKILL.md` | 1 line edit |
+| `skills/execute-plan-finish/SKILL.md` | +20 lines (Step 1.5 + cleanup guard) |
+| `skills/execute-plan-run/SKILL.md` | 1 line edit |
+| `skills/execute-plan-run-inline/SKILL.md` | 1 line edit |
 | `skills/using-dev-tools/references/codex-tools.md` | +15 lines |
 
 ~50 lines added/changed across 5 files. Zero new files. Zero breaking changes.
@@ -240,5 +240,5 @@ If a third skill needs the same detection pattern, extract it into a shared `ref
 ### Regression
 
 - Existing Claude Code skill-triggering tests still pass
-- Existing subagent-driven-development integration tests still pass
+- Existing execute-plan integration tests still pass
 - Normal Claude Code session: full worktree creation + 4-option finishing still works

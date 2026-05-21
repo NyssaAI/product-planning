@@ -21,11 +21,7 @@ Documentation for the **dev-tools plugin repository**. Plugin overview docs foll
 | [specs/](specs/) | Design specs (current) |
 | [plans/](plans/) | Implementation plans (current) |
 
-## Archive
-
-| Directory | Purpose |
-|-----------|---------|
-| [archive/](archive/) | Superseded implementation plans |
+Superseded plans (OpenCode symlink era, early visual companion, historical skill iterations) were removed from the tree; retrieve them from git history before this cleanup if needed (`docs/archive/` through May 2026).
 
 ## Maintainer-only (repo root)
 

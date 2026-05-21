@@ -1,6 +1,6 @@
 # Zero-Dependency Brainstorm Server
 
-Replace the brainstorm companion server's vendored node_modules (express, ws, chokidar — 714 tracked files) with a single zero-dependency `server.js` using only Node.js built-ins.
+Replace the brainstorm companion server's vendored node_modules (express, ws, chokidar — 714 tracked files) with a single zero-dependency `server.cjs` using only Node.js built-ins.
 
 ## Motivation
 
@@ -8,10 +8,10 @@ Vendoring node_modules into the git repo creates a supply chain risk: frozen dep
 
 ## Architecture
 
-A single `server.js` file (~250-300 lines) using `http`, `crypto`, `fs`, and `path`. The file serves two roles:
+A single `server.cjs` file (~250-300 lines) using `http`, `crypto`, `fs`, and `path`. The file serves two roles:
 
-- **When run directly** (`node server.js`): starts the HTTP/WebSocket server
-- **When required** (`require('./server.js')`): exports WebSocket protocol functions for unit testing
+- **When run directly** (`node server.cjs`): starts the HTTP/WebSocket server
+- **When required** (`require('./server.cjs')`): exports WebSocket protocol functions for unit testing
 
 ### WebSocket Protocol
 
@@ -92,7 +92,7 @@ Debounce per-filename with ~100ms timeout to prevent duplicate events (common on
 
 | Before | After |
 |---|---|
-| `index.js` + `package.json` + `package-lock.json` + 714 `node_modules` files | `server.js` (single file) |
+| `index.js` + `package.json` + `package-lock.json` + 714 `node_modules` files | `server.cjs` (single file) |
 | express, ws, chokidar dependencies | none |
 | No static file serving | `/files/*` serves from screen directory |
 
@@ -100,19 +100,19 @@ Debounce per-filename with ~100ms timeout to prevent duplicate events (common on
 
 - `helper.js` — no changes
 - `frame-template.html` — no changes
-- `start-server.sh` — one-line update: `index.js` to `server.js`
+- `start-server.sh` — one-line update: `index.js` to `server.cjs`
 - `stop-server.sh` — no changes
 - `visual-companion.md` — no changes
 - All existing server behavior and external contract
 
 ## Platform Compatibility
 
-- `server.js` uses only cross-platform Node built-ins
+- `server.cjs` uses only cross-platform Node built-ins
 - `fs.watch` is reliable for single flat directories on macOS, Linux, and Windows
 - Shell scripts require bash (Git Bash on Windows, which is required for Claude Code)
 
 ## Testing
 
-**Unit tests** (`ws-protocol.test.js`): Test WebSocket frame encoding/decoding, handshake computation, and protocol edge cases directly by requiring `server.js` exports.
+**Unit tests** (`ws-protocol.test.js`): Test WebSocket frame encoding/decoding, handshake computation, and protocol edge cases directly by requiring `server.cjs` exports.
 
-**Integration tests** (`server.test.js`): Test full server behavior — HTTP serving, WebSocket communication, file watching, brainstorming workflow. Uses `ws` npm package as a test-only client dependency (not shipped to end users).
+**Integration tests** (`server.test.js`): Test full server behavior — HTTP serving, WebSocket communication, file watching, design-spec visual companion workflow. Uses `ws` npm package as a test-only client dependency (not shipped to end users).

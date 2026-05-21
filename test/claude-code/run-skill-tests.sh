@@ -57,7 +57,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --help, -h           Show this help"
             echo ""
             echo "Tests:"
-            echo "  test-execute-plan.sh  Test skill loading and requirements"
+            echo "  test-execute-plan.sh  Test execute-plan skill loading and requirements"
+            echo "  test-fix-bug.sh     Test fix-bug skill loading and requirements"
             echo ""
             echo "Integration Tests (use --integration):"
             echo "  test-execute-plan-integration.sh  Full workflow execution"
@@ -74,6 +75,7 @@ done
 # List of skill tests to run (fast unit tests)
 tests=(
     "test-execute-plan.sh"
+    "test-fix-bug.sh"
 )
 
 # Integration tests (slow, full execution)

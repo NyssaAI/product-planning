@@ -2,7 +2,7 @@
  * Integration tests for the brainstorm server.
  *
  * Tests the full server behavior: HTTP serving, WebSocket communication,
- * file watching, and the brainstorming workflow.
+ * file watching, and the design-spec visual companion workflow.
  *
  * Uses the `ws` npm package as a test client (test-only dependency,
  * not shipped to end users).

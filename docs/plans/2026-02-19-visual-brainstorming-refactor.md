@@ -1,6 +1,6 @@
 # Visual Brainstorming Refactor Implementation Plan
 
-> **For agentic workers:** REQUIRED: Use dev-tools:subagent-driven-development (if subagents available) or dev-tools:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use **dev-tools:execute-plan** to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Refactor visual brainstorming from blocking TUI feedback model to non-blocking "Browser Displays, Terminal Commands" architecture.
 
@@ -20,7 +20,7 @@
 | `lib/brainstorm-server/frame-template.html` | Modify | Template: remove feedback footer, add content placeholder + selection indicator |
 | `lib/brainstorm-server/helper.js` | Modify | Client JS: remove send/feedback functions, narrow to click capture + indicator updates |
 | `lib/brainstorm-server/wait-for-feedback.sh` | Delete | No longer needed |
-| `skills/brainstorming/visual-companion.md` | Modify | Skill instructions: rewrite loop to non-blocking flow |
+| `skills/design-spec/visual-companion.md` | Modify | Skill instructions: rewrite loop to non-blocking flow |
 | `tests/brainstorm-server/server.test.js` | Modify | Tests: update for new template structure and helper.js API |
 
 ---
@@ -390,7 +390,7 @@ git commit -m "Delete wait-for-feedback.sh: replaced by .events file"
 ### Task 6: Rewrite `visual-companion.md`
 
 **Files:**
-- Modify: `skills/brainstorming/visual-companion.md`
+- Modify: `skills/design-spec/visual-companion.md`
 
 - [ ] **Step 1: Update "How It Works" description (line 18)**
 
@@ -478,7 +478,7 @@ Remove the helper.js reference description about "JS API" — the API is now min
 - [ ] **Step 7: Commit**
 
 ```bash
-git add skills/brainstorming/visual-companion.md
+git add skills/design-spec/visual-companion.md
 git commit -m "Rewrite visual-companion.md for non-blocking browser-displays-terminal-commands flow"
 ```
 
@@ -498,7 +498,7 @@ Expected: ALL tests PASS.
 Start the server manually and verify the flow works end-to-end:
 
 ```bash
-cd /Users/drewritter/prime-rad/dev-tools && skills/brainstorming/scripts/start-server.sh --project-dir /tmp/brainstorm-smoke-test
+cd /Users/drewritter/prime-rad/dev-tools && skills/design-spec/scripts/start-server.sh --project-dir /tmp/brainstorm-smoke-test
 ```
 
 Write a test fragment, open in browser, click an option, verify `.events` file is written, verify indicator bar updates. Then stop the server:

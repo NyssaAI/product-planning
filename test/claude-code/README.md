@@ -83,14 +83,17 @@ echo "=== All tests passed ==="
 ### Fast Tests (run by default)
 
 #### test-execute-plan.sh
-Tests skill content and requirements (~2 minutes):
+Tests execute-plan skill content and requirements (~2 minutes):
 - Skill loading and accessibility
-- Workflow ordering (spec compliance before code quality)
-- Self-review requirements documented
-- Plan reading efficiency documented
-- Spec compliance reviewer skepticism documented
-- Review loops documented
-- Task context provision documented
+- Sub-skill gating (single entry point)
+- Default run mode and finish step
+
+#### test-fix-bug.sh
+Tests fix-bug skill content and requirements (~2 minutes):
+- Skill loading and orchestrator steps
+- Sub-skill gating (fix-bug-log / fix-bug-resolve not direct)
+- systematic-debugging as Step 2, not bug entry point
+- Ralph not used for bugs
 
 ### Integration Tests (use --integration flag)
 

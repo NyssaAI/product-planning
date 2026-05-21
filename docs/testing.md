@@ -14,9 +14,14 @@ Testing skills that involve subagents, workflows, and complex interactions requi
 test/
 ├── claude-code/
 │   ├── test-helpers.sh                    # Shared test utilities
+│   ├── test-execute-plan.sh               # execute-plan unit checks
+│   ├── test-fix-bug.sh                    # fix-bug unit checks
 │   ├── test-execute-plan-integration.sh
 │   ├── analyze-token-usage.py             # Token analysis tool
-│   └── run-skill-tests.sh                 # Test runner (if exists)
+│   └── run-skill-tests.sh                 # Test runner
+├── skill-triggering/                      # Naive prompts → skill invocation
+├── explicit-skill-requests/               # User names skill directly
+└── execute-plan-dev/                      # Full execute-plan integration evals (was subagent-driven-dev)
 ```
 
 ## Running Tests

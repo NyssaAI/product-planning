@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-19
 **Status:** Approved
-**Scope:** `lib/brainstorm-server/`, `skills/brainstorming/visual-companion.md`, `tests/brainstorm-server/`
+**Scope:** `test/brainstorm-server/`, `skills/design-spec/visual-companion.md`
 
 ## Problem
 
@@ -134,7 +134,7 @@ The current regex anchors on `<div class="feedback-footer">`, which is being rem
 
 **Deleted entirely.**
 
-### `tests/brainstorm-server/server.test.js`
+### `test/brainstorm-server/server.test.js`
 
 Tests that need updating:
 - Test asserting `feedback-footer` presence in fragment responses — update to assert the selection indicator bar or `<!-- CONTENT -->` replacement

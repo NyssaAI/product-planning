@@ -11,6 +11,37 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 
 **Inputs:** a new idea from conversation, OR a backlog item at `docs/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`).
 
+## Purpose
+
+One canonical path for spec-before-code work:
+
+1. **Explore & refine** — understand intent, surface standards, present design for approval
+2. **Write spec** — save to `docs/specs/`, user review gate
+3. **Worktree** — isolated feature branch (`using-git-worktrees`)
+4. **Plan** — `write-plan` (internal sub-skill)
+5. **Hand off** — **execute-plan** when your human partner is ready to implement
+
+## Hard policy
+
+- Do not invoke `write-plan` directly — only via this skill after spec approval and worktree setup.
+- Do not invoke `execute-plan-run`, `execute-plan-run-inline`, or `execute-plan-finish` directly — use **execute-plan** when implementing.
+- Do not auto-start **execute-plan** from this skill unless your human partner already said go.
+- Do not skip `using-git-worktrees` before `write-plan`.
+- Do not write code or invoke implementation skills during design-spec.
+
+## Required sub-skills
+
+- dev-tools:using-ai-plan (when repo has code — Step 1 context)
+- dev-tools:using-core-standards + applicable `dev-tools:using-*-standards` (Step 2)
+- dev-tools:using-git-worktrees (Step 10)
+- dev-tools:write-plan (Step 11 — internal; users use **design-spec**)
+
+## Files in this skill
+
+- `references/policy.md` — one-way-in policy text
+- `visual-companion.md` — browser companion guide
+- `spec-document-reviewer-prompt.md` — optional spec review template
+
 Start by understanding the current project context and any provided input, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
 
 <HARD-GATE>

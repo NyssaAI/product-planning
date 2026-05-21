@@ -1,8 +1,8 @@
 # Codex App Compatibility Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use dev-tools:subagent-driven-development (recommended) or dev-tools:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use **dev-tools:execute-plan** to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make `using-git-worktrees`, `finishing-a-development-branch`, and related skills work in the Codex App's sandboxed worktree environment without breaking existing behavior.
+**Goal:** Make `using-git-worktrees`, `execute-plan-finish`, and related skills work in the Codex App's sandboxed worktree environment without breaking existing behavior.
 
 **Architecture:** Read-only environment detection (`git-dir` vs `git-common-dir`) at the start of two skills. If already in a linked worktree, skip creation. If on detached HEAD, emit a handoff payload instead of the 4-option menu. Sandbox fallback catches permission errors during worktree creation.
 
@@ -17,9 +17,9 @@
 | File | Responsibility | Action |
 |---|---|---|
 | `skills/using-git-worktrees/SKILL.md` | Worktree creation + isolation | Add Step 0 detection + sandbox fallback |
-| `skills/finishing-a-development-branch/SKILL.md` | Branch finishing workflow | Add Step 1.5 detection + cleanup guard |
-| `skills/subagent-driven-development/SKILL.md` | Plan execution with subagents | Update Integration description |
-| `skills/executing-plans/SKILL.md` | Plan execution inline | Update Integration description |
+| `skills/execute-plan-finish/SKILL.md` | Branch finishing workflow | Add Step 1.5 detection + cleanup guard |
+| `skills/execute-plan-run/SKILL.md` | Plan execution with subagents | Update Integration description |
+| `skills/execute-plan-run-inline/SKILL.md` | Plan execution inline | Update Integration description |
 | `skills/using-dev-tools/references/codex-tools.md` | Codex platform reference | Add detection + finishing docs |
 
 ---
@@ -92,17 +92,17 @@ sandbox fallback for permission errors on git worktree add."
 Change lines 212-214 from:
 
 ```markdown
-- **brainstorming** (Phase 4) - REQUIRED when design is approved and implementation follows
-- **subagent-driven-development** - REQUIRED before executing any tasks
-- **executing-plans** - REQUIRED before executing any tasks
+- **design-spec** (Phase 4) - REQUIRED when design is approved and implementation follows
+- **execute-plan-run** - REQUIRED before executing any tasks
+- **execute-plan-run-inline** - REQUIRED before executing any tasks
 ```
 
 To:
 
 ```markdown
-- **brainstorming** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
-- **subagent-driven-development** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
-- **executing-plans** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
+- **design-spec** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
+- **execute-plan-run** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
+- **execute-plan-run-inline** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
 ```
 
 - [ ] **Step 2: Verify the Integration section**
@@ -120,14 +120,14 @@ Clarify that skill ensures a workspace exists, not that it always creates one."
 
 ---
 
-### Task 3: Add Step 1.5 to `finishing-a-development-branch`
+### Task 3: Add Step 1.5 to `execute-plan-finish`
 
 **Files:**
-- Modify: `skills/finishing-a-development-branch/SKILL.md:38` (insert after Step 1, before Step 2)
+- Modify: `skills/execute-plan-finish/SKILL.md:38` (insert after Step 1, before Step 2)
 
 - [ ] **Step 1: Read the current skill file**
 
-Read `skills/finishing-a-development-branch/SKILL.md` in full. Identify the insertion point: after "**If tests pass:** Continue to Step 2." (line 38) and before "### Step 2: Determine Base Branch" (line 40).
+Read `skills/execute-plan-finish/SKILL.md` in full. Identify the insertion point: after "**If tests pass:** Continue to Step 2." (line 38) and before "### Step 2: Determine Base Branch" (line 40).
 
 - [ ] **Step 2: Insert Step 1.5 section**
 
@@ -190,8 +190,8 @@ Read the file again. Confirm:
 - [ ] **Step 4: Commit**
 
 ```bash
-git add skills/finishing-a-development-branch/SKILL.md
-git commit -m "feat(finishing-a-development-branch): add Step 1.5 environment detection (PRI-823)
+git add skills/execute-plan-finish/SKILL.md
+git commit -m "feat(execute-plan-finish): add Step 1.5 environment detection (PRI-823)
 
 Detect externally managed worktrees with detached HEAD and emit handoff
 payload instead of 4-option menu. Includes commit SHA and data loss warning."
@@ -199,14 +199,14 @@ payload instead of 4-option menu. Includes commit SHA and data loss warning."
 
 ---
 
-### Task 4: Add Step 5 cleanup guard to `finishing-a-development-branch`
+### Task 4: Add Step 5 cleanup guard to `execute-plan-finish`
 
 **Files:**
-- Modify: `skills/finishing-a-development-branch/SKILL.md` (Step 5: Cleanup Worktree — find by section heading, line numbers will have shifted after Task 3)
+- Modify: `skills/execute-plan-finish/SKILL.md` (Step 5: Cleanup Worktree — find by section heading, line numbers will have shifted after Task 3)
 
 - [ ] **Step 1: Read the current Step 5 section**
 
-Find the "### Step 5: Cleanup Worktree" section in `skills/finishing-a-development-branch/SKILL.md` (line numbers will have shifted after Task 3's insertion). The current Step 5 is:
+Find the "### Step 5: Cleanup Worktree" section in `skills/execute-plan-finish/SKILL.md` (line numbers will have shifted after Task 3's insertion). The current Step 5 is:
 
 ```markdown
 ### Step 5: Cleanup Worktree
@@ -269,8 +269,8 @@ Read Step 5. Confirm:
 - [ ] **Step 4: Commit**
 
 ```bash
-git add skills/finishing-a-development-branch/SKILL.md
-git commit -m "feat(finishing-a-development-branch): add Step 5 cleanup guard (PRI-823)
+git add skills/execute-plan-finish/SKILL.md
+git commit -m "feat(execute-plan-finish): add Step 5 cleanup guard (PRI-823)
 
 Re-detect externally managed worktree at cleanup time and skip removal.
 Also fixes pre-existing inconsistency: cleanup now correctly says
@@ -279,13 +279,13 @@ Options 1 and 4 only, matching Quick Reference and Common Mistakes."
 
 ---
 
-### Task 5: Update Integration lines in `subagent-driven-development` and `executing-plans`
+### Task 5: Update Integration lines in `execute-plan-run` and `execute-plan-run-inline`
 
 **Files:**
-- Modify: `skills/subagent-driven-development/SKILL.md:268`
-- Modify: `skills/executing-plans/SKILL.md:68`
+- Modify: `skills/execute-plan-run/SKILL.md:268`
+- Modify: `skills/execute-plan-run-inline/SKILL.md:68`
 
-- [ ] **Step 1: Update `subagent-driven-development`**
+- [ ] **Step 1: Update `execute-plan-run`**
 
 Change line 268 from:
 ```
@@ -296,7 +296,7 @@ To:
 - **dev-tools:using-git-worktrees** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
 ```
 
-- [ ] **Step 2: Update `executing-plans`**
+- [ ] **Step 2: Update `execute-plan-run-inline`**
 
 Change line 68 from:
 ```
@@ -309,13 +309,13 @@ To:
 
 - [ ] **Step 3: Verify both files**
 
-Read line 268 of `skills/subagent-driven-development/SKILL.md` and line 68 of `skills/executing-plans/SKILL.md`. Confirm both say "Ensures isolated workspace (creates one or verifies existing)".
+Read line 268 of `skills/execute-plan-run/SKILL.md` and line 68 of `skills/execute-plan-run-inline/SKILL.md`. Confirm both say "Ensures isolated workspace (creates one or verifies existing)".
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add skills/subagent-driven-development/SKILL.md skills/executing-plans/SKILL.md
-git commit -m "docs(sdd, executing-plans): update worktree Integration descriptions (PRI-823)
+git add skills/execute-plan-run/SKILL.md skills/execute-plan-run-inline/SKILL.md
+git commit -m "docs(sdd, execute-plan-run-inline): update worktree Integration descriptions (PRI-823)
 
 Clarify that using-git-worktrees ensures a workspace exists rather than
 always creating one."
@@ -352,7 +352,7 @@ BRANCH=$(git branch --show-current)
 - `GIT_DIR != GIT_COMMON` → already in a linked worktree (skip creation)
 - `BRANCH` empty → detached HEAD (cannot branch/push/PR from sandbox)
 
-See `using-git-worktrees` Step 0 and `finishing-a-development-branch`
+See `using-git-worktrees` Step 0 and `execute-plan-finish`
 Step 1.5 for how each skill uses these signals.
 
 ## Codex App Finishing
@@ -408,7 +408,7 @@ set -euo pipefail
 
 # Test environment detection logic from PRI-823
 # Tests the git-dir vs git-common-dir comparison used by
-# using-git-worktrees Step 0 and finishing-a-development-branch Step 1.5
+# using-git-worktrees Step 0 and execute-plan-finish Step 1.5
 
 PASS=0
 FAIL=0
@@ -537,9 +537,9 @@ Expected: 6 passed, 0 failed.
 
 Read each file end-to-end:
 - `skills/using-git-worktrees/SKILL.md` — Step 0 present, rest unchanged
-- `skills/finishing-a-development-branch/SKILL.md` — Step 1.5 present, cleanup guard present, rest unchanged
-- `skills/subagent-driven-development/SKILL.md` — line 268 updated
-- `skills/executing-plans/SKILL.md` — line 68 updated
+- `skills/execute-plan-finish/SKILL.md` — Step 1.5 present, cleanup guard present, rest unchanged
+- `skills/execute-plan-run/SKILL.md` — line 268 updated
+- `skills/execute-plan-run-inline/SKILL.md` — line 68 updated
 - `skills/using-dev-tools/references/codex-tools.md` — two new sections at end
 
 - [ ] **Step 3: Verify no unintended changes**
@@ -558,7 +558,7 @@ If test runner exists:
 ./tests/skill-triggering/run-all.sh 2>/dev/null || echo "Skill triggering tests not available in this environment"
 
 # Run SDD integration test
-./tests/claude-code/test-subagent-driven-development-integration.sh 2>/dev/null || echo "SDD integration test not available in this environment"
+./test/claude-code/test-execute-plan-run-integration.sh 2>/dev/null || echo "SDD integration test not available in this environment"
 ```
 
 Note: these tests require Claude Code with `--dangerously-skip-permissions`. If not available, document that regression tests should be run manually.

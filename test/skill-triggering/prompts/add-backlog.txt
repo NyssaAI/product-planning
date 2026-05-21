@@ -1,0 +1,1 @@
+Add this to the backlog as a planned work item: enterprise customers need SSO login via Okta. It's not a bug and we're not implementing it today — just capture it for later.

@@ -102,7 +102,7 @@ The Stop hook looks for this tag. Without it (and without `--max-iterations`), R
 
 **Not for:**
 - **Bugs** — use **`fix-bug`**
-- Design or product decisions — use **brainstorming** / **plan-product**
+- Design or product decisions — use **design-spec** / **plan-product**
 - Tasks with unclear success criteria
 
 ## Learn more

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Workflow entry-point audit (docs, tests, orchestrator parity)
+
+- **`design-spec` orchestrator parity** — Purpose, Hard policy, Required sub-skills, and `references/policy.md` aligned with `fix-bug` / `execute-plan`.
+- **Authoritative docs** — `docs/product.md` and `docs/roadmap.md` list the five user-facing entry points only (`plan-product`, `add-backlog`, `design-spec`, `execute-plan`, `fix-bug`); internal `write-plan` no longer listed as a button.
+- **Maintainer plans/specs** — `docs/plans/` and `docs/specs/` updated to current skill names, paths, and `dev-tools:execute-plan` plan headers (retired `brainstorming`, `writing-plans`, `executing-plans`, etc.).
+- **Archive collapsed** — removed `docs/archive/` (superseded plans); content remains in git history.
+- **Eval coverage** — skill-triggering and explicit-skill-request tests for `fix-bug`, `add-backlog`, `plan-product`; new `test/claude-code/test-fix-bug.sh`.
+- **Integration evals** — `test/subagent-driven-dev/` renamed to `test/execute-plan-dev/`; prompts use `dev-tools:execute-plan`.
+- **Misc** — `commands/ralph-help.md` design entry point; language cleanup in TDD / code-review skill descriptions.
+
 ### Workflow entry points (verb-named skills)
 
 - **`design-spec`** (was `brainstorming`) — spec before code; invokes `write-plan` internally after worktree setup.

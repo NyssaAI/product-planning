@@ -58,6 +58,39 @@ else
 fi
 echo ""
 
+# Test: fix-bug, please
+echo ">>> Test 5: fix-bug-please"
+if "$SCRIPT_DIR/run-test.sh" "fix-bug" "$PROMPTS_DIR/fix-bug-please.txt"; then
+    PASSED=$((PASSED + 1))
+    RESULTS="$RESULTS\nPASS: fix-bug-please"
+else
+    FAILED=$((FAILED + 1))
+    RESULTS="$RESULTS\nFAIL: fix-bug-please"
+fi
+echo ""
+
+# Test: add-backlog, please
+echo ">>> Test 6: add-backlog-please"
+if "$SCRIPT_DIR/run-test.sh" "add-backlog" "$PROMPTS_DIR/add-backlog-please.txt"; then
+    PASSED=$((PASSED + 1))
+    RESULTS="$RESULTS\nPASS: add-backlog-please"
+else
+    FAILED=$((FAILED + 1))
+    RESULTS="$RESULTS\nFAIL: add-backlog-please"
+fi
+echo ""
+
+# Test: plan-product, please
+echo ">>> Test 7: plan-product-please"
+if "$SCRIPT_DIR/run-test.sh" "plan-product" "$PROMPTS_DIR/plan-product-please.txt"; then
+    PASSED=$((PASSED + 1))
+    RESULTS="$RESULTS\nPASS: plan-product-please"
+else
+    FAILED=$((FAILED + 1))
+    RESULTS="$RESULTS\nFAIL: plan-product-please"
+fi
+echo ""
+
 echo "=== Summary ==="
 echo -e "$RESULTS"
 echo ""

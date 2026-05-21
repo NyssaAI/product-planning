@@ -13,6 +13,9 @@ SKILLS=(
     "design-spec"
     "dispatching-parallel-agents"
     "execute-plan"
+    "fix-bug"
+    "add-backlog"
+    "plan-product"
     "requesting-code-review"
 )
 
