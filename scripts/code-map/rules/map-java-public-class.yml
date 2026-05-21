@@ -1,0 +1,8 @@
+id: map-java-public-class
+message: public class
+severity: info
+language: Java
+metadata:
+  mapKind: class
+rule:
+  pattern: public class $NAME { $$$ }

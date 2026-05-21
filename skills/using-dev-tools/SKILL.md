@@ -49,6 +49,9 @@ Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-too
 digraph skill_flow {
     "User message received" [shape=doublecircle];
     "About to EnterPlanMode?" [shape=doublecircle];
+    "About to write implementation plan?" [shape=doublecircle];
+    "On feature branch in worktree?" [shape=diamond];
+    "Invoke using-git-worktrees skill" [shape=box];
     "Already brainstormed?" [shape=diamond];
     "Invoke brainstorming skill" [shape=box];
     "Might any skill apply?" [shape=diamond];
@@ -60,6 +63,10 @@ digraph skill_flow {
     "Respond (including clarifications)" [shape=doublecircle];
 
     "About to EnterPlanMode?" -> "Already brainstormed?";
+    "About to write implementation plan?" -> "On feature branch in worktree?";
+    "On feature branch in worktree?" -> "Invoke using-git-worktrees skill" [label="no"];
+    "On feature branch in worktree?" -> "Might any skill apply?" [label="yes"];
+    "Invoke using-git-worktrees skill" -> "Might any skill apply?";
     "Already brainstormed?" -> "Invoke brainstorming skill" [label="no"];
     "Already brainstormed?" -> "Might any skill apply?" [label="yes"];
     "Invoke brainstorming skill" -> "Might any skill apply?";
@@ -99,9 +106,10 @@ These thoughts mean STOP—you're rationalizing:
 When multiple skills could apply, use this order:
 
 1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
+2. **Planning context** (using-ai-plan) - before writing-plans when repo has code
+3. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
 
-"Let's build X" → brainstorming first, then implementation skills.
+"Let's build X" → brainstorming first, then using-ai-plan + writing-plans, then implementation skills.
 "Fix this bug" → debugging first, then domain-specific skills.
 
 ## Skill Types

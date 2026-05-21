@@ -21,8 +21,8 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Explore project context** — check files, docs, recent commits
-2. **Surface relevant standards** — detect tech stack, read applicable dev-standards (see Standards Surfacing below)
+1. **Explore project context** — check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item; read `docs/ai-plan/INDEX.md` when present for module boundaries (do not load all scope files)
+2. **Surface relevant standards** — detect tech stack, read applicable dev-tools (see Standards Surfacing below)
 3. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 5. **Propose 2-3 approaches** — with trade-offs and your recommendation (informed by surfaced standards)
@@ -30,7 +30,8 @@ You MUST create a task for each of these items and complete them in order:
 7. **Write design doc** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit (include Standards Applied section)
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **User reviews written spec** — ask user to review the spec file before proceeding
-10. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+10. **Set up isolated workspace** — REQUIRED SUB-SKILL: invoke `dev-tools:using-git-worktrees` (feature branch + worktree, not main/master)
+11. **Write implementation plan** — invoke `dev-tools:writing-plans` (only after step 10 completes; writing-plans loads one ai-plan scope via `dev-tools:using-ai-plan` when applicable)
 
 ## Process Flow
 
@@ -47,6 +48,8 @@ digraph brainstorming {
     "Write design doc\n(include Standards Applied)" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
+    "Invoke using-git-worktrees skill" [shape=box];
+    "On feature branch?\n(not main/master)" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
     "Explore project context" -> "Surface relevant standards";
@@ -62,31 +65,38 @@ digraph brainstorming {
     "Write design doc\n(include Standards Applied)" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc\n(include Standards Applied)" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Invoke using-git-worktrees skill" [label="approved"];
+    "Invoke using-git-worktrees skill" -> "On feature branch?\n(not main/master)";
+    "On feature branch?\n(not main/master)" -> "Invoke using-git-worktrees skill" [label="no"];
+    "On feature branch?\n(not main/master)" -> "Invoke writing-plans skill" [label="yes"];
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+<HARD-GATE>
+Do NOT invoke `writing-plans` until `using-git-worktrees` has completed and you are on a feature branch (never `main` or `master`). Do NOT invoke frontend-design, mcp-builder, or any other implementation skill during brainstorming.
+</HARD-GATE>
+
+**After spec approval, the chain is:** `using-git-worktrees` → `writing-plans`. Nothing else.
 
 ## Standards Surfacing
 
-During step 2, detect the project's tech stack and surface the applicable standards by invoking the matching skills from the `dev-standards` peer plugin. Do NOT attempt to read dev-standards files from the filesystem — the skill invocations load the content for you, and filesystem paths are not portable across machines.
+During step 2, detect the project's tech stack and surface the applicable standards by invoking the matching **bundled** `dev-tools:using-*-standards` skills. Do NOT read `standards/*.md` from the filesystem — skill invocations load content portably via `manifest.json`.
 
 **Detection:** Scan the project for files that indicate the tech stack:
 
 | Files detected                          | Skill to invoke                           |
 |-----------------------------------------|-------------------------------------------|
-| `.cs`, `.csproj`, `.razor`, `.sln`      | `dev-standards:using-dotnet-standards`    |
-| `.tsx`, `.ts`, `next.config.*`          | `dev-standards:using-nextjs-standards`    |
-| `.sql`, or Postgres-related config      | `dev-standards:using-postgres-standards`  |
-| `.py`, `pyproject.toml`, `setup.py`    | `dev-standards:using-python-standards`    |
+| `.cs`, `.csproj`, `.razor`, `.sln`      | `dev-tools:using-dotnet-standards`    |
+| `.tsx`, `.ts`, `next.config.*`          | `dev-tools:using-nextjs-standards`    |
+| `.sql`, or Postgres-related config      | `dev-tools:using-postgres-standards`  |
+| `.py`, `pyproject.toml`, `setup.py`    | `dev-tools:using-python-standards`    |
 
-**Always invoke** `dev-standards:using-core-standards` in addition to any tech-specific skill above — it covers cross-cutting concerns (project structure, error handling, logging, testing, workflow artifacts) that apply regardless of stack.
+**Always invoke** `dev-tools:using-core-standards` in addition to any tech-specific skill above — it covers cross-cutting concerns (project structure, error handling, logging, testing, workflow artifacts) that apply regardless of stack.
 
 **Process:**
 
 1. Detect tech stack from file patterns above
-2. Invoke the matching `dev-standards:using-*-standards` skill(s) plus `dev-standards:using-core-standards`
+2. Invoke the matching `dev-tools:using-*-standards` skill(s) plus `dev-tools:using-core-standards`
 3. Briefly tell the user which standards skills you've loaded — don't dump the content, just list the skill names
 4. Let the surfaced standards inform your approach proposals and design decisions
 5. If a standard contradicts a design choice, flag the conflict explicitly
@@ -168,10 +178,11 @@ After the spec review loop passes, ask the user to review the written spec befor
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
 
-**Implementation:**
+**Implementation handoff:**
 
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+1. **REQUIRED SUB-SKILL:** Invoke `dev-tools:using-git-worktrees` — create feature branch and isolated worktree before any plan or code
+2. **REQUIRED SUB-SKILL:** Invoke `dev-tools:writing-plans` — only after the worktree is ready and you are on the feature branch
+3. Do NOT invoke any other skill between these two steps
 
 ## Key Principles
 

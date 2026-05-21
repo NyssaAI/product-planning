@@ -1,0 +1,11 @@
+{
+  "_comment": "Optional. With only product.md, roadmap.md, and tech-stack.md present, defaults are enough. Run: npm run ai-plan -- --init once to scaffold this file.",
+  "docs": {
+    "product": ["docs/product.md", "PRODUCT.md", "product.md"],
+    "roadmap": ["docs/roadmap.md", "roadmap.md"],
+    "techStack": ["docs/tech-stack.md", "docs/techstack.md", "tech-stack.md"]
+  },
+  "modules": {
+    "discover": "auto"
+  }
+}

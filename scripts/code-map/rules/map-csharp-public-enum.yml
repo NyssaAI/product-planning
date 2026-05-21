@@ -1,0 +1,8 @@
+id: map-csharp-public-enum
+message: public enum
+severity: info
+language: CSharp
+metadata:
+  mapKind: enum
+rule:
+  pattern: public enum $NAME

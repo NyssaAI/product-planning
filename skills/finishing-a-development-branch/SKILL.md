@@ -1,23 +1,27 @@
 ---
 name: finishing-a-development-branch
-description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
+description: Use when implementation is complete and all tests pass - verifies tests, pushes the feature branch, and creates a pull request (required unless user explicitly overrides in project instructions)
 ---
 
 # Finishing a Development Branch
 
 ## Overview
 
-Guide completion of development work by presenting clear options and handling chosen workflow.
+Complete development work by verifying tests, pushing the feature branch, and **creating a pull request**. Integration happens through review and merge on the host (GitHub, etc.) — not by merging locally into main.
 
-**Core principle:** Verify tests → Present options → Execute choice → Clean up.
+**Core principle:** Verify tests → Push branch → Create PR → Report PR URL.
 
-**Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
+**Announce at start:** "I'm using the finishing-a-development-branch skill to open a pull request."
+
+<HARD-GATE>
+When implementation is complete and tests pass, you MUST push the feature branch and create a pull request with `gh pr create`. Do NOT merge into `main`/`master` locally. Do NOT leave work on a branch without opening a PR unless your human partner explicitly overrides this in CLAUDE.md, GEMINI.md, or AGENTS.md (same precedence as TDD opt-outs in using-dev-tools).
+</HARD-GATE>
 
 ## The Process
 
 ### Step 1: Verify Tests
 
-**Before presenting options, verify tests pass:**
+**Before pushing or opening a PR, verify tests pass:**
 
 ```bash
 # Run project's test suite
@@ -30,70 +34,71 @@ Tests failing (<N> failures). Must fix before completing:
 
 [Show failures]
 
-Cannot proceed with merge/PR until tests pass.
+Cannot open a PR until tests pass.
 ```
 
 Stop. Don't proceed to Step 2.
 
-**If tests pass:** Continue to Step 2.
+**If tests pass:** Continue to Step 1.5.
 
-### Step 2: Determine Base Branch
+### Step 1.5: Detect Environment
+
+```bash
+GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
+GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
+BRANCH=$(git branch --show-current)
+```
+
+**Path A — Externally managed worktree + detached HEAD** (`GIT_DIR != GIT_COMMON` and `BRANCH` empty):
+
+1. Stage and commit all work (`git add` + `git commit`)
+2. Present handoff (do not run push/PR from here):
+
+```
+Implementation complete. All tests passing.
+Current HEAD: <full-commit-sha>
+
+This workspace is externally managed (detached HEAD).
+I cannot create branches, push, or open PRs from this environment.
+
+If your host provides "Create branch" or "Hand off to local", use those next.
+
+Suggested branch name: <ticket-or-slug>
+Suggested PR title: <title>
+Suggested PR body: <use Step 4 template>
+```
+
+3. **STOP** — skip Steps 2–5 (no worktree remove for externally managed workspaces)
+
+**Path B — Externally managed + named branch, or Path C — normal repo:** Continue to Step 2.
+
+### Step 2: Verify Feature Branch
+
+```bash
+git branch --show-current
+```
+
+**If on `main` or `master`:** STOP. You should not have implemented on the base branch. Report the error to your human partner — implementation should have run in the worktree created by `using-git-worktrees`.
+
+**If on a feature branch:** Continue to Step 3.
+
+### Step 3: Determine Base Branch
 
 ```bash
 # Try common base branches
 git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 ```
 
-Or ask: "This branch split from main - is that correct?"
+Default target for the PR: `main`, or `master` if that is the repo default. If unclear, ask once: "PR base branch: main — correct?"
 
-### Step 3: Present Options
-
-Present exactly these 4 options:
-
-```
-Implementation complete. What would you like to do?
-
-1. Merge back to <base-branch> locally
-2. Push and create a Pull Request
-3. Keep the branch as-is (I'll handle it later)
-4. Discard this work
-
-Which option?
-```
-
-**Don't add explanation** - keep options concise.
-
-### Step 4: Execute Choice
-
-#### Option 1: Merge Locally
-
-```bash
-# Switch to base branch
-git checkout <base-branch>
-
-# Pull latest
-git pull
-
-# Merge feature branch
-git merge <feature-branch>
-
-# Verify tests on merged result
-<test command>
-
-# If tests pass
-git branch -d <feature-branch>
-```
-
-Then: Cleanup worktree (Step 5)
-
-#### Option 2: Push and Create PR
+### Step 4: Push and Create Pull Request
 
 ```bash
 # Push branch
 git push -u origin <feature-branch>
 
-# Create PR
-gh pr create --title "<title>" --body "$(cat <<'EOF'
+# Create PR (required)
+gh pr create --base <base-branch> --title "<title>" --body "$(cat <<'EOF'
 ## Summary
 <2-3 bullets of what changed>
 
@@ -103,17 +108,39 @@ EOF
 )"
 ```
 
-Then: Cleanup worktree (Step 5)
+**After `gh pr create` succeeds:** Report the PR URL to your human partner. Do not merge the PR yourself unless they explicitly ask.
 
-#### Option 3: Keep As-Is
+### Step 5: Worktree Cleanup
 
-Report: "Keeping branch <name>. Worktree preserved at <path>."
+Re-run `GIT_DIR` vs `GIT_COMMON` detection. **If `GIT_DIR != GIT_COMMON`**, skip `git worktree remove` — the host owns this workspace.
 
-**Don't cleanup worktree.**
+**Do NOT remove the worktree after creating the PR** — your human partner may need it for review follow-ups.
 
-#### Option 4: Discard
+Only remove the worktree when `GIT_DIR == GIT_COMMON` and they explicitly confirm the PR is merged:
 
-**Confirm first:**
+```bash
+git worktree list | grep $(git branch --show-current)
+# If yes and partner confirmed merge:
+git worktree remove <worktree-path>
+```
+
+## Sandbox / Push Blocked
+
+If the environment blocks `git push` or `gh` (detached HEAD, sandbox, no network):
+
+1. Commit all work on the feature branch
+2. Output for your human partner to copy:
+   - Branch name
+   - Suggested `git push -u origin <branch>`
+   - Full PR title and body (same template as Step 4)
+3. State clearly: "Could not open PR from this environment — push and run `gh pr create` locally, or use the host UI."
+
+This is a **blocked PR**, not permission to skip the PR workflow.
+
+## Abandoning Work (Only When Asked)
+
+If your human partner **explicitly** asks to discard the branch and worktree (not a menu — they must request it):
+
 ```
 This will permanently delete:
 - Branch <name>
@@ -123,78 +150,52 @@ This will permanently delete:
 Type 'discard' to confirm.
 ```
 
-Wait for exact confirmation.
+Wait for exact confirmation `discard`, then:
 
-If confirmed:
 ```bash
 git checkout <base-branch>
 git branch -D <feature-branch>
+git worktree remove <worktree-path>  # if applicable
 ```
-
-Then: Cleanup worktree (Step 5)
-
-### Step 5: Cleanup Worktree
-
-**For Options 1, 2, 4:**
-
-Check if in worktree:
-```bash
-git worktree list | grep $(git branch --show-current)
-```
-
-If yes:
-```bash
-git worktree remove <worktree-path>
-```
-
-**For Option 3:** Keep worktree.
-
-## Quick Reference
-
-| Option | Merge | Push | Keep Worktree | Cleanup Branch |
-|--------|-------|------|---------------|----------------|
-| 1. Merge locally | ✓ | - | - | ✓ |
-| 2. Create PR | - | ✓ | ✓ | - |
-| 3. Keep as-is | - | - | ✓ | - |
-| 4. Discard | - | - | - | ✓ (force) |
 
 ## Common Mistakes
 
 **Skipping test verification**
-- **Problem:** Merge broken code, create failing PR
-- **Fix:** Always verify tests before offering options
+- **Problem:** Open a failing PR
+- **Fix:** Always verify tests before push
 
-**Open-ended questions**
-- **Problem:** "What should I do next?" → ambiguous
-- **Fix:** Present exactly 4 structured options
+**Merging locally into main**
+- **Problem:** Bypasses review; pollutes base branch
+- **Fix:** PR only — merge happens on the host after review
 
-**Automatic worktree cleanup**
-- **Problem:** Remove worktree when might need it (Option 2, 3)
-- **Fix:** Only cleanup for Options 1 and 4
+**"I'll push later"**
+- **Problem:** Work stalls without reviewable artifact
+- **Fix:** Push and `gh pr create` in this skill, every time
 
-**No confirmation for discard**
-- **Problem:** Accidentally delete work
-- **Fix:** Require typed "discard" confirmation
+**Removing worktree immediately after PR**
+- **Problem:** Partner can't iterate on review feedback in place
+- **Fix:** Keep worktree until they confirm merge
 
 ## Red Flags
 
 **Never:**
 - Proceed with failing tests
-- Merge without verifying tests on result
-- Delete work without confirmation
+- Merge feature branch into `main`/`master` locally without explicit user request
+- End a feature without a PR (or blocked-PR handoff with full PR text)
 - Force-push without explicit request
+- Delete work without typed `discard` confirmation
 
 **Always:**
-- Verify tests before offering options
-- Present exactly 4 options
-- Get typed confirmation for Option 4
-- Clean up worktree for Options 1 & 4 only
+- Verify tests before push
+- Push and create PR with `gh pr create`
+- Report PR URL (or blocked-PR handoff with branch + body)
+- Stay on feature branch until PR is merged on the host
 
 ## Integration
 
 **Called by:**
-- **subagent-driven-development** (Step 7) - After all tasks complete
-- **executing-plans** (Step 5) - After all batches complete
+- **subagent-driven-development** — After all tasks complete
+- **executing-plans** — After all tasks complete
 
 **Pairs with:**
-- **using-git-worktrees** - Cleans up worktree created by that skill
+- **using-git-worktrees** — Feature branch and worktree created before the plan; keep worktree through PR review

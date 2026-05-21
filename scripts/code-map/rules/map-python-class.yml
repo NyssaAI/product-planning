@@ -1,0 +1,8 @@
+id: map-python-class
+message: python class
+severity: info
+language: Python
+metadata:
+  mapKind: py-class
+rule:
+  pattern: "class $NAME:"

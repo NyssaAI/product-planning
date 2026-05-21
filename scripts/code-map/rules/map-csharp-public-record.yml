@@ -1,0 +1,8 @@
+id: map-csharp-public-record
+message: public record
+severity: info
+language: CSharp
+metadata:
+  mapKind: record
+rule:
+  pattern: public record $NAME

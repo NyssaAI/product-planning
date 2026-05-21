@@ -1,11 +1,11 @@
 ---
 name: plan-product
-description: Use when starting a new project or when docs/product.md, docs/roadmap.md, or docs/tech-stack.md are missing. Establishes foundational product documentation (full PRD + roadmap + tech stack) through interactive conversation, conforming to the dev-standards project-structure layout.
+description: Use when starting a new project or when docs/product.md, docs/roadmap.md, or docs/tech-stack.md are missing. Establishes foundational product documentation (full PRD + roadmap + tech stack) through interactive conversation, conforming to the bundled project-structure standard.
 ---
 
 # Plan Product
 
-Establish foundational product documentation through an interactive conversation. Creates a full product requirements document (`docs/product.md`), initial roadmap, tech stack reference, and the `bugs/` + `backlog/` subtree scaffolding required by the dev-standards layout.
+Establish foundational product documentation through an interactive conversation. Creates a full product requirements document (`docs/product.md`), initial roadmap, tech stack reference, and the `docs/` subtree scaffolding required by `standards/project-structure.md` (bundled in dev-tools).
 
 **Always use AskUserQuestion** when asking the user anything. One question at a time — don't overwhelm. Related questions inside one sub-section MAY be bundled into a single compound prompt when the user is moving fast.
 
@@ -22,6 +22,7 @@ You MUST complete these steps in order:
 5. **Scaffold docs subtree** (bugs/, backlog/)
 6. **Generate files**
 7. **Confirm completion**
+8. **Suggest ai-plan** — when the repo will contain source code, tell your human partner to run **using-ai-plan** / `/ai-plan` after the first meaningful code exists (generates `docs/ai-plan/`; ast-grep is provided by the plugin)
 
 ## Step 1: Check for Existing Product Docs
 
@@ -104,18 +105,18 @@ Ask these questions one at a time:
 
 ## Step 4: Establish Tech Stack (for tech-stack.md)
 
-The `dev-standards` plugin (if installed) defines canonical standards for common stacks (.NET, Next.js, Postgres, Python). Rather than duplicating guidance, `tech-stack.md` should enumerate the technologies in use and reference the matching dev-standards categories.
+dev-tools bundles jamaynor development standards (`standards/` + `manifest.json`). Rather than duplicating guidance, `tech-stack.md` should enumerate technologies in use and reference the matching **dev-tools:using-*-standards** skills.
 
-### 4a. Detect dev-standards availability
+**Invoke** `dev-tools:using-core-standards` while drafting tech-stack so project-structure and cross-cutting rules are in context.
 
-Check whether the `dev-standards` plugin is installed. Signals: the `using-core-standards` skill appears in the available-skills list, or the agent can invoke `Skill(dev-standards:using-core-standards)` without error. If available, you have these grouping skills to reference:
-- `using-core-standards` (language-agnostic)
-- `using-dotnet-standards`
-- `using-nextjs-standards`
-- `using-postgres-standards`
-- `using-python-standards`
+Grouping skills available in this plugin:
+- `dev-tools:using-core-standards` (always)
+- `dev-tools:using-dotnet-standards`
+- `dev-tools:using-nextjs-standards`
+- `dev-tools:using-postgres-standards`
+- `dev-tools:using-python-standards`
 
-### 4b. Ask what technologies the project uses
+### 4a. Ask what technologies the project uses
 
 Use AskUserQuestion:
 
@@ -125,34 +126,35 @@ Use AskUserQuestion:
 > - Next.js / React
 > - PostgreSQL
 > - Python
-> - Other (not covered by dev-standards)
+> - Other (not covered by bundled standards)
 
-### 4c. For each selected tech with a matching dev-standards category
+### 4b. For each selected tech with a matching standards category
 
-Reference the matching category in `tech-stack.md`. Do NOT dump the standards' content — the reference is enough; the `using-<category>-standards` skill auto-triggers when the agent does work in that area.
+Reference the matching `dev-tools:using-*-standards` skill in `tech-stack.md`. Do NOT dump standards content — the skill reference is enough; skills auto-trigger during design and implementation.
 
-### 4d. For any "Other" technologies
+### 4c. For any "Other" technologies
 
 Use AskUserQuestion:
 
 > What other technologies are in use? (hosting, key libraries, external APIs, build tools, observability stack, etc.)
 
-If `dev-standards` is NOT installed, skip 4a/4c and instead ask the user directly what conventions or patterns to follow for each technology.
-
 ## Step 5: Scaffold docs subtree
 
-Per the dev-standards project-structure, `docs/` contains:
-- `product.md`
-- `roadmap.md`
-- `tech-stack.md`
-- `bugs/` — populated per-bug via the bug-workflow skill, each entry under `bugs/{timestamp}-{slug}/`
-- `backlog/` — populated per-item via the backlog-workflow skill, each entry under `backlog/{timestamp}-{slug}/`
+Per `standards/project-structure.md`, scaffold `docs/`:
 
-Create the empty directories with `.gitkeep` files so they survive git commits:
+- `product.md`, `roadmap.md`, `tech-stack.md` (created in Step 6)
+- `bugs/`, `backlog/` — empty until bug-workflow / backlog-workflow
+- `specs/`, `plans/` — empty until brainstorming / writing-plans
+- `ai-plan/scopes/` — empty until ai-plan generate (after source code exists)
+
+Create directories with `.gitkeep` where needed:
 
 ```
 docs/bugs/.gitkeep
 docs/backlog/.gitkeep
+docs/specs/.gitkeep
+docs/plans/.gitkeep
+docs/ai-plan/scopes/.gitkeep
 ```
 
 ## Step 6: Generate Files
@@ -250,36 +252,35 @@ Include only phases the user specified. If no post-MVP phases provided, write "N
 |------------|---------|
 | [tech]     | [role]  |
 
-## Applicable dev-standards
+## Applicable standards (dev-tools)
 
-(For each tech category selected in Step 4b, include the matching line. Omit lines for categories not selected. Always include the cross-cutting line.)
+(For each tech category selected in Step 4a, include the matching line. Omit unselected categories. Always include cross-cutting.)
 
-- **.NET:** see `dev-standards` plugin → `using-dotnet-standards` skill for ASP.NET Core, Blazor, EF Core, Marten, and .NET testing conventions.
-- **Next.js:** see `dev-standards` plugin → `using-nextjs-standards` skill for App Router, components, styling, animation, accessibility, SEO, and content-management conventions.
-- **PostgreSQL:** see `dev-standards` plugin → `using-postgres-standards` skill for function, staging-table, schema, audit/metrics, logging, and SQL-formatting patterns.
-- **Python:** see `dev-standards` plugin → `using-python-standards` skill for project structure, bulk-load, data-transformation, and logging patterns.
-- **Cross-cutting:** `using-core-standards` always applies (project structure, error handling, logging, testing, security, DDD, code commenting, workflow artifacts).
+- **.NET:** `dev-tools:using-dotnet-standards`
+- **Next.js:** `dev-tools:using-nextjs-standards`
+- **PostgreSQL:** `dev-tools:using-postgres-standards`
+- **Python:** `dev-tools:using-python-standards`
+- **Cross-cutting:** `dev-tools:using-core-standards` (project structure, errors, logging, testing, security, DDD, workflow artifacts)
 
 ## Other technologies
 
-[From Step 4d — hosting, libraries, external APIs, build tools, etc.]
-
-(If `dev-standards` is not installed, replace the "Applicable dev-standards" section with a plain list of conventions to follow for each technology, captured directly from the user.)
+[From Step 4c — hosting, libraries, external APIs, build tools, etc.]
 ```
 
 ## Step 7: Confirm Completion
 
 After creating all files and directories, tell the user:
 
-> Product documentation created, conforming to dev-standards project-structure:
+> Product documentation created per `standards/project-structure.md`:
 >
 > - `docs/product.md` (PRD)
 > - `docs/roadmap.md`
 > - `docs/tech-stack.md`
-> - `docs/bugs/` (empty — populated per-bug via the `bug-workflow` skill)
-> - `docs/backlog/` (empty — populated per-item via the `backlog-workflow` skill)
+> - `docs/bugs/`, `docs/backlog/`, `docs/specs/`, `docs/plans/`, `docs/ai-plan/scopes/` (scaffolded)
 >
-> Review these files to ensure they capture your product vision. You can edit them directly or invoke this skill again to update specific files.
+> After source code exists, run ai-plan generate (`/ai-plan` or `npm run ai-plan`) to populate `docs/ai-plan/`.
+>
+> Review these files to ensure they capture your product vision.
 
 ## Tips
 
@@ -288,4 +289,4 @@ After creating all files and directories, tell the user:
 - **Functional requirements stay feature-level**, not implementation. "Support SSO" is a good FR; "integrate with Okta via SAML 2.0" is implementation detail that belongs in a design doc, not a PRD.
 - **Load-bearing assumptions should be surfaced early.** Every "if X changes, the whole plan changes" assumption deserves a line in the Assumptions section.
 - These files feed into the `brainstorming` and `writing-plans` skills for downstream context. A good PRD meaningfully reduces the clarifying-question burden at every subsequent skill invocation.
-- If `dev-standards` is not installed, Step 4 falls back to asking the user what conventions to follow directly. The rest of the skill works the same way.
+- Standards are bundled — invoke `dev-tools:using-core-standards` when unsure which conventions apply.

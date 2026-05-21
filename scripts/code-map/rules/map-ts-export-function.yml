@@ -1,0 +1,10 @@
+id: map-ts-export-function
+message: export function
+severity: info
+language: TypeScript
+metadata:
+  mapKind: function
+rule:
+  pattern: export function $NAME($$$) { $$$ }
+  not:
+    pattern: export async function $NAME($$$) { $$$ }

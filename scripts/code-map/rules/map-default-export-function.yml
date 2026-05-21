@@ -1,0 +1,8 @@
+id: map-default-export-function
+message: default export function
+severity: info
+language: JavaScript
+metadata:
+  mapKind: default-function
+rule:
+  pattern: export default function $NAME($$$) { $$$ }

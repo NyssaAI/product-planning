@@ -1,0 +1,8 @@
+id: map-export-async-function
+message: export async function
+severity: info
+language: JavaScript
+metadata:
+  mapKind: async-function
+rule:
+  pattern: export async function $NAME($$$) { $$$ }

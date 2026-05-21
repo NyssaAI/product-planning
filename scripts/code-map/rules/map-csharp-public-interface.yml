@@ -1,0 +1,8 @@
+id: map-csharp-public-interface
+message: public interface
+severity: info
+language: CSharp
+metadata:
+  mapKind: interface
+rule:
+  pattern: public interface $NAME

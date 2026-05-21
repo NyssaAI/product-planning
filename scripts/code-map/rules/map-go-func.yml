@@ -1,0 +1,8 @@
+id: map-go-func
+message: func
+severity: info
+language: Go
+metadata:
+  mapKind: function
+rule:
+  pattern: func $NAME($$$)

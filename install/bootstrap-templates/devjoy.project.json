@@ -1,0 +1,11 @@
+{
+  "skills": {
+    "global": ["dev-tools"],
+    "project": [],
+    "agents": {
+      "openclaw": { "skills": ["dev-tools"] },
+      "hermes": { "skills": ["dev-tools"] }
+    }
+  },
+  "skillsScope": "global"
+}

@@ -1,0 +1,8 @@
+id: map-go-type
+message: type
+severity: info
+language: Go
+metadata:
+  mapKind: type
+rule:
+  pattern: type $NAME $BODY

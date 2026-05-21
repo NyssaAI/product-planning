@@ -1,8 +1,8 @@
 {
   "name": "dev-tools",
   "displayName": "Dev Tools",
-  "description": "Core skills library: TDD, debugging, collaboration patterns, and proven techniques",
-  "version": "5.0.7",
+  "description": "Core skills library: TDD, debugging, ai-plan module graph, git/PR workflow, and collaboration patterns",
+  "version": "5.0.8",
   "author": {
     "name": "jamaynor"
   },

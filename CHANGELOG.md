@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.0.8] - 2026-05-21
+
+### Added
+
+- **Bundled development standards** — `standards/`, `manifest.json`, and `using-core-standards` / `using-dotnet-standards` / `using-nextjs-standards` / `using-postgres-standards` / `using-python-standards` skills ship inside dev-tools (no separate dev-standards plugin).
+- **Bundled ai-plan** — `scripts/code-map/`, `scripts/ai-plan/`, `using-ai-plan` skill, and `/ai-plan` command. `@ast-grep/cli` is a plugin dependency (auto-installs into the plugin root on first code-map run).
+- **docs/standards.md** — documents bundled standards layout for consumers.
+
+### Changed
+
+- **Git workflow gates** — brainstorming requires `using-git-worktrees` after spec approval; `writing-plans`, `executing-plans`, and `subagent-driven-development` verify feature branch/worktree before implementation; `finishing-a-development-branch` requires push + `gh pr create` (override only via project CLAUDE.md/AGENTS.md).
+- **Standards surfacing** — brainstorming and writing-plans invoke bundled `dev-tools:using-*-standards` skills (replaces `dev-standards:` peer plugin).
+- **ai-plan output** — stops generating `docs/ai-plan/BRIEF.md`; L2 planning context reads `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly. Module scopes under `docs/ai-plan/scopes/` remain the primary planning artifact.
+- **project-structure standard** — documents authoritative docs vs generated ai-plan (`docs/specs/`, `docs/plans/`, `docs/ai-plan/scopes/`).
+- **Codex App compatibility** — `using-git-worktrees` Step 0 (linked worktree detection); `finishing-a-development-branch` Step 1.5 environment detection and guarded worktree cleanup.
+
 ## [5.0.7] - 2026-04-24
 
 ### Added

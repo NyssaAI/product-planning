@@ -1,0 +1,10 @@
+id: map-export-function
+message: export function
+severity: info
+language: JavaScript
+metadata:
+  mapKind: function
+rule:
+  pattern: export function $NAME($$$) { $$$ }
+  not:
+    pattern: export async function $NAME($$$) { $$$ }

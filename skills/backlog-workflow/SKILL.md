@@ -5,7 +5,7 @@ description: Use when adding a new planned work item to the backlog. Creates doc
 
 # Backlog Workflow
 
-Formally document a new backlog item (planned work, not a current bug or in-flight feature), conforming to the dev-standards backlog-workflow.
+Formally document a new backlog item (planned work, not a current bug or in-flight feature), conforming to `standards/backlog-workflow.md` (bundled in dev-tools).
 
 **Always use AskUserQuestion** when asking the user anything. One question at a time.
 
@@ -32,7 +32,7 @@ Ask these questions one at a time:
 
 ## Step 2: Generate paths
 
-Use the `YYYY.MM.DD-HHMMSS` variant of the dev-standards `timestamp-format` standard — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-102847`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
+Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md` — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-102847`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
 
 Construct the directory and file paths:
 
@@ -114,7 +114,7 @@ Tell the user:
 
 ## Integration
 
-- **backlog-workflow standard** — from `dev-standards`; defines directory structure and required file contents.
-- **timestamp-format standard** — from `dev-standards`; defines both the `YYYY.MM.DD-HHMMSS` time-component variant (used here) and the `YYYY-MM-DD` date-only variant (used by specs and plans).
+- **backlog-workflow** — `standards/backlog-workflow.md`
+- **timestamp-format** — `standards/timestamp-format.md`
 - **dev-tools:writing-plans** — turns a backlog item into a bite-sized implementation plan when work starts.
 - **dev-tools:brainstorming** — for design-heavy backlog items that need exploration before planning.

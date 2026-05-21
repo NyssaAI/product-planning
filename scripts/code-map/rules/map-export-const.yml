@@ -1,0 +1,8 @@
+id: map-export-const
+message: export const
+severity: info
+language: JavaScript
+metadata:
+  mapKind: const
+rule:
+  pattern: export const $NAME = $VALUE

@@ -1,0 +1,8 @@
+id: map-python-function
+message: python function
+severity: info
+language: Python
+metadata:
+  mapKind: py-function
+rule:
+  pattern: "def $NAME($$$):"

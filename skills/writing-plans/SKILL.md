@@ -13,10 +13,40 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
+<HARD-GATE>
+Do NOT write or save an implementation plan until you are in an isolated worktree on a feature branch. If you are on `main` or `master`, STOP and invoke `dev-tools:using-git-worktrees` first. Brainstorming requires this before handing off to this skill.
+</HARD-GATE>
+
+**Prerequisites (verify before writing):**
+- `dev-tools:using-git-worktrees` completed in this session (or you are already in that feature worktree)
+- Current branch is a feature branch — not `main` or `master`
+- Know the branch name and worktree path for the plan header
+- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/ai-plan/` if stale, then load **one** L1 scope file for the target module
 
 **Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
+
+## AI Plan Context (code & module graph)
+
+When the project has source code and `docs/product.md` / `docs/roadmap.md` / `docs/tech-stack.md` exist:
+
+1. **REQUIRED SUB-SKILL:** `dev-tools:using-ai-plan`
+2. If `docs/ai-plan/INDEX.md` is missing or scopes are outdated, run generate in the **project repo** (see using-ai-plan) before writing tasks
+3. Read `docs/ai-plan/INDEX.md` — pick **one** module matching the spec / roadmap item
+4. Read **only** `docs/ai-plan/scopes/<module-id>.md` (L1) — the module's architectural picture: boundaries, `dependsOn` / `usedBy`, routes, test roots, entry points. Use this for file paths and task order; it complements the feature **spec**, it does not replace it
+5. Order tasks respecting module dependencies (leaves or dependency-safe order per MODULE_MAP edges)
+6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `CODE_MAP.json`, or other scope files during planning
+
+If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip this section.
+
+## Development Standards (bundled)
+
+1. Read the spec's **Standards Applied** section (from brainstorming)
+2. **REQUIRED SUB-SKILLS:** Invoke `dev-tools:using-core-standards` plus every stack skill listed in the spec (same detection table as brainstorming)
+3. Plans MUST respect `standards/project-structure.md`:
+   - Feature folders under `src/`, tests mirror `src/` under `test/`
+   - Plan paths use real paths from the ai-plan scope when available
+4. If a task would violate a loaded standard, flag it in the plan or adjust the task — do not silently diverge
 
 ## Scope Check
 
@@ -56,6 +86,16 @@ This structure informs the task decomposition. Each task should produce self-con
 **Architecture:** [2-3 sentences about approach]
 
 **Tech Stack:** [Key technologies/libraries]
+
+**Branch:** `[feature-branch-name]` (feature branch — not main/master)
+
+**Worktree:** `[absolute path to worktree]`
+
+**Integration:** Pull request via `gh pr create` when implementation completes (`dev-tools:finishing-a-development-branch`)
+
+**Planning scope:** `docs/ai-plan/scopes/<module-id>.md` (when ai-plan is present)
+
+**Standards:** [list from spec Standards Applied — e.g. core, dotnet, nextjs]
 
 ---
 ```
@@ -150,3 +190,14 @@ After saving the plan, offer execution choice:
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use dev-tools:executing-plans
 - Batch execution with checkpoints for review
+
+## Integration
+
+**Prerequisites:**
+- **dev-tools:using-git-worktrees** — REQUIRED before this skill (brainstorming hard gate)
+- **dev-tools:using-ai-plan** — REQUIRED when repo has code and ai-plan inputs exist
+- **dev-tools:using-core-standards** (+ stack skills from spec) — REQUIRED during planning
+
+**Downstream:**
+- **dev-tools:subagent-driven-development** or **dev-tools:executing-plans** — implement the plan
+- **dev-tools:finishing-a-development-branch** — REQUIRED after implementation: push and open PR

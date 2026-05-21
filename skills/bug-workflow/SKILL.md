@@ -5,7 +5,7 @@ description: Use when a bug is discovered and needs to be formally documented be
 
 # Bug Workflow — Discovery
 
-Formally document a newly-discovered bug, conforming to the dev-standards bug-workflow. Produces a dated directory and a detail file so the bug can be worked on systematically by the `bugfix` skill (or manually).
+Formally document a newly-discovered bug, conforming to `standards/bug-workflow.md` (bundled in dev-tools). Produces a dated directory and a detail file so the bug can be worked on systematically by the `bugfix` skill (or manually).
 
 **Always use AskUserQuestion** when asking the user anything. One question at a time.
 
@@ -32,7 +32,7 @@ Ask these questions one at a time:
 
 ## Step 2: Generate paths
 
-Use the `YYYY.MM.DD-HHMMSS` variant of the dev-standards `timestamp-format` standard — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-094512`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
+Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md` — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-094512`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
 
 Construct the directory and file paths:
 
@@ -110,6 +110,6 @@ Tell the user:
 
 ## Integration
 
-- **bug-workflow standard** — from `dev-standards`; defines directory structure, file contents, and the "no batching" rule.
-- **timestamp-format standard** — from `dev-standards`; defines both the `YYYY.MM.DD-HHMMSS` time-component variant (used here) and the `YYYY-MM-DD` date-only variant (used by specs and plans).
+- **bug-workflow** — `standards/bug-workflow.md`
+- **timestamp-format** — `standards/timestamp-format.md`
 - **dev-tools:bugfix** — the follow-on skill that reads the detail file, runs the fix loop, and writes the resolution file in a separate commit.

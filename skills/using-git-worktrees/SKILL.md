@@ -13,6 +13,28 @@ Git worktrees create isolated workspaces sharing the same repository, allowing w
 
 **Announce at start:** "I'm using the using-git-worktrees skill to set up an isolated workspace."
 
+## Step 0: Check if Already in an Isolated Workspace
+
+Run before Directory Selection:
+
+```bash
+GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
+GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
+BRANCH=$(git branch --show-current)
+```
+
+**If `GIT_DIR != GIT_COMMON`** (linked worktree — Codex App, Claude agent worktree, or prior skill run):
+
+1. Skip worktree creation and .gitignore verification (host owns this workspace)
+2. Run **Project Setup** and **Verify Clean Baseline** from Creation Steps below (idempotent)
+3. Report and **STOP**:
+   - On a branch: `Already in isolated workspace at <path> on branch <name>. Tests passing. Ready to implement.`
+   - Detached HEAD: `Already in isolated workspace at <path> (detached HEAD, externally managed). Tests passing. Branch creation needed at finish. Ready to implement.`
+
+**If `GIT_DIR == GIT_COMMON`:** proceed with Directory Selection and full creation flow.
+
+**Sandbox fallback:** If creation runs but `git worktree add -b` fails with permission denied, fall back to Step 0 behavior — setup + baseline in current directory, report, STOP.
+
 ## Directory Selection Process
 
 Follow this priority order:
@@ -209,10 +231,11 @@ Ready to implement auth feature
 ## Integration
 
 **Called by:**
-- **brainstorming** (Phase 4) - REQUIRED when design is approved and implementation follows
-- **subagent-driven-development** - REQUIRED before executing any tasks
-- **executing-plans** - REQUIRED before executing any tasks
+- **brainstorming** - REQUIRED after spec approval, immediately before `writing-plans` (hard gate)
+- **writing-plans** - Prerequisite: must already be on the feature worktree before saving a plan
+- **subagent-driven-development** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
+- **executing-plans** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
 - Any skill needing isolated workspace
 
 **Pairs with:**
-- **finishing-a-development-branch** - REQUIRED for cleanup after work complete
+- **finishing-a-development-branch** - REQUIRED after implementation: push branch and open PR (keep worktree through review)

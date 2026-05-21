@@ -15,7 +15,7 @@ A bug detail file MUST exist at `docs/bugs/{bug_id}/{bug_id}-detail.md` before t
 
 You MUST complete these steps in order:
 
-1. **Get bug_id** — ask the user which bug to fix, or accept it as an argument. The `bug_id` is the full `{timestamp}-{short-slug}` identifier produced by `bug-workflow` (see the `timestamp-format` standard in dev-standards).
+1. **Get bug_id** — ask the user which bug to fix, or accept it as an argument. The `bug_id` is the full `{timestamp}-{short-slug}` identifier produced by `bug-workflow` (see `standards/timestamp-format.md`).
 2. **Validate bug file** — confirm `docs/bugs/{bug_id}/{bug_id}-detail.md` exists. If not, stop.
 3. **Read bug detail** — read the full bug description (symptom, root cause if known, contributing factors).
 4. **Detect test runner** — identify the project's test command by checking for `package.json` (npm test), `pyproject.toml`/`pytest.ini` (pytest), `*.csproj` (dotnet test), `go.mod` (go test ./...), `Makefile` (make test), or ask the user.
@@ -112,8 +112,8 @@ CRITICAL: Do NOT output the promise unless ALL of these are true:
 ## Integration
 
 **References:**
-- **bug-workflow standard** (in `dev-standards`) — bug detail and resolution file format, directory layout, and the "no batching" rule requiring separate discovery and resolution commits.
-- **timestamp-format standard** (in `dev-standards`) — defines the `YYYY.MM.DD-HHMMSS` time-component variant used as the `bug_id` prefix.
+- **bug-workflow** — `standards/bug-workflow.md`
+- **timestamp-format** — `standards/timestamp-format.md`
 - **dev-tools:bug-workflow** — upstream skill that produces the detail file this skill requires. Invoke it first if the detail file doesn't exist.
 - **dev-tools:systematic-debugging** — root cause investigation principles used in Phase 1.
 - **dev-tools:verification-before-completion** — evidence-before-claims principle used in Phase 4-6.

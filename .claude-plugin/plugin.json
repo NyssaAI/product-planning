@@ -1,7 +1,7 @@
 {
   "name": "dev-tools",
-  "version": "5.0.7",
-  "description": "Development workflow skills: TDD, debugging, bugfix loops, standards-aware brainstorming, and product planning",
+  "version": "5.0.8",
+  "description": "Development workflow skills: TDD, debugging, brainstorming, ai-plan code/module graph, git worktrees, PR workflow, and product planning",
   "author": {
     "name": "jamaynor"
   },
@@ -9,8 +9,10 @@
   "license": "MIT",
   "keywords": [
     "skills",
+    "standards",
     "tdd",
     "debugging",
+    "ai-plan",
     "collaboration",
     "best-practices",
     "workflows"

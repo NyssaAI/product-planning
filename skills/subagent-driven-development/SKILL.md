@@ -39,6 +39,14 @@ digraph when_to_use {
 
 ## The Process
 
+### Step 0: Verify Isolated Workspace
+
+Before reading the plan or dispatching subagents:
+
+1. Confirm feature branch (not `main`/`master`): `git branch --show-current`
+2. If wrong branch or no worktree, invoke **dev-tools:using-git-worktrees** (REQUIRED SUB-SKILL) and do not proceed until ready
+3. Match plan header **Branch** and **Worktree** to your current directory
+
 ```dot
 digraph process {
     rankdir=TB;
@@ -58,11 +66,16 @@ digraph process {
         "Mark task complete in TodoWrite" [shape=box];
     }
 
+    "On feature branch?\n(not main/master)" [shape=diamond];
+    "Invoke using-git-worktrees" [shape=box];
     "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use dev-tools:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
+    "On feature branch?\n(not main/master)" -> "Invoke using-git-worktrees" [label="no"];
+    "Invoke using-git-worktrees" -> "On feature branch?\n(not main/master)";
+    "On feature branch?\n(not main/master)" -> "Read plan, extract all tasks with full text, note context, create TodoWrite" [label="yes"];
     "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
     "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
@@ -128,6 +141,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
+[Verify on feature branch in worktree — not main]
 [Read plan file once: docs/plans/feature-plan.md]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
@@ -194,7 +208,8 @@ Code reviewer: ✅ Approved
 
 [After all tasks]
 [Dispatch final code-reviewer]
-Final reviewer: All requirements met, ready to merge
+[Invoke finishing-a-development-branch: push + gh pr create]
+You: PR opened: https://github.com/org/repo/pull/123
 
 Done!
 ```
@@ -265,13 +280,14 @@ Done!
 ## Integration
 
 **Required workflow skills:**
-- **dev-tools:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
+- **dev-tools:using-git-worktrees** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
 - **dev-tools:writing-plans** - Creates the plan this skill executes
 - **dev-tools:requesting-code-review** - Code review template for reviewer subagents
 - **dev-tools:finishing-a-development-branch** - Complete development after all tasks
 
 **Subagents should use:**
 - **dev-tools:test-driven-development** - Subagents follow TDD for each task
+- **dev-tools:using-core-standards** (+ stack skills from plan) - Conform to bundled standards during implementation
 
 **Alternative workflow:**
 - **dev-tools:executing-plans** - Use for parallel session instead of same-session execution

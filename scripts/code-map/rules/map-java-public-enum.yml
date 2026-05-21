@@ -1,0 +1,8 @@
+id: map-java-public-enum
+message: public enum
+severity: info
+language: Java
+metadata:
+  mapKind: enum
+rule:
+  pattern: public enum $NAME { $$$ }

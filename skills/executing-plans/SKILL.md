@@ -15,6 +15,17 @@ Load plan, review critically, execute all tasks, report when complete.
 
 ## The Process
 
+### Step 0: Verify Isolated Workspace
+
+**Before loading the plan:**
+
+1. Confirm you are on a feature branch (not `main` or `master`):
+   ```bash
+   git branch --show-current
+   ```
+2. If on `main`/`master` or no feature worktree exists, STOP and invoke **dev-tools:using-git-worktrees** (REQUIRED SUB-SKILL). Do not execute plan tasks until the worktree is ready.
+3. The plan header should list **Branch** and **Worktree** — verify you are in that worktree.
+
 ### Step 1: Load and Review Plan
 1. Read plan file
 2. Review critically - identify any questions or concerns about the plan
@@ -32,9 +43,9 @@ For each task:
 ### Step 3: Complete Development
 
 After all tasks complete and verified:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
+- Announce: "I'm using the finishing-a-development-branch skill to open a pull request."
 - **REQUIRED SUB-SKILL:** Use dev-tools:finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+- Follow that skill to verify tests, push the branch, and create a PR with `gh pr create`
 
 ## When to Stop and Ask for Help
 
@@ -65,6 +76,6 @@ After all tasks complete and verified:
 ## Integration
 
 **Required workflow skills:**
-- **dev-tools:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
+- **dev-tools:using-git-worktrees** - REQUIRED: Ensures isolated workspace (creates one or verifies existing)
 - **dev-tools:writing-plans** - Creates the plan this skill executes
 - **dev-tools:finishing-a-development-branch** - Complete development after all tasks

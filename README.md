@@ -1,6 +1,6 @@
 # dev-tools
 
-dev-tools is a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
+dev-tools is a complete software development workflow for your coding agents: **process skills** (brainstorm → plan → TDD → PR), **jamaynor development standards** (bundled — no separate dev-standards plugin), and **ai-plan** code/module graph generators.
 
 ## How it works
 
@@ -84,9 +84,20 @@ Start a new session in your chosen platform and ask for something that should tr
 
 1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
-2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
+2. **using-git-worktrees** - **Hard gate** after spec approval, before any plan. Creates feature branch + isolated worktree (never `main`/`master`), runs setup, verifies clean test baseline.
 
-3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
+3. **writing-plans** - Runs only inside that worktree. Uses **ai-plan** module graph (`docs/ai-plan/scopes/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
+
+**AI Plan (code & module graph):** Bundled under `scripts/code-map/` and `scripts/ai-plan/`. `@ast-grep/cli` ships with the plugin (auto-installs into the plugin directory on first use). From a project repo with `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --init --write-scripts
+npm run ai-plan   # after init copies scripts into the project
+```
+
+Or use the `/ai-plan` command in Claude Code. See **using-ai-plan** skill and `scripts/ai-plan/README.md`.
+
+**Plugin maintainers / git clone:** run `npm install` once at the dev-tools plugin root so `node_modules/@ast-grep/cli` exists before publishing; end users get the same via auto-install on first `code-map` run if the marketplace copy omits `node_modules`.
 
 4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
 
@@ -94,7 +105,7 @@ Start a new session in your chosen platform and ask for something that should tr
 
 6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
 
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
+7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, pushes the feature branch, and **opens a pull request** with `gh pr create` (required unless project docs explicitly override).
 
 **The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
 
@@ -118,18 +129,28 @@ Start a new session in your chosen platform and ask for something that should tr
 
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
-- **writing-plans** - Detailed implementation plans
+- **writing-plans** - Detailed implementation plans (ai-plan scope when available)
+- **using-ai-plan** - Code map + module graph for planning (`docs/ai-plan/`)
 - **executing-plans** - Batch execution with checkpoints
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist
 - **receiving-code-review** - Responding to feedback
 - **using-git-worktrees** - Parallel development branches
-- **finishing-a-development-branch** - Merge/PR decision workflow
+- **finishing-a-development-branch** - Push branch and open PR (required integration path)
 - **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
+
+**Standards** (bundled — `standards/` + `manifest.json`)
+- **using-core-standards** - Project structure, errors, logging, testing, DDD, workflow artifacts
+- **using-dotnet-standards** / **using-nextjs-standards** / **using-postgres-standards** / **using-python-standards** - Stack-specific rules
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
 - **using-dev-tools** - Introduction to the skills system
+- **using-ai-plan** - Code map + module graph for planning
+
+## Repo layout (your projects)
+
+Consumer repos follow **`standards/project-structure.md`** (in the plugin). Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`. Workflow adds `docs/specs/`, `docs/plans/`, `docs/ai-plan/`, `docs/backlog/`, `docs/bugs/`. See `docs/standards.md` in this plugin.
 
 ## Philosophy
 

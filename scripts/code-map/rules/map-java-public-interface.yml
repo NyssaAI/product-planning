@@ -1,0 +1,8 @@
+id: map-java-public-interface
+message: public interface
+severity: info
+language: Java
+metadata:
+  mapKind: interface
+rule:
+  pattern: public interface $NAME { $$$ }

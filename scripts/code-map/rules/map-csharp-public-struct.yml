@@ -1,0 +1,8 @@
+id: map-csharp-public-struct
+message: public struct
+severity: info
+language: CSharp
+metadata:
+  mapKind: struct
+rule:
+  pattern: public struct $NAME
