@@ -191,15 +191,15 @@ Steps (all idempotent — skips if target already exists):
    - Rename `INDEX.md` → `index.md`
    - Rename `CODE_MAP.json` → `code-map.json`
    - Rename `MODULE_MAP.json` → `module-map.json`
-   - Move `modules/` unchanged
+   - Rename `scopes/` → `modules/` (contents move unchanged)
 2. Move `docs/specs/` → `docs/agent-files/specs/`
 3. Move `docs/plans/` → `docs/agent-files/plans/`
 4. Move `docs/backlog/` → `docs/agent-files/backlog/`
 5. Move `docs/bugs/` → `docs/agent-files/bugs/`
 6. Patch cross-references in moved files:
    - `module-map.json` `"codeMap"` field: `docs/ai-plan/CODE_MAP.json` → `docs/agent-files/context/code-map.json`
-   - `index.md` scope links: `./modules/` references remain relative — no change needed
-   - `module-map.json` `"planningScope"` fields: `docs/ai-plan/modules/` → `docs/agent-files/context/modules/`
+   - `index.md` module links: relative `./scopes/` references → `./modules/` (the directory is renamed in step 1, so old relative links break)
+   - `module-map.json` `"planningScope"` keys: rename to `"planningModule"`; values `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/`
 7. Create `docs/design/` with `.gitkeep`
 8. Create `docs/use-cases/` with `.gitkeep`
 9. Create `docs/features.md` stub (table header + one commented example row)
