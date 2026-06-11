@@ -1,0 +1,14 @@
+id: map-ts-nest-route
+message: NestJS route decorator method
+severity: info
+language: TypeScript
+metadata:
+  mapKind: route
+rule:
+  kind: method_definition
+  follows:
+    kind: decorator
+    regex: '@(Get|Post|Put|Delete|Patch)\b'
+  has:
+    field: name
+    pattern: $NAME

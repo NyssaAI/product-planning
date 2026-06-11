@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:37:07.191Z",
+  "generated": "2026-06-11T16:41:21.679Z",
   "roots": [
     "."
   ],
@@ -13,8 +13,8 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 21,
-  "symbolCount": 47,
+  "fileCount": 22,
+  "symbolCount": 51,
   "files": [
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
@@ -33,7 +33,8 @@
         {
           "name": "API_ROUTE_CANDIDATES",
           "kind": "const",
-          "line": 38
+          "line": 38,
+          "signature": "export const API_ROUTE_CANDIDATES = ["
         },
         {
           "name": "MODULE_GLOB_CANDIDATES",
@@ -324,7 +325,8 @@
         {
           "name": "DEFAULT_SCAN_ROOTS",
           "kind": "const",
-          "line": 6
+          "line": 6,
+          "signature": "export const DEFAULT_SCAN_ROOTS = ['src', 'native']; /** @type"
         },
         {
           "name": "SUPPORTED_LANGUAGES",
@@ -399,6 +401,35 @@
           "line": 73,
           "signature": "export function resolveAstGrepBinary(options)",
           "summary": "Resolve ast-grep binary shipped with the dev-tools plugin."
+        }
+      ]
+    },
+    {
+      "path": "test/claude-code/analyze-token-usage.py",
+      "symbols": [
+        {
+          "name": "analyze_main_session",
+          "kind": "py-function",
+          "line": 12,
+          "signature": "def analyze_main_session(filepath)"
+        },
+        {
+          "name": "format_tokens",
+          "kind": "py-function",
+          "line": 72,
+          "signature": "def format_tokens(n)"
+        },
+        {
+          "name": "calculate_cost",
+          "kind": "py-function",
+          "line": 76,
+          "signature": "def calculate_cost(usage, input_cost_per_m=3.0, output_cost_per_m=15.0)"
+        },
+        {
+          "name": "main",
+          "kind": "py-function",
+          "line": 83,
+          "signature": "def main()"
         }
       ]
     }

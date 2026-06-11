@@ -17,9 +17,19 @@ const MAX_SIGNATURE_LENGTH = 300;
 export function extractSignature(filePath, lineNumber) {
   try {
     const lines = readFileSync(filePath, 'utf8').split('\n');
-    const start = lineNumber - 1;
+    let start = lineNumber - 1;
     if (start < 0 || start >= lines.length) {
       return undefined;
+    }
+
+    // Matches on attributed/decorated declarations start at the attribute or
+    // decorator line — skip forward to the declaration itself.
+    while (
+      start < lines.length - 1 &&
+      /^\s*(@|\[)/.test(lines[start]) &&
+      start < lineNumber - 1 + MAX_SIGNATURE_LINES
+    ) {
+      start += 1;
     }
 
     const chunk = lines.slice(
@@ -50,8 +60,9 @@ export function extractSignature(filePath, lineNumber) {
         break;
       }
       // Declarations without parameter lists (classes, interfaces) finish on
-      // the first line that opens a body.
-      if (!sawOpenParen && /[{:]\s*$/.test(line)) {
+      // the first line that opens a body — even when the body closes on the
+      // same line (`export class Empty {}`).
+      if (!sawOpenParen && (/\{/.test(line) || /:\s*$/.test(line))) {
         done = true;
         break;
       }
