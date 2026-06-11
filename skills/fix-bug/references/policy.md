@@ -4,7 +4,7 @@ This repository uses a single user-facing entrypoint for bug handling: **`fix-bu
 
 ## Allowed flow
 
-1. **fix-bug-log** — document bug in `docs/bugs/{bug_id}/`, discovery commit
+1. **fix-bug-log** — document bug in `docs/agent-files/bugs/{bug_id}/`, discovery commit
 2. **Analyze** — root-cause investigation via `systematic-debugging`
 3. **fix-bug-resolve** — failing test, fix, resolution file, resolution commit
 4. **fix-bug-complete** — verify gates and report
