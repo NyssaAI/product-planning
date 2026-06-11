@@ -6,9 +6,9 @@
 
 **Architecture:** New post-processing lib modules for signature and comment extraction under `scripts/code-map/lib/`. New ast-grep rule variants for C#, TypeScript, and Python decorators. `render.mjs` updated for capability-first module files and enriched INDEX/MODULE_MAP. New `regen-if-source-changed.mjs` wrapper for the PostToolUse hook. Skill language shifts from guidance to instruction for L1 context loading.
 
-**Dependency:** Paths below assume the `docs/agent-files/` layout from `2026-06-11-dev-tools-directory-reorganization-design.md` is in place. If implementing before the directory reorg, substitute `docs/ai-plan/` for `docs/agent-files/context/` and `docs/ai-plan/scopes/` for `docs/agent-files/context/modules/` throughout.
+**Dependency (hard prerequisite):** The `docs/agent-files/` layout from `feature/directory-reorganization` (plan: `2026-06-11-directory-reorganization.md`) MUST be in place before Task 1. Merge that branch into this one first (`git merge feature/directory-reorganization`) and confirm `node scripts/ai-plan/generate.mjs --doctor` passes. That reorg also performs the on-disk `scopes/` → `modules/` path rename — this plan's Task 10 handles only the remaining field and terminology renames (`planningScope` → `planningModule`, `preserveScope` → `preserveModule`, "scope file" → "module file"). All paths below use the post-reorg layout.
 
-**Planning scope:** `docs/ai-plan/modules/main.md`
+**Planning module:** `docs/agent-files/context/modules/main.md` (post-reorg path; `docs/ai-plan/scopes/main.md` before the prerequisite merge)
 
 **Spec:** `docs/specs/2026-06-11-code-map-improvements-design.md`
 
@@ -216,7 +216,7 @@ Run the code map generator against the dev-tools repo itself:
 node scripts/code-map/generate-code-map.mjs
 ```
 
-Open `docs/ai-plan/CODE_MAP.json` (or new path if reorg is done). Confirm:
+Open `docs/agent-files/context/code-map.json`. Confirm:
 - Existing `name`, `kind`, `line` fields are still present
 - Some entries have `signature` and/or `summary` fields
 - No entries have empty string `signature` or `summary` (they should be absent, not empty)
@@ -244,7 +244,7 @@ C# classes preceded by `[ApiController]`, `[Route]`, or similar attributes are n
 
 - [ ] **Step 1: Read the existing C# rules**
 
-Read `scripts/code-map/rules/map-csharp-public-class.yml` and `scripts/code-map/rules/map-csharp-public-class.yml` to understand the rule format.
+Read `scripts/code-map/rules/map-csharp-public-class.yml` and `scripts/code-map/rules/map-csharp-public-interface.yml` to understand the rule format.
 
 - [ ] **Step 2: Create attributed class rule**
 
@@ -494,7 +494,7 @@ node scripts/code-map/generate-code-map.mjs
 node scripts/ai-plan/generate.mjs
 ```
 
-Read the generated module file at `docs/ai-plan/modules/main.md` (or new path). Confirm:
+Read the generated module file at `docs/agent-files/context/modules/main.md`. Confirm:
 - The capability-first sections appear before Boundaries
 - Public API table is present (may be sparse for the dev-tools repo which is mostly markdown)
 - No template placeholders like `{description}` remain unfilled
@@ -626,14 +626,14 @@ with backwards-compat fallback."
 ### Task 10: Rename scopes → modules throughout
 
 **Files:**
-- Modify: `scripts/ai-plan/lib/bootstrap.mjs` (line 112: `'docs/ai-plan/scopes'`)
-- Modify: `scripts/ai-plan/lib/doctor.mjs` (any `scopes` path references)
-- Modify: `scripts/ai-plan/lib/render.mjs` (any `scopes` path references)
-- Modify: `scripts/ai-plan/lib/config.mjs` (any `scopes` or `planningScope` references)
-- Modify: `scripts/ai-plan/generate.mjs` (directory creation and `planningScope` field)
-- Modify: `skills/using-ai-plan/SKILL.md` (all `scopes/` and `planningScope` references)
+- Modify: `scripts/ai-plan/lib/bootstrap.mjs` (verify the `modules` path landed via the reorg merge; fix any leftover `scopes` string)
+- Modify: `scripts/ai-plan/lib/doctor.mjs` (any leftover `scopes` path references)
+- Modify: `scripts/ai-plan/lib/render.mjs` (any leftover `scopes` path references)
+- Modify: `scripts/ai-plan/lib/config.mjs` (any `planningScope` references)
+- Modify: `scripts/ai-plan/generate.mjs` (`planningScope` field)
+- Modify: `skills/using-ai-plan/SKILL.md` (`planningScope` and "scope file" terminology)
 
-This is purely a rename — no logic changes.
+This is purely a rename — no logic changes. The on-disk `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/` path rename was already done by the directory reorganization merge — this task covers the field name and prose terminology that the reorg did not touch.
 
 - [ ] **Step 1: Grep for all occurrences**
 
@@ -647,7 +647,7 @@ Record all file/line hits.
 - [ ] **Step 2: Apply renames in scripts**
 
 For each script file found:
-- `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/` (or `docs/ai-plan/modules/` if reorg not yet done)
+- Any leftover `scopes` path string → the `modules` equivalent (the reorg merge converted these already — fix stragglers only)
 - `planningScope` → `planningModule`
 - `preserveScope` → `preserveModule` (already handled in Task 9 for config.mjs)
 - "scope file" → "module file" in comments and JSDoc
@@ -655,7 +655,7 @@ For each script file found:
 - [ ] **Step 3: Apply renames in skills**
 
 In `skills/using-ai-plan/SKILL.md`:
-- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md`
+- Verify module file paths read `docs/agent-files/context/modules/<module-id>.md` (converted by the reorg merge); fix any leftover `scopes` string
 - `planningScope` → `planningModule`
 - "scope file" → "module file"
 - "scope" → "module" where it refers to the artifact type (not the concept "scope of work")
@@ -720,7 +720,7 @@ In the module loop, add:
 node scripts/ai-plan/generate.mjs
 ```
 
-Read `docs/ai-plan/INDEX.md` (or new path). Confirm the module table has the new columns with content.
+Read `docs/agent-files/context/index.md`. Confirm the module table has the new columns with content.
 
 - [ ] **Step 5: Commit**
 
@@ -767,7 +767,7 @@ Strip undefined keys before serializing (so absent fields don't clutter the JSON
 node scripts/ai-plan/generate.mjs
 ```
 
-Read `docs/ai-plan/MODULE_MAP.json`. Confirm `description` and `capabilities` are present in entries where they were inferred or manually set.
+Read `docs/agent-files/context/module-map.json`. Confirm `description` and `capabilities` are present in entries where they were inferred or manually set.
 
 - [ ] **Step 4: Commit**
 
@@ -1050,8 +1050,7 @@ Otherwise, the index is current — skip regeneration.
 
 - [ ] **Step 3: Update path references in the Workflow artifacts section**
 
-- `docs/ai-plan/scopes/<module>.md` → `docs/agent-files/context/modules/<module>.md`
-- `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
+- Verify the L1 path reads `docs/agent-files/context/modules/<module>.md` and the index path reads `docs/agent-files/context/index.md` (both converted by the reorg merge); fix any leftover `scopes` or uppercase-filename remnant
 
 - [ ] **Step 4: Commit**
 
@@ -1155,7 +1154,7 @@ In the "Single module focus" section, update the module file path references:
 grep -n "docs/ai-plan\|planningScope" skills/design-spec/SKILL.md
 ```
 
-Should return nothing.
+Should return only the deliberate legacy-fallback mention from Step 2 ("or legacy `docs/ai-plan/INDEX.md`") — nothing else.
 
 - [ ] **Step 5: Commit**
 
@@ -1242,11 +1241,7 @@ Read `skills/using-ai-plan/SKILL.md` in full. Note the Progressive Disclosure ta
 
 - [ ] **Step 2: Update Progressive Disclosure table**
 
-Change the L1 row from:
-```
-| L1 | **One** `docs/ai-plan/scopes/<module-id>.md` | **During write-plan** — pick module from INDEX |
-```
-To:
+Change the L1 row (the path itself was already converted by the reorg merge — this change is the instruction language) to:
 ```
 | L1 | **One** `docs/agent-files/context/modules/<module-id>.md` | **During write-plan** — Read the module file now (Read tool). Do not defer or summarize. |
 ```
@@ -1300,10 +1295,10 @@ node scripts/ai-plan/generate.mjs
 
 Confirm:
 - No errors or warnings
-- `CODE_MAP.json` entries have `signature` and/or `summary` fields on at least some entries
-- `docs/ai-plan/modules/main.md` (or new path) has capability-first sections
-- `INDEX.md` module table has `What it does` and `Owns` columns
-- `MODULE_MAP.json` has `description` and `capabilities` on module entries
+- `docs/agent-files/context/code-map.json` entries have `signature` and/or `summary` fields on at least some entries
+- `docs/agent-files/context/modules/main.md` has capability-first sections
+- `docs/agent-files/context/index.md` module table has `What it does` and `Owns` columns
+- `docs/agent-files/context/module-map.json` has `description` and `capabilities` on module entries
 - `CLAUDE.md` has the `<!-- ai-plan:module-map:start/end -->` embedded section
 
 - [ ] **Step 2: Verify doctor passes**
@@ -1317,11 +1312,11 @@ Should pass with no errors.
 - [ ] **Step 3: Grep for remaining old terms**
 
 ```bash
-grep -rn "planningScope\|preserveScope\|docs/ai-plan/scopes\|scope file" \
+grep -rn "planningScope\|preserveScope\|docs/ai-plan/scopes\|scope file\|context/scopes" \
   scripts/ skills/
 ```
 
-Investigate and fix any remaining hits (except spec files which are intentional).
+Investigate and fix any remaining hits. Allowed exceptions: spec files under `docs/` (historical record), deliberate legacy-fallback mentions in skill text (e.g. design-spec's "or legacy `docs/ai-plan/INDEX.md`"), and the `preserveScope` backwards-compat fallback read in `config.mjs` from Task 9.
 
 - [ ] **Step 4: Verify git log**
 
