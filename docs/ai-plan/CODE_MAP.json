@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "1.0",
+  "generated": "2026-06-11T13:16:38.428Z",
+  "roots": [
+    "."
+  ],
+  "languages": [
+    "JavaScript",
+    "TypeScript",
+    "CSharp",
+    "Java",
+    "Python",
+    "Go",
+    "Rust"
+  ],
+  "fileCount": 18,
+  "symbolCount": 43,
+  "files": [
+    {
+      "path": "scripts/ai-plan/lib/auto-detect.mjs",
+      "symbols": [
+        {
+          "name": "DEFAULT_DOC_CANDIDATES",
+          "kind": "const",
+          "line": 5
+        },
+        {
+          "name": "CODE_ROOT_CANDIDATES",
+          "kind": "const",
+          "line": 22
+        },
+        {
+          "name": "API_ROUTE_CANDIDATES",
+          "kind": "const",
+          "line": 38
+        },
+        {
+          "name": "MODULE_GLOB_CANDIDATES",
+          "kind": "const",
+          "line": 49
+        },
+        {
+          "name": "readProjectName",
+          "kind": "function",
+          "line": 60
+        },
+        {
+          "name": "detectCodeMapRoots",
+          "kind": "function",
+          "line": 80
+        },
+        {
+          "name": "detectApiRoutes",
+          "kind": "function",
+          "line": 100
+        },
+        {
+          "name": "detectSrcChildModules",
+          "kind": "function",
+          "line": 147
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/bootstrap.mjs",
+      "symbols": [
+        {
+          "name": "bootstrapRepo",
+          "kind": "function",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/build.mjs",
+      "symbols": [
+        {
+          "name": "buildAiPlanModel",
+          "kind": "function",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/config.mjs",
+      "symbols": [
+        {
+          "name": "loadAiPlanConfig",
+          "kind": "function",
+          "line": 41
+        },
+        {
+          "name": "validateRequiredDocs",
+          "kind": "function",
+          "line": 111
+        },
+        {
+          "name": "resolveDocPath",
+          "kind": "function",
+          "line": 133
+        },
+        {
+          "name": "writeStarterConfigs",
+          "kind": "function",
+          "line": 146
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/discover-modules.mjs",
+      "symbols": [
+        {
+          "name": "discoverModules",
+          "kind": "function",
+          "line": 26
+        },
+        {
+          "name": "parseNavEntries",
+          "kind": "function",
+          "line": 305
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/docs.mjs",
+      "symbols": [
+        {
+          "name": "loadProjectBrief",
+          "kind": "function",
+          "line": 9
+        },
+        {
+          "name": "extractConventionsFromTechStack",
+          "kind": "function",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/doctor.mjs",
+      "symbols": [
+        {
+          "name": "checkRuntimeReadiness",
+          "kind": "function",
+          "line": 150
+        },
+        {
+          "name": "runDoctor",
+          "kind": "function",
+          "line": 194
+        },
+        {
+          "name": "formatDoctorReport",
+          "kind": "function",
+          "line": 256
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/logger.mjs",
+      "symbols": [
+        {
+          "name": "createLogger",
+          "kind": "function",
+          "line": 57
+        },
+        {
+          "name": "log",
+          "kind": "const",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/module-deps.mjs",
+      "symbols": [
+        {
+          "name": "buildModuleEdges",
+          "kind": "function",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "symbols": [
+        {
+          "name": "detectEntryPoints",
+          "kind": "function",
+          "line": 45
+        },
+        {
+          "name": "detectTestRoots",
+          "kind": "function",
+          "line": 88
+        },
+        {
+          "name": "detectConfigFiles",
+          "kind": "function",
+          "line": 123
+        },
+        {
+          "name": "detectPublicSurface",
+          "kind": "function",
+          "line": 141
+        },
+        {
+          "name": "inferFlows",
+          "kind": "function",
+          "line": 171
+        },
+        {
+          "name": "inferOutOfScope",
+          "kind": "function",
+          "line": 200
+        },
+        {
+          "name": "enrichModule",
+          "kind": "function",
+          "line": 225
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/project-root.mjs",
+      "symbols": [
+        {
+          "name": "findProjectRoot",
+          "kind": "function",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/render.mjs",
+      "symbols": [
+        {
+          "name": "renderIndex",
+          "kind": "function",
+          "line": 5
+        },
+        {
+          "name": "renderModuleScope",
+          "kind": "function",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/routes.mjs",
+      "symbols": [
+        {
+          "name": "discoverHttpRoutes",
+          "kind": "function",
+          "line": 25
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/stack-profiles/index.mjs",
+      "symbols": [
+        {
+          "name": "detectStackModules",
+          "kind": "function",
+          "line": 245
+        }
+      ]
+    },
+    {
+      "path": "scripts/code-map/lib/code-map-config.mjs",
+      "symbols": [
+        {
+          "name": "DEFAULT_SCAN_ROOTS",
+          "kind": "const",
+          "line": 6
+        },
+        {
+          "name": "SUPPORTED_LANGUAGES",
+          "kind": "const",
+          "line": 9
+        },
+        {
+          "name": "SOURCE_EXTENSIONS",
+          "kind": "const",
+          "line": 19
+        },
+        {
+          "name": "loadCodeMapConfig",
+          "kind": "function",
+          "line": 57
+        }
+      ]
+    },
+    {
+      "path": "scripts/code-map/lib/file-header-comment.mjs",
+      "symbols": [
+        {
+          "name": "extractFileHeaderComment",
+          "kind": "function",
+          "line": 117
+        }
+      ]
+    },
+    {
+      "path": "scripts/lib/plugin-root.mjs",
+      "symbols": [
+        {
+          "name": "findPluginRoot",
+          "kind": "function",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "path": "scripts/lib/resolve-ast-grep.mjs",
+      "symbols": [
+        {
+          "name": "resolveAstGrepBinary",
+          "kind": "function",
+          "line": 73
+        }
+      ]
+    }
+  ]
+}

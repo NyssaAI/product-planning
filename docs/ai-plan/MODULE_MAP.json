@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "generated": "2026-06-11T13:16:41.536Z",
+  "project": {
+    "name": "dev-tools",
+    "docs": {
+      "product": "docs/product.md",
+      "roadmap": "docs/roadmap.md",
+      "techStack": "docs/tech-stack.md"
+    }
+  },
+  "progressiveDisclosure": {
+    "levels": [
+      {
+        "level": 0,
+        "name": "task",
+        "inject": "Your feature/bug doc and acceptance criteria"
+      },
+      {
+        "level": 1,
+        "name": "module-scope",
+        "inject": "docs/ai-plan/scopes/<module-id>.md (one file)"
+      },
+      {
+        "level": 2,
+        "name": "product-docs",
+        "inject": "docs/product.md, docs/roadmap.md, and/or docs/tech-stack.md",
+        "when": "Product intent or stack constraints matter"
+      },
+      {
+        "level": 3,
+        "name": "code-map",
+        "inject": "docs/ai-plan/CODE_MAP.json",
+        "when": "Plan lists symbols; need line numbers"
+      }
+    ],
+    "index": "docs/ai-plan/INDEX.md"
+  },
+  "modules": [
+    {
+      "id": "main",
+      "name": "dev-tools",
+      "root": ".",
+      "source": "fallback",
+      "dependsOn": [],
+      "usedBy": [],
+      "routeCount": 0,
+      "symbolCount": 0,
+      "planningScope": "docs/ai-plan/scopes/main.md"
+    }
+  ],
+  "edges": [],
+  "codeMap": "docs/ai-plan/CODE_MAP.json",
+  "stats": {
+    "moduleCount": 1,
+    "routeCount": 0,
+    "codeMapSymbols": 43
+  }
+}
