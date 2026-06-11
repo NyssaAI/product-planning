@@ -3,6 +3,7 @@
 **Date:** 2026-06-11
 **Status:** Approved
 **Target repo:** `jamaynor/dev-tools` plugin
+**Depends on:** `2026-06-11-dev-tools-directory-reorganization-design.md` — paths in this spec assume the `docs/agent-files/` layout is already in place. If implemented before the reorg, substitute `docs/ai-plan/` for `docs/agent-files/context/`.
 
 ## Summary
 
@@ -204,14 +205,21 @@ The markers allow regeneration to replace the section without touching surroundi
       "matcher": "Write|Edit",
       "hooks": [{
         "type": "command",
-        "command": "node scripts/code-map/generate-code-map.mjs && node scripts/ai-plan/generate.mjs"
+        "command": "node <PLUGIN_ROOT>/scripts/ai-plan/regen-if-source-changed.mjs"
       }]
     }]
   }
 }
 ```
 
-The hook runs regeneration in the background when a Write or Edit touches a file under a source root. CLAUDE.md is updated with the new module map immediately. Opt-out: set `"autoRegenerate": false` in `ai-plan.config.json`; the hook script checks this flag before running.
+The hook delegates to a new wrapper script `scripts/ai-plan/regen-if-source-changed.mjs` that:
+1. Reads the modified file path from the hook's environment (`CLAUDE_TOOL_USE_FILE` or equivalent)
+2. Checks if it falls under a configured source root — exits silently if not (e.g. docs edits, config changes do not trigger regeneration)
+3. Checks `"autoRegenerate": false` in `ai-plan.config.json` — exits silently if opted out
+4. Spawns `generate-code-map.mjs && generate.mjs` as a detached background process so it does not block the agent
+5. Logs the run to `docs/agent-files/context/.regen.log` for debugging
+
+CLAUDE.md is updated with the new module map when the background process completes. Opt-out: set `"autoRegenerate": false` in `ai-plan.config.json`.
 
 ### 4.2 Codex: reliable session-start regeneration
 
