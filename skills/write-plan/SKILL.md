@@ -27,9 +27,9 @@ Do NOT write or save an implementation plan until you are in an isolated worktre
 - `dev-tools:using-git-worktrees` completed in this session (or you are already in that feature worktree)
 - Current branch is a feature branch — not `main` or `master`
 - Know the branch name and worktree path for the plan header
-- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/ai-plan/` if stale, then load **one** L1 scope file for the target module
+- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/agent-files/context/` if stale, then load **one** L1 scope file for the target module
 
-**Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
+**Save plans to:** `docs/agent-files/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
 
 ## AI Plan Context (code & module graph)
@@ -37,11 +37,11 @@ Do NOT write or save an implementation plan until you are in an isolated worktre
 When the project has source code and `docs/product.md` / `docs/roadmap.md` / `docs/tech-stack.md` exist:
 
 1. **REQUIRED SUB-SKILL:** `dev-tools:using-ai-plan`
-2. If `docs/ai-plan/INDEX.md` is missing or scopes are outdated, run generate in the **project repo** (see using-ai-plan) before writing tasks
-3. Read `docs/ai-plan/INDEX.md` — pick **one** module matching the spec's **Primary module** (from design-spec's Module scope section) or the spec / roadmap item if no module scope section
-4. Read **only** `docs/ai-plan/scopes/<module-id>.md` (L1) — the module's architectural picture: boundaries, `dependsOn` / `usedBy`, routes, test roots, entry points. Use this for file paths and task order; it complements the feature **spec**, it does not replace it
-5. Order tasks respecting module dependencies (leaves or dependency-safe order per MODULE_MAP edges)
-6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `CODE_MAP.json`, or other scope files during planning
+2. If `docs/agent-files/context/index.md` is missing or scopes are outdated, run generate in the **project repo** (see using-ai-plan) before writing tasks
+3. Read `docs/agent-files/context/index.md` — pick **one** module matching the spec's **Primary module** (from design-spec's Module scope section) or the spec / roadmap item if no module scope section
+4. Read **only** `docs/agent-files/context/modules/<module-id>.md` (L1) — the module's architectural picture: boundaries, `dependsOn` / `usedBy`, routes, test roots, entry points. Use this for file paths and task order; it complements the feature **spec**, it does not replace it
+5. Order tasks respecting module dependencies (leaves or dependency-safe order per module-map edges)
+6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `code-map.json`, or other scope files during planning
 
 If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip this section.
 
@@ -101,7 +101,7 @@ This structure informs the task decomposition. Each task should produce self-con
 
 **Integration:** Pull request via `gh pr create` when implementation completes (`dev-tools:execute-plan` → `execute-plan-finish`)
 
-**Planning scope:** `docs/ai-plan/scopes/<module-id>.md` (when ai-plan is present)
+**Planning scope:** `docs/agent-files/context/modules/<module-id>.md` (when ai-plan is present)
 
 **Standards:** [list from spec Standards Applied — e.g. core, dotnet, nextjs]
 
@@ -183,7 +183,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, hand off to **execute-plan** — do not start implementation in this skill.
 
-1. Tell your human partner: "Plan saved to `docs/plans/<filename>.md`. When you're ready to implement, say so — I'll use **execute-plan** (verify → run → finish with PR)."
+1. Tell your human partner: "Plan saved to `docs/agent-files/plans/<filename>.md`. When you're ready to implement, say so — I'll use **execute-plan** (verify → run → finish with PR)."
 2. **Do NOT** invoke `execute-plan-run`, `execute-plan-run-inline`, or `execute-plan-finish` directly — only via **execute-plan**
 3. Wait for explicit go-ahead unless your human partner already asked to implement in the same message
 

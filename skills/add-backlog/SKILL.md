@@ -1,6 +1,6 @@
 ---
 name: add-backlog
-description: Use when adding a new planned work item to the backlog. Creates docs/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md per the backlog-workflow standard, commits, and pushes.
+description: Use when adding a new planned work item to the backlog. Creates docs/agent-files/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md per the backlog-workflow standard, commits, and pushes.
 ---
 
 # Add Backlog Item
@@ -38,12 +38,12 @@ Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md` — the
 
 Construct the directory and file paths:
 
-- Directory: `docs/backlog/{timestamp}-{slug}/`
-- Detail file: `docs/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
+- Directory: `docs/agent-files/backlog/{timestamp}-{slug}/`
+- Detail file: `docs/agent-files/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
 
 Example:
-- `docs/backlog/2026.04.24-102847-add-sso-via-okta/`
-- `docs/backlog/2026.04.24-102847-add-sso-via-okta/2026.04.24-102847-add-sso-via-okta-detail.md`
+- `docs/agent-files/backlog/2026.04.24-102847-add-sso-via-okta/`
+- `docs/agent-files/backlog/2026.04.24-102847-add-sso-via-okta/2026.04.24-102847-add-sso-via-okta-detail.md`
 
 ## Step 3: Write detail file
 
@@ -101,11 +101,11 @@ Tell the user:
 
 > Backlog item documented and committed:
 >
-> - `docs/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
+> - `docs/agent-files/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
 > - Commit: `{sha}`
 > - Pushed: yes / no (no remote configured)
 >
-> The item is now in the backlog. When you're ready to work on it, invoke `dev-tools:design-spec` with this detail file as input — design-spec reads the backlog item, produces a spec in `docs/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement.
+> The item is now in the backlog. When you're ready to work on it, invoke `dev-tools:design-spec` with this detail file as input — design-spec reads the backlog item, produces a spec in `docs/agent-files/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement.
 
 ## Tips
 

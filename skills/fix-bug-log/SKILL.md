@@ -1,6 +1,6 @@
 ---
 name: fix-bug-log
-description: Internal sub-skill invoked by fix-bug only. Documents a newly discovered bug in docs/bugs/. Do not invoke directly — use dev-tools:fix-bug.
+description: Internal sub-skill invoked by fix-bug only. Documents a newly discovered bug in docs/agent-files/bugs/. Do not invoke directly — use dev-tools:fix-bug.
 user-invocable: false
 disable-model-invocation: true
 ---
@@ -42,8 +42,8 @@ Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md`. Use 24
 
 Construct paths using full `bug_id` = `{timestamp}-{slug}`:
 
-- Directory: `docs/bugs/{bug_id}/`
-- Detail file: `docs/bugs/{bug_id}/{bug_id}-detail.md`
+- Directory: `docs/agent-files/bugs/{bug_id}/`
+- Detail file: `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
 
 Example `bug_id`: `2026.04.24-094512-login-500-after-valid-credentials`
 
@@ -89,7 +89,7 @@ Tell the user:
 
 > Bug logged and committed:
 >
-> - `docs/bugs/{bug_id}/{bug_id}-detail.md`
+> - `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
 > - Commit: `{sha}`
 > - Pushed: yes / no (no remote configured)
 >

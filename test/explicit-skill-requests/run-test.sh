@@ -46,7 +46,7 @@ PROJECT_DIR="$OUTPUT_DIR/project"
 mkdir -p "$PROJECT_DIR/docs/plans"
 
 # Create a dummy plan file for mid-conversation tests
-cat > "$PROJECT_DIR/docs/plans/auth-system.md" << 'EOF'
+cat > "$PROJECT_DIR/docs/agent-files/plans/auth-system.md" << 'EOF'
 # Auth System Implementation Plan
 
 ## Task 1: Add User Model

@@ -17,12 +17,12 @@ Verify all completion gates after **fix-bug-resolve** and post the final report.
 
 Only mark complete when **all** are true:
 
-- [ ] `bug_id` exists and detail file exists: `docs/bugs/{bug_id}/{bug_id}-detail.md`
+- [ ] `bug_id` exists and detail file exists: `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
 - [ ] Discovery committed separately (from fix-bug-log)
 - [ ] Root cause investigated (fix-bug Step 2 / systematic-debugging completed with hypothesis + evidence)
 - [ ] Full test suite passes
 - [ ] Root cause addressed (not just symptom)
-- [ ] Resolution file exists: `docs/bugs/{bug_id}/{bug_id}-resolution.md`
+- [ ] Resolution file exists: `docs/agent-files/bugs/{bug_id}/{bug_id}-resolution.md`
 - [ ] Resolution committed separately from discovery
 
 Use `checklists/lifecycle-checklist.md` in the parent **fix-bug** skill folder as the operator checklist.

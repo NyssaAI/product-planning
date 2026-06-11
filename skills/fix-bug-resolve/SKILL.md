@@ -14,7 +14,7 @@ Invoked by `dev-tools:fix-bug` at Step 3 (resolve). Users should use **fix-bug**
 Fix a documented and analyzed bug through an iterative Ralph loop. Each iteration examines the current state, works toward a fix, runs tests, and critiques the result. The loop continues until the fix is verified and all tests pass.
 
 <HARD-GATE>
-A bug detail file MUST exist at `docs/bugs/{bug_id}/{bug_id}-detail.md`, where `{bug_id}` is the full `{timestamp}-{short-slug}` from **fix-bug-log** (e.g., `2026.04.13-143207-broken-auth`). Parent **fix-bug** must have completed Step 2 (analyze via systematic-debugging) before this skill runs. If not documented yet, stop — parent should run fix-bug-log first.
+A bug detail file MUST exist at `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`, where `{bug_id}` is the full `{timestamp}-{short-slug}` from **fix-bug-log** (e.g., `2026.04.13-143207-broken-auth`). Parent **fix-bug** must have completed Step 2 (analyze via systematic-debugging) before this skill runs. If not documented yet, stop — parent should run fix-bug-log first.
 </HARD-GATE>
 
 ## Checklist
@@ -22,7 +22,7 @@ A bug detail file MUST exist at `docs/bugs/{bug_id}/{bug_id}-detail.md`, where `
 You MUST complete these steps in order:
 
 1. **Get bug_id** — from parent fix-bug (same id through the lifecycle)
-2. **Validate bug file** — confirm `docs/bugs/{bug_id}/{bug_id}-detail.md` exists. If not, stop.
+2. **Validate bug file** — confirm `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md` exists. If not, stop.
 3. **Read bug detail and analyze findings** — symptom, root-cause hypothesis from fix-bug Step 2
 4. **Detect test runner** — identify the project's test command by checking for `package.json` (npm test), `pyproject.toml`/`pytest.ini` (pytest), `*.csproj` (dotnet test), `go.mod` (go test ./...), `Makefile` (make test), or ask the user.
 5. **Start Ralph loop** — execute the setup script with the constructed prompt, `--max-iterations 20`, and `--completion-promise "BUG FIXED"`.
@@ -52,7 +52,7 @@ You are fixing bug {BUG_ID}.
 ## State Check
 
 Before doing anything, assess where you are:
-- Read docs/bugs/{BUG_ID}/{BUG_ID}-detail.md for the bug description
+- Read docs/agent-files/bugs/{BUG_ID}/{BUG_ID}-detail.md for the bug description
 - Run: git log --oneline -10
 - Run: {TEST_COMMAND}
 
@@ -101,7 +101,7 @@ If ANY issues remain, fix them. Do NOT output the completion promise.
 
 ## Phase 6: Resolve (only when ALL tests pass and fix is solid)
 
-1. Write docs/bugs/{BUG_ID}/{BUG_ID}-resolution.md with:
+1. Write docs/agent-files/bugs/{BUG_ID}/{BUG_ID}-resolution.md with:
    - Fix applied: what was changed and why
    - Status: resolved
    - Commits: list the commit SHAs that contain the fix

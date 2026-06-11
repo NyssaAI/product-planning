@@ -6,31 +6,34 @@ All development repos created should follow this standard
 /                                                   - repo root
 ├── docs/                                           - main documentation folder
 │   │
-│   │  --- Authoritative (human-maintained) ---
+│   │  --- Human-authored product docs (docs/ root is human-only) ---
 │   ├── product.md                                  - PRD: what the product is
 │   ├── roadmap.md                                  - priorities and phases
 │   ├── tech-stack.md                               - technologies and applicable standards
-│   ├── specs/                                      - feature-level design (one approved design per file)
-│   │   └── YYYY-MM-DD-<topic>-design.md
-│   ├── plans/                                      - feature-level implementation plan
-│   │   └── YYYY-MM-DD-<feature-name>.md
-│   ├── backlog/                                    - queued work items
-│   │   └── {YYYY.MM.DD-HHMMSS-slug}/
-│   │       └── {timestamp}-{slug}-detail.md
-│   ├── bugs/                                       - bug reports and resolutions
-│   │   └── {YYYY.MM.DD-HHMMSS-slug}/
-│   │       ├── {timestamp}-{slug}-detail.md
-│   │       └── {timestamp}-{slug}-resolution.md
+│   ├── features.md                                 - feature inventory (status table)
+│   ├── design/                                     - UI wireframes and mockups (no enforced schema)
+│   ├── use-cases/                                  - structured use-case detail
+│   │   └── f{n}-u{n}.md
 │   │
-│   │  --- Generated module architecture (ai-plan) ---
-│   │  Scopes are the valuable artifact: one self-contained picture per code module.
-│   │  Other ai-plan files are indexes or optional excerpts — not a second copy of specs/plans.
-│   └── ai-plan/
-│       ├── scopes/
-│       │   └── <module-id>.md                      - module architecture (boundaries, deps, routes, tests)
-│       ├── MODULE_MAP.json                         - machine-readable dependency graph
-│       ├── CODE_MAP.json                           - symbol index (lookup after plan names files)
-│       └── INDEX.md                                - how to inject scopes during planning
+│   │  --- Everything the plugin touches ---
+│   └── agent-files/
+│       ├── context/                                - generated — do not hand-edit, freely overwritten
+│       │   ├── index.md                            - how to inject module files during planning
+│       │   ├── code-map.json                       - symbol index (lookup after plan names files)
+│       │   ├── module-map.json                     - machine-readable dependency graph
+│       │   └── modules/
+│       │       └── <module-id>.md                  - module architecture (boundaries, deps, routes, tests)
+│       ├── specs/                                  - workflow: approved design docs
+│       │   └── YYYY-MM-DD-<topic>-design.md
+│       ├── plans/                                  - workflow: implementation plans
+│       │   └── YYYY-MM-DD-<feature-name>.md
+│       ├── backlog/                                - workflow: queued work items
+│       │   └── {YYYY.MM.DD-HHMMSS-slug}/
+│       │       └── {timestamp}-{slug}-detail.md
+│       └── bugs/                                   - workflow: bug reports and resolutions
+│           └── {YYYY.MM.DD-HHMMSS-slug}/
+│               ├── {timestamp}-{slug}-detail.md
+│               └── {timestamp}-{slug}-resolution.md
 ├── src/                                            - source code (feature-folder structure)
 ├── test/                                           - test code (mirrors src/ structure)
 │   └── acceptance-tests/                           - shell tests the execise the binary from the commandline and collect errors and logs
@@ -40,6 +43,8 @@ All development repos created should follow this standard
 │           └──  logs/
 └── CLAUDE.md                                       - repo-specific instructions
 ```
+
+**Rule:** `docs/` root is human-only product docs. `docs/agent-files/` is everything the plugin touches. `docs/agent-files/context/` is machine-generated and freely overwritten.
 
 ## Timestamp format
 
@@ -54,28 +59,93 @@ Every repo must have at minimum:
 - `docs/tech-stack.md` — technologies used
 - `CLAUDE.md` — repo-specific agent instructions
 
+## Human-authored artifact types
+
+### docs/features.md
+
+Human-maintained feature inventory. Linked from use-case frontmatter.
+
+```markdown
+# Features
+
+| #  | Feature            | Status  | Summary                                              |
+|----|--------------------|---------|------------------------------------------------------|
+| F1 | Actor Registration | active  | Provisional registration workflow with accept/reject |
+| F2 | Host Registry      | planned | SSH tunnel registration and management               |
+```
+
+Status values: `planned` | `active` | `complete` | `deferred`
+
+### docs/use-cases/f{n}-u{n}.md
+
+One file per use case. A third input type for `design-spec` alongside ad-hoc ideas and backlog items.
+
+```markdown
+---
+product: <Product Name>
+feature: F1
+feature-name: Actor Registration
+use-case: F1-U1
+use-case-name: Register a new actor
+status: active
+---
+
+# F1-U1: Register a new actor
+
+Brief prose describing what the actor is trying to do and why it matters.
+
+## Process
+
+(tree-style process outline)
+
+## Success criteria
+
+- [ ] Criterion 1
+- [ ] Criterion 2
+```
+
+### docs/design/
+
+Reserved folder for UI wireframes, mockups, and layout specs. No enforced schema. Created during migration; teams populate it freely.
+
+## Progressive specificity chain
+
+Each level adds specificity to the previous. This chain is the canonical input path into `design-spec`:
+
+```
+docs/product.md               PRD — what the product is
+       ↓
+docs/features.md              Feature inventory — one step more detailed than PRD
+       ↓
+docs/use-cases/f{n}-u{n}.md   Use-case detail — one step more detailed than feature
+       ↓
+docs/agent-files/specs/       Design spec — technical design for one use case (design-spec output)
+       ↓
+docs/agent-files/plans/       Implementation plan (write-plan output)
+```
+
 ### Two axes of documentation (do not conflate)
 
 | Axis | Location | Answers |
 |------|----------|---------|
-| **Work item** | `specs/`, `plans/`, `backlog/`, `bugs/` | What are we building *in this task*? Design and steps for one feature or fix. |
-| **Code module** | `docs/ai-plan/scopes/<module-id>.md` | What does this *part of the codebase* own? Boundaries, dependencies, routes, test roots — derived from the repo. |
+| **Work item** | `agent-files/specs/`, `agent-files/plans/`, `agent-files/backlog/`, `agent-files/bugs/` | What are we building *in this task*? Design and steps for one feature or fix. |
+| **Code module** | `docs/agent-files/context/modules/<module-id>.md` | What does this *part of the codebase* own? Boundaries, dependencies, routes, test roots — derived from the repo. |
 
-Planning a roadmap item: **spec** (intent) + **one scope** (architecture for the module you will touch) → **plan** (tasks). Do not substitute a scope for a spec or vice versa.
+Planning a roadmap item: **spec** (intent) + **one module file** (architecture for the module you will touch) → **plan** (tasks). Do not substitute a module file for a spec or vice versa.
 
 ### Workflow artifacts (dev-tools)
 
 | Path | Created by | Timestamp format |
 |------|------------|------------------|
-| `docs/specs/…-design.md` | design-spec | `YYYY-MM-DD` |
-| `docs/plans/….md` | write-plan (via design-spec) | `YYYY-MM-DD` |
-| `docs/ai-plan/scopes/*.md` | ai-plan generate | regenerated when modules change |
-| `docs/backlog/…/` | add-backlog | `YYYY.MM.DD-HHMMSS` |
-| `docs/bugs/…/` | fix-bug-log (via fix-bug) | `YYYY.MM.DD-HHMMSS` |
+| `docs/agent-files/specs/…-design.md` | design-spec | `YYYY-MM-DD` |
+| `docs/agent-files/plans/….md` | write-plan (via design-spec) | `YYYY-MM-DD` |
+| `docs/agent-files/context/modules/*.md` | ai-plan generate | regenerated when modules change |
+| `docs/agent-files/backlog/…/` | add-backlog | `YYYY.MM.DD-HHMMSS` |
+| `docs/agent-files/bugs/…/` | fix-bug-log (via fix-bug) | `YYYY.MM.DD-HHMMSS` |
 
-For product/roadmap context during planning, read `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly — do not maintain duplicate excerpts under `ai-plan/`.
+For product/roadmap context during planning, read `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly — do not maintain duplicate excerpts under `agent-files/context/`.
 
-Regenerate ai-plan after module structure changes (`npm run ai-plan` or plugin scripts). Scopes with `preserveScope` in config are not overwritten.
+Regenerate ai-plan after module structure changes (`npm run ai-plan` or plugin scripts). Module files with `preserveModule` in config are not overwritten.
 
 ---
 

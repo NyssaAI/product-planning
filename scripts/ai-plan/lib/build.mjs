@@ -87,7 +87,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
       .map((e) => e.to);
 
     const scopeRel = path
-      .join(config.outputDir, 'scopes', `${mod.id}.md`)
+      .join(config.outputDir, 'modules', `${mod.id}.md`)
       .replace(/\\/g, '/');
 
     const enrichment = enrichModule(repoRoot, routeModules, mod, codeMapFiles);
@@ -141,7 +141,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
         {
           level: 1,
           name: 'module-scope',
-          inject: `${config.outputDir}/scopes/<module-id>.md (one file)`,
+          inject: `${config.outputDir}/modules/<module-id>.md (one file)`,
         },
         {
           level: 2,
@@ -156,7 +156,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
           when: 'Plan lists symbols; need line numbers',
         },
       ],
-      index: `${config.outputDir}/INDEX.md`,
+      index: `${config.outputDir}/index.md`,
     },
     brief: brief.excerpts,
     modules: enrichedModules,

@@ -14,6 +14,6 @@ With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the 
 
 ## Workflow
 
-- Backlog items: `docs/backlog/{timestamp-slug}/`
-- Plans: `docs/plans/` — use **dev-tools:execute-plan** to implement (not internal execute-plan-run / execute-plan-run-inline / execute-plan-finish)
-- Bugs: `docs/bugs/{timestamp-slug}/` — use **dev-tools:fix-bug** (not internal fix-bug-log / fix-bug-resolve / fix-bug-complete)
+- Backlog items: `docs/agent-files/backlog/{timestamp-slug}/`
+- Plans: `docs/agent-files/plans/` — use **dev-tools:execute-plan** to implement (not internal execute-plan-run / execute-plan-run-inline / execute-plan-finish)
+- Bugs: `docs/agent-files/bugs/{timestamp-slug}/` — use **dev-tools:fix-bug** (not internal fix-bug-log / fix-bug-resolve / fix-bug-complete)
