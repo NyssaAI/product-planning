@@ -48,7 +48,7 @@ The standard PR body template (Summary + Test Plan) gains a **Bug** section for 
 [Checklist]
 ```
 
-`fix-bug-complete` passes the bug detail file path to `execute-plan-finish` as context so the Bug section is populated. Reviewers get direct access to the original bug report from the PR.
+`execute-plan-finish` detects the Bug section automatically: at Step 4 (PR creation), it checks whether a bug detail file exists under `docs/agent-files/bugs/` whose slug matches the current branch name (e.g. branch `fix/2026.06.11-143000-null-pointer` → `docs/agent-files/bugs/2026.06.11-143000-null-pointer/`). If found, it adds the Bug section to the PR body. No parameter passing required — the branch name is the shared key.
 
 ---
 
