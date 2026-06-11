@@ -3,7 +3,7 @@
 ## Directory structure
 
 ```
-docs/bugs/
+docs/agent-files/bugs/
 └── {timestamp}-{slug}/
     ├── {timestamp}-{slug}-detail.md
     └── {timestamp}-{slug}-resolution.md

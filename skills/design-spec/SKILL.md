@@ -1,6 +1,6 @@
 ---
 name: design-spec
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Accepts ad-hoc ideas or a backlog detail file as input. Explores user intent, requirements and design before implementation."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Accepts ad-hoc ideas, a backlog detail file, or a use-case file as input. Explores user intent, requirements and design before implementation."
 ---
 
 # Design Spec
@@ -9,14 +9,14 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 
 **Announce at start:** "I'm using the design-spec skill to refine this into a spec."
 
-**Inputs:** a new idea from conversation, OR a backlog item at `docs/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`).
+**Inputs:** a new idea from conversation, OR a backlog item at `docs/agent-files/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`), OR a use-case file at `docs/use-cases/f{n}-u{n}.md`.
 
 ## Purpose
 
 One canonical path for spec-before-code work:
 
 1. **Explore & refine** — understand intent, surface standards, present design for approval
-2. **Write spec** — save to `docs/specs/`, user review gate
+2. **Write spec** — save to `docs/agent-files/specs/`, user review gate
 3. **Worktree** — isolated feature branch (`using-git-worktrees`)
 4. **Plan** — `write-plan` (internal sub-skill)
 5. **Hand off** — **execute-plan** when your human partner is ready to implement
@@ -56,13 +56,13 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item; when the repo has source code, invoke `dev-tools:using-ai-plan` to ensure `docs/ai-plan/` is current, then read `INDEX.md` and `MODULE_MAP.json` summary for module boundaries (see Single module focus below; do not load all scope files)
+1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a use-case file, read it plus the linked feature row (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item; when the repo has source code, invoke `dev-tools:using-ai-plan` to ensure `docs/agent-files/context/` is current, then read `index.md` and `module-map.json` summary for module boundaries (see Single module focus below; do not load all scope files)
 2. **Surface relevant standards** — detect tech stack, read applicable dev-tools (see Standards Surfacing below)
 3. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 5. **Propose 2-3 approaches** — with trade-offs and your recommendation (informed by surfaced standards)
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
-7. **Write design doc** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit (include Standards Applied section)
+7. **Write design doc** — save to `docs/agent-files/specs/YYYY-MM-DD-<topic>-design.md` and commit (include Standards Applied section)
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **User reviews written spec** — ask user to review the spec file before proceeding
 10. **Set up isolated workspace** — REQUIRED SUB-SKILL: invoke `dev-tools:using-git-worktrees` (feature branch + worktree, not main/master)
@@ -115,13 +115,13 @@ Do NOT invoke `write-plan` until `using-git-worktrees` has completed and you are
 
 ## Backlog item input
 
-Use when the user asks to start work on a backlog item, names a backlog id, or points at a path under `docs/backlog/`.
+Use when the user asks to start work on a backlog item, names a backlog id, or points at a path under `docs/agent-files/backlog/`.
 
 **Backlog id format:** `{YYYY.MM.DD-HHMMSS-slug}` (example: `2026.04.24-102847-add-sso-via-okta`).
 
-**Detail file path:** `docs/backlog/{id}/{id}-detail.md`
+**Detail file path:** `docs/agent-files/backlog/{id}/{id}-detail.md`
 
-**If the id is missing but intent is clear** ("work on the SSO backlog item"), list matching directories under `docs/backlog/` or ask which item.
+**If the id is missing but intent is clear** ("work on the SSO backlog item"), list matching directories under `docs/agent-files/backlog/` or ask which item.
 
 **When a backlog detail file exists, you MUST:**
 
@@ -136,17 +136,41 @@ Use when the user asks to start work on a backlog item, names a backlog id, or p
 5. Carry acceptance criteria forward into the spec; refine them during design if needed, but get user approval before changing meaning
 6. In the written spec, include a **Source** section (see After the Design)
 
-**Backlog is input, not output.** This skill produces `docs/specs/…-design.md`. Do not edit the backlog detail file during design unless the user explicitly asks to update the backlog item.
+**Backlog is input, not output.** This skill produces `docs/agent-files/specs/…-design.md`. Do not edit the backlog detail file during design unless the user explicitly asks to update the backlog item.
+
+## Use-case input
+
+Use when the user points at a path under `docs/use-cases/` or names a use-case id (e.g. `F1-U1`).
+
+**Use-case file path:** `docs/use-cases/f{n}-u{n}.md` — frontmatter links it to a feature row in `docs/features.md`.
+
+**When a use-case file is the input, you MUST:**
+
+1. Read the use-case file (summary, process, success criteria)
+2. Look up the linked feature row in `docs/features.md` (the `feature:` frontmatter key)
+3. Read `docs/product.md` for product context
+4. Announce: "Using use-case `{use-case-id}` as input for this design."
+5. Carry the use-case **success criteria** forward as spec **acceptance criteria**; refine during design if needed, but get user approval before changing meaning
+6. Ask clarifying questions only for **gaps** not covered by the use-case — technical approach, constraints, edge cases the process tree doesn't address
+7. In the written spec, include a **Source** section:
+   ```markdown
+   ## Source
+
+   **Use case:** `docs/use-cases/f{n}-u{n}.md` ({use-case-name})
+   **Feature:** {feature-id} — {feature-name} (`docs/features.md`)
+   ```
+
+**Use-case files are input, not output.** Do not edit the use-case file during design unless the user explicitly asks.
 
 ## Single module focus
 
-**Default:** scope each design to **one primary module** from `docs/ai-plan/INDEX.md` when the repo has code.
+**Default:** scope each design to **one primary module** from `docs/agent-files/context/index.md` when the repo has code.
 
 **During design, encourage your human partner to narrow work to a single module whenever possible.** One module → one spec → one plan → focused implementation.
 
 **When exploring the idea:**
 
-1. Use `INDEX.md` and `MODULE_MAP.json` to identify which module owns this work
+1. Use `index.md` and `module-map.json` to identify which module owns this work
 2. If the request clearly spans multiple modules, **propose splitting** into separate specs (one per module) before designing — each gets its own spec → plan → implementation cycle
 3. If splitting is impractical, designate exactly one **primary module** and list only **dependency touch points** in other modules (interfaces, not full design in those modules)
 4. Ask explicitly when ambiguous: "This looks like it belongs in `{module}` — should we scope this design to that module only?"
@@ -156,7 +180,7 @@ Use when the user asks to start work on a backlog item, names a backlog id, or p
 ```markdown
 ## Module scope
 
-**Primary module:** `{module-id}` (`docs/ai-plan/scopes/{module-id}.md`)
+**Primary module:** `{module-id}` (`docs/agent-files/context/modules/{module-id}.md`)
 
 **Affected modules:** [none | list only modules touched via dependency — not co-designed]
 ```
@@ -233,13 +257,13 @@ During step 2, detect the project's tech stack and surface the applicable standa
 
 **Documentation:**
 
-- Write the validated design (spec) to `docs/specs/YYYY-MM-DD-<topic>-design.md`
+- Write the validated design (spec) to `docs/agent-files/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override this default)
 - If design started from a backlog item, include a **Source** section near the top of the design doc:
   ```markdown
   ## Source
 
-  **Backlog item:** `docs/backlog/{id}/{id}-detail.md`
+  **Backlog item:** `docs/agent-files/backlog/{id}/{id}-detail.md`
   ```
 - When the repo has code, include **Module scope** (see Single module focus above) after Source
 - Include a **Standards Applied** section at the end of the design doc:

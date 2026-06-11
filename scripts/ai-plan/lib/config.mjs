@@ -14,7 +14,7 @@ import {
  * @property {string} root
  * @property {string} [description]
  * @property {string[]} [flows]
- * @property {boolean} [preserveScope] When true, ai-plan does not overwrite docs/ai-plan/scopes/<id>.md
+ * @property {boolean} [preserveScope] When true, ai-plan does not overwrite docs/agent-files/context/modules/<id>.md
  */
 
 /**
@@ -67,11 +67,11 @@ export function loadAiPlanConfig(repoRoot, opts = {}) {
         ? raw.projectName
         : readProjectName(repoRoot),
     outputDir:
-      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/ai-plan',
+      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/agent-files/context',
     codeMapOutput:
       typeof raw.codeMapOutput === 'string'
         ? raw.codeMapOutput
-        : 'docs/ai-plan/CODE_MAP.json',
+        : 'docs/agent-files/context/code-map.json',
     docs,
     briefMaxCharsPerDoc:
       typeof raw.briefMaxCharsPerDoc === 'number'
@@ -151,7 +151,7 @@ export function writeStarterConfigs(repoRoot) {
       codeMapPath,
       `${JSON.stringify(
         {
-          output: 'docs/ai-plan/CODE_MAP.json',
+          output: 'docs/agent-files/context/code-map.json',
           roots,
         },
         null,

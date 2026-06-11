@@ -7,6 +7,7 @@
  *   node scripts/ai-plan/generate.mjs --init       # bootstrap repo
  *   node scripts/ai-plan/generate.mjs --doctor     # validate setup
  *   node scripts/ai-plan/generate.mjs --doctor --runtimes
+ *   node scripts/ai-plan/generate.mjs --migrate    # move legacy layout to docs/agent-files/
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -18,6 +19,7 @@ import {
   validateRequiredDocs,
 } from './lib/config.mjs';
 import { runDoctor, formatDoctorReport } from './lib/doctor.mjs';
+import { runMigrate, formatMigrateReport } from './lib/migrate.mjs';
 import { createLogger } from './lib/logger.mjs';
 import { findProjectRoot } from './lib/project-root.mjs';
 import { renderIndex, renderModuleScope } from './lib/render.mjs';
@@ -27,6 +29,7 @@ const log = createLogger({ module: 'generate' });
 const args = process.argv.slice(2);
 const initMode = args.includes('--init') || args.includes('-i');
 const doctorMode = args.includes('--doctor');
+const migrateMode = args.includes('--migrate');
 const runtimesMode = args.includes('--runtimes');
 const writeScripts = args.includes('--write-scripts');
 const withProjectManifest = args.includes('--with-project-manifest');
@@ -111,16 +114,16 @@ function runGenerate() {
   };
 
   const outDir = path.join(REPO_ROOT, config.outputDir);
-  const scopesDir = path.join(outDir, 'scopes');
+  const scopesDir = path.join(outDir, 'modules');
   mkdirSync(scopesDir, { recursive: true });
 
   writeFileSync(
-    path.join(outDir, 'INDEX.md'),
+    path.join(outDir, 'index.md'),
     renderIndex(model, config),
     'utf8'
   );
   writeFileSync(
-    path.join(outDir, 'MODULE_MAP.json'),
+    path.join(outDir, 'module-map.json'),
     `${JSON.stringify(
       {
         schemaVersion: model.schemaVersion,
@@ -181,6 +184,12 @@ function main() {
 
   if (doctorMode) {
     runDoctorCommand();
+    return;
+  }
+
+  if (migrateMode) {
+    const actions = runMigrate(REPO_ROOT);
+    process.stdout.write(formatMigrateReport(actions));
     return;
   }
 

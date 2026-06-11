@@ -9,7 +9,7 @@ description: Use for non-bug technical failures during other work — test/build
 
 **Not an entry point for bugs.** All bug work starts at **`dev-tools:fix-bug`**. Step 2 (**Analyze**) invokes this skill after **`fix-bug-log`** documents the bug.
 
-**Standalone invocation** is for **non-bug technical failures** while doing other work — e.g. a test fails during `execute-plan`, CI breaks on your branch, build errors after a dependency change. No `docs/bugs/` artifact required.
+**Standalone invocation** is for **non-bug technical failures** while doing other work — e.g. a test fails during `execute-plan`, CI breaks on your branch, build errors after a dependency change. No `docs/agent-files/bugs/` artifact required.
 
 | Situation | Entry | This skill's role |
 |-----------|-------|-----------------|
@@ -21,7 +21,7 @@ description: Use for non-bug technical failures during other work — test/build
 
 | Skill | Step | What it does |
 |-------|------|--------------|
-| `fix-bug-log` | 1 | Write `docs/bugs/{bug_id}/…-detail.md`, discovery commit |
+| `fix-bug-log` | 1 | Write `docs/agent-files/bugs/{bug_id}/…-detail.md`, discovery commit |
 | **`systematic-debugging`** | **2 (Analyze)** | **Root-cause investigation** |
 | `fix-bug-resolve` | 3 | Ralph loop — failing test, fix, resolution commit |
 | `fix-bug-complete` | 4 | Verify gates and final report |
@@ -44,7 +44,7 @@ If you haven't completed Phase 1, you cannot propose fixes.
 
 ## When to Use
 
-**Bugs (production, reported defect, `docs/bugs/` work):** invoke **`dev-tools:fix-bug` only**. Step 2 invokes this skill. Do not skip fix-bug or invoke this skill directly for bug work.
+**Bugs (production, reported defect, `docs/agent-files/bugs/` work):** invoke **`dev-tools:fix-bug` only**. Step 2 invokes this skill. Do not skip fix-bug or invoke this skill directly for bug work.
 
 **Non-bug technical issues** — invoke this skill directly:
 - Test failures during implementation (not yet filed as a bug)
