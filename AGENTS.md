@@ -95,3 +95,11 @@ This repository is the **dev-tools plugin** (skills, standards, hooks, scripts) 
 ## Bundled first-party content
 
 jamaynor **standards** and **ai-plan** ship inside dev-tools by design. This is first-party bundled content, not third-party plugin sprawl. Optional `@ast-grep/cli` in the plugin root supports ai-plan code-map generation.
+
+<!-- ai-plan:module-map:start -->
+## Module map (auto-updated — do not edit)
+
+| Module | What it does | Owns | Module file |
+|--------|--------------|------|-------------|
+| main | Application code (auto-detected single module). | Feature code and services under `./` | `docs/agent-files/context/modules/main.md` |
+<!-- ai-plan:module-map:end -->

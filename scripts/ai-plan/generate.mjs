@@ -20,6 +20,7 @@ import {
 } from './lib/config.mjs';
 import { runDoctor, formatDoctorReport } from './lib/doctor.mjs';
 import { runMigrate, formatMigrateReport } from './lib/migrate.mjs';
+import { embedModuleMap, renderModuleMapTable } from './lib/embed.mjs';
 import { createLogger } from './lib/logger.mjs';
 import { findProjectRoot } from './lib/project-root.mjs';
 import { renderIndex, renderModuleScope } from './lib/render.mjs';
@@ -175,10 +176,16 @@ function runGenerate() {
     modulesWritten += 1;
   }
 
+  const embedded = embedModuleMap(
+    REPO_ROOT,
+    renderModuleMapTable(model.modules)
+  );
+
   log.info('generate mode complete', {
     modules: model.modules.length,
     modulesWritten,
     routeCount: model.stats.routeCount,
+    embedded,
   });
 
   process.stdout.write(
@@ -187,6 +194,9 @@ function runGenerate() {
   process.stdout.write(
     `  Docs: ${resolved.product}, ${resolved.roadmap}, ${resolved.techStack}\n`
   );
+  if (embedded.length > 0) {
+    process.stdout.write(`  Module map embedded in: ${embedded.join(', ')}\n`);
+  }
 }
 
 function main() {
