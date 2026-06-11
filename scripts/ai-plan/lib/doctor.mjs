@@ -78,14 +78,14 @@ function checkCodeMap(repoRoot, codeMapOutput) {
  * @returns {DoctorCheck[]}
  */
 function checkModuleMap(repoRoot, config) {
-  const mapPath = path.join(repoRoot, config.outputDir, 'MODULE_MAP.json');
-  const scopesDir = path.join(repoRoot, config.outputDir, 'scopes');
+  const mapPath = path.join(repoRoot, config.outputDir, 'module-map.json');
+  const scopesDir = path.join(repoRoot, config.outputDir, 'modules');
 
   if (!existsSync(mapPath)) {
     return [{
       id: 'module-map',
       status: 'fail',
-      message: 'MODULE_MAP.json not found',
+      message: 'module-map.json not found',
       hint: 'Run: npm run ai-plan or node <PLUGIN_ROOT>/scripts/ai-plan/generate.mjs',
     }];
   }
@@ -101,7 +101,7 @@ function checkModuleMap(repoRoot, config) {
   const checks = [{
     id: 'module-map',
     status: moduleCount > 0 ? 'pass' : 'warn',
-    message: `MODULE_MAP has ${moduleCount} modules, ${scopeFiles} scope files`,
+    message: `module-map has ${moduleCount} modules, ${scopeFiles} module files`,
   }];
 
   const fallbackOnly = map.modules?.every((m) => m.source === 'fallback');
@@ -128,8 +128,8 @@ function checkAgentEntrypoints(repoRoot) {
   for (const [id, rel] of [
     ['agents-md', 'AGENTS.md'],
     ['claude-md', 'CLAUDE.md'],
-    ['backlog-dir', 'docs/backlog'],
-    ['bugs-dir', 'docs/bugs'],
+    ['backlog-dir', 'docs/agent-files/backlog'],
+    ['bugs-dir', 'docs/agent-files/bugs'],
   ]) {
     const full = path.join(repoRoot, rel);
     checks.push({

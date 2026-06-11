@@ -111,16 +111,16 @@ function runGenerate() {
   };
 
   const outDir = path.join(REPO_ROOT, config.outputDir);
-  const scopesDir = path.join(outDir, 'scopes');
+  const scopesDir = path.join(outDir, 'modules');
   mkdirSync(scopesDir, { recursive: true });
 
   writeFileSync(
-    path.join(outDir, 'INDEX.md'),
+    path.join(outDir, 'index.md'),
     renderIndex(model, config),
     'utf8'
   );
   writeFileSync(
-    path.join(outDir, 'MODULE_MAP.json'),
+    path.join(outDir, 'module-map.json'),
     `${JSON.stringify(
       {
         schemaVersion: model.schemaVersion,
