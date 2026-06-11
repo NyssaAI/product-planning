@@ -79,7 +79,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
  */
 function checkModuleMap(repoRoot, config) {
   const mapPath = path.join(repoRoot, config.outputDir, 'module-map.json');
-  const scopesDir = path.join(repoRoot, config.outputDir, 'modules');
+  const modulesDir = path.join(repoRoot, config.outputDir, 'modules');
 
   if (!existsSync(mapPath)) {
     return [{
@@ -92,16 +92,16 @@ function checkModuleMap(repoRoot, config) {
 
   const map = JSON.parse(readFileSync(mapPath, 'utf8'));
   const moduleCount = map.modules?.length ?? 0;
-  let scopeFiles = 0;
-  if (existsSync(scopesDir)) {
-    scopeFiles = readdirSync(scopesDir).filter((f) => f.endsWith('.md')).length;
+  let moduleFiles = 0;
+  if (existsSync(modulesDir)) {
+    moduleFiles = readdirSync(modulesDir).filter((f) => f.endsWith('.md')).length;
   }
 
   /** @type {DoctorCheck[]} */
   const checks = [{
     id: 'module-map',
     status: moduleCount > 0 ? 'pass' : 'warn',
-    message: `module-map has ${moduleCount} modules, ${scopeFiles} module files`,
+    message: `module-map has ${moduleCount} modules, ${moduleFiles} module files`,
   }];
 
   const fallbackOnly = map.modules?.every((m) => m.source === 'fallback');

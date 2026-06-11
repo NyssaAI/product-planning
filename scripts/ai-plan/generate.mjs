@@ -114,8 +114,8 @@ function runGenerate() {
   };
 
   const outDir = path.join(REPO_ROOT, config.outputDir);
-  const scopesDir = path.join(outDir, 'modules');
-  mkdirSync(scopesDir, { recursive: true });
+  const modulesDir = path.join(outDir, 'modules');
+  mkdirSync(modulesDir, { recursive: true });
 
   writeFileSync(
     path.join(outDir, 'index.md'),
@@ -161,23 +161,23 @@ function runGenerate() {
     'utf8'
   );
 
-  let scopesWritten = 0;
+  let modulesWritten = 0;
   for (const mod of model.modules) {
     if (mod.preserveModule) {
       log.debug('skip preserveModule module', { moduleId: mod.id });
       continue;
     }
     writeFileSync(
-      path.join(scopesDir, `${mod.id}.md`),
+      path.join(modulesDir, `${mod.id}.md`),
       renderModuleScope(model, mod),
       'utf8'
     );
-    scopesWritten += 1;
+    modulesWritten += 1;
   }
 
   log.info('generate mode complete', {
     modules: model.modules.length,
-    scopesWritten,
+    modulesWritten,
     routeCount: model.stats.routeCount,
   });
 
