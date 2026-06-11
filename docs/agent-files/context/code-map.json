@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:46:29.683Z",
+  "generated": "2026-06-11T16:55:19.471Z",
   "roots": [
     "."
   ],
@@ -13,8 +13,8 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 22,
-  "symbolCount": 52,
+  "fileCount": 23,
+  "symbolCount": 54,
   "files": [
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
@@ -173,6 +173,24 @@
           "kind": "function",
           "line": 256,
           "signature": "export function formatDoctorReport(report)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/embed.mjs",
+      "symbols": [
+        {
+          "name": "renderModuleMapTable",
+          "kind": "function",
+          "line": 14,
+          "signature": "export function renderModuleMapTable(modules)"
+        },
+        {
+          "name": "embedModuleMap",
+          "kind": "function",
+          "line": 88,
+          "signature": "export function embedModuleMap(repoRoot, tableMarkdown)",
+          "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root)."
         }
       ]
     },

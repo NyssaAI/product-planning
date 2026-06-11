@@ -29,9 +29,9 @@
 | `checkRuntimeReadiness` | `export function checkRuntimeReadiness(repoRoot = process.cwd())` |  |
 | `runDoctor` | `export function runDoctor(repoRoot, options = {})` |  |
 | `formatDoctorReport` | `export function formatDoctorReport(report)` |  |
+| `renderModuleMapTable` | `export function renderModuleMapTable(modules)` |  |
+| `embedModuleMap` | `export function embedModuleMap(repoRoot, tableMarkdown)` | Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root). |
 | `createLogger` | `export function createLogger(bindings = {})` |  |
-| `runMigrate` | `export function runMigrate(repoRoot)` | Migrate a repo from the legacy docs layout to docs/agent-files/. |
-| `formatMigrateReport` | `export function formatMigrateReport(actions)` |  |
 
 ## Boundaries
 
@@ -61,9 +61,9 @@
 - `scripts/ai-plan/lib/discover-modules.mjs`: discoverModules, parseNavEntries
 - `scripts/ai-plan/lib/docs.mjs`: loadProjectBrief, extractConventionsFromTechStack
 - `scripts/ai-plan/lib/doctor.mjs`: checkRuntimeReadiness, runDoctor, formatDoctorReport
+- `scripts/ai-plan/lib/embed.mjs`: renderModuleMapTable, embedModuleMap
 - `scripts/ai-plan/lib/logger.mjs`: createLogger, log
 - `scripts/ai-plan/lib/migrate.mjs`: runMigrate, formatMigrateReport
-- `scripts/ai-plan/lib/module-deps.mjs`: buildModuleEdges
 
 ## After planning
 

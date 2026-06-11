@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:46:29.809Z",
+  "generated": "2026-06-11T16:55:19.600Z",
   "project": {
     "name": "dev-tools",
     "docs": {
@@ -45,7 +45,7 @@
       "dependsOn": [],
       "usedBy": [],
       "routeCount": 0,
-      "symbolCount": 52,
+      "symbolCount": 54,
       "planningModule": "docs/agent-files/context/modules/main.md",
       "description": "Application code (auto-detected single module).",
       "capabilities": [
@@ -58,6 +58,6 @@
   "stats": {
     "moduleCount": 1,
     "routeCount": 0,
-    "codeMapSymbols": 52
+    "codeMapSymbols": 54
   }
 }
