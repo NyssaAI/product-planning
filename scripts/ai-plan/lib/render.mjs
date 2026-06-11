@@ -19,28 +19,28 @@ export function renderIndex(model, config) {
     lines.push(`| L${level.level} ${level.name} | ${level.inject} | ${when} |`);
   }
   lines.push('');
-  lines.push('**Default for a feature:** L0 task + **one** L1 scope file. Add L2 only if product/stack context is unclear.');
+  lines.push('**Default for a feature:** L0 task + **one** L1 module file. Add L2 only if product/stack context is unclear.');
   lines.push('');
-  lines.push('## Module scopes (pick one)');
+  lines.push('## Module files (pick one)');
   lines.push('');
-  lines.push('| Module | Scope file |');
-  lines.push('|--------|------------|');
+  lines.push('| Module | Module file |');
+  lines.push('|--------|-------------|');
   for (const mod of model.modules) {
     if (mod.id === 'platform') {
       lines.push(
-        `| platform | [scopes/platform.md](./scopes/platform.md) |`
+        `| platform | [modules/platform.md](./modules/platform.md) |`
       );
     } else {
       lines.push(
-        `| ${mod.name} (\`${mod.id}\`) | [scopes/${mod.id}.md](./scopes/${mod.id}.md) |`
+        `| ${mod.name} (\`${mod.id}\`) | [modules/${mod.id}.md](./modules/${mod.id}.md) |`
       );
     }
   }
   lines.push('');
   lines.push('## Artifacts');
   lines.push('');
-  lines.push(`- **Module graph:** [MODULE_MAP.json](./MODULE_MAP.json)`);
-  lines.push(`- **Symbol index:** [\`CODE_MAP.json\`](./CODE_MAP.json)`);
+  lines.push(`- **Module graph:** [module-map.json](./module-map.json)`);
+  lines.push(`- **Symbol index:** [\`code-map.json\`](./code-map.json)`);
   lines.push(`- **Product docs:** \`docs/product.md\`, \`docs/roadmap.md\`, \`docs/tech-stack.md\` (read directly — do not duplicate in BRIEF)`);
   lines.push('');
   if (model.project.docs.product) {
@@ -57,8 +57,8 @@ export function renderIndex(model, config) {
   lines.push('');
   lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/ai-plan/generate.mjs --init` (dev-tools plugin)');
   lines.push('- Validate: `node <PLUGIN_ROOT>/scripts/ai-plan/generate.mjs --doctor`');
-  lines.push('- Backlog: `docs/backlog/{YYYY.MM.DD-HHMMSS-slug}/`');
-  lines.push('- Bugs: `docs/bugs/{YYYY.MM.DD-HHMMSS-slug}/`');
+  lines.push('- Backlog: `docs/agent-files/backlog/{YYYY.MM.DD-HHMMSS-slug}/`');
+  lines.push('- Bugs: `docs/agent-files/bugs/{YYYY.MM.DD-HHMMSS-slug}/`');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -171,7 +171,7 @@ export function renderModuleScope(model, mod) {
 
   lines.push('## After planning');
   lines.push('');
-  lines.push(`- Symbols: [\`CODE_MAP.json\`](../CODE_MAP.json)`);
+  lines.push(`- Symbols: [\`code-map.json\`](../code-map.json)`);
   lines.push('- Open only files your plan names');
   lines.push('');
 

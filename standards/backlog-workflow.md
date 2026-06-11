@@ -3,7 +3,7 @@
 ## Directory structure
 
 ```
-docs/backlog/
+docs/agent-files/backlog/
 └── {timestamp}-{slug}/
     └── {timestamp}-{slug}-detail.md
 ```
@@ -23,4 +23,4 @@ The detail file should include:
 
 ## Starting work on a backlog item
 
-When work begins, invoke **dev-tools:design-spec** with the detail file as input. Design-spec reads summary, context, scope, and acceptance criteria, produces a spec in `docs/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement. Do not skip straight to planning without a spec.
+When work begins, invoke **dev-tools:design-spec** with the detail file as input. Design-spec reads summary, context, scope, and acceptance criteria, produces a spec in `docs/agent-files/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement. Do not skip straight to planning without a spec.

@@ -106,10 +106,10 @@ export function bootstrapRepo(repoRoot, options = {}) {
     skipped
   );
 
-  ensureDirIfMissing(repoRoot, 'docs/backlog', created, skipped);
-  ensureDirIfMissing(repoRoot, 'docs/bugs', created, skipped);
+  ensureDirIfMissing(repoRoot, 'docs/agent-files/backlog', created, skipped);
+  ensureDirIfMissing(repoRoot, 'docs/agent-files/bugs', created, skipped);
   ensureDirIfMissing(repoRoot, 'test/unit', created, skipped);
-  ensureDirIfMissing(repoRoot, 'docs/ai-plan/scopes', created, skipped);
+  ensureDirIfMissing(repoRoot, 'docs/agent-files/context/modules', created, skipped);
 
   writeIfMissing(repoRoot, 'AGENTS.md', readTemplate('AGENTS.md'), created, skipped);
   writeIfMissing(repoRoot, 'CLAUDE.md', readTemplate('CLAUDE.md'), created, skipped);

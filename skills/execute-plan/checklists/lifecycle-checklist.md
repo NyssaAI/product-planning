@@ -1,6 +1,6 @@
 # execute-plan checklist
 
-- [ ] written plan exists in docs/plans/
+- [ ] written plan exists in docs/agent-files/plans/
 - [ ] on feature branch / worktree (not main/master)
 - [ ] execute-plan-run OR execute-plan-run-inline completed all tasks
 - [ ] tests verified passing
