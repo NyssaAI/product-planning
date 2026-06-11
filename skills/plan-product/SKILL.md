@@ -145,7 +145,7 @@ Per `standards/project-structure.md`, scaffold `docs/`:
 - `product.md`, `roadmap.md`, `tech-stack.md` (created in Step 6)
 - `bugs/`, `backlog/` — empty until fix-bug / add-backlog
 - `specs/`, `plans/` — empty until design-spec / write-plan
-- `ai-plan/scopes/` — empty until ai-plan generate (after source code exists)
+- `agent-files/context/modules/` — empty until ai-plan generate (after source code exists)
 
 Create directories with `.gitkeep` where needed:
 
