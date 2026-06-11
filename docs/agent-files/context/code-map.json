@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:31:42.736Z",
+  "generated": "2026-06-11T16:37:07.191Z",
   "roots": [
     "."
   ],
@@ -13,8 +13,8 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 19,
-  "symbolCount": 45,
+  "fileCount": 21,
+  "symbolCount": 47,
   "files": [
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
@@ -22,7 +22,8 @@
         {
           "name": "DEFAULT_DOC_CANDIDATES",
           "kind": "const",
-          "line": 5
+          "line": 5,
+          "signature": "export const DEFAULT_DOC_CANDIDATES"
         },
         {
           "name": "CODE_ROOT_CANDIDATES",
@@ -42,22 +43,26 @@
         {
           "name": "readProjectName",
           "kind": "function",
-          "line": 60
+          "line": 60,
+          "signature": "export function readProjectName(repoRoot)"
         },
         {
           "name": "detectCodeMapRoots",
           "kind": "function",
-          "line": 80
+          "line": 80,
+          "signature": "export function detectCodeMapRoots(repoRoot)"
         },
         {
           "name": "detectApiRoutes",
           "kind": "function",
-          "line": 100
+          "line": 100,
+          "signature": "export function detectApiRoutes(repoRoot)"
         },
         {
           "name": "detectSrcChildModules",
           "kind": "function",
-          "line": 147
+          "line": 147,
+          "signature": "export function detectSrcChildModules(repoRoot)"
         }
       ]
     },
@@ -67,7 +72,8 @@
         {
           "name": "bootstrapRepo",
           "kind": "function",
-          "line": 78
+          "line": 78,
+          "signature": "export function bootstrapRepo(repoRoot, options"
         }
       ]
     },
@@ -77,7 +83,8 @@
         {
           "name": "buildAiPlanModel",
           "kind": "function",
-          "line": 37
+          "line": 37,
+          "signature": "export function buildAiPlanModel(repoRoot, config, codeMapFiles)"
         }
       ]
     },
@@ -87,22 +94,26 @@
         {
           "name": "loadAiPlanConfig",
           "kind": "function",
-          "line": 41
+          "line": 41,
+          "signature": "export function loadAiPlanConfig(repoRoot, opts"
         },
         {
           "name": "validateRequiredDocs",
           "kind": "function",
-          "line": 111
+          "line": 111,
+          "signature": "export function validateRequiredDocs(repoRoot, config)"
         },
         {
           "name": "resolveDocPath",
           "kind": "function",
-          "line": 133
+          "line": 133,
+          "signature": "export function resolveDocPath(repoRoot, candidates)"
         },
         {
           "name": "writeStarterConfigs",
           "kind": "function",
-          "line": 146
+          "line": 146,
+          "signature": "export function writeStarterConfigs(repoRoot)"
         }
       ]
     },
@@ -112,12 +123,14 @@
         {
           "name": "discoverModules",
           "kind": "function",
-          "line": 26
+          "line": 26,
+          "signature": "export function discoverModules(repoRoot, config)"
         },
         {
           "name": "parseNavEntries",
           "kind": "function",
-          "line": 305
+          "line": 305,
+          "signature": "export function parseNavEntries(navPath)"
         }
       ]
     },
@@ -127,12 +140,15 @@
         {
           "name": "loadProjectBrief",
           "kind": "function",
-          "line": 9
+          "line": 9,
+          "signature": "export function loadProjectBrief(repoRoot, config)"
         },
         {
           "name": "extractConventionsFromTechStack",
           "kind": "function",
-          "line": 48
+          "line": 48,
+          "signature": "export function extractConventionsFromTechStack(techStackExcerpt)",
+          "summary": "Pull bullet lines from tech-stack excerpt for planner conventions."
         }
       ]
     },
@@ -142,17 +158,20 @@
         {
           "name": "checkRuntimeReadiness",
           "kind": "function",
-          "line": 150
+          "line": 150,
+          "signature": "export function checkRuntimeReadiness(repoRoot = process.cwd())"
         },
         {
           "name": "runDoctor",
           "kind": "function",
-          "line": 194
+          "line": 194,
+          "signature": "export function runDoctor(repoRoot, options"
         },
         {
           "name": "formatDoctorReport",
           "kind": "function",
-          "line": 256
+          "line": 256,
+          "signature": "export function formatDoctorReport(report)"
         }
       ]
     },
@@ -162,12 +181,14 @@
         {
           "name": "createLogger",
           "kind": "function",
-          "line": 57
+          "line": 57,
+          "signature": "export function createLogger(bindings"
         },
         {
           "name": "log",
           "kind": "const",
-          "line": 87
+          "line": 87,
+          "signature": "export const log = createLogger();"
         }
       ]
     },
@@ -177,12 +198,15 @@
         {
           "name": "runMigrate",
           "kind": "function",
-          "line": 151
+          "line": 151,
+          "signature": "export function runMigrate(repoRoot)",
+          "summary": "Migrate a repo from the legacy docs layout to docs/agent-files/."
         },
         {
           "name": "formatMigrateReport",
           "kind": "function",
-          "line": 201
+          "line": 201,
+          "signature": "export function formatMigrateReport(actions)"
         }
       ]
     },
@@ -192,7 +216,8 @@
         {
           "name": "buildModuleEdges",
           "kind": "function",
-          "line": 9
+          "line": 9,
+          "signature": "export function buildModuleEdges(repoRoot, modules)"
         }
       ]
     },
@@ -202,37 +227,44 @@
         {
           "name": "detectEntryPoints",
           "kind": "function",
-          "line": 45
+          "line": 45,
+          "signature": "export function detectEntryPoints(repoRoot, moduleRoot)"
         },
         {
           "name": "detectTestRoots",
           "kind": "function",
-          "line": 88
+          "line": 88,
+          "signature": "export function detectTestRoots(repoRoot, moduleRoot)"
         },
         {
           "name": "detectConfigFiles",
           "kind": "function",
-          "line": 123
+          "line": 123,
+          "signature": "export function detectConfigFiles(repoRoot)"
         },
         {
           "name": "detectPublicSurface",
           "kind": "function",
-          "line": 141
+          "line": 141,
+          "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)"
         },
         {
           "name": "inferFlows",
           "kind": "function",
-          "line": 171
+          "line": 171,
+          "signature": "export function inferFlows(repoRoot, allModules, mod)"
         },
         {
           "name": "inferOutOfScope",
           "kind": "function",
-          "line": 200
+          "line": 200,
+          "signature": "export function inferOutOfScope(allModules, mod)"
         },
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 225
+          "line": 225,
+          "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)"
         }
       ]
     },
@@ -242,7 +274,8 @@
         {
           "name": "findProjectRoot",
           "kind": "function",
-          "line": 8
+          "line": 8,
+          "signature": "export function findProjectRoot(startDir = process.cwd())"
         }
       ]
     },
@@ -252,12 +285,14 @@
         {
           "name": "renderIndex",
           "kind": "function",
-          "line": 5
+          "line": 5,
+          "signature": "export function renderIndex(model, config)"
         },
         {
           "name": "renderModuleScope",
           "kind": "function",
-          "line": 70
+          "line": 70,
+          "signature": "export function renderModuleScope(model, mod)"
         }
       ]
     },
@@ -267,7 +302,8 @@
         {
           "name": "discoverHttpRoutes",
           "kind": "function",
-          "line": 25
+          "line": 25,
+          "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapFiles)"
         }
       ]
     },
@@ -277,7 +313,8 @@
         {
           "name": "detectStackModules",
           "kind": "function",
-          "line": 245
+          "line": 245,
+          "signature": "export function detectStackModules(repoRoot, config)"
         }
       ]
     },
@@ -302,7 +339,20 @@
         {
           "name": "loadCodeMapConfig",
           "kind": "function",
-          "line": 57
+          "line": 57,
+          "signature": "export function loadCodeMapConfig(repoRoot)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/code-map/lib/comment-extractor.mjs",
+      "symbols": [
+        {
+          "name": "extractDocComment",
+          "kind": "function",
+          "line": 49,
+          "signature": "export function extractDocComment(filePath, lineNumber)",
+          "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts"
         }
       ]
     },
@@ -312,7 +362,20 @@
         {
           "name": "extractFileHeaderComment",
           "kind": "function",
-          "line": 117
+          "line": 117,
+          "signature": "export function extractFileHeaderComment(content)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/code-map/lib/signature-extractor.mjs",
+      "symbols": [
+        {
+          "name": "extractSignature",
+          "kind": "function",
+          "line": 17,
+          "signature": "export function extractSignature(filePath, lineNumber)",
+          "summary": "Extracts the declaration signature starting at the given line."
         }
       ]
     },
@@ -322,7 +385,8 @@
         {
           "name": "findPluginRoot",
           "kind": "function",
-          "line": 8
+          "line": 8,
+          "signature": "export function findPluginRoot(startDir)"
         }
       ]
     },
@@ -332,7 +396,9 @@
         {
           "name": "resolveAstGrepBinary",
           "kind": "function",
-          "line": 73
+          "line": 73,
+          "signature": "export function resolveAstGrepBinary(options)",
+          "summary": "Resolve ast-grep binary shipped with the dev-tools plugin."
         }
       ]
     }

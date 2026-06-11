@@ -64,7 +64,8 @@ export function extractDocComment(filePath, lineNumber) {
 
       if (isCommentLine(line)) {
         const stripped = stripCommentMarkers(line);
-        if (stripped) {
+        // JSDoc tag lines (@param, @returns, @type, …) are metadata, not prose.
+        if (stripped && !stripped.startsWith('@')) {
           commentLines.unshift(stripped);
         }
         inComment = true;

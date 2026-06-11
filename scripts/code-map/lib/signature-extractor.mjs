@@ -67,6 +67,8 @@ export function extractSignature(filePath, lineNumber) {
     // strip a trailing colon after the closing paren or class name.
     sig = sig.replace(/\s*(\{|=>).*$/, '').trim();
     sig = sig.replace(/:\s*$/, '').trim();
+    // Const/var initializers leave a dangling `=` once the body is cut.
+    sig = sig.replace(/=\s*$/, '').trim();
     // Strip trailing decorators-only or attribute-only artifacts.
     if (!sig || sig.startsWith('@') || sig.startsWith('[')) {
       return undefined;
