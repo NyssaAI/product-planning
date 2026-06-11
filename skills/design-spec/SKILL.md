@@ -56,7 +56,12 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a use-case file, read it plus the linked feature row (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item; when the repo has source code, invoke `dev-tools:using-ai-plan` to ensure `docs/agent-files/context/` is current, then read `index.md` and `module-map.json` summary for module boundaries (see Single module focus below; do not load all scope files)
+1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a use-case file, read it plus the linked feature row (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item. **When the repo has source code, load planning context now — these steps are not optional:**
+   1. Check for `docs/agent-files/context/index.md` (or legacy `docs/ai-plan/INDEX.md`)
+   2. If missing: run `npm run ai-plan` (or the plugin generate scripts) now, before continuing
+   3. If present: check staleness — if `index.md` is older than the most recently modified source file, run `npm run ai-plan` before continuing
+   4. Read `index.md` now (use the Read tool). Do not summarize or skip. The module capability table is your routing context for the whole design.
+   5. When the primary module is identified (see Single module focus below), read `docs/agent-files/context/modules/<id>.md` now (Read tool) — before the first clarifying question, not later. Do not load other module files.
 2. **Surface relevant standards** — detect tech stack, read applicable dev-tools (see Standards Surfacing below)
 3. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
