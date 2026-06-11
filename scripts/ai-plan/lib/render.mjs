@@ -23,18 +23,20 @@ export function renderIndex(model, config) {
   lines.push('');
   lines.push('## Module files (pick one)');
   lines.push('');
-  lines.push('| Module | Module file |');
-  lines.push('|--------|-------------|');
+  lines.push('| Module | What it does | Owns | Module file |');
+  lines.push('|--------|--------------|------|-------------|');
   for (const mod of model.modules) {
-    if (mod.id === 'platform') {
-      lines.push(
-        `| platform | [modules/platform.md](./modules/platform.md) |`
-      );
-    } else {
-      lines.push(
-        `| ${mod.name} (\`${mod.id}\`) | [modules/${mod.id}.md](./modules/${mod.id}.md) |`
-      );
-    }
+    const label =
+      mod.id === 'platform' ? 'platform' : `${mod.name} (\`${mod.id}\`)`;
+    const firstSentence = (mod.description ?? '').split(/(?<=[.!?])\s/)[0];
+    const whatItDoes =
+      firstSentence.length > 80
+        ? `${firstSentence.slice(0, 77)}…`
+        : firstSentence || `${mod.id} module`;
+    const owns = (mod.capabilities ?? []).slice(0, 3).join('; ');
+    lines.push(
+      `| ${label} | ${whatItDoes} | ${owns} | [modules/${mod.id}.md](./modules/${mod.id}.md) |`
+    );
   }
   lines.push('');
   lines.push('## Artifacts');
@@ -69,15 +71,51 @@ export function renderIndex(model, config) {
  */
 export function renderModuleScope(model, mod) {
   const lines = [];
-  lines.push(`# ${mod.name} (\`${mod.id}\`) — planning scope`);
+  lines.push(`# ${mod.name} (\`${mod.id}\`) — module`);
   lines.push('');
   lines.push(
-    '**Inject with your task doc only.** Do not load other scope files or the full code map for planning.'
+    '**Inject with your task doc only.** Do not load other module files or the full code map for planning.'
   );
   lines.push('');
 
   if (mod.description) {
-    lines.push(mod.description);
+    lines.push(`**What this module does:** ${mod.description}`);
+    lines.push('');
+  }
+
+  if (mod.capabilities?.length > 0) {
+    lines.push('## Capabilities (owns)');
+    lines.push('');
+    for (const capability of mod.capabilities) {
+      lines.push(`- ${capability}`);
+    }
+    lines.push('');
+  }
+
+  if (mod.doesNotOwn?.length > 0) {
+    lines.push('## Does not own');
+    lines.push('');
+    for (const entry of mod.doesNotOwn) {
+      lines.push(`- ${entry}`);
+    }
+    lines.push('');
+  }
+
+  const apiRows = (mod.publicSurface ?? []).filter(
+    (sym) => sym.signature || sym.summary
+  );
+  if (apiRows.length > 0) {
+    lines.push('## Public API');
+    lines.push('');
+    lines.push('| Symbol | Signature | Summary |');
+    lines.push('|--------|-----------|---------|');
+    for (const sym of apiRows.slice(0, 20)) {
+      const signature = sym.signature
+        ? `\`${sym.signature.replace(/\|/g, '\\|')}\``
+        : '';
+      const summary = (sym.summary ?? '').replace(/\|/g, '\\|');
+      lines.push(`| \`${sym.name}\` | ${signature} | ${summary} |`);
+    }
     lines.push('');
   }
 
@@ -133,15 +171,6 @@ export function renderModuleScope(model, mod) {
     lines.push('');
     for (const cfg of mod.configFiles.slice(0, 8)) {
       lines.push(`- \`${cfg}\``);
-    }
-    lines.push('');
-  }
-
-  if (mod.publicSurface?.length > 0) {
-    lines.push('## Public surface (sample)');
-    lines.push('');
-    for (const sym of mod.publicSurface.slice(0, 15)) {
-      lines.push(`- \`${sym.name}\` (\`${sym.kind}\`) — \`${sym.file}\``);
     }
     lines.push('');
   }

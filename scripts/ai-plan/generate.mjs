@@ -130,17 +130,27 @@ function runGenerate() {
         generated: model.generated,
         project: model.project,
         progressiveDisclosure: model.progressiveDisclosure,
-        modules: model.modules.map((m) => ({
-          id: m.id,
-          name: m.name,
-          root: m.root,
-          source: m.source,
-          dependsOn: m.dependsOn,
-          usedBy: m.usedBy,
-          routeCount: m.httpRoutes.length,
-          symbolCount: m.symbolCount,
-          planningScope: m.planningScope,
-        })),
+        modules: model.modules.map((m) => {
+          /** @type {Record<string, unknown>} */
+          const entry = {
+            id: m.id,
+            name: m.name,
+            root: m.root,
+            source: m.source,
+            dependsOn: m.dependsOn,
+            usedBy: m.usedBy,
+            routeCount: m.httpRoutes.length,
+            symbolCount: m.symbolCount,
+            planningModule: m.planningModule,
+          };
+          if (m.description) {
+            entry.description = m.description;
+          }
+          if (m.capabilities?.length) {
+            entry.capabilities = m.capabilities;
+          }
+          return entry;
+        }),
         edges: model.moduleGraph.edges,
         codeMap: model.codeMap,
         stats: model.stats,
@@ -153,8 +163,8 @@ function runGenerate() {
 
   let scopesWritten = 0;
   for (const mod of model.modules) {
-    if (mod.preserveScope) {
-      log.debug('skip preserveScope module', { moduleId: mod.id });
+    if (mod.preserveModule) {
+      log.debug('skip preserveModule module', { moduleId: mod.id });
       continue;
     }
     writeFileSync(

@@ -133,14 +133,27 @@ export function detectConfigFiles(repoRoot) {
   return found;
 }
 
+/** Kinds ranked for the Public API table — routes and classes first. */
+const PUBLIC_SURFACE_KIND_RANK = {
+  route: 0,
+  class: 1,
+  interface: 1,
+  function: 2,
+  'async-function': 2,
+  'py-function': 2,
+  'default-function': 2,
+};
+
 /**
- * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[]} codeMapFiles
+ * @param {{ path: string, symbols?: { name: string, kind: string, line: number, signature?: string, summary?: string }[] }[]} codeMapFiles
  * @param {string} moduleRoot
- * @returns {{ file: string, name: string, kind: string }[]}
+ * @returns {{ file: string, name: string, kind: string, signature?: string, summary?: string }[]}
  */
 export function detectPublicSurface(codeMapFiles, moduleRoot) {
-  const prefix = `${moduleRoot.replace(/\\/g, '/')}/`;
-  /** @type {{ file: string, name: string, kind: string }[]} */
+  const root = moduleRoot.replace(/\\/g, '/');
+  // A module rooted at the repo top ('.') owns every file.
+  const prefix = root === '.' || root === './' ? '' : `${root}/`;
+  /** @type {{ file: string, name: string, kind: string, signature?: string, summary?: string }[]} */
   const out = [];
 
   for (const file of codeMapFiles) {
@@ -149,17 +162,24 @@ export function detectPublicSurface(codeMapFiles, moduleRoot) {
       continue;
     }
     for (const sym of file.symbols ?? []) {
-      if (sym.kind === 'export' || sym.kind === 'public' || sym.kind === 'function') {
-        out.push({ file: p, name: sym.name, kind: sym.kind });
-      }
-      if (out.length >= 30) {
-        return out;
-      }
+      out.push({
+        file: p,
+        name: sym.name,
+        kind: sym.kind,
+        signature: sym.signature,
+        summary: sym.summary,
+      });
     }
   }
 
+  out.sort(
+    (a, b) =>
+      (PUBLIC_SURFACE_KIND_RANK[a.kind] ?? 3) -
+      (PUBLIC_SURFACE_KIND_RANK[b.kind] ?? 3)
+  );
+
   log.debug('detectPublicSurface complete', { moduleRoot, count: out.length });
-  return out;
+  return out.slice(0, 30);
 }
 
 /**
@@ -190,6 +210,96 @@ export function inferFlows(repoRoot, allModules, mod) {
 
   log.debug('inferFlows complete', { moduleId: mod.id, flowCount: flows.length });
   return flows;
+}
+
+/** @type {Record<string, string>} */
+const DOMAIN_HINTS = {
+  auth: 'authentication and session concerns',
+  user: 'user accounts and profiles',
+  billing: 'billing and payment processing',
+  payment: 'payment processing',
+  order: 'order management',
+  notification: 'notifications and messaging',
+  admin: 'administrative operations',
+  api: 'HTTP API surface',
+  web: 'web UI',
+  ui: 'user interface components',
+  core: 'core domain logic',
+  shared: 'shared utilities and cross-cutting helpers',
+  platform: 'shared platform services',
+};
+
+/**
+ * Infers a prose description, capability bullets, and does-not-own entries
+ * from a module's name, routes, entry points, and dependency edges. Manual
+ * config values take precedence over these in build.mjs.
+ *
+ * @param {string} repoRoot
+ * @param {{ id: string, root: string, httpRoutes?: { path: string, methods?: string[] }[], dependsOn?: string[] }} mod
+ * @param {{ entryPoints: string[] }} enrichment
+ * @returns {{ description: string, capabilities: string[], doesNotOwn: string[] }}
+ */
+export function inferCapabilities(repoRoot, mod, enrichment) {
+  /** @type {string[]} */
+  const capabilities = [];
+  /** @type {string[]} */
+  const sentences = [];
+
+  const domainWord = Object.keys(DOMAIN_HINTS).find((word) =>
+    mod.id.toLowerCase().includes(word)
+  );
+  if (domainWord) {
+    sentences.push(
+      `Owns ${DOMAIN_HINTS[domainWord]} for this application.`
+    );
+  }
+
+  const routes = mod.httpRoutes ?? [];
+  if (routes.length > 0) {
+    const methods = [
+      ...new Set(routes.flatMap((r) => r.methods ?? [])),
+    ].filter(Boolean);
+    const methodText = methods.length > 0 ? `${methods.join('/')} ` : '';
+    const samplePaths = routes
+      .slice(0, 3)
+      .map((r) => `\`${r.path}\``)
+      .join(', ');
+    sentences.push(
+      `Serves ${routes.length} HTTP ${methodText}route${routes.length === 1 ? '' : 's'} including ${samplePaths}.`
+    );
+    capabilities.push(
+      `HTTP endpoints under \`${mod.root}/\` (${routes.length} routes)`
+    );
+  }
+
+  const entryPoints = enrichment.entryPoints ?? [];
+  if (entryPoints.some((e) => e.includes('bin/') || e.includes('cmd/'))) {
+    capabilities.push(`CLI commands (entry points under \`${mod.root}/\`)`);
+  }
+  if (
+    entryPoints.some((e) => e.endsWith('Program.cs') || e.endsWith('main.py') || e.endsWith('main.ts') || e.endsWith('index.ts'))
+  ) {
+    capabilities.push('Application bootstrap and startup wiring');
+  }
+
+  if (sentences.length === 0) {
+    sentences.push(
+      `Application module providing ${mod.id} functionality under \`${mod.root}/\`.`
+    );
+  }
+  if (capabilities.length === 0) {
+    capabilities.push(`Feature code and services under \`${mod.root}/\``);
+  }
+
+  const doesNotOwn = (mod.dependsOn ?? []).map(
+    (dep) => `${dep} concerns → ${dep} module`
+  );
+
+  return {
+    description: sentences.join(' '),
+    capabilities,
+    doesNotOwn,
+  };
 }
 
 /**
@@ -225,13 +335,15 @@ export function inferOutOfScope(allModules, mod) {
 export function enrichModule(repoRoot, allModules, mod, codeMapFiles) {
   log.debug('enrichModule start', { moduleId: mod.id, root: mod.root });
 
+  const entryPoints = detectEntryPoints(repoRoot, mod.root);
   const enrichment = {
-    entryPoints: detectEntryPoints(repoRoot, mod.root),
+    entryPoints,
     testRoots: detectTestRoots(repoRoot, mod.root),
     configFiles: detectConfigFiles(repoRoot),
     publicSurface: detectPublicSurface(codeMapFiles, mod.root),
     inferredFlows: inferFlows(repoRoot, allModules, mod),
     outOfScope: inferOutOfScope(allModules, mod),
+    inferredCapabilities: inferCapabilities(repoRoot, mod, { entryPoints }),
   };
 
   log.debug('enrichModule complete', {

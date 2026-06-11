@@ -74,11 +74,30 @@ export function extractSignature(filePath, lineNumber) {
 
     let sig = collected.join(' ').replace(/\s+/g, ' ').trim();
 
-    // Cut at the start of the body. Python's `:` terminator is kept implicit —
-    // strip a trailing colon after the closing paren or class name.
-    sig = sig.replace(/\s*(\{|=>).*$/, '').trim();
+    // Cut at the start of the body: the first `{` or `=>` OUTSIDE the
+    // parameter list (default params like `options = {}` contain braces
+    // at paren depth > 0 and must survive).
+    let parenDepth = 0;
+    let cutAt = -1;
+    for (let idx = 0; idx < sig.length; idx += 1) {
+      const ch = sig[idx];
+      if (ch === '(') {
+        parenDepth += 1;
+      } else if (ch === ')') {
+        parenDepth -= 1;
+      } else if (parenDepth === 0) {
+        if (ch === '{' || (ch === '=' && sig[idx + 1] === '>')) {
+          cutAt = idx;
+          break;
+        }
+      }
+    }
+    if (cutAt >= 0) {
+      sig = sig.slice(0, cutAt).trim();
+    }
+    // Python's `:` terminator is kept implicit; const initializers leave a
+    // dangling `=` once the body is cut.
     sig = sig.replace(/:\s*$/, '').trim();
-    // Const/var initializers leave a dangling `=` once the body is cut.
     sig = sig.replace(/=\s*$/, '').trim();
     // Strip trailing decorators-only or attribute-only artifacts.
     if (!sig || sig.startsWith('@') || sig.startsWith('[')) {

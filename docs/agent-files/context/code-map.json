@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:41:21.679Z",
+  "generated": "2026-06-11T16:46:29.683Z",
   "roots": [
     "."
   ],
@@ -14,7 +14,7 @@
     "Rust"
   ],
   "fileCount": 22,
-  "symbolCount": 51,
+  "symbolCount": 52,
   "files": [
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
@@ -74,7 +74,7 @@
           "name": "bootstrapRepo",
           "kind": "function",
           "line": 78,
-          "signature": "export function bootstrapRepo(repoRoot, options"
+          "signature": "export function bootstrapRepo(repoRoot, options = {})"
         }
       ]
     },
@@ -95,25 +95,25 @@
         {
           "name": "loadAiPlanConfig",
           "kind": "function",
-          "line": 41,
-          "signature": "export function loadAiPlanConfig(repoRoot, opts"
+          "line": 44,
+          "signature": "export function loadAiPlanConfig(repoRoot, opts = {})"
         },
         {
           "name": "validateRequiredDocs",
           "kind": "function",
-          "line": 111,
+          "line": 114,
           "signature": "export function validateRequiredDocs(repoRoot, config)"
         },
         {
           "name": "resolveDocPath",
           "kind": "function",
-          "line": 133,
+          "line": 136,
           "signature": "export function resolveDocPath(repoRoot, candidates)"
         },
         {
           "name": "writeStarterConfigs",
           "kind": "function",
-          "line": 146,
+          "line": 149,
           "signature": "export function writeStarterConfigs(repoRoot)"
         }
       ]
@@ -130,7 +130,7 @@
         {
           "name": "parseNavEntries",
           "kind": "function",
-          "line": 305,
+          "line": 312,
           "signature": "export function parseNavEntries(navPath)"
         }
       ]
@@ -166,7 +166,7 @@
           "name": "runDoctor",
           "kind": "function",
           "line": 194,
-          "signature": "export function runDoctor(repoRoot, options"
+          "signature": "export function runDoctor(repoRoot, options = {})"
         },
         {
           "name": "formatDoctorReport",
@@ -183,7 +183,7 @@
           "name": "createLogger",
           "kind": "function",
           "line": 57,
-          "signature": "export function createLogger(bindings"
+          "signature": "export function createLogger(bindings = {})"
         },
         {
           "name": "log",
@@ -246,25 +246,32 @@
         {
           "name": "detectPublicSurface",
           "kind": "function",
-          "line": 141,
+          "line": 152,
           "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)"
         },
         {
           "name": "inferFlows",
           "kind": "function",
-          "line": 171,
+          "line": 191,
           "signature": "export function inferFlows(repoRoot, allModules, mod)"
+        },
+        {
+          "name": "inferCapabilities",
+          "kind": "function",
+          "line": 242,
+          "signature": "export function inferCapabilities(repoRoot, mod, enrichment)",
+          "summary": "Infers a prose description, capability bullets, and does-not-own entries from a module's name, routes, entry points, and"
         },
         {
           "name": "inferOutOfScope",
           "kind": "function",
-          "line": 200,
+          "line": 310,
           "signature": "export function inferOutOfScope(allModules, mod)"
         },
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 225,
+          "line": 335,
           "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)"
         }
       ]
@@ -292,7 +299,7 @@
         {
           "name": "renderModuleScope",
           "kind": "function",
-          "line": 70,
+          "line": 72,
           "signature": "export function renderModuleScope(model, mod)"
         }
       ]

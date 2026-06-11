@@ -1,6 +1,6 @@
 # dev-tools — AI planning index
 
-Generated: 2026-06-11T16:31:42.875Z. Regenerate: `npm run ai-plan`.
+Generated: 2026-06-11T16:46:29.809Z. Regenerate: `npm run ai-plan`.
 
 ## Progressive disclosure (for planning agents)
 
@@ -15,9 +15,9 @@ Generated: 2026-06-11T16:31:42.875Z. Regenerate: `npm run ai-plan`.
 
 ## Module files (pick one)
 
-| Module | Module file |
-|--------|-------------|
-| dev-tools (`main`) | [modules/main.md](./modules/main.md) |
+| Module | What it does | Owns | Module file |
+|--------|--------------|------|-------------|
+| dev-tools (`main`) | Application code (auto-detected single module). | Feature code and services under `./` | [modules/main.md](./modules/main.md) |
 
 ## Artifacts
 
