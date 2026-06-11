@@ -6,7 +6,7 @@
 
 **Architecture:** Path constants updated throughout generator scripts and skills. A new `--migrate` command added to `generate.mjs` handles idempotent migration of existing consumer repos. The `design-spec` skill gains a third input type (use-case files).
 
-**Planning scope:** `docs/ai-plan/modules/main.md`
+**Planning scope:** `docs/ai-plan/scopes/main.md` (current layout — becomes `docs/agent-files/context/modules/main.md` once this plan ships)
 
 **Spec:** `docs/specs/2026-06-11-dev-tools-directory-reorganization-design.md`
 
@@ -168,7 +168,7 @@ Read `scripts/ai-plan/lib/config.mjs`. Make these changes:
 Read `scripts/ai-plan/lib/bootstrap.mjs`. Make these changes:
 - Line 109: `'docs/backlog'` → `'docs/agent-files/backlog'`
 - Line 110: `'docs/bugs'` → `'docs/agent-files/bugs'`
-- Line 112: `'docs/ai-plan/scopes'` → `'docs/agent-files/context/scopes'`
+- Line 112: `'docs/ai-plan/scopes'` → `'docs/agent-files/context/modules'` (the new layout names this directory `modules/` — see the spec tree; do NOT use `context/scopes`)
 
 - [ ] **Step 3: Update `doctor.mjs`**
 
@@ -226,7 +226,7 @@ Add a `runMigrate(repoRoot)` function to `generate.mjs` (or a new `scripts/ai-pl
    - Rename `INDEX.md` → `index.md`
    - Rename `CODE_MAP.json` → `code-map.json`
    - Rename `MODULE_MAP.json` → `module-map.json`
-   - Move `modules/` directory unchanged
+   - Rename `scopes/` → `modules/` (the old layout names this directory `scopes/`; contents move unchanged)
 
 2. **Move `docs/specs/` → `docs/agent-files/specs/`** (skip if target exists)
 
@@ -238,9 +238,10 @@ Add a `runMigrate(repoRoot)` function to `generate.mjs` (or a new `scripts/ai-pl
 
 6. **Patch cross-references in moved files:**
    - In `docs/agent-files/context/module-map.json`: replace the `"codeMap"` field value `docs/ai-plan/CODE_MAP.json` → `docs/agent-files/context/code-map.json`
-   - In `docs/agent-files/context/module-map.json`: replace `"planningModule"` field values `docs/ai-plan/modules/` → `docs/agent-files/context/modules/`
+   - In `docs/agent-files/context/module-map.json`: rename `"planningScope"` keys to `"planningModule"` and replace their values `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/` (old repos have the old field name and the `scopes/` directory)
    - In `docs/agent-files/context/index.md`: replace `docs/ai-plan/` → `docs/agent-files/context/` (for any links that aren't already relative)
-   - Do NOT modify relative `./modules/` links — they remain correct
+   - In `docs/agent-files/context/index.md`: replace relative `./scopes/` links → `./modules/` (the directory was renamed in step 1, so old relative links break)
+   - Relative links already pointing at `./modules/` need no change
 
 7. **Create `docs/design/`** with a `.gitkeep` file (skip if exists)
 
@@ -318,8 +319,8 @@ Make these replacements throughout the file:
 - `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
 - `docs/ai-plan/CODE_MAP.json` → `docs/agent-files/context/code-map.json`
 - `docs/ai-plan/MODULE_MAP.json` → `docs/agent-files/context/module-map.json`
-- `docs/ai-plan/modules/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md`
-- `docs/ai-plan/modules/` → `docs/agent-files/context/modules/`
+- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md` (the current skill text says `scopes/` — the rename to `modules/` happens here)
+- `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/`
 - `docs/ai-plan/` → `docs/agent-files/context/` (any remaining)
 - `docs/specs/…-design.md` → `docs/agent-files/specs/…-design.md`
 - `docs/specs/` → `docs/agent-files/specs/`
@@ -332,7 +333,7 @@ Also update:
 - [ ] **Step 3: Verify no old paths remain**
 
 ```bash
-grep -n "docs/ai-plan\|docs/specs/" skills/using-ai-plan/SKILL.md
+grep -n "docs/ai-plan\|docs/specs/\|context/scopes" skills/using-ai-plan/SKILL.md
 ```
 
 Should return nothing.
@@ -367,6 +368,7 @@ Apply these replacements:
 - `docs/backlog/` → `docs/agent-files/backlog/`
 - `docs/backlog/{id}/{id}-detail.md` → `docs/agent-files/backlog/{id}/{id}-detail.md`
 - `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
+- `docs/ai-plan/scopes/{module-id}.md` → `docs/agent-files/context/modules/{module-id}.md` (Module scope template section)
 - `docs/ai-plan/` → `docs/agent-files/context/`
 
 Also add the third input type (use-case file) to the input chain section. When given a path under `docs/use-cases/`, `design-spec` should:
@@ -421,7 +423,7 @@ Read `skills/write-plan/SKILL.md` in full.
 
 - `docs/plans/` → `docs/agent-files/plans/`
 - `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
-- `docs/ai-plan/modules/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md`
+- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md` (the current skill text says `scopes/`)
 - `docs/ai-plan/` → `docs/agent-files/context/`
 - `docs/specs/` → `docs/agent-files/specs/`
 
@@ -568,7 +570,8 @@ grep -rn "docs/ai-plan\|docs/specs\|docs/plans\|docs/backlog\|docs/bugs" scripts
 - [ ] **Step 3: Apply replacements in each affected file**
 
 For each file found:
-- `docs/ai-plan/` → `docs/agent-files/context/`
+- `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/` (apply before the catch-all below so `scopes` doesn't survive)
+- `docs/ai-plan/` → `docs/agent-files/context/` (any remaining)
 - `docs/specs/` → `docs/agent-files/specs/`
 - `docs/plans/` → `docs/agent-files/plans/`
 - `docs/backlog/` → `docs/agent-files/backlog/`
@@ -601,7 +604,7 @@ Generated AGENTS.md stubs now reference new docs/agent-files/ layout."
 - [ ] **Step 1: Full grep for any remaining old paths**
 
 ```bash
-grep -rn "docs/ai-plan\|docs/specs/\|docs/plans/\|docs/backlog/\|docs/bugs/" \
+grep -rn "docs/ai-plan\|docs/specs/\|docs/plans/\|docs/backlog/\|docs/bugs/\|context/scopes" \
   standards/ scripts/ skills/
 ```
 
@@ -627,7 +630,7 @@ node scripts/code-map/generate-code-map.mjs
 node scripts/ai-plan/generate.mjs
 ```
 
-Confirm output goes to `docs/agent-files/context/code-map.json` and `docs/agent-files/context/index.md`.
+Confirm output goes to `docs/agent-files/context/code-map.json` and `docs/agent-files/context/index.md`, and module files land in `docs/agent-files/context/modules/` (not `context/scopes/`).
 
 - [ ] **Step 4: Spot-check key skill files**
 
