@@ -291,11 +291,18 @@ function manualToModule(manual, config) {
     name: manual.name ?? id,
     root: manual.root.replace(/\\/g, '/'),
     description: manual.description ?? '',
+    capabilities: Array.isArray(manual.capabilities)
+      ? manual.capabilities
+      : undefined,
+    doesNotOwn: Array.isArray(manual.doesNotOwn)
+      ? manual.doesNotOwn
+      : undefined,
     flows: manual.flows ?? config.modules.flows[id] ?? [],
     packageDependencies: [],
     exportEntries: [],
     source: 'manual',
-    preserveScope: manual.preserveScope === true,
+    preserveModule:
+      manual.preserveModule === true || manual.preserveScope === true,
   };
 }
 

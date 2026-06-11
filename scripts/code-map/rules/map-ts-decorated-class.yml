@@ -1,0 +1,15 @@
+id: map-ts-decorated-class
+message: TypeScript decorated export class
+severity: info
+language: TypeScript
+metadata:
+  mapKind: class
+rule:
+  kind: class_declaration
+  inside:
+    kind: export_statement
+    has:
+      kind: decorator
+  has:
+    field: name
+    pattern: $NAME

@@ -12,9 +12,12 @@ import {
  * @property {string} id
  * @property {string} [name]
  * @property {string} root
- * @property {string} [description]
+ * @property {string} [description] Prose responsibility statement — overrides the inferred one
+ * @property {string[]} [capabilities] Capability bullets — override the inferred ones
+ * @property {string[]} [doesNotOwn] "{capability} → {module} module" entries — override the inferred ones
  * @property {string[]} [flows]
- * @property {boolean} [preserveScope] When true, ai-plan does not overwrite docs/agent-files/context/modules/<id>.md
+ * @property {boolean} [preserveModule] When true, ai-plan does not overwrite docs/agent-files/context/modules/<id>.md
+ * @property {boolean} [preserveScope] Deprecated alias for preserveModule (read as fallback)
  */
 
 /**

@@ -21,6 +21,8 @@ import {
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
+import { extractSignature } from './lib/signature-extractor.mjs';
+import { extractDocComment } from './lib/comment-extractor.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
@@ -300,11 +302,22 @@ function buildCodeMapDocument(symbols, options) {
         symbols: [],
       });
     }
-    byFile.get(entry.file).symbols.push({
+    const absPath = path.join(REPO_ROOT, entry.file);
+    const signature = extractSignature(absPath, entry.line);
+    const summary = extractDocComment(absPath, entry.line);
+    /** @type {{ name: string, kind: string, line: number, signature?: string, summary?: string }} */
+    const symbol = {
       name: entry.name,
       kind: entry.kind,
       line: entry.line,
-    });
+    };
+    if (signature !== undefined) {
+      symbol.signature = signature;
+    }
+    if (summary !== undefined) {
+      symbol.summary = summary;
+    }
+    byFile.get(entry.file).symbols.push(symbol);
   }
 
   if (options.includeComments) {

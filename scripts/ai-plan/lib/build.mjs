@@ -98,14 +98,31 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
       ),
     ].slice(0, 12);
 
+    const dependsOn = [...new Set(dependencies)].sort();
+    const inferred = enrichment.inferredCapabilities;
+    // Manual config values (description, capabilities, doesNotOwn) win over
+    // inferred ones. doesNotOwn falls back to dependency edges.
+    const description = mod.description || inferred.description;
+    const capabilities = Array.isArray(mod.capabilities)
+      ? mod.capabilities
+      : inferred.capabilities;
+    const doesNotOwn = Array.isArray(mod.doesNotOwn)
+      ? mod.doesNotOwn
+      : dependsOn.length > 0
+        ? dependsOn.map((dep) => `${dep} concerns → ${dep} module`)
+        : inferred.doesNotOwn;
+
     return {
       ...mod,
+      description,
+      capabilities,
+      doesNotOwn,
       nav: navById.get(mod.id) ?? null,
       symbolsSample: symbols.slice(0, 60),
       symbolCount: symbols.length,
-      dependsOn: [...new Set(dependencies)].sort(),
+      dependsOn,
       usedBy: [...new Set(dependents)].sort(),
-      planningScope: scopeRel,
+      planningModule: scopeRel,
       entryPoints: enrichment.entryPoints,
       testRoots: enrichment.testRoots,
       configFiles: enrichment.configFiles,
@@ -182,10 +199,12 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
  * @param {string} prefix
  */
 function symbolsUnderPrefix(files, prefix) {
+  // A module rooted at the repo top ('.') owns every file.
+  const normalized = prefix === './' || prefix === '.' ? '' : prefix;
   const out = [];
   for (const file of files) {
     const p = file.path.replace(/\\/g, '/');
-    if (!p.startsWith(prefix)) {
+    if (!p.startsWith(normalized)) {
       continue;
     }
     for (const sym of file.symbols ?? []) {

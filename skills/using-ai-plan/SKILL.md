@@ -21,18 +21,18 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 
 ## Progressive Disclosure (mandatory)
 
-**Primary ai-plan artifact:** `docs/agent-files/context/modules/<module-id>.md` — a self-contained architectural description of one code module (boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols). This is not a duplicate of `docs/agent-files/specs/` or `docs/agent-files/plans/`; those are *work-item* docs. Scopes are *module* docs.
+**Primary ai-plan artifact:** `docs/agent-files/context/modules/<module-id>.md` — a self-contained architectural description of one code module (boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols). This is not a duplicate of `docs/agent-files/specs/` or `docs/agent-files/plans/`; those are *work-item* docs. Module files are *module* docs.
 
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task + `docs/agent-files/specs/…-design.md` (if feature work) | Always |
-| L1 | **One** `docs/agent-files/context/modules/<module-id>.md` | **During write-plan** — pick module from INDEX |
+| L1 | **One** `docs/agent-files/context/modules/<module-id>.md` | **During write-plan** — Read the module file now (Read tool). Do not defer or summarize. |
 | L2 | `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` | When product context needed |
 | L3 | `docs/agent-files/context/code-map.json` | **After** plan names symbols — implementation only |
 
 `module-map.json` informs task ordering; do not paste the whole file into context.
 
-**Never** inject all scope files or the full code map during planning.
+**Never** inject all module files or the full code map during planning.
 
 ## Generate (target repo)
 
@@ -48,7 +48,7 @@ From the **project root**, using scripts bundled in the dev-tools plugin:
 # One-time bootstrap (creates docs, configs, AGENTS.md stubs)
 node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs" --init --write-scripts
 
-# Regenerate map + scopes (run code-map first internally via npm script, or both):
+# Regenerate map + module files (run code-map first internally via npm script, or both):
 node "<PLUGIN_ROOT>/scripts/code-map/generate-code-map.mjs"
 node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs"
 ```
@@ -70,17 +70,17 @@ Replace `<PLUGIN_ROOT>` with `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the 
 
 If `--write-scripts` copied tooling into the repo, prefer `npm run ai-plan` from the project root.
 
-## Pick a Module Scope (write-plan)
+## Pick a Module File (write-plan)
 
 1. Read `docs/agent-files/context/index.md` — module table links to `modules/<id>.md`
 2. Match the spec / roadmap item to **one** module (ask if ambiguous)
-3. Read **only** that scope file — boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols
+3. Read `docs/agent-files/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read **only** that one module file
 4. Use `docs/agent-files/context/module-map.json` only for dependency ordering between tasks (do not paste the whole file into context)
 
 Record in the plan header:
 
 ```markdown
-**Planning scope:** `docs/agent-files/context/modules/<module-id>.md`
+**Planning module:** `docs/agent-files/context/modules/<module-id>.md`
 ```
 
 ## Staleness
@@ -89,9 +89,9 @@ Regenerate when:
 
 - Module folders added/removed/renamed
 - Public API or route structure changed materially
-- Scope file missing for the module you need
+- Module file missing for the module you need
 
-Tell your human partner: "Module graph may be stale — run `npm run ai-plan` in the project repo."
+**Staleness gate:** if `docs/agent-files/context/index.md` is missing, or any source file is newer than it, run `npm run ai-plan` **before any planning step** — do not proceed with stale context. Tell your human partner: "Module graph was stale — regenerated before planning."
 
 ## Repo layout
 
@@ -105,7 +105,7 @@ Generated artifacts live under `docs/agent-files/context/` per **`standards/proj
 | **design-spec** | Auto-regenerates index if stale; reads index + module-map; **single primary module per spec** |
 | **using-core-standards** | Project structure, test layout, timestamp rules |
 | **using-git-worktrees** | Before write-plan |
-| **write-plan** | Consumes L1 scope + module-map edges + standards from spec |
+| **write-plan** | Consumes L1 module file + module-map edges + standards from spec |
 | **execute-plan** / **execute-plan-run** / **execute-plan-run-inline** | L3 code-map for named symbols only |
 
 See `scripts/ai-plan/README.md` and `docs/standards.md` in the plugin for details.

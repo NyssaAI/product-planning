@@ -5,4 +5,7 @@ language: Python
 metadata:
   mapKind: py-function
 rule:
-  pattern: "def $NAME($$$):"
+  kind: function_definition
+  has:
+    field: name
+    pattern: $NAME

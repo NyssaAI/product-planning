@@ -133,6 +133,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
 
   if (options.writeScripts) {
     mergePackageScripts(repoRoot, created, skipped);
+    writeClaudeHook(repoRoot, created, skipped);
   }
 
   log.info('bootstrap complete', {
@@ -179,4 +180,71 @@ function mergePackageScripts(repoRoot, created, skipped) {
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
   log.info('bootstrap merged package.json scripts');
   created.push('package.json (scripts)');
+}
+
+const REGEN_HOOK_MATCHER = 'Write|Edit';
+
+/**
+ * Adds the PostToolUse auto-regeneration hook to the project's
+ * .claude/settings.json. Existing hooks are preserved; if a hook entry
+ * already references regen-if-source-changed.mjs nothing is written.
+ * Opt-out at runtime via "autoRegenerate": false in ai-plan.config.json.
+ *
+ * @param {string} repoRoot
+ * @param {string[]} created
+ * @param {string[]} skipped
+ */
+function writeClaudeHook(repoRoot, created, skipped) {
+  const settingsDir = path.join(repoRoot, '.claude');
+  const settingsPath = path.join(settingsDir, 'settings.json');
+  const pluginRoot = path.resolve(__dirname, '../../..');
+  const hookScript = path
+    .join(pluginRoot, 'scripts/ai-plan/regen-if-source-changed.mjs')
+    .replace(/\\/g, '/');
+
+  /** @type {Record<string, any>} */
+  let settings = {};
+  if (existsSync(settingsPath)) {
+    try {
+      settings = JSON.parse(readFileSync(settingsPath, 'utf8'));
+    } catch {
+      log.warn('bootstrap could not parse .claude/settings.json — skipping hook', {
+        path: settingsPath,
+      });
+      skipped.push('.claude/settings.json (unparseable)');
+      return;
+    }
+  }
+
+  settings.hooks = settings.hooks ?? {};
+  settings.hooks.PostToolUse = settings.hooks.PostToolUse ?? [];
+
+  const alreadyPresent = JSON.stringify(settings.hooks.PostToolUse).includes(
+    'regen-if-source-changed.mjs'
+  );
+  if (alreadyPresent) {
+    skipped.push('.claude/settings.json (hook present)');
+    return;
+  }
+
+  settings.hooks.PostToolUse.push({
+    matcher: REGEN_HOOK_MATCHER,
+    hooks: [
+      {
+        type: 'command',
+        command: `node "${hookScript}"`,
+      },
+    ],
+  });
+
+  if (!existsSync(settingsDir)) {
+    mkdirSync(settingsDir, { recursive: true });
+  }
+  writeFileSync(
+    settingsPath,
+    `${JSON.stringify(settings, null, 2)}\n`,
+    'utf8'
+  );
+  log.info('bootstrap wrote PostToolUse regen hook', { path: settingsPath });
+  created.push('.claude/settings.json (PostToolUse regen hook)');
 }
