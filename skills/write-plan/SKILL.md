@@ -27,7 +27,7 @@ Do NOT write or save an implementation plan until you are in an isolated worktre
 - `dev-tools:using-git-worktrees` completed in this session (or you are already in that feature worktree)
 - Current branch is a feature branch — not `main` or `master`
 - Know the branch name and worktree path for the plan header
-- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/agent-files/context/` if stale, then load **one** L1 scope file for the target module
+- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/agent-files/context/` if stale, then load **one** L1 module file for the target module
 
 **Save plans to:** `docs/agent-files/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
@@ -37,11 +37,11 @@ Do NOT write or save an implementation plan until you are in an isolated worktre
 When the project has source code and `docs/product.md` / `docs/roadmap.md` / `docs/tech-stack.md` exist:
 
 1. **REQUIRED SUB-SKILL:** `dev-tools:using-ai-plan`
-2. If `docs/agent-files/context/index.md` is missing or scopes are outdated, run generate in the **project repo** (see using-ai-plan) before writing tasks
-3. Read `docs/agent-files/context/index.md` — pick **one** module matching the spec's **Primary module** (from design-spec's Module scope section) or the spec / roadmap item if no module scope section
-4. Read **only** `docs/agent-files/context/modules/<module-id>.md` (L1) — the module's architectural picture: boundaries, `dependsOn` / `usedBy`, routes, test roots, entry points. Use this for file paths and task order; it complements the feature **spec**, it does not replace it
+2. If `docs/agent-files/context/index.md` is missing or module files are outdated, run generate in the **project repo** (see using-ai-plan) before writing tasks — do not plan against stale context
+3. Read `docs/agent-files/context/index.md` now (Read tool) — pick **one** module matching the spec's **Primary module** (from design-spec's Module scope section) or the spec / roadmap item if no module scope section
+4. Read `docs/agent-files/context/modules/<module-id>.md` now (Read tool). Do not summarize or skip — the module's architectural picture (capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots, entry points) supplies file paths and task order. It complements the feature **spec**, it does not replace it
 5. Order tasks respecting module dependencies (leaves or dependency-safe order per module-map edges)
-6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `code-map.json`, or other scope files during planning
+6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `code-map.json`, or other module files during planning
 
 If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip this section.
 
@@ -51,7 +51,7 @@ If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip 
 2. **REQUIRED SUB-SKILLS:** Invoke `dev-tools:using-core-standards` plus every stack skill listed in the spec (same detection table as design-spec)
 3. Plans MUST respect `standards/project-structure.md`:
    - Feature folders under `src/`, tests mirror `src/` under `test/`
-   - Plan paths use real paths from the ai-plan scope when available
+   - Plan paths use real paths from the ai-plan module file when available
 4. If a task would violate a loaded standard, flag it in the plan or adjust the task — do not silently diverge
 
 ## Scope Check
@@ -101,12 +101,25 @@ This structure informs the task decomposition. Each task should produce self-con
 
 **Integration:** Pull request via `gh pr create` when implementation completes (`dev-tools:execute-plan` → `execute-plan-finish`)
 
-**Planning scope:** `docs/agent-files/context/modules/<module-id>.md` (when ai-plan is present)
+**Planning module:** `docs/agent-files/context/modules/<module-id>.md` (when ai-plan is present)
 
 **Standards:** [list from spec Standards Applied — e.g. core, dotnet, nextjs]
 
 ---
+
+## Planning context
+
+**Module:** `<module-id>`
+
+**What this module does:** [description — first 2 sentences from the module file]
+
+**Capabilities:** [comma-separated list from the module file]
+**Does not own:** [comma-separated list from the module file, or "—"]
+
+---
 ```
+
+The **Planning context** section is filled from the module file you read in AI Plan Context — copy the description, capabilities, and does-not-own facts so the context travels with the plan. `execute-plan` and its subagents then have the module picture without re-fetching. Omit the section only when the repo has no ai-plan artifacts.
 
 ## Task Structure
 

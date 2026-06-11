@@ -19,11 +19,20 @@ The repo must provide (default paths under `docs/`):
 | L2 | `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` | When product context needed |
 | L3 | `docs/agent-files/context/code-map.json` | After the plan names symbols — implementation only |
 
-Never inject all scope files or the full code map during planning.
+Never inject all module files or the full code map during planning.
 
-## Regenerate
+## Regenerate (conditional startup step)
 
-From project root (after `--init --write-scripts`):
+Regenerate **only when needed**: if `docs/agent-files/context/index.md` is missing, or source files are newer than it. If the index is current, skip this section entirely.
+
+**Pre-flight checks — run before regenerating, skip (do not abort the session) if any fail:**
+
+1. `"autoRegenerate": false` in `ai-plan.config.json` → skip regeneration entirely; the team manages it manually.
+2. Node 18+ available (`node --version`). If not: note *"ai-plan: skipped — Node 18+ not available."* and continue.
+3. Required docs present: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`. If not: note *"ai-plan: skipped — MISSING_DOCS"* and continue.
+4. ast-grep available: the plugin auto-installs `@ast-grep/cli` into its own root on first run. If the run fails with an ast-grep error: note *"ai-plan: skipped — AST_GREP_NOT_FOUND. Run npm install in the dev-tools plugin root."* and continue.
+
+**Regenerate** from the project root (after `--init --write-scripts`):
 
 ```bash
 npm run ai-plan
@@ -32,11 +41,12 @@ npm run ai-plan
 Or via plugin scripts (`PLUGIN_ROOT` = dev-tools plugin directory, e.g. `CLAUDE_PLUGIN_ROOT`):
 
 ```bash
-node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs" --init --write-scripts
 node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs" --doctor
 node "<PLUGIN_ROOT>/scripts/code-map/generate-code-map.mjs"
 node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs"
 ```
+
+**On failure:** report the named error code from the output (`MISSING_DOCS`, `AST_GREP_NOT_FOUND`, `CODE_MAP_STALE`, `NO_MODULES_FOUND`) and proceed with whatever context is available — never abort the session over regeneration.
 
 ## Workflow artifacts
 
