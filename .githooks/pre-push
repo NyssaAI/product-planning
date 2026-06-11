@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+
+"$ROOT/scripts/bump-version.sh" --check
+
+has_releasable_change=0
+has_version_change=0
+
+is_zero_sha() {
+  [[ "$1" =~ ^0+$ ]]
+}
+
+is_version_file() {
+  case "$1" in
+    package.json|package-lock.json|.claude-plugin/plugin.json|.cursor-plugin/plugin.json|gemini-extension.json)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+is_releasable_file() {
+  case "$1" in
+    .claude-plugin/*|.codex/*|.cursor-plugin/*|.opencode/*|agents/*|commands/*|hooks/*|scripts/*|skills/*|standards/*|package.json|package-lock.json|gemini-extension.json|manifest.json|README.md|CHANGELOG.md|RELEASE-NOTES.md)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+check_file() {
+  local file="$1"
+
+  if is_version_file "$file"; then
+    has_version_change=1
+  fi
+
+  if is_releasable_file "$file"; then
+    has_releasable_change=1
+  fi
+}
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ -n "${local_ref:-}" ]] || continue
+
+  if is_zero_sha "$local_sha"; then
+    continue
+  fi
+
+  if is_zero_sha "$remote_sha"; then
+    commits="$(git rev-list "$local_sha" --not --remotes)"
+    if [[ -z "$commits" ]]; then
+      commits="$local_sha"
+    fi
+    while IFS= read -r file; do
+      check_file "$file"
+    done < <(git diff-tree --no-commit-id --name-only -r $commits)
+  else
+    while IFS= read -r file; do
+      check_file "$file"
+    done < <(git diff --name-only "$remote_sha..$local_sha")
+  fi
+done
+
+if [[ "$has_releasable_change" -eq 1 && "$has_version_change" -eq 0 ]]; then
+  cat >&2 <<'EOF'
+error: releasable dev-tools plugin files changed without a version bump.
+
+Run scripts/bump-version.sh <new-version>, commit the version files, and push again.
+EOF
+  exit 1
+fi

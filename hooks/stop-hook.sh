@@ -8,6 +8,8 @@ set -euo pipefail
 
 # Read hook input from stdin (advanced stop hook API)
 HOOK_INPUT=$(cat)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+JSON_HELPER="$SCRIPT_DIR/stop-hook-json.mjs"
 
 # Check if ralph-loop is active
 RALPH_STATE_FILE=".claude/ralph-loop.local.md"
@@ -29,7 +31,7 @@ COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/
 # started the loop, this session must not block (or touch the state file).
 # Legacy state files without session_id fall through (preserves old behavior).
 STATE_SESSION=$(echo "$FRONTMATTER" | grep '^session_id:' | sed 's/session_id: *//' || true)
-HOOK_SESSION=$(echo "$HOOK_INPUT" | jq -r '.session_id // ""')
+HOOK_SESSION=$(printf '%s' "$HOOK_INPUT" | node "$JSON_HELPER" input-field session_id)
 if [[ -n "$STATE_SESSION" ]] && [[ "$STATE_SESSION" != "$HOOK_SESSION" ]]; then
   exit 0
 fi
@@ -65,7 +67,7 @@ if [[ $MAX_ITERATIONS -gt 0 ]] && [[ $ITERATION -ge $MAX_ITERATIONS ]]; then
 fi
 
 # Get transcript path from hook input
-TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path')
+TRANSCRIPT_PATH=$(printf '%s' "$HOOK_INPUT" | node "$JSON_HELPER" input-field transcript_path)
 
 if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
   echo "⚠️  Ralph loop: Transcript file not found" >&2
@@ -93,7 +95,7 @@ fi
 # JSONL line, all with role=assistant. So slurp the last N assistant lines,
 # flatten to text blocks only, and take the last one.
 #
-# Capped at the last 100 assistant lines to keep jq's slurp input bounded
+# Capped at the last 100 assistant lines to keep JSON parsing bounded
 # for long-running sessions.
 LAST_LINES=$(grep '"role":"assistant"' "$TRANSCRIPT_PATH" | tail -n 100)
 if [[ -z "$LAST_LINES" ]]; then
@@ -107,16 +109,14 @@ fi
 # `last // ""` yields empty string when no text blocks exist (e.g. a turn
 # that is all tool calls). That's fine: empty text means no <promise> tag,
 # so the loop simply continues.
-# (Briefly disable errexit so a jq failure can be caught by the $? check.)
+# (Briefly disable errexit so a JSON parse failure can be caught by the $? check.)
 set +e
-LAST_OUTPUT=$(echo "$LAST_LINES" | jq -rs '
-  map(.message.content[]? | select(.type == "text") | .text) | last // ""
-' 2>&1)
-JQ_EXIT=$?
+LAST_OUTPUT=$(printf '%s\n' "$LAST_LINES" | node "$JSON_HELPER" last-assistant-text 2>&1)
+PARSE_EXIT=$?
 set -e
 
-# Check if jq succeeded
-if [[ $JQ_EXIT -ne 0 ]]; then
+# Check if transcript parsing succeeded
+if [[ $PARSE_EXIT -ne 0 ]]; then
   echo "⚠️  Ralph loop: Failed to parse assistant message JSON" >&2
   echo "   Error: $LAST_OUTPUT" >&2
   echo "   This may indicate a transcript format issue." >&2
@@ -178,14 +178,7 @@ fi
 
 # Output JSON to block the stop and feed prompt back
 # The "reason" field contains the prompt that will be sent back to Claude
-jq -n \
-  --arg prompt "$PROMPT_TEXT" \
-  --arg msg "$SYSTEM_MSG" \
-  '{
-    "decision": "block",
-    "reason": $prompt,
-    "systemMessage": $msg
-  }'
+node "$JSON_HELPER" block-output "$PROMPT_TEXT" "$SYSTEM_MSG"
 
 # Exit 0 for successful hook execution
 exit 0
