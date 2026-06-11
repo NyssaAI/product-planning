@@ -118,7 +118,8 @@ When multiple skills could apply, use this order:
 "Work on backlog item X" / path under `docs/agent-files/backlog/` → **add-backlog** if not documented; then **design-spec** (reads backlog detail) → write-plan → **execute-plan** when ready.
 "Add to backlog" / new planned work item → **add-backlog** only.
 "Implement the plan" / "go" / path under `docs/agent-files/plans/` → **execute-plan** only (not execute-plan-run or execute-plan-finish directly).
-"Fix this bug" → fix-bug first (fix-bug-log → systematic-debugging → fix-bug-resolve → fix-bug-complete), then domain-specific skills if needed.
+"Fix this bug" → fix-bug first (fix-bug-log → systematic-debugging → fix-bug-resolve → fix-bug-complete → PR via execute-plan-finish), then domain-specific skills if needed.
+"Merge the PR" / "PR is approved" / "land it" → **merge-pr** (regression checks → confirm → squash merge → worktree cleanup).
 
 ## Skill Types
 
