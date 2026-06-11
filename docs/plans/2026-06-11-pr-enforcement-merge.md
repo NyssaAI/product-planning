@@ -6,9 +6,11 @@
 
 **Architecture:** `fix-bug-complete` gains a final step that invokes `execute-plan-finish`. `execute-plan-finish` gains branch-name-as-key bug section detection. New `merge-pr` skill with PR input resolution, two regression checks (feature reversion + spec acceptance criteria), merge execution, and worktree cleanup.
 
-**Planning module:** `docs/ai-plan/modules/main.md`
+**Planning module:** `docs/ai-plan/scopes/main.md` (current layout; `docs/agent-files/context/modules/main.md` after the directory reorganization lands)
 
 **Spec:** `docs/specs/2026-06-11-pr-enforcement-and-merge-skill-design.md`
+
+**Coordination:** `feature/directory-reorganization` also edits `skills/fix-bug-complete/SKILL.md` and `skills/execute-plan-finish/SKILL.md` (path replacements `docs/bugs/` → `docs/agent-files/bugs/`). Merge that branch into this one before implementing to avoid conflicts in those files. The skill text written by this plan already uses the new `docs/agent-files/` paths with explicit legacy fallbacks, so it works on either layout — but landing the reorg first keeps the diffs clean.
 
 ---
 
