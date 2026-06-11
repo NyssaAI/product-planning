@@ -31,6 +31,7 @@ const args = process.argv.slice(2);
 const initMode = args.includes('--init') || args.includes('-i');
 const doctorMode = args.includes('--doctor');
 const migrateMode = args.includes('--migrate');
+const jsonMode = args.includes('--json');
 const runtimesMode = args.includes('--runtimes');
 const writeScripts = args.includes('--write-scripts');
 const withProjectManifest = args.includes('--with-project-manifest');
@@ -79,31 +80,50 @@ function runDoctorCommand() {
   }
 }
 
+/**
+ * @typedef {object} GenerateResult
+ * @property {boolean} ok
+ * @property {boolean} skipped
+ * @property {number} modules
+ * @property {string[]} warnings Named codes: CODE_MAP_STALE, …
+ * @property {string[]} errors Named codes: MISSING_DOCS, NO_MODULES_FOUND, AST_GREP_NOT_FOUND, …
+ * @property {string} summary
+ */
+
+/**
+ * @returns {GenerateResult}
+ */
 function runGenerate() {
   log.info('generate mode start', { repoRoot: REPO_ROOT });
+  /** @type {string[]} */
+  const warnings = [];
+  /** @type {string[]} */
+  const errors = [];
+
   const config = loadAiPlanConfig(REPO_ROOT);
   const { missing, resolved } = validateRequiredDocs(REPO_ROOT, config);
 
   if (missing.length > 0) {
     log.error('required docs missing', { missing });
-    process.stderr.write(
-      `AI Plan requires these documents (configure paths in ai-plan.config.json → docs):\n`
-    );
     for (const key of missing) {
-      process.stderr.write(
-        `  - ${key}: tried ${config.docs[key].join(', ')}\n`
+      errors.push(
+        `MISSING_DOCS: ${key} not found (tried ${config.docs[key].join(', ')})`
       );
     }
-    process.stderr.write(
-      `\nAdd the missing file(s), or run: node <PLUGIN_ROOT>/scripts/ai-plan/generate.mjs --init\n`
-    );
-    process.exit(1);
+    return {
+      ok: false,
+      skipped: true,
+      modules: 0,
+      warnings,
+      errors,
+      summary: `generation skipped — missing required docs: ${missing.join(', ')}. Run --init or configure ai-plan.config.json → docs.`,
+    };
   }
 
   const codeMapFiles = loadCodeMapFiles(REPO_ROOT, config.codeMapOutput);
   if (codeMapFiles.length === 0) {
-    process.stderr.write(
-      `Warning: ${config.codeMapOutput} not found — run npm run code-map first.\n`
+    warnings.push(
+      `CODE_MAP_STALE: ${config.codeMapOutput} missing or empty — run npm run code-map first`
     );
   }
 
@@ -181,6 +201,12 @@ function runGenerate() {
     renderModuleMapTable(model.modules)
   );
 
+  if (model.modules.length === 0) {
+    errors.push(
+      'NO_MODULES_FOUND: module discovery produced zero modules — check ai-plan.config.json → modules'
+    );
+  }
+
   log.info('generate mode complete', {
     modules: model.modules.length,
     modulesWritten,
@@ -188,14 +214,35 @@ function runGenerate() {
     embedded,
   });
 
-  process.stdout.write(
-    `AI Plan: ${model.modules.length} modules → ${config.outputDir}/\n`
-  );
-  process.stdout.write(
-    `  Docs: ${resolved.product}, ${resolved.roadmap}, ${resolved.techStack}\n`
-  );
-  if (embedded.length > 0) {
-    process.stdout.write(`  Module map embedded in: ${embedded.join(', ')}\n`);
+  const embeddedNote =
+    embedded.length > 0 ? `; module map embedded in ${embedded.join(', ')}` : '';
+  return {
+    ok: errors.length === 0,
+    skipped: false,
+    modules: model.modules.length,
+    warnings,
+    errors,
+    summary: `${model.modules.length} modules → ${config.outputDir}/ (docs: ${resolved.product}, ${resolved.roadmap}, ${resolved.techStack})${embeddedNote}`,
+  };
+}
+
+/**
+ * @param {GenerateResult} result
+ */
+function reportGenerateResult(result) {
+  if (jsonMode) {
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+  } else {
+    process.stdout.write(`AI Plan: ${result.summary}\n`);
+    for (const warning of result.warnings) {
+      process.stderr.write(`  warning: ${warning}\n`);
+    }
+    for (const error of result.errors) {
+      process.stderr.write(`  error: ${error}\n`);
+    }
+  }
+  if (!result.ok) {
+    process.exit(1);
   }
 }
 
@@ -218,7 +265,7 @@ function main() {
     return;
   }
 
-  runGenerate();
+  reportGenerateResult(runGenerate());
 }
 
 main();
