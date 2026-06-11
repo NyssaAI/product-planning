@@ -1,6 +1,6 @@
 ---
 name: execute-plan-finish
-description: Internal sub-skill invoked by execute-plan only. Verifies tests, pushes feature branch, opens PR. Do not invoke directly — use dev-tools:execute-plan.
+description: Internal sub-skill invoked by execute-plan (Step 3) and fix-bug-complete (PR enforcement) only. Verifies tests, pushes feature branch, opens PR. Do not invoke directly — use dev-tools:execute-plan or dev-tools:fix-bug.
 user-invocable: false
 disable-model-invocation: true
 ---
@@ -8,7 +8,7 @@ disable-model-invocation: true
 # Execute Plan — Finish
 
 <INTERNAL-SUB-SKILL>
-Invoked by `dev-tools:execute-plan` at Step 3 (finish). Users should use **execute-plan**, not this skill directly.
+Invoked by `dev-tools:execute-plan` at Step 3 (finish) and by `dev-tools:fix-bug-complete` after completion gates pass (PR enforcement). Users should use **execute-plan** or **fix-bug**, not this skill directly.
 </INTERNAL-SUB-SKILL>
 
 ## Overview
@@ -108,13 +108,26 @@ gh pr create --base <base-branch> --title "<title>" --body "$(cat <<'EOF'
 ## Summary
 <2-3 bullets of what changed>
 
+## Bug *(include only if detection below finds a matching bug — omit otherwise)*
+`docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+
 ## Test Plan
 - [ ] <verification steps>
 EOF
 )"
 ```
 
-**After `gh pr create` succeeds:** Report the PR URL to your human partner. Do not merge the PR yourself unless they explicitly ask.
+When a spec or plan exists for this work, also include a `**Spec:** <path>` line in the Summary section — **merge-pr** reads it for the acceptance-criteria regression check.
+
+**Bug section detection (before calling `gh pr create`):** check whether this branch closes a documented bug — the branch name is the shared key, no parameter passing required:
+
+1. Get the current branch: `git branch --show-current`
+2. Extract the slug: strip any leading `fix/`, `bugfix/`, or `bug/` prefix; the remainder is the slug
+3. Check for `docs/agent-files/bugs/{slug}/` (or legacy `docs/bugs/{slug}/`)
+4. If the directory exists: include the Bug section with the path `docs/agent-files/bugs/{slug}/{slug}-detail.md`
+5. If not: omit the Bug section entirely
+
+**After `gh pr create` succeeds:** Report the PR URL to your human partner. Do not merge the PR yourself unless they explicitly ask — when they're ready after review, **dev-tools:merge-pr** runs regression checks, merges, and cleans up the worktree.
 
 ### Step 5: Worktree Cleanup
 
@@ -201,6 +214,8 @@ git worktree remove <worktree-path>  # if applicable
 
 **Invoked by:**
 - **dev-tools:execute-plan** — Step 3 after run completes
+- **dev-tools:fix-bug-complete** — PR enforcement after all completion gates pass
 
 **Pairs with:**
 - **using-git-worktrees** — Feature branch and worktree created before the plan; keep worktree through PR review
+- **dev-tools:merge-pr** — after review: regression checks, merge, worktree cleanup

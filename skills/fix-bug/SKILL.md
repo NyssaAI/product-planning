@@ -65,6 +65,7 @@ Before proposing or implementing fixes:
 - invoke `dev-tools:fix-bug-complete` with the same `bug_id`
 - verify all completion gates (see fix-bug-complete skill)
 - post output contract report
+- fix-bug-complete then invokes `dev-tools:execute-plan-finish` to push the branch and open a pull request (PR enforcement — bug work integrates through review, same as plan work)
 
 ## Files in this skill
 
@@ -81,5 +82,6 @@ At end, report (via fix-bug-complete):
 - resolution commit sha
 - tests run + pass/fail counts
 - remaining risks (if any)
+- PR URL (via execute-plan-finish)
 
 If any gate fails, stop and report exactly which step failed.

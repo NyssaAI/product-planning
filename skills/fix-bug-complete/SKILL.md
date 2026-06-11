@@ -47,7 +47,21 @@ If any gate fails, stop and report exactly which gate failed. Do not claim compl
 
 If useful, fill `templates/fix-bug-summary-template.md` from the parent fix-bug skill folder.
 
+## PR enforcement
+
+After all completion gates pass and the output report is printed:
+
+**REQUIRED SUB-SKILL:** Invoke `dev-tools:execute-plan-finish` to push the branch and open a pull request.
+
+> "Fix validated. Invoking **execute-plan-finish** to push the branch and open a pull request."
+
+`execute-plan-finish` handles: environment detection, feature branch verification, base branch detection, `gh pr create` (including Bug section auto-detection from the branch name), and the worktree cleanup prompt. Do not duplicate any of these steps here.
+
+**Prerequisite:** all completion gates above must be true before invoking `execute-plan-finish`. If any gate fails, stop at the gate — do not proceed to PR creation.
+
 ## Integration
 
 - **dev-tools:fix-bug** — parent orchestrator
 - **dev-tools:fix-bug-log** / **systematic-debugging** (Step 2) / **fix-bug-resolve** — upstream steps
+- **dev-tools:execute-plan-finish** — invoked after all gates pass (PR enforcement)
+- **dev-tools:merge-pr** — after PR review, merges with regression checks and cleans up the worktree
