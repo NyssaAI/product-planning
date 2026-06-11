@@ -31,7 +31,7 @@ else
 fi
 
 # Create a dummy plan file
-cat > "$PROJECT_DIR/docs/plans/auth-system.md" << 'EOF'
+cat > "$PROJECT_DIR/docs/agent-files/plans/auth-system.md" << 'EOF'
 # Auth System Implementation Plan
 
 ## Task 1: Add User Model
