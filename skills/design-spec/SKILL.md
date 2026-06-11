@@ -71,7 +71,7 @@ You MUST create a task for each of these items and complete them in order:
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **User reviews written spec** — ask user to review the spec file before proceeding
 10. **Set up isolated workspace** — REQUIRED SUB-SKILL: invoke `dev-tools:using-git-worktrees` (feature branch + worktree, not main/master)
-11. **Write implementation plan** — invoke `dev-tools:write-plan` (only after step 10 completes; write-plan loads one ai-plan scope via `dev-tools:using-ai-plan` when applicable)
+11. **Write implementation plan** — invoke `dev-tools:write-plan` (only after step 10 completes; write-plan loads one ai-plan module file via `dev-tools:using-ai-plan` when applicable)
 
 ## Process Flow
 
