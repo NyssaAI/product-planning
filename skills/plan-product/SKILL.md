@@ -22,7 +22,7 @@ You MUST complete these steps in order:
 5. **Scaffold docs subtree** (bugs/, backlog/)
 6. **Generate files**
 7. **Confirm completion**
-8. **Ai-plan note** — when the repo will contain source code, tell your human partner that **using-ai-plan** runs automatically during **design-spec** and **write-plan** once code exists (regenerates `docs/ai-plan/` when stale). Manual `/ai-plan` or `npm run ai-plan` is only needed after structural module changes — not at project bootstrap.
+8. **Ai-plan note** — when the repo will contain source code, tell your human partner that **using-ai-plan** runs automatically during **design-spec** and **write-plan** once code exists (regenerates `docs/agent-files/context/` when stale). Manual `/ai-plan` or `npm run ai-plan` is only needed after structural module changes — not at project bootstrap.
 
 ## Step 1: Check for Existing Product Docs
 
@@ -32,8 +32,8 @@ Check if `docs/` contains any of these files:
 - `tech-stack.md`
 
 Also check directory scaffolding:
-- `docs/bugs/`
-- `docs/backlog/`
+- `docs/agent-files/bugs/`
+- `docs/agent-files/backlog/`
 
 **If any files exist**, use AskUserQuestion:
 
@@ -150,11 +150,11 @@ Per `standards/project-structure.md`, scaffold `docs/`:
 Create directories with `.gitkeep` where needed:
 
 ```
-docs/bugs/.gitkeep
-docs/backlog/.gitkeep
-docs/specs/.gitkeep
-docs/plans/.gitkeep
-docs/ai-plan/scopes/.gitkeep
+docs/agent-files/bugs/.gitkeep
+docs/agent-files/backlog/.gitkeep
+docs/agent-files/specs/.gitkeep
+docs/agent-files/plans/.gitkeep
+docs/agent-files/context/modules/.gitkeep
 ```
 
 ## Step 6: Generate Files
@@ -276,7 +276,7 @@ After creating all files and directories, tell the user:
 > - `docs/product.md` (PRD)
 > - `docs/roadmap.md`
 > - `docs/tech-stack.md`
-> - `docs/bugs/`, `docs/backlog/`, `docs/specs/`, `docs/plans/`, `docs/ai-plan/scopes/` (scaffolded)
+> - `docs/agent-files/bugs/`, `docs/agent-files/backlog/`, `docs/agent-files/specs/`, `docs/agent-files/plans/`, `docs/agent-files/context/modules/` (scaffolded)
 >
 > After source code exists, **design-spec** and **write-plan** invoke **using-ai-plan** automatically when the index is stale. Run `/ai-plan` or `npm run ai-plan` manually only after module structure changes.
 >

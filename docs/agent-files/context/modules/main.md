@@ -25,6 +25,6 @@ Application code (auto-detected single module).
 
 ## After planning
 
-- Symbols: [`CODE_MAP.json`](../CODE_MAP.json)
+- Symbols: [`code-map.json`](../code-map.json)
 - Open only files your plan names
 

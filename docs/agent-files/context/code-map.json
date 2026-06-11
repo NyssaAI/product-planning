@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T13:16:38.428Z",
+  "generated": "2026-06-11T16:31:42.736Z",
   "roots": [
     "."
   ],
@@ -13,8 +13,8 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 18,
-  "symbolCount": 43,
+  "fileCount": 19,
+  "symbolCount": 45,
   "files": [
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
@@ -168,6 +168,21 @@
           "name": "log",
           "kind": "const",
           "line": 87
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/migrate.mjs",
+      "symbols": [
+        {
+          "name": "runMigrate",
+          "kind": "function",
+          "line": 151
+        },
+        {
+          "name": "formatMigrateReport",
+          "kind": "function",
+          "line": 201
         }
       ]
     },

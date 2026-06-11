@@ -17,7 +17,7 @@ One canonical lifecycle:
 
 ## Hard policy
 
-- Do not implement plan tasks without a written plan in `docs/plans/` (unless your human partner explicitly points at another plan path).
+- Do not implement plan tasks without a written plan in `docs/agent-files/plans/` (unless your human partner explicitly points at another plan path).
 - Do not invoke `execute-plan-run`, `execute-plan-run-inline`, or `execute-plan-finish` directly — only via this skill.
 - Do not skip worktree verification (Step 1).
 - Default to subagent execution when the platform supports it.
@@ -41,7 +41,7 @@ Before loading or executing tasks:
 
 ### Step 2: Run
 
-Load the plan from `docs/plans/` (path from handoff, user, or latest if unambiguous).
+Load the plan from `docs/agent-files/plans/` (path from handoff, user, or latest if unambiguous).
 
 **Default (subagents available):**
 
