@@ -17,6 +17,7 @@ SKILLS=(
     "add-backlog"
     "plan-product"
     "requesting-code-review"
+    "merge-pr"
 )
 
 echo "=== Running Skill Triggering Tests ==="

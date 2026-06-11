@@ -106,6 +106,12 @@ OWNER_PID="$(ps -o ppid= -p "$PPID" 2>/dev/null | tr -d ' ')"
 if [[ -z "$OWNER_PID" || "$OWNER_PID" == "1" ]]; then
   OWNER_PID="$PPID"
 fi
+case "${OSTYPE:-}" in
+  msys*|cygwin*|mingw*) OWNER_PID="" ;;
+esac
+if [[ -n "${MSYSTEM:-}" ]]; then
+  OWNER_PID=""
+fi
 
 # Foreground mode for environments that reap detached/background processes.
 if [[ "$FOREGROUND" == "true" ]]; then

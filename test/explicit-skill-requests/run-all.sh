@@ -91,6 +91,17 @@ else
 fi
 echo ""
 
+# Test: merge-pr, please
+echo ">>> Test 8: merge-pr-please"
+if "$SCRIPT_DIR/run-test.sh" "merge-pr" "$PROMPTS_DIR/merge-pr-please.txt"; then
+    PASSED=$((PASSED + 1))
+    RESULTS="$RESULTS\nPASS: merge-pr-please"
+else
+    FAILED=$((FAILED + 1))
+    RESULTS="$RESULTS\nFAIL: merge-pr-please"
+fi
+echo ""
+
 echo "=== Summary ==="
 echo -e "$RESULTS"
 echo ""

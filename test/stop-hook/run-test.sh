@@ -47,4 +47,25 @@ node -e "const fs=require('fs'); const out=JSON.parse(fs.readFileSync(process.ar
 grep -Fq 'iteration: 1' "$TMP/.claude/ralph-loop.local.md" \
   || fail "stop hook did not increment the Ralph iteration"
 
+cat > "$TMP/.claude/ralph-loop.local.md" <<'EOF'
+---
+max_iterations: 3
+completion_promise: "DONE"
+session_id: owner-session
+---
+Continue this prompt.
+EOF
+
+if ! printf '%s\n' '{"session_id":"owner-session","transcript_path":"missing.jsonl"}' \
+  | (cd "$TMP" && "$ROOT/hooks/stop-hook.sh") >"$TMP/stop-hook-corrupt.out" 2>"$TMP/stop-hook-corrupt.err"; then
+  cat "$TMP/stop-hook-corrupt.err" >&2
+  fail "stop hook should handle missing iteration field without hook failure"
+fi
+
+grep -Fq "State file corrupted" "$TMP/stop-hook-corrupt.err" \
+  || fail "stop hook did not report corrupted state for missing iteration"
+
+[[ ! -f "$TMP/.claude/ralph-loop.local.md" ]] \
+  || fail "stop hook did not remove corrupted Ralph state"
+
 echo "PASS: stop hook runs without jq"
