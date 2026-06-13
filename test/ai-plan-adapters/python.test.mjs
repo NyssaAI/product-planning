@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pythonAdapter from '../../scripts/ai-plan/lib/adapters/python.mjs';
+import { buildAiPlanModel } from '../../scripts/ai-plan/lib/build.mjs';
 import { selectAdapter } from '../../scripts/ai-plan/lib/adapters/index.mjs';
 import { deriveModules } from '../../scripts/ai-plan/lib/detection/derive-modules.mjs';
 
@@ -24,6 +25,39 @@ const fixtureFiles = [
 
 function edgeKey(edge) {
   return `${edge.from}->${edge.to}`;
+}
+
+function aiPlanConfig() {
+  return {
+    projectName: 'python-fixture',
+    outputDir: 'docs/agent-files/context',
+    codeMapOutput: 'docs/agent-files/context/code-map.json',
+    docs: {
+      product: ['docs/product.md'],
+      roadmap: ['docs/roadmap.md'],
+      techStack: ['docs/tech-stack.md'],
+    },
+    briefMaxCharsPerDoc: 1200,
+    modules: {
+      discover: 'auto',
+      manual: [],
+      pinned: [],
+      globs: [],
+      flows: {},
+      adapter: 'python',
+      minFiles: 1,
+      maxFiles: 4,
+    },
+    nav: null,
+    apiRoutes: {
+      enabled: false,
+      root: '',
+      routeFile: 'route.ts',
+      pathPrefix: '',
+    },
+    conventions: [],
+    configFilePresent: false,
+  };
 }
 
 test('python adapter matches Python repos only and is selectable by id', () => {
@@ -93,4 +127,20 @@ test('python adapter graph feeds deriveModules with feature-level modules', () =
     result.value.map((mod) => mod.root),
     ['src/orders', 'src/shared', 'src/users']
   );
+});
+
+test('ai-plan model preserves Python adapter dependencies in module graph', () => {
+  const graph = pythonAdapter.extract(fixtureRoot, fixtureFiles);
+  const model = buildAiPlanModel(fixtureRoot, aiPlanConfig(), graph.files);
+  const moduleEdges = new Set(
+    model.moduleGraph.edges.map((edge) => `${edge.from}->${edge.to}`)
+  );
+  const orders = model.modules.find((mod) => mod.id === 'orders');
+  const shared = model.modules.find((mod) => mod.id === 'shared');
+  const users = model.modules.find((mod) => mod.id === 'users');
+
+  assert.deepEqual(moduleEdges, new Set(['orders->shared', 'orders->users', 'users->shared']));
+  assert.deepEqual(orders.dependsOn, ['shared', 'users']);
+  assert.deepEqual(shared.usedBy, ['orders', 'users']);
+  assert.deepEqual(users.dependsOn, ['shared']);
 });
