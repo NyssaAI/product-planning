@@ -71,20 +71,26 @@ git -C "$TMP" add hooks/session-start
 git -C "$TMP" commit -q -m "change hook without version"
 NEW_SHA="$(git -C "$TMP" rev-parse HEAD)"
 
-if printf 'refs/heads/main %s refs/heads/main %s\n' "$NEW_SHA" "$OLD_SHA" \
+# Releasable changes WITHOUT a version bump are allowed — version bumps happen
+# once per release on main, never per feature branch.
+if ! printf 'refs/heads/main %s refs/heads/main %s\n' "$NEW_SHA" "$OLD_SHA" \
   | (cd "$TMP" && ./.githooks/pre-push) >/tmp/dev-tools-version-hook.out 2>/tmp/dev-tools-version-hook.err; then
-  fail "pre-push hook allowed releasable changes without a version bump"
+  fail "pre-push blocked a releasable change with no version bump (should be allowed): $(cat /tmp/dev-tools-version-hook.err)"
 fi
 
-grep -Fq 'without a version bump' /tmp/dev-tools-version-hook.err \
-  || fail "pre-push hook failed for the wrong reason"
-
-if printf 'refs/heads/feature %s refs/heads/feature %040d\n' "$NEW_SHA" 0 \
-  | (cd "$TMP" && ./.githooks/pre-push) >/tmp/dev-tools-version-hook-new-branch.out 2>/tmp/dev-tools-version-hook-new-branch.err; then
-  fail "pre-push hook allowed new-branch releasable changes without a version bump"
+if ! printf 'refs/heads/feature %s refs/heads/feature %040d\n' "$NEW_SHA" 0 \
+  | (cd "$TMP" && ./.githooks/pre-push) >/dev/null 2>&1; then
+  fail "pre-push blocked a new-branch releasable change with no version bump (should be allowed)"
 fi
 
-grep -Fq 'without a version bump' /tmp/dev-tools-version-hook-new-branch.err \
-  || fail "pre-push hook new-branch check failed for the wrong reason"
+# But version-file DRIFT must still block the push.
+node -e "const f=process.argv[1]; const fs=require('fs'); fs.writeFileSync(f, fs.readFileSync(f,'utf8').replace('1.0.0','1.0.1'));" "$TMP/.cursor-plugin/plugin.json"
+git -C "$TMP" add .cursor-plugin/plugin.json
+git -C "$TMP" commit -q -m "drift one version file"
+DRIFT_SHA="$(git -C "$TMP" rev-parse HEAD)"
+if printf 'refs/heads/main %s refs/heads/main %s\n' "$DRIFT_SHA" "$NEW_SHA" \
+  | (cd "$TMP" && ./.githooks/pre-push) >/tmp/dev-tools-version-drift.out 2>/tmp/dev-tools-version-drift.err; then
+  fail "pre-push allowed a push with version-file drift (should be blocked)"
+fi
 
-echo "PASS: version pre-push hook is installed before push"
+echo "PASS: pre-push allows releasable changes without a bump, blocks version drift"
