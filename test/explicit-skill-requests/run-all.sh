@@ -25,19 +25,8 @@ else
 fi
 echo ""
 
-# Test: use systematic-debugging
-echo ">>> Test 2: use-systematic-debugging"
-if "$SCRIPT_DIR/run-test.sh" "systematic-debugging" "$PROMPTS_DIR/use-systematic-debugging.txt"; then
-    PASSED=$((PASSED + 1))
-    RESULTS="$RESULTS\nPASS: use-systematic-debugging"
-else
-    FAILED=$((FAILED + 1))
-    RESULTS="$RESULTS\nFAIL: use-systematic-debugging"
-fi
-echo ""
-
 # Test: please use design-spec
-echo ">>> Test 3: please-use-design-spec"
+echo ">>> Test 2: please-use-design-spec"
 if "$SCRIPT_DIR/run-test.sh" "design-spec" "$PROMPTS_DIR/please-use-design-spec.txt"; then
     PASSED=$((PASSED + 1))
     RESULTS="$RESULTS\nPASS: please-use-design-spec"
@@ -48,7 +37,7 @@ fi
 echo ""
 
 # Test: mid-conversation execute plan
-echo ">>> Test 4: mid-conversation-execute-plan"
+echo ">>> Test 3: mid-conversation-execute-plan"
 if "$SCRIPT_DIR/run-test.sh" "execute-plan" "$PROMPTS_DIR/mid-conversation-execute-plan.txt"; then
     PASSED=$((PASSED + 1))
     RESULTS="$RESULTS\nPASS: mid-conversation-execute-plan"
@@ -59,7 +48,7 @@ fi
 echo ""
 
 # Test: fix-bug, please
-echo ">>> Test 5: fix-bug-please"
+echo ">>> Test 4: fix-bug-please"
 if "$SCRIPT_DIR/run-test.sh" "fix-bug" "$PROMPTS_DIR/fix-bug-please.txt"; then
     PASSED=$((PASSED + 1))
     RESULTS="$RESULTS\nPASS: fix-bug-please"
@@ -70,13 +59,24 @@ fi
 echo ""
 
 # Test: add-backlog, please
-echo ">>> Test 6: add-backlog-please"
+echo ">>> Test 5: add-backlog-please"
 if "$SCRIPT_DIR/run-test.sh" "add-backlog" "$PROMPTS_DIR/add-backlog-please.txt"; then
     PASSED=$((PASSED + 1))
     RESULTS="$RESULTS\nPASS: add-backlog-please"
 else
     FAILED=$((FAILED + 1))
     RESULTS="$RESULTS\nFAIL: add-backlog-please"
+fi
+echo ""
+
+# Test: add-bug, please
+echo ">>> Test 6: add-bug-please"
+if "$SCRIPT_DIR/run-test.sh" "add-bug" "$PROMPTS_DIR/add-bug-please.txt"; then
+    PASSED=$((PASSED + 1))
+    RESULTS="$RESULTS\nPASS: add-bug-please"
+else
+    FAILED=$((FAILED + 1))
+    RESULTS="$RESULTS\nFAIL: add-bug-please"
 fi
 echo ""
 
@@ -88,17 +88,6 @@ if "$SCRIPT_DIR/run-test.sh" "plan-product" "$PROMPTS_DIR/plan-product-please.tx
 else
     FAILED=$((FAILED + 1))
     RESULTS="$RESULTS\nFAIL: plan-product-please"
-fi
-echo ""
-
-# Test: merge-pr, please
-echo ">>> Test 8: merge-pr-please"
-if "$SCRIPT_DIR/run-test.sh" "merge-pr" "$PROMPTS_DIR/merge-pr-please.txt"; then
-    PASSED=$((PASSED + 1))
-    RESULTS="$RESULTS\nPASS: merge-pr-please"
-else
-    FAILED=$((FAILED + 1))
-    RESULTS="$RESULTS\nFAIL: merge-pr-please"
 fi
 echo ""
 

@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { createLogger } from './logger.mjs';
+import { summarizeDescription } from './summarize.mjs';
 
 const log = createLogger({ module: 'embed' });
 
@@ -17,11 +18,7 @@ export function renderModuleMapTable(modules) {
     '|--------|--------------|------|-------------|',
   ];
   for (const mod of modules) {
-    const firstSentence = (mod.description ?? '').split(/(?<=[.!?])\s/)[0];
-    const whatItDoes =
-      firstSentence.length > 80
-        ? `${firstSentence.slice(0, 77)}…`
-        : firstSentence || `${mod.id} module`;
+    const whatItDoes = summarizeDescription(mod.description, mod.id);
     const owns = (mod.capabilities ?? []).slice(0, 3).join('; ');
     lines.push(
       `| ${mod.id} | ${whatItDoes} | ${owns} | \`${mod.planningModule}\` |`

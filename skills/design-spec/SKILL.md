@@ -1,6 +1,6 @@
 ---
 name: design-spec
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Accepts ad-hoc ideas, a backlog detail file, or a use-case file as input. Explores user intent, requirements and design before implementation."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Accepts ad-hoc ideas, backlog detail files, bug detail files, or use-case files as input. Explores user intent, requirements and design before implementation."
 ---
 
 # Design Spec
@@ -9,7 +9,7 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 
 **Announce at start:** "I'm using the design-spec skill to refine this into a spec."
 
-**Inputs:** a new idea from conversation, OR a backlog item at `docs/agent-files/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`), OR a use-case file at `docs/use-cases/f{n}-u{n}.md`.
+**Inputs:** a new idea from conversation, OR a backlog item at `docs/agent-files/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`), OR a bug detail file at `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`, OR a use-case file at `docs/use-cases/f{n}-u{n}.md`.
 
 ## Purpose
 
@@ -56,7 +56,7 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a use-case file, read it plus the linked feature row (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item. **When the repo has source code, load planning context now — these steps are not optional:**
+1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a bug detail file, read it first (see Bug detail input below); if starting from a use-case file, read it plus the linked feature row (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item. **When the repo has source code, load planning context now — these steps are not optional:**
    1. Check for `docs/agent-files/context/index.md` (or legacy `docs/ai-plan/INDEX.md`)
    2. If missing: run `npm run ai-plan` (or the plugin generate scripts) now, before continuing
    3. If present: check staleness — if `index.md` is older than the most recently modified source file, run `npm run ai-plan` before continuing
@@ -142,6 +142,31 @@ Use when the user asks to start work on a backlog item, names a backlog id, or p
 6. In the written spec, include a **Source** section (see After the Design)
 
 **Backlog is input, not output.** This skill produces `docs/agent-files/specs/…-design.md`. Do not edit the backlog detail file during design unless the user explicitly asks to update the backlog item.
+
+## Bug detail input
+
+Use when `dev-tools:fix-bug` classifies a documented bug as complex, or when the user points at a path under `docs/agent-files/bugs/` and asks to design the fix.
+
+**Bug detail file path:** `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+
+When a bug detail file is the input, you MUST:
+
+1. Read the full detail file before asking clarifying questions
+2. Announce: "Using bug `{bug_id}` as input for this design."
+3. Treat these sections as starting evidence:
+   - **Symptom** → observed behavior
+   - **Root cause** → known or hypothesized cause
+   - **Contributing factors** → relevant context, environment, logs, or recent changes
+4. If `fix-bug` already produced a root-cause hypothesis and evidence, carry that forward into the design
+5. Ask clarifying questions only for gaps that affect the design: expected behavior, risk, user impact, migration constraints, cross-module boundaries, or acceptance criteria
+6. In the written spec, include a **Source** section:
+   ```markdown
+   ## Source
+
+   **Bug:** `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+   ```
+
+**Bug detail files are input, not output.** Do not edit the bug detail file during design unless the user explicitly asks.
 
 ## Use-case input
 

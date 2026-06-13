@@ -13,14 +13,14 @@ Invoked by `dev-tools:execute-plan` at Step 3 (finish) and by `dev-tools:fix-bug
 
 ## Overview
 
-Complete development work by verifying tests, pushing the feature branch, and **creating a pull request**. Integration happens through review and merge on the host (GitHub, etc.) — not by merging locally into main.
+Complete development work by verifying tests, pushing the feature branch, and **creating or updating a pull request**. Integration happens through review and merge on the host (GitHub, etc.) — not by merging locally into main.
 
-**Core principle:** Verify tests → Push branch → Create PR → Report PR URL.
+**Core principle:** Verify tests → Push branch → Create or update PR → Report PR URL.
 
-**Announce at start:** "I'm using execute-plan-finish (via execute-plan) to open a pull request."
+**Announce at start:** "I'm using execute-plan-finish (via execute-plan) to open or update a pull request."
 
 <HARD-GATE>
-When implementation is complete and tests pass, you MUST push the feature branch and create a pull request with `gh pr create`. Do NOT merge into `main`/`master` locally. Do NOT leave work on a branch without opening a PR unless your human partner explicitly overrides this in CLAUDE.md, GEMINI.md, or AGENTS.md (same precedence as TDD opt-outs in using-dev-tools).
+When implementation is complete and tests pass, you MUST push the feature branch and ensure a pull request exists. If no PR exists, create one with `gh pr create`; if a PR already exists, push updates to that PR branch and report the existing PR URL. Do NOT merge into `main`/`master` locally. Do NOT leave work on a branch without opening a PR unless your human partner explicitly overrides this in CLAUDE.md, GEMINI.md, or AGENTS.md (same precedence as TDD opt-outs in using-dev-tools).
 </HARD-GATE>
 
 ## The Process
@@ -97,13 +97,13 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Default target for the PR: `main`, or `master` if that is the repo default. If unclear, ask once: "PR base branch: main — correct?"
 
-### Step 4: Push and Create Pull Request
+### Step 4: Push and Create or Update Pull Request
 
 ```bash
 # Push branch
 git push -u origin <feature-branch>
 
-# Create PR (required)
+# If no PR exists for this branch, create one (required)
 gh pr create --base <base-branch> --title "<title>" --body "$(cat <<'EOF'
 ## Summary
 <2-3 bullets of what changed>
@@ -117,7 +117,15 @@ EOF
 )"
 ```
 
-When a spec or plan exists for this work, also include a `**Spec:** <path>` line in the Summary section — **merge-pr** reads it for the acceptance-criteria regression check.
+Before calling `gh pr create`, check whether the current branch already has an open PR:
+
+```bash
+gh pr view --json url --jq .url
+```
+
+If that command returns a PR URL, do **not** create another PR. Report that the existing PR was updated after the push.
+
+When a spec or plan exists for this work, also include a `**Spec:** <path>` line in the Summary section — the post-review closeout phase reads it for the acceptance-criteria regression check.
 
 **Bug section detection (before calling `gh pr create`):** check whether this branch closes a documented bug — the branch name is the shared key, no parameter passing required:
 
@@ -127,7 +135,7 @@ When a spec or plan exists for this work, also include a `**Spec:** <path>` line
 4. If the directory exists: include the Bug section with the path `docs/agent-files/bugs/{slug}/{slug}-detail.md`
 5. If not: omit the Bug section entirely
 
-**After `gh pr create` succeeds:** Report the PR URL to your human partner. Do not merge the PR yourself unless they explicitly ask — when they're ready after review, **dev-tools:merge-pr** runs regression checks, merges, and cleans up the worktree.
+**After `gh pr create` succeeds or an existing PR is found:** Report the PR URL to your human partner. Do not merge the PR yourself. When they're ready after review, **dev-tools:execute-plan** runs post-review closeout, which invokes internal merge-pr for regression checks, merge, and worktree cleanup.
 
 ### Step 5: Worktree Cleanup
 
@@ -189,7 +197,7 @@ git worktree remove <worktree-path>  # if applicable
 
 **"I'll push later"**
 - **Problem:** Work stalls without reviewable artifact
-- **Fix:** Push and `gh pr create` in this skill, every time
+- **Fix:** Push and create or update the PR in this skill, every time
 
 **Removing worktree immediately after PR**
 - **Problem:** Partner can't iterate on review feedback in place
@@ -206,7 +214,7 @@ git worktree remove <worktree-path>  # if applicable
 
 **Always:**
 - Verify tests before push
-- Push and create PR with `gh pr create`
+- Push and create a PR with `gh pr create`, or update the existing PR for this branch
 - Report PR URL (or blocked-PR handoff with branch + body)
 - Stay on feature branch until PR is merged on the host
 
@@ -218,4 +226,4 @@ git worktree remove <worktree-path>  # if applicable
 
 **Pairs with:**
 - **using-git-worktrees** — Feature branch and worktree created before the plan; keep worktree through PR review
-- **dev-tools:merge-pr** — after review: regression checks, merge, worktree cleanup
+- **dev-tools:execute-plan** — after review: post-review closeout invokes internal merge-pr for regression checks, merge, and worktree cleanup

@@ -6,8 +6,11 @@ This repository uses a single user-facing entrypoint for bug handling: **`fix-bu
 
 1. **fix-bug-log** — document bug in `docs/agent-files/bugs/{bug_id}/`, discovery commit
 2. **Analyze** — root-cause investigation via `systematic-debugging`
-3. **fix-bug-resolve** — failing test, fix, resolution file, resolution commit
-4. **fix-bug-complete** — verify gates and report
+3. **Classify route** — simple one-file bug or complex bug requiring design
+4. **Simple route:** `fix-bug-resolve` — failing test, fix, resolution file, resolution commit, then `fix-bug-complete`
+5. **Complex route:** `design-spec` — bug detail file becomes design input, then implementation proceeds and finishes through `execute-plan`
+
+Simple bugs may skip design-spec only when all simple-bug criteria are satisfied.
 
 ## Disallowed flow
 
@@ -17,3 +20,4 @@ This repository uses a single user-facing entrypoint for bug handling: **`fix-bu
 - Using `/ralph-loop` for bugs (bypasses log, analyze, and separate commits)
 - Skipping root-cause investigation
 - Combining discovery + resolution in one commit
+- Using the simple route for schema, migration, auth/security, API contract, cross-module, or product behavior changes

@@ -29,19 +29,22 @@ Canonical user-facing skills (verb name = folder name under `skills/`):
 |------|--------|---------|
 | `plan-product` | `plan-product` | New project: product, roadmap, tech-stack |
 | `add-backlog` | `add-backlog` | Add backlog item with detail file |
+| `add-bug` | `add-bug` | Add bug report with detail file |
 | `design-spec` | `design-spec` | Spec before code |
 | `execute-plan` | `execute-plan` | Implement written plan → PR |
-| `fix-bug` | `fix-bug` | Bug lifecycle → resolution |
+| `fix-bug` | `fix-bug` | Bug orchestrator: simple direct fix or complex design path |
 
-**Feature chain:** `design-spec` → `write-plan` (internal) → `execute-plan` (verify → run → finish)
+**Feature chain:** `design-spec` → `write-plan` (internal) → `execute-plan` (verify → run → open PR; review feedback → `receiving-code-review` → update PR; after approval → regression-check → merge → cleanup)
 
 **Backlog chain:** `add-backlog` → (when work begins) `design-spec` → `write-plan` (internal) → `execute-plan` when ready
 
+**Bug-report chain:** `add-bug` → (when ready to fix) `fix-bug`
+
 **Greenfield chain:** `plan-product` → `design-spec` → `write-plan` (internal) → `execute-plan` when ready
 
-**Bug chain:** `fix-bug` only (log → analyze → resolve → complete)
+**Bug chain:** `fix-bug` only. Simple one-file bugs can go log → analyze → direct TDD fix → complete. Complex bugs route log → analyze → `design-spec` → `write-plan` (internal) → `execute-plan`.
 
-**Internal sub-skills** (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
+**Internal sub-skills** (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `merge-pr`, `fix-bug-log`, `systematic-debugging`, `fix-bug-resolve`, `fix-bug-complete`.
 
 **Automatic (not buttons):** `using-dev-tools` (session router), `using-ai-plan` during design-spec / write-plan when code exists.
 
