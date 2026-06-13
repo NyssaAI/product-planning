@@ -3,6 +3,13 @@ import path from 'node:path';
 import { MODULE_GLOB_CANDIDATES, detectSrcChildModules } from './auto-detect.mjs';
 import { createLogger } from './logger.mjs';
 import { detectStackModules } from './stack-profiles/index.mjs';
+import { selectAdapter } from './adapters/index.mjs';
+import { deriveModules } from './detection/derive-modules.mjs';
+
+/** @type {Set<string>} dirs the cohesion file walk never descends into */
+const WALK_SKIP = new Set([
+  'bin', 'obj', 'node_modules', '.git', '.vs', '.worktrees', 'dist', 'build', '.next',
+]);
 
 const log = createLogger({ module: 'discover-modules' });
 
@@ -15,7 +22,7 @@ const log = createLogger({ module: 'discover-modules' });
  * @property {string[]} flows
  * @property {string[]} packageDependencies
  * @property {string[]} exportEntries
- * @property {'workspace' | 'manual' | 'glob' | 'src-child' | 'fallback'} source
+ * @property {'workspace' | 'manual' | 'glob' | 'src-child' | 'fallback' | 'derived' | 'pinned'} source
  */
 
 /**
@@ -61,6 +68,14 @@ function discoverAuto(repoRoot, config) {
   if (fromWs.length > 0) {
     log.info('discoverAuto using workspaces', { count: fromWs.length });
     return fromWs;
+  }
+
+  const fromCohesion = discoverFromCohesion(repoRoot, config);
+  if (fromCohesion.length > 0) {
+    log.info('discoverAuto using cohesion detection', {
+      count: fromCohesion.length,
+    });
+    return fromCohesion;
   }
 
   const fromStack = detectStackModules(repoRoot, config);
@@ -117,6 +132,90 @@ function discoverAuto(repoRoot, config) {
       source: 'fallback',
     },
   ];
+}
+
+/**
+ * Cohesion-based detection: pick a language adapter, extract its file graph,
+ * and derive directory-anchored feature modules via the shared core. Returns
+ * [] when no adapter matches (leaving existing JS/glob paths intact).
+ *
+ * @param {string} repoRoot
+ * @param {import('./config.mjs').AiPlanConfig} config
+ * @returns {ModuleDef[]}
+ */
+function discoverFromCohesion(repoRoot, config) {
+  const adapter = selectAdapter(repoRoot, config.modules.adapter);
+  if (!adapter) {
+    return [];
+  }
+  log.debug('discoverFromCohesion adapter selected', { adapter: adapter.id });
+
+  const files = listRepoFiles(repoRoot);
+  const graph = adapter.extract(repoRoot, files);
+  const result = deriveModules(repoRoot, graph, {
+    pins: config.modules.pinned ?? [],
+    minFiles: config.modules.minFiles,
+    maxFiles: config.modules.maxFiles,
+  });
+  if (!result.ok) {
+    log.warn('discoverFromCohesion failed', { error: result.error });
+    return [];
+  }
+  return result.value.map((d) => detectedToModule(d, config));
+}
+
+/**
+ * @param {import('./detection/types.mjs').DetectedModule} d
+ * @param {import('./config.mjs').AiPlanConfig} config
+ * @returns {ModuleDef}
+ */
+function detectedToModule(d, config) {
+  return {
+    id: d.id,
+    name: d.name,
+    root: d.root,
+    description: d.description,
+    capabilities: d.capabilities,
+    doesNotOwn: d.doesNotOwn,
+    flows: config.modules.flows[d.id] ?? [],
+    packageDependencies: [],
+    exportEntries: [],
+    source: d.source,
+    ...(d.flags ? { flags: d.flags } : {}),
+  };
+}
+
+/**
+ * Repo-relative file list for the cohesion walk (build/IDE dirs skipped).
+ * @param {string} repoRoot
+ * @param {number} [limit]
+ * @returns {string[]}
+ */
+function listRepoFiles(repoRoot, limit = 20000) {
+  /** @type {string[]} */
+  const out = [];
+  const stack = [repoRoot];
+  while (stack.length > 0 && out.length < limit) {
+    const dir = stack.pop();
+    let entries;
+    try {
+      entries = readdirSync(dir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const e of entries) {
+      if (WALK_SKIP.has(e.name)) {
+        continue;
+      }
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        stack.push(full);
+      } else {
+        out.push(path.relative(repoRoot, full).replace(/\\/g, '/'));
+      }
+    }
+  }
+  return out;
 }
 
 /**
