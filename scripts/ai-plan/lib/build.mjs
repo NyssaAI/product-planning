@@ -3,6 +3,7 @@ import path from 'node:path';
 import { loadProjectBrief, extractConventionsFromTechStack } from './docs.mjs';
 import { discoverModules, parseNavEntries } from './discover-modules.mjs';
 import { buildModuleEdges } from './module-deps.mjs';
+import { extractStackGraph } from './stack-graph.mjs';
 import { discoverHttpRoutes } from './routes.mjs';
 import { createLogger } from './logger.mjs';
 import { enrichModule } from './module-enrichment.mjs';
@@ -37,7 +38,11 @@ function detectSharedRoot(repoRoot) {
 export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
   log.info('buildAiPlanModel start', { repoRoot, codeMapFileCount: codeMapFiles.length });
   const brief = loadProjectBrief(repoRoot, config);
-  const modules = discoverModules(repoRoot, config);
+  // Extract the adapter stack graph once; module discovery and module-edge
+  // derivation both consume it, so this avoids re-walking and re-parsing the
+  // whole repo a second time.
+  const stack = extractStackGraph(repoRoot, config);
+  const modules = discoverModules(repoRoot, config, stack);
   log.debug('buildAiPlanModel discovered modules', {
     count: modules.length,
     ids: modules.map((m) => m.id),
@@ -46,7 +51,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
     config.nav ? path.join(repoRoot, config.nav) : null
   );
   const routes = discoverHttpRoutes(repoRoot, config, modules, codeMapFiles);
-  const edges = buildModuleEdges(repoRoot, modules, config);
+  const edges = buildModuleEdges(repoRoot, modules, config, stack);
 
   const navById = new Map(nav.map((n) => [n.id, n]));
   const moduleIds = new Set(modules.map((m) => m.id));
