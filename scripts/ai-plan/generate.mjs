@@ -24,6 +24,8 @@ import { embedModuleMap, renderModuleMapTable } from './lib/embed.mjs';
 import { createLogger } from './lib/logger.mjs';
 import { findProjectRoot } from './lib/project-root.mjs';
 import { renderIndex, renderModuleScope } from './lib/render.mjs';
+import { discoverModules } from './lib/discover-modules.mjs';
+import { pinModule, unpinModule } from './lib/pin.mjs';
 
 const log = createLogger({ module: 'generate' });
 
@@ -35,7 +37,24 @@ const jsonMode = args.includes('--json');
 const runtimesMode = args.includes('--runtimes');
 const writeScripts = args.includes('--write-scripts');
 const withProjectManifest = args.includes('--with-project-manifest');
+const pinId = flagValue(args, '--pin');
+const unpinId = flagValue(args, '--unpin');
 const REPO_ROOT = findProjectRoot();
+
+/**
+ * Value following a `--flag` (e.g. `--pin <id>`). Returns null when the flag
+ * is absent, undefined when present without a value.
+ * @param {string[]} argv
+ * @param {string} flag
+ */
+function flagValue(argv, flag) {
+  const i = argv.indexOf(flag);
+  if (i < 0) {
+    return null;
+  }
+  const next = argv[i + 1];
+  return next && !next.startsWith('--') ? next : undefined;
+}
 
 /**
  * @param {string} repoRoot
@@ -246,8 +265,57 @@ function reportGenerateResult(result) {
   }
 }
 
+/**
+ * `--pin <id>` ejects a currently-derived module into config (frozen,
+ * editable); `--unpin <id>` returns it to auto-derivation.
+ * @param {string | undefined} id
+ * @param {boolean} remove
+ */
+function runPinCommand(id, remove) {
+  if (!id) {
+    process.stderr.write(
+      `usage: ${remove ? '--unpin' : '--pin'} <module-id>\n`
+    );
+    process.exit(1);
+  }
+  if (remove) {
+    const result = unpinModule(REPO_ROOT, id);
+    process.stdout.write(
+      result.ok
+        ? `AI Plan: unpinned ${id} — returns to auto-derivation on next regen\n`
+        : `AI Plan: cannot unpin — ${result.error}\n`
+    );
+    if (!result.ok) {
+      process.exit(1);
+    }
+    return;
+  }
+
+  const config = loadAiPlanConfig(REPO_ROOT);
+  const modules = discoverModules(REPO_ROOT, config);
+  const result = pinModule(REPO_ROOT, id, modules);
+  if (result.ok) {
+    process.stdout.write(
+      `AI Plan: pinned ${id} (root ${result.pin.root}) — edit ai-plan.config.json → modules.pinned to adjust\n`
+    );
+  } else {
+    process.stderr.write(`AI Plan: cannot pin — ${result.error}\n`);
+    process.exit(1);
+  }
+}
+
 function main() {
   log.debug('ai-plan CLI invoked', { args, repoRoot: REPO_ROOT });
+
+  if (pinId !== null) {
+    runPinCommand(pinId, false);
+    return;
+  }
+
+  if (unpinId !== null) {
+    runPinCommand(unpinId, true);
+    return;
+  }
 
   if (doctorMode) {
     runDoctorCommand();

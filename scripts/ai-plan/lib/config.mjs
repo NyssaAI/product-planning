@@ -83,11 +83,24 @@ export function loadAiPlanConfig(repoRoot, opts = {}) {
     modules: {
       discover: raw.modules?.discover ?? 'auto',
       manual: Array.isArray(raw.modules?.manual) ? raw.modules.manual : [],
+      pinned: Array.isArray(raw.modules?.pinned) ? raw.modules.pinned : [],
       globs: Array.isArray(raw.modules?.globs) ? raw.modules.globs : [],
       flows:
         raw.modules?.flows && typeof raw.modules.flows === 'object'
           ? raw.modules.flows
           : {},
+      adapter:
+        typeof raw.modules?.adapter === 'string'
+          ? raw.modules.adapter
+          : undefined,
+      minFiles:
+        typeof raw.modules?.minFiles === 'number'
+          ? raw.modules.minFiles
+          : undefined,
+      maxFiles:
+        typeof raw.modules?.maxFiles === 'number'
+          ? raw.modules.maxFiles
+          : undefined,
     },
     nav: typeof raw.nav === 'string' ? raw.nav : null,
     apiRoutes: {
