@@ -1,6 +1,6 @@
 ---
 name: design-spec
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Accepts ad-hoc ideas, backlog detail files, bug detail files, or use-case files as input. Explores user intent, requirements and design before implementation."
+description: Use when feature work needs intent, requirements, scope, or design clarified before implementation; applies to ad-hoc ideas, backlog detail files, bug detail files, and use-case files.
 ---
 
 # Design Spec
