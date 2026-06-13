@@ -3,13 +3,8 @@ import path from 'node:path';
 import { MODULE_GLOB_CANDIDATES, detectSrcChildModules } from './auto-detect.mjs';
 import { createLogger } from './logger.mjs';
 import { detectStackModules } from './stack-profiles/index.mjs';
-import { selectAdapter } from './adapters/index.mjs';
+import { extractStackGraph } from './stack-graph.mjs';
 import { deriveModules } from './detection/derive-modules.mjs';
-
-/** @type {Set<string>} dirs the cohesion file walk never descends into */
-const WALK_SKIP = new Set([
-  'bin', 'obj', 'node_modules', '.git', '.vs', '.worktrees', 'dist', 'build', '.next',
-]);
 
 const log = createLogger({ module: 'discover-modules' });
 
@@ -28,9 +23,11 @@ const log = createLogger({ module: 'discover-modules' });
 /**
  * @param {string} repoRoot
  * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./stack-graph.mjs').StackGraph | null} [stack] pre-extracted
+ *   adapter graph reused by cohesion detection; extracted on demand if omitted.
  * @returns {ModuleDef[]}
  */
-export function discoverModules(repoRoot, config) {
+export function discoverModules(repoRoot, config, stack) {
   const discover = config.modules.discover;
 
   if (discover === 'manual') {
@@ -55,14 +52,15 @@ export function discoverModules(repoRoot, config) {
     return mergeManual(discoverFromGlob(repoRoot, pattern, config), config);
   }
 
-  return mergeManual(discoverAuto(repoRoot, config), config);
+  return mergeManual(discoverAuto(repoRoot, config, stack), config);
 }
 
 /**
  * @param {string} repoRoot
  * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./stack-graph.mjs').StackGraph | null} [stack]
  */
-function discoverAuto(repoRoot, config) {
+function discoverAuto(repoRoot, config, stack) {
   log.debug('discoverAuto start', { repoRoot });
   const fromWs = discoverFromWorkspaces(repoRoot, config);
   if (fromWs.length > 0) {
@@ -70,7 +68,7 @@ function discoverAuto(repoRoot, config) {
     return fromWs;
   }
 
-  const fromCohesion = discoverFromCohesion(repoRoot, config);
+  const fromCohesion = discoverFromCohesion(repoRoot, config, stack);
   if (fromCohesion.length > 0) {
     log.info('discoverAuto using cohesion detection', {
       count: fromCohesion.length,
@@ -141,17 +139,17 @@ function discoverAuto(repoRoot, config) {
  *
  * @param {string} repoRoot
  * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./stack-graph.mjs').StackGraph | null} [stack]
  * @returns {ModuleDef[]}
  */
-function discoverFromCohesion(repoRoot, config) {
-  const adapter = selectAdapter(repoRoot, config.modules.adapter);
-  if (!adapter) {
+function discoverFromCohesion(repoRoot, config, stack) {
+  const resolved = stack ?? extractStackGraph(repoRoot, config);
+  if (!resolved) {
     return [];
   }
+  const { adapter, graph } = resolved;
   log.debug('discoverFromCohesion adapter selected', { adapter: adapter.id });
 
-  const files = listRepoFiles(repoRoot);
-  const graph = adapter.extract(repoRoot, files);
   const result = deriveModules(repoRoot, graph, {
     pins: config.modules.pinned ?? [],
     minFiles: config.modules.minFiles,
@@ -183,39 +181,6 @@ function detectedToModule(d, config) {
     source: d.source,
     ...(d.flags ? { flags: d.flags } : {}),
   };
-}
-
-/**
- * Repo-relative file list for the cohesion walk (build/IDE dirs skipped).
- * @param {string} repoRoot
- * @param {number} [limit]
- * @returns {string[]}
- */
-function listRepoFiles(repoRoot, limit = 20000) {
-  /** @type {string[]} */
-  const out = [];
-  const stack = [repoRoot];
-  while (stack.length > 0 && out.length < limit) {
-    const dir = stack.pop();
-    let entries;
-    try {
-      entries = readdirSync(dir, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-    for (const e of entries) {
-      if (WALK_SKIP.has(e.name)) {
-        continue;
-      }
-      const full = path.join(dir, e.name);
-      if (e.isDirectory()) {
-        stack.push(full);
-      } else {
-        out.push(path.relative(repoRoot, full).replace(/\\/g, '/'));
-      }
-    }
-  }
-  return out;
 }
 
 /**

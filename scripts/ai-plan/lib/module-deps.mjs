@@ -1,103 +1,123 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
-import { selectAdapter } from './adapters/index.mjs';
-
-/** @type {Set<string>} dirs the adapter file walk never descends into */
-const WALK_SKIP = new Set([
-  'bin',
-  'obj',
-  'node_modules',
-  '.git',
-  '.vs',
-  '.worktrees',
-  'dist',
-  'build',
-  '.next',
-]);
+import { extractStackGraph } from './stack-graph.mjs';
 
 /**
  * @param {string} repoRoot
  * @param {import('./discover-modules.mjs').ModuleDef[]} modules
  * @param {import('./config.mjs').AiPlanConfig} [config]
+ * @param {import('./stack-graph.mjs').StackGraph | null} [stack] pre-extracted
+ *   adapter graph; falls back to a fresh extraction when omitted.
  * @returns {{ from: string, to: string }[]}
  */
-export function buildModuleEdges(repoRoot, modules, config) {
-  const adapterEdges = buildAdapterModuleEdges(repoRoot, modules, config);
-  if (adapterEdges.length > 0) {
-    return adapterEdges;
+export function buildModuleEdges(repoRoot, modules, config, stack) {
+  const resolved = stack ?? extractStackGraph(repoRoot, config);
+  if (resolved) {
+    const adapterEdges = buildAdapterModuleEdges(modules, resolved.graph);
+    if (adapterEdges.length > 0) {
+      // Adapter import-resolution supersedes the regex import scan below, but
+      // declared package dependencies are orthogonal — fold them in so manual
+      // modules don't silently lose their workspace edges.
+      return dedupeEdges([...adapterEdges, ...packageDependencyEdges(modules)]);
+    }
   }
 
+  return dedupeEdges([
+    ...packageDependencyEdges(modules),
+    ...importScanEdges(repoRoot, modules),
+  ]);
+}
+
+/**
+ * Map an adapter's file-level edges onto module ids.
+ *
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @param {ReturnType<import('./detection/types.mjs').StackGraphAdapter['extract']>} graph
+ * @returns {{ from: string, to: string }[]}
+ */
+function buildAdapterModuleEdges(modules, graph) {
+  // Longest root first so the most specific module claims each file. Sorted
+  // once here rather than per moduleIdForFile() call.
+  const sortedModules = [...modules].sort(
+    (a, b) => b.root.length - a.root.length
+  );
+
+  /** @type {{ from: string, to: string }[]} */
+  const edges = [];
+  for (const edge of graph.edges ?? []) {
+    const from = moduleIdForFile(edge.from, sortedModules);
+    const to = moduleIdForFile(edge.to, sortedModules);
+    if (from && to) {
+      edges.push({ from, to });
+    }
+  }
+  return dedupeEdges(edges);
+}
+
+/**
+ * Edges declared via module package dependencies (monorepo workspace deps).
+ *
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @returns {{ from: string, to: string }[]}
+ */
+function packageDependencyEdges(modules) {
+  const byName = new Map(modules.map((mod) => [mod.name, mod.id]));
+  /** @type {{ from: string, to: string }[]} */
+  const edges = [];
+  for (const mod of modules) {
+    for (const dep of mod.packageDependencies) {
+      const targetId = byName.get(dep);
+      if (targetId) {
+        edges.push({ from: mod.id, to: targetId });
+      }
+    }
+  }
+  return edges;
+}
+
+/**
+ * Edges discovered by scanning each module's source for relative/named imports.
+ *
+ * @param {string} repoRoot
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @returns {{ from: string, to: string }[]}
+ */
+function importScanEdges(repoRoot, modules) {
   const byName = new Map();
   const byRoot = new Map();
-
   for (const mod of modules) {
     byName.set(mod.name, mod.id);
     byRoot.set(mod.root, mod.id);
   }
 
-  /** @type {Map<string, Set<string>>} */
-  const edges = new Map();
-
-  for (const mod of modules) {
-    /** @type {Set<string>} */
-    const targets = new Set();
-
-    for (const dep of mod.packageDependencies) {
-      const targetId = byName.get(dep);
-      if (targetId && targetId !== mod.id) {
-        targets.add(targetId);
-      }
-    }
-
-    const dir = path.join(repoRoot, mod.root);
-    if (existsSync(dir)) {
-      for (const t of scanImportsInDir(repoRoot, dir, byName, byRoot, mod.id)) {
-        targets.add(t);
-      }
-    }
-
-    edges.set(mod.id, targets);
-  }
-
   /** @type {{ from: string, to: string }[]} */
-  const list = [];
-  for (const [from, targets] of edges) {
-    for (const to of targets) {
-      if (from !== to) {
-        list.push({ from, to });
-      }
+  const edges = [];
+  for (const mod of modules) {
+    const dir = path.join(repoRoot, mod.root);
+    if (!existsSync(dir)) {
+      continue;
+    }
+    for (const to of scanImportsInDir(repoRoot, dir, byName, byRoot, mod.id)) {
+      edges.push({ from: mod.id, to });
     }
   }
-
-  return list.sort(
-    (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to)
-  );
+  return edges;
 }
 
 /**
- * @param {string} repoRoot
- * @param {import('./discover-modules.mjs').ModuleDef[]} modules
- * @param {import('./config.mjs').AiPlanConfig | undefined} config
+ * Dedupe, drop self-edges, and sort module edges for stable output.
+ *
+ * @param {{ from: string, to: string }[]} edges
  * @returns {{ from: string, to: string }[]}
  */
-function buildAdapterModuleEdges(repoRoot, modules, config) {
-  const adapter = config ? selectAdapter(repoRoot, config.modules.adapter) : null;
-  if (!adapter) {
-    return [];
-  }
-
-  const graph = adapter.extract(repoRoot, listRepoFiles(repoRoot));
-  const edgeKeys = new Set();
-  for (const edge of graph.edges ?? []) {
-    const from = moduleIdForFile(edge.from, modules);
-    const to = moduleIdForFile(edge.to, modules);
-    if (!from || !to || from === to) {
-      continue;
+function dedupeEdges(edges) {
+  const keys = new Set();
+  for (const edge of edges) {
+    if (edge.from !== edge.to) {
+      keys.add(`${edge.from}\0${edge.to}`);
     }
-    edgeKeys.add(`${from}\0${to}`);
   }
-
-  return [...edgeKeys]
+  return [...keys]
     .map((key) => {
       const [from, to] = key.split('\0');
       return { from, to };
@@ -106,46 +126,14 @@ function buildAdapterModuleEdges(repoRoot, modules, config) {
 }
 
 /**
- * @param {string} repoRoot
- * @param {number} [limit]
- * @returns {string[]}
- */
-function listRepoFiles(repoRoot, limit = 20000) {
-  /** @type {string[]} */
-  const out = [];
-  const stack = [repoRoot];
-  while (stack.length > 0 && out.length < limit) {
-    const dir = stack.pop();
-    let entries;
-    try {
-      entries = readdirSync(dir, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-    for (const entry of entries) {
-      if (WALK_SKIP.has(entry.name)) {
-        continue;
-      }
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        stack.push(full);
-      } else {
-        out.push(path.relative(repoRoot, full).replace(/\\/g, '/'));
-      }
-    }
-  }
-  return out.sort();
-}
-
-/**
  * @param {string} file
- * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @param {import('./discover-modules.mjs').ModuleDef[]} sortedModules modules
+ *   pre-sorted longest-root-first.
  * @returns {string | null}
  */
-function moduleIdForFile(file, modules) {
+function moduleIdForFile(file, sortedModules) {
   const normalized = file.replace(/\\/g, '/').replace(/^\.\//, '');
-  const sorted = [...modules].sort((a, b) => b.root.length - a.root.length);
-  for (const mod of sorted) {
+  for (const mod of sortedModules) {
     const root = mod.root.replace(/\\/g, '/').replace(/\/$/, '');
     if (root === '.' || normalized === root || normalized.startsWith(`${root}/`)) {
       return mod.id;
