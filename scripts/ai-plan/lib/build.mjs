@@ -46,7 +46,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
     config.nav ? path.join(repoRoot, config.nav) : null
   );
   const routes = discoverHttpRoutes(repoRoot, config, modules, codeMapFiles);
-  const edges = buildModuleEdges(repoRoot, modules);
+  const edges = buildModuleEdges(repoRoot, modules, config);
 
   const navById = new Map(nav.map((n) => [n.id, n]));
   const moduleIds = new Set(modules.map((m) => m.id));

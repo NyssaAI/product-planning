@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import csharpAdapter from '../../scripts/ai-plan/lib/adapters/csharp.mjs';
+import { buildAiPlanModel } from '../../scripts/ai-plan/lib/build.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..', '..');
@@ -23,6 +24,39 @@ const files = [
 
 function edgeMap(graph) {
   return new Map(graph.edges.map((edge) => [`${edge.from}->${edge.to}`, edge]));
+}
+
+function aiPlanConfig() {
+  return {
+    projectName: 'csharp-fixture',
+    outputDir: 'docs/agent-files/context',
+    codeMapOutput: 'docs/agent-files/context/code-map.json',
+    docs: {
+      product: ['docs/product.md'],
+      roadmap: ['docs/roadmap.md'],
+      techStack: ['docs/tech-stack.md'],
+    },
+    briefMaxCharsPerDoc: 1200,
+    modules: {
+      discover: 'auto',
+      manual: [],
+      pinned: [],
+      globs: [],
+      flows: {},
+      adapter: 'csharp',
+      minFiles: 1,
+      maxFiles: 4,
+    },
+    nav: null,
+    apiRoutes: {
+      enabled: false,
+      root: '',
+      routeFile: 'route.ts',
+      pathPrefix: '',
+    },
+    conventions: [],
+    configFilePresent: false,
+  };
 }
 
 test('csharp adapter resolves namespaces, aliases, global usings, and project references', () => {
@@ -79,4 +113,25 @@ test('csharp adapter source has no NUL separators', () => {
   );
 
   assert.equal(source.includes('\u0000'), false);
+});
+
+test('ai-plan model preserves C# adapter dependencies in module graph', () => {
+  const graph = csharpAdapter.extract(fixtureRoot, files);
+  const model = buildAiPlanModel(fixtureRoot, aiPlanConfig(), graph.files);
+  const moduleEdges = new Set(
+    model.moduleGraph.edges.map((edge) => `${edge.from}->${edge.to}`)
+  );
+  const orders = model.modules.find((mod) => mod.id === 'orders');
+  const contracts = model.modules.find((mod) => mod.id === 'contracts');
+
+  assert.deepEqual(
+    moduleEdges,
+    new Set([
+      'orders->contracts',
+      'orders->models',
+      'orders->shared',
+    ])
+  );
+  assert.deepEqual(orders.dependsOn, ['contracts', 'models', 'shared']);
+  assert.deepEqual(contracts.usedBy, ['orders']);
 });
