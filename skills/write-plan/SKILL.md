@@ -1,6 +1,6 @@
 ---
 name: write-plan
-description: Internal sub-skill invoked by design-spec only. Writes implementation plans from an approved spec. Do not invoke directly — use dev-tools:design-spec.
+description: Internal sub-skill for design-spec contexts when an approved spec is ready for implementation planning.
 user-invocable: false
 disable-model-invocation: true
 ---

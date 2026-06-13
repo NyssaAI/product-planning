@@ -1,6 +1,6 @@
 ---
 name: execute-plan-run
-description: Internal sub-skill invoked by execute-plan only. Default plan executor — task-matched subagent per plan task with two-stage review. Do not invoke directly — use dev-tools:execute-plan.
+description: Internal sub-skill for execute-plan contexts where independent plan tasks are ready for execution in the current session.
 user-invocable: false
 disable-model-invocation: true
 ---

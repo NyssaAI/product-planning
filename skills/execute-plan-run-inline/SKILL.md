@@ -1,6 +1,6 @@
 ---
 name: execute-plan-run-inline
-description: Internal sub-skill invoked by execute-plan only. Fallback inline plan executor when subagents unavailable. Do not invoke directly — use dev-tools:execute-plan.
+description: Internal sub-skill for execute-plan contexts where plan tasks are ready for execution and subagents are unavailable.
 user-invocable: false
 disable-model-invocation: true
 ---

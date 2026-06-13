@@ -1,6 +1,6 @@
 ---
 name: plan-product
-description: Use when starting a new project or when docs/product.md, docs/roadmap.md, or docs/tech-stack.md are missing. Establishes foundational product documentation (full PRD + roadmap + tech stack) through interactive conversation, conforming to the bundled project-structure standard.
+description: Use when starting a new project or when docs/product.md, docs/roadmap.md, or docs/tech-stack.md are missing or outdated.
 ---
 
 # Plan Product

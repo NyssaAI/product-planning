@@ -1,6 +1,6 @@
 ---
 name: execute-plan-finish
-description: Internal sub-skill invoked by execute-plan (Step 3) and fix-bug-complete (PR enforcement) only. Verifies tests, pushes feature branch, opens PR. Do not invoke directly — use dev-tools:execute-plan or dev-tools:fix-bug.
+description: Internal sub-skill for execute-plan or fix-bug contexts when verified changes are ready for PR submission.
 user-invocable: false
 disable-model-invocation: true
 ---

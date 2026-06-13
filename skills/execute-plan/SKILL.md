@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: Use when a written implementation plan exists, PR review feedback needs follow-up, or approved work should be merged. Single canonical entrypoint for plan execution through PR closeout.
+description: Use when a written implementation plan exists, PR review feedback needs follow-up, or approved planned work is ready for PR closeout.
 ---
 
 # Execute Plan (single entrypoint)

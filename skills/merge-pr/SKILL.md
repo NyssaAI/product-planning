@@ -1,6 +1,6 @@
 ---
 name: merge-pr
-description: Internal sub-skill invoked by execute-plan after PR review approval. Performs regression checks, merges the approved PR, and cleans up the worktree. Do not invoke directly; use dev-tools:execute-plan.
+description: Internal sub-skill for execute-plan contexts after GitHub PR review approval when the approved PR is ready to land.
 user-invocable: false
 disable-model-invocation: true
 ---

@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Internal sub-skill invoked by fix-bug Step 2. Performs root-cause investigation before route classification and repair. Do not invoke directly; use dev-tools:fix-bug.
+description: Internal sub-skill for fix-bug Step 2 contexts when root cause is unknown and the next repair path is not yet reliable.
 user-invocable: false
 disable-model-invocation: true
 ---

@@ -1,6 +1,6 @@
 ---
 name: using-ai-plan
-description: Use when writing implementation plans in a repo with code — generates or consumes the docs/agent-files/context module graph and code map for scoped planning context
+description: Use when implementation planning needs scoped repo context from docs/agent-files/context module graphs or code maps
 ---
 
 # Using AI Plan

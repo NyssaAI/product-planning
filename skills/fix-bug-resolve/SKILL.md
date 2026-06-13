@@ -1,6 +1,6 @@
 ---
 name: fix-bug-resolve
-description: Internal sub-skill invoked by fix-bug only. Ralph loop fix for a analyzed bug_id. Do not invoke directly — use dev-tools:fix-bug.
+description: Internal sub-skill for fix-bug contexts when an analyzed bug_id is ready for repair.
 user-invocable: false
 disable-model-invocation: true
 ---

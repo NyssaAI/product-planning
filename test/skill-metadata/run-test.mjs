@@ -27,6 +27,29 @@ function frontmatterField(markdown, field, file) {
   return match[1].trim().replace(/^["']|["']$/g, '');
 }
 
+const processSummaryPatterns = [
+  /\bCreates?\b/,
+  /\bVerifies?\b/,
+  /\bDocuments?\b/,
+  /\bPerforms?\b/,
+  /\bEstablishes?\b/,
+  /\bWrites?\b/,
+  /\bmerges?\b/i,
+  /\bcleans up\b/i,
+  /\bopens PR\b/i,
+  /\bcommits?\b/i,
+  /\bpushes?\b/i,
+  /\broutes?\b/i,
+  /\bgenerates? or consumes?\b/i,
+  /\bSingle canonical\b/,
+  /\bDefault plan executor\b/,
+  /\bFallback inline plan executor\b/,
+  /\bRalph loop fix\b/,
+  /\bDo not invoke directly\b/,
+  /\brequires running\b/i,
+  /\brequires technical\b/i,
+];
+
 const skillDirs = readdirSync(skillsDir)
   .map((name) => path.join(skillsDir, name))
   .filter((entry) => statSync(entry).isDirectory())
@@ -58,6 +81,13 @@ for (const dir of skillDirs) {
     true,
     `${rel} description should start with "Use when" or "Internal sub-skill"`
   );
+  for (const pattern of processSummaryPatterns) {
+    assert.equal(
+      pattern.test(description),
+      false,
+      `${rel} description should describe trigger conditions, not workflow: ${pattern}`
+    );
+  }
   checked += 1;
 }
 
