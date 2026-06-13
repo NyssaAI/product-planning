@@ -1,0 +1,9 @@
+id: map-ts-export-interface
+message: export interface
+severity: info
+language: TypeScript
+metadata:
+  mapKind: interface
+rule:
+  pattern: export interface $NAME { $$$ }
+

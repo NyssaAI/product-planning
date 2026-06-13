@@ -1,0 +1,9 @@
+id: map-ts-export-type
+message: export type
+severity: info
+language: TypeScript
+metadata:
+  mapKind: type
+rule:
+  pattern: export type $NAME = $VALUE
+

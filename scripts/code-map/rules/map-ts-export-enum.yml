@@ -1,0 +1,9 @@
+id: map-ts-export-enum
+message: export enum
+severity: info
+language: TypeScript
+metadata:
+  mapKind: enum
+rule:
+  pattern: export enum $NAME { $$$ }
+

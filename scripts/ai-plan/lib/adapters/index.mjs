@@ -6,12 +6,12 @@
  */
 
 import csharpAdapter from './csharp.mjs';
-// Parallel work: import typescriptAdapter from './typescript.mjs';
+import typescriptAdapter from './typescript.mjs';
 
 /** @type {import('../detection/types.mjs').StackGraphAdapter[]} */
 export const ADAPTERS = [
   csharpAdapter,
-  // typescriptAdapter,
+  typescriptAdapter,
 ];
 
 /**
