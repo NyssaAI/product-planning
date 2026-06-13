@@ -1,6 +1,6 @@
 # dev-tools — AI planning index
 
-Generated: 2026-06-11T16:55:19.600Z. Regenerate: `npm run ai-plan`.
+Generated: 2026-06-13T20:03:19.577Z. Regenerate: `npm run ai-plan`.
 
 ## Progressive disclosure (for planning agents)
 
@@ -17,7 +17,14 @@ Generated: 2026-06-11T16:55:19.600Z. Regenerate: `npm run ai-plan`.
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
-| dev-tools (`main`) | Application code (auto-detected single module). | Feature code and services under `./` | [modules/main.md](./modules/main.md) |
+| hooks (`hooks`) | `hooks` — 1 file under `hooks/`. | Code under `hooks/` | [modules/hooks.md](./modules/hooks.md) |
+| .opencode (`opencode`) | `.opencode` — 1 file under `.opencode/`. | DevToolsPlugin | [modules/opencode.md](./modules/opencode.md) |
+| scripts (`scripts`) | `scripts` — 1 file under `scripts/`. | Code under `scripts/` | [modules/scripts.md](./modules/scripts.md) |
+| ai-plan (`scripts-ai-plan`) | `ai-plan` — 32 files under `scripts/ai-plan/`. | ADAPTERS; API_ROUTE_CANDIDATES; CODE_ROOT_CANDIDATES | [modules/scripts-ai-plan.md](./modules/scripts-ai-plan.md) |
+| code-map (`scripts-code-map`) | `code-map` — 5 files under `scripts/code-map/`. | DEFAULT_SCAN_ROOTS; SOURCE_EXTENSIONS; SUPPORTED_LANGUAGES | [modules/scripts-code-map.md](./modules/scripts-code-map.md) |
+| lib (`scripts-lib`) | `lib` — 2 files under `scripts/lib/`. | findPluginRoot; resolveAstGrepBinary | [modules/scripts-lib.md](./modules/scripts-lib.md) |
+| skills (`skills`) | `skills` — 4 files under `skills/`. | waitForEvent; waitForEventCount; waitForEventMatch | [modules/skills.md](./modules/skills.md) |
+| test (`test`) | `test` — 14 files under `test/`. | Code under `test/` | [modules/test.md](./modules/test.md) |
 
 ## Artifacts
 

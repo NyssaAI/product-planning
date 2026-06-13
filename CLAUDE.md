@@ -101,5 +101,12 @@ jamaynor **standards** and **ai-plan** ship inside dev-tools by design. This is 
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
-| main | Application code (auto-detected single module). | Feature code and services under `./` | `docs/agent-files/context/modules/main.md` |
+| hooks | `hooks` — 1 file under `hooks/`. | Code under `hooks/` | `docs/agent-files/context/modules/hooks.md` |
+| opencode | `.opencode` — 1 file under `.opencode/`. | DevToolsPlugin | `docs/agent-files/context/modules/opencode.md` |
+| scripts | `scripts` — 1 file under `scripts/`. | Code under `scripts/` | `docs/agent-files/context/modules/scripts.md` |
+| scripts-ai-plan | `ai-plan` — 32 files under `scripts/ai-plan/`. | ADAPTERS; API_ROUTE_CANDIDATES; CODE_ROOT_CANDIDATES | `docs/agent-files/context/modules/scripts-ai-plan.md` |
+| scripts-code-map | `code-map` — 5 files under `scripts/code-map/`. | DEFAULT_SCAN_ROOTS; SOURCE_EXTENSIONS; SUPPORTED_LANGUAGES | `docs/agent-files/context/modules/scripts-code-map.md` |
+| scripts-lib | `lib` — 2 files under `scripts/lib/`. | findPluginRoot; resolveAstGrepBinary | `docs/agent-files/context/modules/scripts-lib.md` |
+| skills | `skills` — 4 files under `skills/`. | waitForEvent; waitForEventCount; waitForEventMatch | `docs/agent-files/context/modules/skills.md` |
+| test | `test` — 14 files under `test/`. | Code under `test/` | `docs/agent-files/context/modules/test.md` |
 <!-- ai-plan:module-map:end -->
