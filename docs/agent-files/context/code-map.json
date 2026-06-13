@@ -1,8 +1,11 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:55:19.471Z",
+  "generated": "2026-06-13T22:13:01.253Z",
   "roots": [
-    "."
+    "scripts",
+    "hooks",
+    "skills",
+    ".opencode"
   ],
   "languages": [
     "JavaScript",
@@ -13,9 +16,72 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 23,
-  "symbolCount": 54,
+  "fileCount": 34,
+  "symbolCount": 78,
   "files": [
+    {
+      "path": ".opencode/plugins/dev-tools.js",
+      "symbols": [
+        {
+          "name": "DevToolsPlugin",
+          "kind": "const",
+          "line": 49,
+          "signature": "export const DevToolsPlugin = async ({ client, directory })"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/adapters/index.mjs",
+      "symbols": [
+        {
+          "name": "ADAPTERS",
+          "kind": "const",
+          "line": 13,
+          "signature": "export const ADAPTERS = [ csharpAdapter, pythonAdapter, typescriptAdapter, ]; /** * Select an adapter for the repo. `forcedId` (from config) wins; otherwise the"
+        },
+        {
+          "name": "selectAdapter",
+          "kind": "function",
+          "line": 27,
+          "signature": "export function selectAdapter(repoRoot, forcedId)",
+          "summary": "Select an adapter for the repo."
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/adapters/python.mjs",
+      "symbols": [
+        {
+          "name": "matches",
+          "kind": "function",
+          "line": 69,
+          "signature": "export function matches(repoRoot)"
+        },
+        {
+          "name": "extract",
+          "kind": "function",
+          "line": 86,
+          "signature": "export function extract(repoRoot, files)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/adapters/typescript.mjs",
+      "symbols": [
+        {
+          "name": "matches",
+          "kind": "function",
+          "line": 83,
+          "signature": "export function matches(repoRoot)"
+        },
+        {
+          "name": "extract",
+          "kind": "function",
+          "line": 103,
+          "signature": "export function extract(repoRoot, files)"
+        }
+      ]
+    },
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
       "symbols": [
@@ -84,7 +150,7 @@
         {
           "name": "buildAiPlanModel",
           "kind": "function",
-          "line": 37,
+          "line": 38,
           "signature": "export function buildAiPlanModel(repoRoot, config, codeMapFiles)"
         }
       ]
@@ -101,20 +167,117 @@
         {
           "name": "validateRequiredDocs",
           "kind": "function",
-          "line": 114,
+          "line": 127,
           "signature": "export function validateRequiredDocs(repoRoot, config)"
         },
         {
           "name": "resolveDocPath",
           "kind": "function",
-          "line": 136,
+          "line": 149,
           "signature": "export function resolveDocPath(repoRoot, candidates)"
         },
         {
           "name": "writeStarterConfigs",
           "kind": "function",
-          "line": 149,
+          "line": 162,
           "signature": "export function writeStarterConfigs(repoRoot)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/detection/derive-modules.mjs",
+      "symbols": [
+        {
+          "name": "deriveModules",
+          "kind": "function",
+          "line": 55,
+          "signature": "export function deriveModules(repoRoot, fileGraph, options = {})"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/detection/metrics.mjs",
+      "symbols": [
+        {
+          "name": "internalExternalWeights",
+          "kind": "function",
+          "line": 19,
+          "signature": "export function internalExternalWeights(edges, assign)",
+          "summary": "Internal vs."
+        },
+        {
+          "name": "internalExternalRatio",
+          "kind": "function",
+          "line": 43,
+          "signature": "export function internalExternalRatio(edges, assign)",
+          "summary": "internal / (internal + external)."
+        },
+        {
+          "name": "modularity",
+          "kind": "function",
+          "line": 56,
+          "signature": "export function modularity(edges, assign)",
+          "summary": "Newman modularity Q for an assignment (weighted, undirected)."
+        },
+        {
+          "name": "cohesion",
+          "kind": "function",
+          "line": 97,
+          "signature": "export function cohesion(edges, assign, moduleId)",
+          "summary": "Cohesion of one module: internal weight / (internal + boundary)."
+        },
+        {
+          "name": "coupling",
+          "kind": "function",
+          "line": 121,
+          "signature": "export function coupling(edges, assign, modA, modB)",
+          "summary": "Coupling between two modules: total cross-edge weight between them."
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "symbols": [
+        {
+          "name": "DEFAULT_EXCLUDE",
+          "kind": "const",
+          "line": 8,
+          "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);"
+        },
+        {
+          "name": "topLevelAreas",
+          "kind": "function",
+          "line": 24,
+          "signature": "export function topLevelAreas(files, exclude = DEFAULT_EXCLUDE)",
+          "summary": "Immediate child directories of the repo root that contain a file (e.g."
+        },
+        {
+          "name": "filesInArea",
+          "kind": "function",
+          "line": 43,
+          "signature": "export function filesInArea(files, area, exclude = DEFAULT_EXCLUDE)",
+          "summary": "Files under `area`, dropping any whose path crosses an excluded directory."
+        },
+        {
+          "name": "maxDepth",
+          "kind": "function",
+          "line": 55,
+          "signature": "export function maxDepth(areaFiles)",
+          "summary": "Deepest directory nesting below the area (excluding the filename)."
+        },
+        {
+          "name": "partitionAtDepth",
+          "kind": "function",
+          "line": 71,
+          "signature": "export function partitionAtDepth(areaFiles, area, depth)",
+          "summary": "Assign each area file to the module rooted `depth` segments below the area."
+        },
+        {
+          "name": "sizeByModule",
+          "kind": "function",
+          "line": 87,
+          "signature": "export function sizeByModule(partition)",
+          "summary": "File count per module root for an assignment."
         }
       ]
     },
@@ -124,13 +287,14 @@
         {
           "name": "discoverModules",
           "kind": "function",
-          "line": 26,
-          "signature": "export function discoverModules(repoRoot, config)"
+          "line": 30,
+          "signature": "export function discoverModules(repoRoot, config, stack)",
+          "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted."
         },
         {
           "name": "parseNavEntries",
           "kind": "function",
-          "line": 312,
+          "line": 376,
           "signature": "export function parseNavEntries(navPath)"
         }
       ]
@@ -182,13 +346,13 @@
         {
           "name": "renderModuleMapTable",
           "kind": "function",
-          "line": 14,
+          "line": 15,
           "signature": "export function renderModuleMapTable(modules)"
         },
         {
           "name": "embedModuleMap",
           "kind": "function",
-          "line": 88,
+          "line": 85,
           "signature": "export function embedModuleMap(repoRoot, tableMarkdown)",
           "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root)."
         }
@@ -235,8 +399,9 @@
         {
           "name": "buildModuleEdges",
           "kind": "function",
-          "line": 9,
-          "signature": "export function buildModuleEdges(repoRoot, modules)"
+          "line": 13,
+          "signature": "export function buildModuleEdges(repoRoot, modules, config, stack)",
+          "summary": "adapter graph; falls back to a fresh extraction when omitted."
         }
       ]
     },
@@ -295,6 +460,25 @@
       ]
     },
     {
+      "path": "scripts/ai-plan/lib/pin.mjs",
+      "symbols": [
+        {
+          "name": "pinModule",
+          "kind": "function",
+          "line": 37,
+          "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
+          "summary": "Eject a derived module into `modules.pinned[]`."
+        },
+        {
+          "name": "unpinModule",
+          "kind": "function",
+          "line": 74,
+          "signature": "export function unpinModule(repoRoot, moduleId)",
+          "summary": "Remove a pin by id or root, returning its subtree to auto-derivation."
+        }
+      ]
+    },
+    {
       "path": "scripts/ai-plan/lib/project-root.mjs",
       "symbols": [
         {
@@ -311,14 +495,32 @@
         {
           "name": "renderIndex",
           "kind": "function",
-          "line": 5,
+          "line": 7,
           "signature": "export function renderIndex(model, config)"
         },
         {
           "name": "renderModuleScope",
           "kind": "function",
-          "line": 72,
+          "line": 70,
           "signature": "export function renderModuleScope(model, mod)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/repo-files.mjs",
+      "symbols": [
+        {
+          "name": "WALK_SKIP",
+          "kind": "const",
+          "line": 9,
+          "summary": "test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used as test data are not detected as the paren"
+        },
+        {
+          "name": "listRepoFiles",
+          "kind": "function",
+          "line": 31,
+          "signature": "export function listRepoFiles(repoRoot, limit = 20000)",
+          "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped)."
         }
       ]
     },
@@ -334,6 +536,18 @@
       ]
     },
     {
+      "path": "scripts/ai-plan/lib/stack-graph.mjs",
+      "symbols": [
+        {
+          "name": "extractStackGraph",
+          "kind": "function",
+          "line": 20,
+          "signature": "export function extractStackGraph(repoRoot, config)",
+          "summary": "Select the stack-graph adapter for the repo and run a single extraction."
+        }
+      ]
+    },
+    {
       "path": "scripts/ai-plan/lib/stack-profiles/index.mjs",
       "symbols": [
         {
@@ -341,6 +555,18 @@
           "kind": "function",
           "line": 245,
           "signature": "export function detectStackModules(repoRoot, config)"
+        }
+      ]
+    },
+    {
+      "path": "scripts/ai-plan/lib/summarize.mjs",
+      "symbols": [
+        {
+          "name": "summarizeDescription",
+          "kind": "function",
+          "line": 15,
+          "signature": "export function summarizeDescription(description, fallbackId, lineLen = 120, maxLines = 2)",
+          "summary": "Builds the module summary shown in the index and embedded module-map tables."
         }
       ]
     },
@@ -430,31 +656,28 @@
       ]
     },
     {
-      "path": "test/claude-code/analyze-token-usage.py",
+      "path": "skills/systematic-debugging/condition-based-waiting-example.ts",
       "symbols": [
         {
-          "name": "analyze_main_session",
-          "kind": "py-function",
-          "line": 12,
-          "signature": "def analyze_main_session(filepath)"
+          "name": "waitForEvent",
+          "kind": "function",
+          "line": 20,
+          "signature": "export function waitForEvent( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, timeoutMs = 5000 ): Promise<LaceEvent>",
+          "summary": "Wait for a specific event type to appear in thread Example: await waitForEvent(threadManager, agentThreadId, 'TOOL_RESUL"
         },
         {
-          "name": "format_tokens",
-          "kind": "py-function",
-          "line": 72,
-          "signature": "def format_tokens(n)"
+          "name": "waitForEventCount",
+          "kind": "function",
+          "line": 60,
+          "signature": "export function waitForEventCount( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, count: number, timeoutMs = 5000 ): Promise<LaceEvent[]>",
+          "summary": "Wait for a specific number of events of a given type Example: // Wait for 2 AGENT_MESSAGE events (initial response + con"
         },
         {
-          "name": "calculate_cost",
-          "kind": "py-function",
-          "line": 76,
-          "signature": "def calculate_cost(usage, input_cost_per_m=3.0, output_cost_per_m=15.0)"
-        },
-        {
-          "name": "main",
-          "kind": "py-function",
-          "line": 83,
-          "signature": "def main()"
+          "name": "waitForEventMatch",
+          "kind": "function",
+          "line": 111,
+          "signature": "export function waitForEventMatch( threadManager: ThreadManager, threadId: string, predicate: (event: LaceEvent) => boolean, description: string, timeoutMs = 5000 ): Promise<LaceEvent>",
+          "summary": "Wait for an event matching a custom predicate Useful when you need to check event data, not just type Example: // Wait f"
         }
       ]
     }
