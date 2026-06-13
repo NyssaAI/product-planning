@@ -5,4 +5,7 @@ language: Python
 metadata:
   mapKind: py-class
 rule:
-  pattern: "class $NAME:"
+  kind: class_definition
+  has:
+    field: name
+    pattern: $NAME
