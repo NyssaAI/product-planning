@@ -25,14 +25,26 @@ const SPARSE_EDGE_THRESHOLD = 5;
 const norm = (p) => p.replace(/\\/g, '/').replace(/\/$/, '');
 const underRoot = (file, root) => file === root || file.startsWith(`${root}/`);
 const basename = (root) => norm(root).split('/').filter(Boolean).at(-1) ?? root;
-const toId = (root) =>
-  norm(root)
-    .split('/')
-    .filter(Boolean)
-    .join('-')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+
+/** Leading build/layout dirs dropped from module ids. */
+const ROOT_PREFIXES = new Set([
+  'src', 'test', 'tests', 'app', 'lib', 'internal', 'packages', 'apps',
+]);
+/** Dotted dir like "NyssaMeshServer.Api" -> "Api"; symbol "A.B.Foo" -> "Foo". */
+const lastSegment = (s) => (s.includes('.') ? s.split('.').pop() : s);
+const kebab = (s) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+/** Concise id: drop a leading build root, collapse dotted dirs (e.g. `api-actors`). */
+function shortId(root) {
+  const segs = norm(root).split('/').filter(Boolean);
+  if (segs.length > 1 && ROOT_PREFIXES.has(segs[0].toLowerCase())) {
+    segs.shift();
+  }
+  return kebab(segs.map(lastSegment).join('-')) || kebab(norm(root));
+}
+/** Full path id, used only to disambiguate id collisions. */
+const fullId = (root) => kebab(norm(root).split('/').filter(Boolean).join('-'));
 
 /**
  * @param {string} repoRoot
@@ -80,19 +92,46 @@ export function deriveModules(repoRoot, fileGraph, options = {}) {
     }
   }
 
+  /** @type {Map<string, string[]>} file -> short symbol names */
+  const fileSymbols = new Map(
+    fileGraph.files.map((f) => [
+      norm(f.path),
+      (f.symbols ?? []).map((s) => lastSegment(s.name)),
+    ])
+  );
+
+  /** Size + a description and capability bullets sourced from the module's own symbols. */
+  const moduleMeta = (root) => {
+    let size = 0;
+    const syms = new Set();
+    for (const [file, modRoot] of assign) {
+      if (modRoot !== root) continue;
+      size += 1;
+      for (const s of fileSymbols.get(file) ?? []) syms.add(s);
+    }
+    const top = [...syms].sort().slice(0, 3);
+    const name = basename(root);
+    return {
+      size,
+      description: `\`${name}\` — ${size} file${size === 1 ? '' : 's'} under \`${root}/\`.`,
+      capabilities: top.length > 0 ? top : [`Code under \`${root}/\``],
+    };
+  };
+
   /** @type {import('./types.mjs').DetectedModule[]} */
   const derived = [...new Set(assign.values())].sort().map((root) => {
-    const size = [...assign.values()].filter((r) => r === root).length;
+    const meta = moduleMeta(root);
     /** @type {import('./types.mjs').DetectedModule} */
     const mod = {
-      id: toId(root),
+      id: shortId(root),
       name: basename(root),
       root,
-      description: `Auto-detected module under \`${root}/\`.`,
+      description: meta.description,
+      capabilities: meta.capabilities,
       source: 'derived',
     };
-    if (size > maxFiles) {
-      mod.flags = [`large module (${size} files) — consider splitting deeper`];
+    if (meta.size > maxFiles) {
+      mod.flags = [`large module (${meta.size} files) — consider splitting deeper`];
     }
     return mod;
   });
@@ -101,7 +140,7 @@ export function deriveModules(repoRoot, fileGraph, options = {}) {
   const pinned = pins
     .filter((p) => !p.exclude)
     .map((p) => ({
-      id: p.id ?? toId(p.root),
+      id: p.id ?? shortId(p.root),
       name: p.name ?? basename(p.root),
       root: norm(p.root),
       description: p.description ?? `Pinned module under \`${norm(p.root)}/\`.`,
@@ -109,6 +148,23 @@ export function deriveModules(repoRoot, fileGraph, options = {}) {
       ...(p.capabilities ? { capabilities: p.capabilities } : {}),
       ...(p.doesNotOwn ? { doesNotOwn: p.doesNotOwn } : {}),
     }));
+
+  // Pinned ids are authoritative; disambiguate any derived id collision deterministically.
+  const usedIds = new Set(pinned.map((m) => m.id));
+  for (const mod of derived) {
+    if (!usedIds.has(mod.id)) {
+      usedIds.add(mod.id);
+      continue;
+    }
+    let candidate = fullId(mod.root);
+    let n = 2;
+    while (usedIds.has(candidate)) {
+      candidate = `${fullId(mod.root)}-${n}`;
+      n += 1;
+    }
+    mod.id = candidate;
+    usedIds.add(candidate);
+  }
 
   const modules = [...pinned, ...derived].sort((a, b) =>
     a.root.localeCompare(b.root)

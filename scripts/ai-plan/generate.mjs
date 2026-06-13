@@ -10,7 +10,14 @@
  *   node scripts/ai-plan/generate.mjs --migrate    # move legacy layout to docs/agent-files/
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 import { buildAiPlanModel } from './lib/build.mjs';
 import { bootstrapRepo } from './lib/bootstrap.mjs';
@@ -213,6 +220,22 @@ function runGenerate() {
       'utf8'
     );
     modulesWritten += 1;
+  }
+
+  // Prune stale generated module files (ids no longer in the model). Only files
+  // whose header marks them a generated module scope are removed — human docs
+  // dropped into modules/ are left untouched.
+  const currentIds = new Set(model.modules.map((m) => m.id));
+  for (const file of readdirSync(modulesDir)) {
+    if (!file.endsWith('.md') || currentIds.has(file.slice(0, -3))) {
+      continue;
+    }
+    const full = path.join(modulesDir, file);
+    const firstLine = readFileSync(full, 'utf8').split('\n', 1)[0] ?? '';
+    if (firstLine.includes('— module')) {
+      unlinkSync(full);
+      log.info('pruned stale module file', { file });
+    }
   }
 
   const embedded = embedModuleMap(
