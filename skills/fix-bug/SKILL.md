@@ -1,6 +1,6 @@
 ---
 name: fix-bug
-description: Use when a bug is discovered, documented, or needs fixing. Single canonical entrypoint for bug work; routes simple one-file bugs to direct repair and complex bugs through design.
+description: Use when a bug is discovered, documented, reproduced, or ready for repair.
 ---
 
 # Fix Bug (single entrypoint)

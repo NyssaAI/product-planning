@@ -1,6 +1,6 @@
 ---
 name: add-backlog
-description: Use when adding a new planned work item to the backlog. Creates docs/agent-files/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md per the backlog-workflow standard, commits, and pushes.
+description: Use when a new planned work item needs backlog capture before design, planning, or implementation work.
 ---
 
 # Add Backlog Item

@@ -1,6 +1,6 @@
 ---
 name: fix-bug-complete
-description: Internal sub-skill invoked by fix-bug only for the simple bug route. Verifies completion gates and posts final bug report. Do not invoke directly — use dev-tools:fix-bug.
+description: Internal sub-skill for fix-bug contexts when a repaired simple bug needs completion checks and final reporting.
 user-invocable: false
 disable-model-invocation: true
 ---

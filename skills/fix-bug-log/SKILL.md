@@ -1,6 +1,6 @@
 ---
 name: fix-bug-log
-description: Internal sub-skill invoked by fix-bug only. Documents a newly discovered bug in docs/agent-files/bugs/. Do not invoke directly — use dev-tools:fix-bug.
+description: Internal sub-skill for fix-bug contexts when a newly discovered bug needs a docs/agent-files/bugs/ entry before analysis.
 user-invocable: false
 disable-model-invocation: true
 ---
