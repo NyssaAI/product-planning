@@ -1,7 +1,11 @@
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
 
-/** @type {Set<string>} dirs the repo file walk never descends into */
+/**
+ * @type {Set<string>} dirs the repo file walk never descends into. Includes
+ * test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used
+ * as test data are not detected as the parent project's own modules.
+ */
 export const WALK_SKIP = new Set([
   'bin',
   'obj',
@@ -12,6 +16,8 @@ export const WALK_SKIP = new Set([
   'dist',
   'build',
   '.next',
+  'fixtures',
+  '__fixtures__',
 ]);
 
 /**

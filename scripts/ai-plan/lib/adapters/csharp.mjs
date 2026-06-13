@@ -23,7 +23,15 @@ const TYPE_DECL =
   /\b(?:(class|interface|struct|enum)|record(?:\s+(class|struct))?)\s+([A-Z][A-Za-z0-9_]*)(?:\s*<[^>{;]+>)?/g;
 const IDENT = /\b[A-Z][A-Za-z0-9_]*\b/g;
 const QUALIFIED_IDENT = /\b[A-Z][A-Za-z0-9_]*(?:\.[A-Z][A-Za-z0-9_]*)+\b/g;
-const SKIP_DIRS = new Set(['bin', 'obj', 'node_modules', '.git', '.vs']);
+const SKIP_DIRS = new Set([
+  'bin',
+  'obj',
+  'node_modules',
+  '.git',
+  '.vs',
+  'fixtures',
+  '__fixtures__',
+]);
 
 /** @type {import('../detection/types.mjs').StackGraphAdapter} */
 const csharpAdapter = {

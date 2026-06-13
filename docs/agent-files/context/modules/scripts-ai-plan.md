@@ -1,12 +1,18 @@
-# dev-tools (`main`) — module
+# ai-plan (`scripts-ai-plan`) — module
 
 **Inject with your task doc only.** Do not load other module files or the full code map for planning.
 
-**What this module does:** Application code (auto-detected single module).
+**What this module does:** `ai-plan` — 32 files under `scripts/ai-plan/`.
 
 ## Capabilities (owns)
 
-- Feature code and services under `./`
+- ADAPTERS
+- API_ROUTE_CANDIDATES
+- CODE_ROOT_CANDIDATES
+
+## Does not own
+
+- scripts-lib concerns → scripts-lib module
 
 ## Public API
 
@@ -37,12 +43,14 @@
 
 | | Path |
 |--|------|
-| Root | `./` |
-| Out of scope | node_modules/, .git/, dist/, build/, .next/ |
+| Root | `scripts/ai-plan/` |
+| Depends on modules | scripts-lib |
+| Used by | scripts-code-map, test |
+| Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
 
 ## Flows
 
-- Feature code and services under `./`
+- Feature code and services under `scripts/ai-plan/`
 
 ## Tests
 
