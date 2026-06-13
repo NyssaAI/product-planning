@@ -1,6 +1,6 @@
 {
   "name": "dev-tools",
-  "version": "5.1.5",
+  "version": "5.2.0",
   "type": "module",
   "main": ".opencode/plugins/dev-tools.js",
   "dependencies": {
