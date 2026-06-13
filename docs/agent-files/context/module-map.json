@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-11T16:55:19.600Z",
+  "generated": "2026-06-13T20:03:19.577Z",
   "project": {
     "name": "dev-tools",
     "docs": {
@@ -38,25 +38,174 @@
   },
   "modules": [
     {
-      "id": "main",
-      "name": "dev-tools",
-      "root": ".",
-      "source": "fallback",
+      "id": "hooks",
+      "name": "hooks",
+      "root": "hooks",
+      "source": "derived",
       "dependsOn": [],
       "usedBy": [],
       "routeCount": 0,
-      "symbolCount": 54,
-      "planningModule": "docs/agent-files/context/modules/main.md",
-      "description": "Application code (auto-detected single module).",
+      "symbolCount": 0,
+      "planningModule": "docs/agent-files/context/modules/hooks.md",
+      "description": "`hooks` — 1 file under `hooks/`.",
       "capabilities": [
-        "Feature code and services under `./`"
+        "Code under `hooks/`"
+      ]
+    },
+    {
+      "id": "opencode",
+      "name": ".opencode",
+      "root": ".opencode",
+      "source": "derived",
+      "dependsOn": [],
+      "usedBy": [],
+      "routeCount": 0,
+      "symbolCount": 0,
+      "planningModule": "docs/agent-files/context/modules/opencode.md",
+      "description": "`.opencode` — 1 file under `.opencode/`.",
+      "capabilities": [
+        "DevToolsPlugin"
+      ]
+    },
+    {
+      "id": "scripts",
+      "name": "scripts",
+      "root": "scripts",
+      "source": "derived",
+      "dependsOn": [],
+      "usedBy": [],
+      "routeCount": 0,
+      "symbolCount": 50,
+      "planningModule": "docs/agent-files/context/modules/scripts.md",
+      "description": "`scripts` — 1 file under `scripts/`.",
+      "capabilities": [
+        "Code under `scripts/`"
+      ]
+    },
+    {
+      "id": "scripts-ai-plan",
+      "name": "ai-plan",
+      "root": "scripts/ai-plan",
+      "source": "derived",
+      "dependsOn": [
+        "scripts-lib"
+      ],
+      "usedBy": [
+        "scripts-code-map",
+        "test"
+      ],
+      "routeCount": 0,
+      "symbolCount": 41,
+      "planningModule": "docs/agent-files/context/modules/scripts-ai-plan.md",
+      "description": "`ai-plan` — 32 files under `scripts/ai-plan/`.",
+      "capabilities": [
+        "ADAPTERS",
+        "API_ROUTE_CANDIDATES",
+        "CODE_ROOT_CANDIDATES"
+      ]
+    },
+    {
+      "id": "scripts-code-map",
+      "name": "code-map",
+      "root": "scripts/code-map",
+      "source": "derived",
+      "dependsOn": [
+        "scripts-ai-plan",
+        "scripts-lib"
+      ],
+      "usedBy": [
+        "test"
+      ],
+      "routeCount": 0,
+      "symbolCount": 7,
+      "planningModule": "docs/agent-files/context/modules/scripts-code-map.md",
+      "description": "`code-map` — 5 files under `scripts/code-map/`.",
+      "capabilities": [
+        "DEFAULT_SCAN_ROOTS",
+        "SOURCE_EXTENSIONS",
+        "SUPPORTED_LANGUAGES"
+      ]
+    },
+    {
+      "id": "scripts-lib",
+      "name": "lib",
+      "root": "scripts/lib",
+      "source": "derived",
+      "dependsOn": [],
+      "usedBy": [
+        "scripts-ai-plan",
+        "scripts-code-map"
+      ],
+      "routeCount": 0,
+      "symbolCount": 2,
+      "planningModule": "docs/agent-files/context/modules/scripts-lib.md",
+      "description": "`lib` — 2 files under `scripts/lib/`.",
+      "capabilities": [
+        "findPluginRoot",
+        "resolveAstGrepBinary"
+      ]
+    },
+    {
+      "id": "skills",
+      "name": "skills",
+      "root": "skills",
+      "source": "derived",
+      "dependsOn": [],
+      "usedBy": [],
+      "routeCount": 0,
+      "symbolCount": 0,
+      "planningModule": "docs/agent-files/context/modules/skills.md",
+      "description": "`skills` — 4 files under `skills/`.",
+      "capabilities": [
+        "waitForEvent",
+        "waitForEventCount",
+        "waitForEventMatch"
+      ]
+    },
+    {
+      "id": "test",
+      "name": "test",
+      "root": "test",
+      "source": "derived",
+      "dependsOn": [
+        "scripts-ai-plan",
+        "scripts-code-map"
+      ],
+      "usedBy": [],
+      "routeCount": 0,
+      "symbolCount": 4,
+      "planningModule": "docs/agent-files/context/modules/test.md",
+      "description": "`test` — 14 files under `test/`.",
+      "capabilities": [
+        "Code under `test/`"
       ]
     }
   ],
-  "edges": [],
+  "edges": [
+    {
+      "from": "scripts-ai-plan",
+      "to": "scripts-lib"
+    },
+    {
+      "from": "scripts-code-map",
+      "to": "scripts-ai-plan"
+    },
+    {
+      "from": "scripts-code-map",
+      "to": "scripts-lib"
+    },
+    {
+      "from": "test",
+      "to": "scripts-ai-plan"
+    },
+    {
+      "from": "test",
+      "to": "scripts-code-map"
+    }
+  ],
   "codeMap": "docs/agent-files/context/code-map.json",
   "stats": {
-    "moduleCount": 1,
+    "moduleCount": 8,
     "routeCount": 0,
     "codeMapSymbols": 54
   }
