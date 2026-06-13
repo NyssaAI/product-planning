@@ -3,6 +3,8 @@
 .claude/
 .DS_Store
 node_modules/
+bin/
+obj/
 inspo
 triage/
 .regen.log
