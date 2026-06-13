@@ -1,4 +1,4 @@
-namespace App.Orders;
+namespace MyApp.Orders;
 
 public class Order
 {
