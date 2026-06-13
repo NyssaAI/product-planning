@@ -67,16 +67,17 @@ function flagValue(argv, flag) {
  * @param {string} repoRoot
  * @param {string} codeMapOutput
  */
-function loadCodeMapFiles(repoRoot, codeMapOutput) {
+function loadCodeMap(repoRoot, codeMapOutput) {
   const mapPath = path.join(repoRoot, codeMapOutput);
   if (!existsSync(mapPath)) {
     log.warn('CODE_MAP missing', { path: codeMapOutput });
-    return [];
+    return { files: [], endpoints: [] };
   }
   const raw = JSON.parse(readFileSync(mapPath, 'utf8'));
   const files = Array.isArray(raw.files) ? raw.files : [];
-  log.debug('loaded CODE_MAP files', { count: files.length });
-  return files;
+  const endpoints = Array.isArray(raw.endpoints) ? raw.endpoints : [];
+  log.debug('loaded CODE_MAP', { files: files.length, endpoints: endpoints.length });
+  return { files, endpoints };
 }
 
 function runInit() {
@@ -146,14 +147,14 @@ function runGenerate() {
     };
   }
 
-  const codeMapFiles = loadCodeMapFiles(REPO_ROOT, config.codeMapOutput);
-  if (codeMapFiles.length === 0) {
+  const codeMap = loadCodeMap(REPO_ROOT, config.codeMapOutput);
+  if (codeMap.files.length === 0) {
     warnings.push(
       `CODE_MAP_STALE: ${config.codeMapOutput} missing or empty — run npm run code-map first`
     );
   }
 
-  const model = buildAiPlanModel(REPO_ROOT, config, codeMapFiles);
+  const model = buildAiPlanModel(REPO_ROOT, config, codeMap);
   model.project.docs = {
     product: resolved.product,
     roadmap: resolved.roadmap,

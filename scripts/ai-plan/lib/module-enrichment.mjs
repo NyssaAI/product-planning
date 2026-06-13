@@ -184,8 +184,8 @@ export function detectPublicSurface(codeMapFiles, moduleRoot) {
 
 /**
  * @param {string} repoRoot
- * @param {{ id: string, root: string, httpRoutes?: { path: string }[] }[]} allModules
- * @param {{ id: string, root: string, httpRoutes?: { path: string }[] }} mod
+ * @param {{ id: string, root: string, httpRoutes?: { path: string }[], mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[] }[]} allModules
+ * @param {{ id: string, root: string, httpRoutes?: { path: string }[], mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[] }} mod
  * @returns {string[]}
  */
 export function inferFlows(repoRoot, allModules, mod) {
@@ -194,6 +194,10 @@ export function inferFlows(repoRoot, allModules, mod) {
 
   if (mod.httpRoutes?.length) {
     flows.push(`HTTP API handlers under \`${mod.root}/\` (${mod.httpRoutes.length} routes)`);
+  }
+  const mcpCount = mcpEndpointCount(mod);
+  if (mcpCount > 0) {
+    flows.push(`MCP capability handlers under \`${mod.root}/\` (${mcpCount} endpoints)`);
   }
 
   const entryPoints = detectEntryPoints(repoRoot, mod.root);
@@ -235,7 +239,7 @@ const DOMAIN_HINTS = {
  * config values take precedence over these in build.mjs.
  *
  * @param {string} repoRoot
- * @param {{ id: string, root: string, httpRoutes?: { path: string, methods?: string[] }[], dependsOn?: string[] }} mod
+ * @param {{ id: string, root: string, httpRoutes?: { path: string, methods?: string[] }[], mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[], dependsOn?: string[] }} mod
  * @param {{ entryPoints: string[] }} enrichment
  * @returns {{ description: string, capabilities: string[], doesNotOwn: string[] }}
  */
@@ -270,6 +274,18 @@ export function inferCapabilities(repoRoot, mod, enrichment) {
     capabilities.push(
       `HTTP endpoints under \`${mod.root}/\` (${routes.length} routes)`
     );
+  }
+
+  const mcpCount = mcpEndpointCount(mod);
+  if (mcpCount > 0) {
+    const parts = [
+      endpointPart(mod.mcpTools?.length ?? 0, 'tool'),
+      endpointPart(mod.mcpResources?.length ?? 0, 'resource'),
+      endpointPart(mod.mcpPrompts?.length ?? 0, 'prompt'),
+      endpointPart(mod.mcpTransports?.length ?? 0, 'transport'),
+    ].filter(Boolean);
+    sentences.push(`Serves ${mcpCount} MCP endpoint${mcpCount === 1 ? '' : 's'} (${parts.join(', ')}).`);
+    capabilities.push(`MCP tools/resources/prompts under \`${mod.root}/\` (${mcpCount} endpoints)`);
   }
 
   const entryPoints = enrichment.entryPoints ?? [];
@@ -328,8 +344,8 @@ export function inferOutOfScope(allModules, mod) {
 
 /**
  * @param {string} repoRoot
- * @param {{ id: string, root: string, httpRoutes?: { path: string }[] }[]} allModules
- * @param {{ id: string, root: string, httpRoutes?: { path: string }[] }} mod
+ * @param {{ id: string, root: string, httpRoutes?: { path: string }[], mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[] }[]} allModules
+ * @param {{ id: string, root: string, httpRoutes?: { path: string }[], mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[] }} mod
  * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[]} codeMapFiles
  */
 export function enrichModule(repoRoot, allModules, mod, codeMapFiles) {
@@ -354,4 +370,29 @@ export function enrichModule(repoRoot, allModules, mod, codeMapFiles) {
   });
 
   return enrichment;
+}
+
+/**
+ * @param {{ mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[] }} mod
+ * @returns {number}
+ */
+function mcpEndpointCount(mod) {
+  return (
+    (mod.mcpTools?.length ?? 0) +
+    (mod.mcpResources?.length ?? 0) +
+    (mod.mcpPrompts?.length ?? 0) +
+    (mod.mcpTransports?.length ?? 0)
+  );
+}
+
+/**
+ * @param {number} count
+ * @param {string} label
+ * @returns {string}
+ */
+function endpointPart(count, label) {
+  if (count === 0) {
+    return '';
+  }
+  return `${count} ${label}${count === 1 ? '' : 's'}`;
 }

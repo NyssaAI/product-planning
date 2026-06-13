@@ -27,7 +27,7 @@ Upstream also lives in [jamaynor/ai-tools](https://github.com/jamaynor/ai-tools)
 | Roadmap | `docs/roadmap.md` |
 | Tech stack | `docs/tech-stack.md` |
 
-Everything else is **auto-detected** (modules, code roots, HTTP routes, dependencies).
+Everything else is **auto-detected** (modules, code roots, HTTP/MCP endpoint surfaces, dependencies).
 
 ## Quick start (any repository)
 
@@ -56,7 +56,7 @@ npm run ai-plan             # code-map + MODULE_MAP + scopes
 
 | Output | Purpose |
 |--------|---------|
-| `docs/agent-plan/context/code-map.json` | Symbol index (exports, routes, line numbers) |
+| `docs/agent-plan/context/code-map.json` | Symbol index plus endpoint index (HTTP routes, MCP tools/resources/prompts, line numbers) |
 | `docs/agent-plan/context/module-map.json` | Module graph (`dependsOn` / `usedBy`) |
 | `docs/agent-plan/context/modules/<id>.md` | **Primary artifact** — one module architecture per file |
 | `docs/agent-plan/context/index.md` | Progressive disclosure guide |

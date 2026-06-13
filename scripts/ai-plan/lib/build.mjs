@@ -33,9 +33,11 @@ function detectSharedRoot(repoRoot) {
 /**
  * @param {string} repoRoot
  * @param {import('./config.mjs').AiPlanConfig} config
- * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[]} codeMapFiles
+ * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[] | { files?: { path: string, symbols?: { name: string, kind: string, line: number }[] }[], endpoints?: object[] }} codeMapInput
  */
-export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
+export function buildAiPlanModel(repoRoot, config, codeMapInput) {
+  const codeMap = normalizeCodeMap(codeMapInput);
+  const codeMapFiles = codeMap.files;
   log.info('buildAiPlanModel start', { repoRoot, codeMapFileCount: codeMapFiles.length });
   const brief = loadProjectBrief(repoRoot, config);
   // Extract the adapter stack graph once; module discovery and module-edge
@@ -50,7 +52,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
   const nav = parseNavEntries(
     config.nav ? path.join(repoRoot, config.nav) : null
   );
-  const routes = discoverHttpRoutes(repoRoot, config, modules, codeMapFiles);
+  const routes = discoverHttpRoutes(repoRoot, config, modules, codeMap);
   const edges = buildModuleEdges(repoRoot, modules, config, stack);
 
   const navById = new Map(nav.map((n) => [n.id, n]));
@@ -74,11 +76,42 @@ export function buildAiPlanModel(repoRoot, config, codeMapFiles) {
     const modRoutes = routes.filter((r) => r.moduleId === mod.id);
     return {
       ...mod,
-      httpRoutes: modRoutes.map((r) => ({
-        path: r.path,
-        methods: r.methods,
-        file: r.file,
-      })),
+      httpRoutes: modRoutes
+        .filter((r) => r.kind === 'http')
+        .map((r) => ({
+          path: r.path,
+          methods: r.methods,
+          file: r.file,
+        })),
+      mcpTools: modRoutes
+        .filter((r) => r.kind === 'mcp-tool')
+        .map((r) => ({
+          name: r.name,
+          file: r.file,
+          line: r.line,
+        })),
+      mcpResources: modRoutes
+        .filter((r) => r.kind === 'mcp-resource')
+        .map((r) => ({
+          name: r.name,
+          path: r.path,
+          file: r.file,
+          line: r.line,
+        })),
+      mcpPrompts: modRoutes
+        .filter((r) => r.kind === 'mcp-prompt')
+        .map((r) => ({
+          name: r.name,
+          file: r.file,
+          line: r.line,
+        })),
+      mcpTransports: modRoutes
+        .filter((r) => r.kind === 'mcp-transport')
+        .map((r) => ({
+          path: r.path,
+          file: r.file,
+          line: r.line,
+        })),
     };
   });
 
@@ -222,4 +255,18 @@ function symbolsUnderPrefix(files, prefix) {
     }
   }
   return out;
+}
+
+/**
+ * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[] | { files?: { path: string, symbols?: { name: string, kind: string, line: number }[] }[], endpoints?: object[] }} input
+ * @returns {{ files: { path: string, symbols?: { name: string, kind: string, line: number }[] }[], endpoints: object[] }}
+ */
+function normalizeCodeMap(input) {
+  if (Array.isArray(input)) {
+    return { files: input, endpoints: [] };
+  }
+  return {
+    files: Array.isArray(input?.files) ? input.files : [],
+    endpoints: Array.isArray(input?.endpoints) ? input.endpoints : [],
+  };
 }

@@ -47,13 +47,14 @@ function checkCodeMap(repoRoot, codeMapOutput) {
     const raw = JSON.parse(readFileSync(mapPath, 'utf8'));
     const fileCount = raw.fileCount ?? raw.files?.length ?? 0;
     const symbolCount = raw.symbolCount ?? 0;
-    log.debug('doctor code-map stats', { fileCount, symbolCount });
+    const endpointCount = raw.endpointCount ?? raw.endpoints?.length ?? 0;
+    log.debug('doctor code-map stats', { fileCount, symbolCount, endpointCount });
 
-    if (fileCount === 0) {
+    if (fileCount === 0 && endpointCount === 0) {
       return [{
         id: 'code-map',
         status: 'warn',
-        message: 'CODE_MAP has zero files',
+        message: 'CODE_MAP has zero files and zero endpoints',
         hint: 'Verify code-map.config.json roots',
       }];
     }
@@ -61,7 +62,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
     return [{
       id: 'code-map',
       status: 'pass',
-      message: `CODE_MAP ok (${fileCount} files, ${symbolCount} symbols)`,
+      message: `CODE_MAP ok (${fileCount} files, ${symbolCount} symbols, ${endpointCount} endpoints)`,
     }];
   } catch (error) {
     return [{
@@ -221,10 +222,10 @@ export function runDoctor(repoRoot, options = {}) {
   checks.push(...checkAgentEntrypoints(repoRoot));
 
   if (existsSync(path.join(repoRoot, config.codeMapOutput))) {
-    const codeMapFiles = JSON.parse(
+    const codeMap = JSON.parse(
       readFileSync(path.join(repoRoot, config.codeMapOutput), 'utf8')
-    ).files ?? [];
-    const model = buildAiPlanModel(repoRoot, config, codeMapFiles);
+    );
+    const model = buildAiPlanModel(repoRoot, config, codeMap);
     log.debug('doctor built model for validation', {
       moduleCount: model.modules.length,
       routeCount: model.stats.routeCount,
