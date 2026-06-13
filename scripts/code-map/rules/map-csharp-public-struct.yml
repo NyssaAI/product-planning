@@ -5,4 +5,7 @@ language: CSharp
 metadata:
   mapKind: struct
 rule:
-  pattern: public struct $NAME
+  kind: struct_declaration
+  all:
+    - has: { field: name, pattern: $NAME }
+    - has: { kind: modifier, regex: ^public$ }

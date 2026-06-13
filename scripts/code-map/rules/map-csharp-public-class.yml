@@ -5,4 +5,7 @@ language: CSharp
 metadata:
   mapKind: class
 rule:
-  pattern: public class $NAME
+  kind: class_declaration
+  all:
+    - has: { field: name, pattern: $NAME }
+    - has: { kind: modifier, regex: ^public$ }

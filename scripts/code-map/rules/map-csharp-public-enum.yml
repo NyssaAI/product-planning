@@ -5,4 +5,7 @@ language: CSharp
 metadata:
   mapKind: enum
 rule:
-  pattern: public enum $NAME
+  kind: enum_declaration
+  all:
+    - has: { field: name, pattern: $NAME }
+    - has: { kind: modifier, regex: ^public$ }
