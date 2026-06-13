@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **ai-plan cohesion-based module detection** — `discover: auto` now derives **feature-level** modules from the code's dependency graph (directories grouped at the coupling/cohesion-optimal depth) instead of one-per-project. Language-agnostic core (`scripts/ai-plan/lib/detection/`) + pluggable per-language adapters (`scripts/ai-plan/lib/adapters/`), with a **C# adapter** that resolves type-reference edges. Deterministic; falls back to directory structure for sparse graphs. Non-matching repos (incl. JS workspaces) are unchanged.
+- **Module pinning / eject** — `generate.mjs --pin <id>` / `--unpin <id>` freeze a derived module into `ai-plan.config.json` → `modules.pinned[]` (editable id/name/description/capabilities/boundary). Pinned roots are authoritative and survive re-derivation. Config gains `modules.pinned`, `modules.adapter`, `modules.minFiles`, `modules.maxFiles`.
+
 ## [5.1.0] - 2026-05-21
 
 ### Added
