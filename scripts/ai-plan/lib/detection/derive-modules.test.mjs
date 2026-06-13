@@ -54,3 +54,22 @@ test('sparse graph falls back to directory structure', () => {
 test('invalid graph returns a Result failure (no throw)', () => {
   assert.equal(deriveModules('.', null).ok, false);
 });
+
+test('produces concise unique ids and symbol-sourced capabilities', () => {
+  const f = (path, type) => ({ path, symbols: [{ name: `App.${type}`, kind: 'class', line: 1 }] });
+  const files = [
+    f('src/Api/Actors/a1.cs', 'ActorSvc'), f('src/Api/Actors/a2.cs', 'ActorRepo'), f('src/Api/Actors/a3.cs', 'ActorModel'),
+    f('src/Api/Mesh/m1.cs', 'MeshSvc'), f('src/Api/Mesh/m2.cs', 'MeshRepo'), f('src/Api/Mesh/m3.cs', 'MeshModel'),
+  ];
+  const e = (a, b) => ({ from: a, to: b, weight: 1 });
+  const edges = [
+    e('src/Api/Actors/a1.cs', 'src/Api/Actors/a2.cs'), e('src/Api/Actors/a2.cs', 'src/Api/Actors/a3.cs'), e('src/Api/Actors/a3.cs', 'src/Api/Actors/a1.cs'),
+    e('src/Api/Mesh/m1.cs', 'src/Api/Mesh/m2.cs'), e('src/Api/Mesh/m2.cs', 'src/Api/Mesh/m3.cs'), e('src/Api/Mesh/m3.cs', 'src/Api/Mesh/m1.cs'),
+  ];
+  const r = deriveModules('.', { files, edges });
+  const actors = r.value.find((m) => m.root === 'src/Api/Actors');
+  assert.equal(actors.id, 'api-actors'); // concise: build root dropped
+  assert.deepEqual(actors.capabilities, ['ActorModel', 'ActorRepo', 'ActorSvc']); // short symbol names, sorted
+  assert.equal(r.value.find((m) => m.root === 'src/Api/Mesh').id, 'api-mesh');
+  assert.equal(new Set(r.value.map((m) => m.id)).size, r.value.length); // all unique
+});
