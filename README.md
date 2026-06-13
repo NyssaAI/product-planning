@@ -10,7 +10,7 @@ Once it's teased a spec out of the conversation, it shows it to you in chunks sh
 
 After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
 
-Next up, once you say "go", it launches **execute-plan**, having agents work through each engineering task, inspecting and reviewing their work, and opening a PR when done. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+Next up, once you say "go", it launches **execute-plan**, having agents work through each engineering task, inspecting and reviewing their work, and opening a PR when done. After the PR is reviewed and approved, **execute-plan** also owns the closeout: regression checks, merge, and cleanup. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
 
 There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has dev-tools skills.
 
@@ -161,6 +161,7 @@ Start a new session in your chosen platform and ask for something that should tr
 - **Greenfield project:** "starting a new project" / missing product docs → **`plan-product`**
 - **Feature work:** "help me plan this feature" → **`design-spec`**
 - **Backlog item:** "add this to the backlog" → **`add-backlog`**
+- **Bug report only:** "document this bug for later, don't fix it" → **`add-bug`**
 - **Implement plan:** "implement the plan" / path under `docs/plans/` → **`execute-plan`**
 - **Bug work:** "I found a bug in login" → **`fix-bug`** (not `systematic-debugging` directly)
 
@@ -170,31 +171,34 @@ The agent should automatically invoke the relevant dev-tools skill.
 
 **Ralph loop (Claude Code only):** Ralph is **hook + script infrastructure**, not a workflow entry point. **`fix-bug-resolve`** (inside **`fix-bug`**) uses Ralph automatically on Claude Code via the **Stop** hook (`hooks/hooks.json`). Cursor registers only the session-start hook (`hooks/hooks-cursor.json`), so Ralph state at `.claude/ralph-loop.local.md` is not auto-continued on stop in Cursor — use Claude Code for full bug fix loops, or iterate manually in Cursor.
 
-**Advanced (non-bug only):** `/ralph-loop` and `/cancel-ralph` exist for optional iterative non-bug tasks on Claude Code. **Do not use `/ralph-loop` for bugs** — use **`fix-bug`**, which runs log → analyze → resolve → complete with Ralph inside resolve.
+**Advanced (non-bug only):** `/ralph-loop` and `/cancel-ralph` exist for optional iterative non-bug tasks on Claude Code. **Do not use `/ralph-loop` for bugs** — use **`fix-bug`**, which logs and analyzes first, then either uses the simple direct route with Ralph inside resolve or routes complex bugs through design/plan execution.
 
 ## Workflow entry points
 
-User-facing workflow starts (5 buttons):
+User-facing workflow starts (6 buttons):
 
 | Verb name | Skill folder | Purpose |
 |-----------|--------------|---------|
 | `plan-product` | `plan-product` | New project: product, roadmap, tech-stack |
 | `add-backlog` | `add-backlog` | Add backlog item with detail file |
+| `add-bug` | `add-bug` | Add bug report with detail file |
 | `design-spec` | `design-spec` | Spec before code |
 | `execute-plan` | `execute-plan` | Implement written plan → PR |
-| `fix-bug` | `fix-bug` | Bug lifecycle → resolution |
+| `fix-bug` | `fix-bug` | Bug orchestrator: simple direct fix or complex design path |
 
 Automatic (not user buttons): `using-dev-tools` (session router), `using-ai-plan` during **design-spec** / **write-plan** when code exists.
 
-**Feature chain:** `design-spec` → `write-plan` (internal) → **`execute-plan`** (verify → run → finish)
+**Feature chain:** `design-spec` → `write-plan` (internal) → **`execute-plan`** (verify → run → open PR; review feedback → `receiving-code-review` → update PR; after approval → regression-check → merge → cleanup)
 
 **Backlog chain:** **`add-backlog`** → (when work begins) **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
 
+**Bug-report chain:** **`add-bug`** → (when ready to fix) **`fix-bug`**
+
 **Greenfield chain:** **`plan-product`** → **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
 
-**Bug chain:** **`fix-bug`** only (log → analyze → resolve → complete)
+**Bug chain:** **`fix-bug`** only. Simple one-file bugs can go log → analyze → direct TDD fix → complete. Complex bugs route log → analyze → **`design-spec`** → `write-plan` (internal) → **`execute-plan`**.
 
-Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`.
+Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `merge-pr`, `fix-bug-log`, `systematic-debugging`, `fix-bug-resolve`, `fix-bug-complete`.
 
 ## The Basic Workflow
 
@@ -206,7 +210,7 @@ Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`,
 
 **AI Plan:** **using-ai-plan** runs automatically during design-spec and write-plan when the repo has code (regenerates when stale). Manual `/ai-plan` or `npm run ai-plan` after module structure changes. Bundled generators: `scripts/code-map/`, `scripts/ai-plan/`. Maintainer details: `scripts/ai-plan/README.md`.
 
-4. **execute-plan** - Single entry for implementation. **Verify** worktree → **run** tasks (`execute-plan-run` default, or `execute-plan-run-inline` fallback) → **finish** with tests, push, and PR (`execute-plan-finish`).
+4. **execute-plan** - Single entry for implementation, review feedback follow-up, and post-review closeout. **Verify** worktree → **run** tasks (`execute-plan-run` default, or `execute-plan-run-inline` fallback) → **finish** with tests, push, and PR (`execute-plan-finish`). If reviewers request changes, **execute-plan** invokes `receiving-code-review` before applying review feedback and pushing updates. After PR approval, **execute-plan** invokes internal `merge-pr` for regression checks, merge, and cleanup.
 
 During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **requesting-code-review** between tasks where applicable.
 
@@ -221,13 +225,14 @@ During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **re
 
 **Debugging**
 - **fix-bug** - Canonical entry for all bug work (see Artifact-producing workflows below)
-- **systematic-debugging** - Root-cause method. For bugs: fix-bug Step 2 only. Standalone for non-bug failures during feature work.
+- **systematic-debugging** - Internal root-cause method used by fix-bug Step 2.
 - **verification-before-completion** - Ensure it's actually fixed
 
 **Artifact-producing workflows**
 - **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
 - **add-backlog** - Add a planned work item to `docs/backlog/` with a detail file
-- **fix-bug** - Canonical bug entrypoint (log → analyze → resolve → complete). Sub-skills: `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`. Step 2 analyze uses `systematic-debugging`.
+- **add-bug** - Add a bug report to `docs/agent-files/bugs/` without analyzing or fixing it
+- **fix-bug** - Canonical bug orchestrator. Simple one-file bugs can be fixed directly after analysis; complex bugs route through `design-spec` and `execute-plan`. Sub-skills: `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`. Step 2 analyze uses `systematic-debugging`.
 
 **Collaboration** 
 - **design-spec** - Socratic design refinement (spec before code)

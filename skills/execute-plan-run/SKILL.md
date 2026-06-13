@@ -265,6 +265,8 @@ Done! (PR opened by execute-plan Step 3)
 - Don't rush them into implementation
 
 **If reviewer finds issues:**
+- Invoke **dev-tools:receiving-code-review** to evaluate the feedback before applying it
+- Clarify unclear, conflicting, or technically questionable feedback before implementation
 - Implementer (same subagent) fixes them
 - Reviewer reviews again
 - Repeat until approved
@@ -283,5 +285,6 @@ Done! (PR opened by execute-plan Step 3)
 - **dev-tools:test-driven-development** - Subagents follow TDD for each task
 - **dev-tools:using-core-standards** (+ stack skills from plan) - Conform to bundled standards during implementation
 - **dev-tools:requesting-code-review** - Code review template for reviewer subagents
+- **dev-tools:receiving-code-review** - Evaluate reviewer feedback before applying requested changes
 
 **On completion:** Report all tasks done to parent **execute-plan** — do not invoke **execute-plan-finish** directly.

@@ -1,6 +1,6 @@
 ---
 name: fix-bug-complete
-description: Internal sub-skill invoked by fix-bug only. Verifies completion gates and posts final bug report. Do not invoke directly — use dev-tools:fix-bug.
+description: Internal sub-skill invoked by fix-bug only for the simple bug route. Verifies completion gates and posts final bug report. Do not invoke directly — use dev-tools:fix-bug.
 user-invocable: false
 disable-model-invocation: true
 ---
@@ -8,10 +8,10 @@ disable-model-invocation: true
 # Fix Bug — Complete
 
 <INTERNAL-SUB-SKILL>
-Invoked by `dev-tools:fix-bug` at Step 4 (complete). Users should use **fix-bug**, not this skill directly.
+Invoked by `dev-tools:fix-bug` only for the simple bug route. Users should use **fix-bug**, not this skill directly.
 </INTERNAL-SUB-SKILL>
 
-Verify all completion gates after **fix-bug-resolve** and post the final report.
+Verify all completion gates after **fix-bug-resolve** and post the final report. This skill is not used for complex bugs routed through **design-spec** and **execute-plan**.
 
 ## Completion gates
 
@@ -61,7 +61,7 @@ After all completion gates pass and the output report is printed:
 
 ## Integration
 
-- **dev-tools:fix-bug** — parent orchestrator
+- **dev-tools:fix-bug** — parent orchestrator, simple route only
 - **dev-tools:fix-bug-log** / **systematic-debugging** (Step 2) / **fix-bug-resolve** — upstream steps
 - **dev-tools:execute-plan-finish** — invoked after all gates pass (PR enforcement)
-- **dev-tools:merge-pr** — after PR review, merges with regression checks and cleans up the worktree
+- **dev-tools:execute-plan** — after PR review, post-review closeout invokes internal merge-pr for regression checks and worktree cleanup

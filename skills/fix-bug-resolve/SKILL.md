@@ -8,7 +8,7 @@ disable-model-invocation: true
 # Fix Bug — Resolve
 
 <INTERNAL-SUB-SKILL>
-Invoked by `dev-tools:fix-bug` at Step 3 (resolve). Users should use **fix-bug**, not this skill directly.
+Invoked by `dev-tools:fix-bug` for the simple bug route. Users should use **fix-bug**, not this skill directly.
 </INTERNAL-SUB-SKILL>
 
 Fix a documented and analyzed bug through an iterative Ralph loop. Each iteration examines the current state, works toward a fix, runs tests, and critiques the result. The loop continues until the fix is verified and all tests pass.

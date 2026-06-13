@@ -1,3 +1,5 @@
+import { summarizeDescription } from './summarize.mjs';
+
 /**
  * @param {ReturnType<import('./build.mjs').buildAiPlanModel>} model
  * @param {import('./config.mjs').AiPlanConfig} config
@@ -28,11 +30,7 @@ export function renderIndex(model, config) {
   for (const mod of model.modules) {
     const label =
       mod.id === 'platform' ? 'platform' : `${mod.name} (\`${mod.id}\`)`;
-    const firstSentence = (mod.description ?? '').split(/(?<=[.!?])\s/)[0];
-    const whatItDoes =
-      firstSentence.length > 80
-        ? `${firstSentence.slice(0, 77)}…`
-        : firstSentence || `${mod.id} module`;
+    const whatItDoes = summarizeDescription(mod.description, mod.id);
     const owns = (mod.capabilities ?? []).slice(0, 3).join('; ');
     lines.push(
       `| ${label} | ${whatItDoes} | ${owns} | [modules/${mod.id}.md](./modules/${mod.id}.md) |`

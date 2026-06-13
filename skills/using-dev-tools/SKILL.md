@@ -109,7 +109,7 @@ These thoughts mean STOP—you're rationalizing:
 
 When multiple skills could apply, use this order:
 
-1. **Process skills first** (design-spec, fix-bug, debugging) - these determine HOW to approach the task
+1. **Process skills first** (design-spec, fix-bug) - these determine HOW to approach the task
 2. **Planning context** (using-ai-plan) - before write-plan when repo has code
 3. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
 
@@ -117,9 +117,11 @@ When multiple skills could apply, use this order:
 "Let's build X" → **design-spec** first (single-module spec when code exists), then write-plan (via design-spec) → **execute-plan** when ready to implement.
 "Work on backlog item X" / path under `docs/agent-files/backlog/` → **add-backlog** if not documented; then **design-spec** (reads backlog detail) → write-plan → **execute-plan** when ready.
 "Add to backlog" / new planned work item → **add-backlog** only.
+"Add bug" / "document this bug for later" / "do not fix it now" → **add-bug** only.
 "Implement the plan" / "go" / path under `docs/agent-files/plans/` → **execute-plan** only (not execute-plan-run or execute-plan-finish directly).
-"Fix this bug" → fix-bug first (fix-bug-log → systematic-debugging → fix-bug-resolve → fix-bug-complete → PR via execute-plan-finish), then domain-specific skills if needed.
-"Merge the PR" / "PR is approved" / "land it" → **merge-pr** (regression checks → confirm → squash merge → worktree cleanup).
+"Fix this bug" → **fix-bug** only. It logs/analyzes, then chooses simple direct TDD fix or complex route through **design-spec** → **execute-plan**.
+"Address PR review feedback" / "review requested changes" / "fix review comments" -> **execute-plan** (review follow-up invokes **receiving-code-review** before code changes).
+"Merge the PR" / "PR is approved" / "land it" -> **execute-plan** (post-review closeout invokes internal **merge-pr**).
 
 ## Skill Types
 

@@ -1,13 +1,19 @@
 ---
 name: merge-pr
-description: Use after a pull request has been reviewed and approved on GitHub. Performs a two-layer regression check (feature reversion + spec acceptance criteria) then merges and cleans up the worktree. Single canonical entrypoint for all PR merge work.
+description: Internal sub-skill invoked by execute-plan after PR review approval. Performs regression checks, merges the approved PR, and cleans up the worktree. Do not invoke directly; use dev-tools:execute-plan.
+user-invocable: false
+disable-model-invocation: true
 ---
 
 # Merge PR
 
+<INTERNAL-SUB-SKILL>
+Internal sub-skill invoked by execute-plan after PR review approval. Users should use **execute-plan**, not this skill directly.
+</INTERNAL-SUB-SKILL>
+
 Merge a reviewed pull request with regression safety checks.
 
-**Announce at start:** "I'm using the merge-pr skill to check for regressions and merge."
+**Announce at start:** "I'm using merge-pr (via execute-plan) to check for regressions and merge."
 
 ## Purpose
 
@@ -167,6 +173,7 @@ Report any skipped steps (e.g. "worktree already removed", "check (b) skipped �
 
 ## Integration
 
+- **dev-tools:execute-plan** — parent orchestrator for post-review PR closeout
 - **dev-tools:execute-plan-finish** — creates the PR this skill later merges (writes the `**Spec:**` line and Bug section it reads)
 - **dev-tools:fix-bug-complete** — invokes execute-plan-finish for bug-fix PRs
 - **dev-tools:using-git-worktrees** — created the worktree this skill cleans up
