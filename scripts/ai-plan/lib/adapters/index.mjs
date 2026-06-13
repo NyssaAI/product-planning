@@ -6,11 +6,13 @@
  */
 
 import csharpAdapter from './csharp.mjs';
+import pythonAdapter from './python.mjs';
 import typescriptAdapter from './typescript.mjs';
 
 /** @type {import('../detection/types.mjs').StackGraphAdapter[]} */
 export const ADAPTERS = [
   csharpAdapter,
+  pythonAdapter,
   typescriptAdapter,
 ];
 
