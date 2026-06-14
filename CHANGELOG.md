@@ -2,10 +2,26 @@
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-06-14
+
+### Breaking changes
+
+- **Output tree renamed `docs/agent-files/` → `docs/agent-plan/`** (hard rename, no runtime fallback). `generate.mjs --migrate` does **not** move `docs/agent-files/`; repos on that layout must `git mv docs/agent-files docs/agent-plan` manually. (`--migrate` still converts the older `docs/ai-plan/`, `docs/specs/`, `docs/plans/`, `docs/backlog/`, `docs/bugs/` layouts.)
+- **Legacy path fallbacks removed** from `design-spec`, `execute-plan-finish`, and `merge-pr` — repos must be on the `docs/agent-plan/` layout; pre-reorg paths are no longer read.
+- **`docs/features.md` format changed** from a status table to a checkbox **Inventory** + per-feature **Definitions**; feature ids `F1` → `F-001`. `merge-pr` now reads delivered features from checked (`[x]`) inventory entries instead of a status column.
+- **Use-case schema changed** (cross-cutting model): ids `F-001-U1` → standalone `U-001`; frontmatter `feature:` (singular) → required, searchable `features:` list; filename `f{n}-u{n}.md` → `u-{nnn}-<slug>.md`.
+
 ### Added
 
+- **`docs/features.md` as a first-class artifact** — `plan-product` creates and uses it: an `F-001` checkbox inventory plus AI-refined, human-confirmed per-feature definitions, seeded from the PRD's functional requirements. The roadmap sequences features by id.
+- **Cross-cutting use cases** — a use case is a user-journey view that may span several features, listing them in a required `features:` frontmatter list (greppable: `grep -l "F-002" docs/use-cases/*.md`).
 - **ai-plan cohesion-based module detection** — `discover: auto` now derives **feature-level** modules from the code's dependency graph (directories grouped at the coupling/cohesion-optimal depth) instead of one-per-project. Language-agnostic core (`scripts/ai-plan/lib/detection/`) + pluggable per-language adapters (`scripts/ai-plan/lib/adapters/`), with a **C# adapter** that resolves type-reference edges. Deterministic; falls back to directory structure for sparse graphs. Non-matching repos (incl. JS workspaces) are unchanged.
 - **Module pinning / eject** — `generate.mjs --pin <id>` / `--unpin <id>` freeze a derived module into `ai-plan.config.json` → `modules.pinned[]` (editable id/name/description/capabilities/boundary). Pinned roots are authoritative and survive re-derivation. Config gains `modules.pinned`, `modules.adapter`, `modules.minFiles`, `modules.maxFiles`.
+
+### Changed
+
+- **Minimal module scope** — `design-spec` / `write-plan` scope to the **minimum module set** needed to implement the behavior, not exactly one module (a cross-cutting use case may legitimately require several).
+- Bootstrap now writes `docs/features.md`; `migrate.mjs` emits the new features.md format; the bundled `AGENTS.md` template, ai-plan docs, and the Codex/Copilot tool mappings (now including `AskUserQuestion`) were updated to match.
 
 ## [5.1.0] - 2026-05-21
 
