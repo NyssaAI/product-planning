@@ -120,6 +120,7 @@ When multiple skills could apply, use this order:
 "Add bug" / "document this bug for later" / "do not fix it now" → **add-bug** only.
 "Implement the plan" / "go" / path under `docs/agent-plan/plans/` → **execute-plan** only (not execute-plan-run or execute-plan-finish directly).
 "Fix this bug" → **fix-bug** only. It logs/analyzes, then chooses simple direct TDD fix or complex route through **design-spec** → **execute-plan**.
+"Audit repo setup" / "is this repo set up right" / legacy `docs/agent-files/` present or `docs/agent-plan/` paths missing → **align-project-structure**.
 "Address PR review feedback" / "review requested changes" / "fix review comments" -> **execute-plan** (review follow-up invokes **receiving-code-review** before code changes).
 "Merge the PR" / "PR is approved" / "land it" -> **execute-plan** (post-review closeout invokes internal **merge-pr**).
 

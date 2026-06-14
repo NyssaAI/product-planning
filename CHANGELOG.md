@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [6.1.0] - 2026-06-14
+
+### Added
+
+- **`align-project-structure` skill** — audits a repo against `standards/project-structure.md`. Hard-enforces the `docs/` section (required docs, `docs/agent-plan/` subtree, current `features.md` / use-case formats, no legacy `docs/agent-files/` or pre-reorg roots) and warns on the rest. Auto-applies safe fixes (`generate.mjs --init`, `docs/agent-files` → `docs/agent-plan` move, `generate.mjs --migrate`) and presents a plan for content-rewriting fixes before applying them.
+
 ## [6.0.0] - 2026-06-14
 
 ### Breaking changes
