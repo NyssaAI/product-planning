@@ -12,7 +12,6 @@
  * - tsconfig.json for baseUrl and paths alias resolution
  */
 
-import { spawnSync } from 'node:child_process';
 import {
   existsSync,
   readFileSync,
@@ -23,6 +22,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../../../lib/resolve-ast-grep.mjs';
 import { createLogger } from '../logger.mjs';
+import { runBatchedScan, parseScanJson } from './sg-scan.mjs';
 
 const log = createLogger({ module: 'typescript-adapter' });
 
@@ -257,76 +257,6 @@ function extractModuleSpecifiers(repoRoot, candidateFiles) {
   }
 
   return byFile;
-}
-
-// Conservative cap on the total length of file-path arguments per ast-grep
-// invocation, well under the Windows ~32 KB command-line limit (the rest of the
-// budget covers the binary path, the inline rules, and flags).
-const MAX_SCAN_ARG_LENGTH = 24000;
-
-/**
- * Run `ast-grep scan` over the given absolute file paths, batching the argv so
- * no single invocation exceeds the OS command-line limit (ENAMETOOLONG on large
- * repos). Returns the merged match objects across all batches.
- *
- * @param {string} binary
- * @param {string} repoRoot
- * @param {string[]} absPaths
- * @param {string[]} ruleArgs ast-grep rule selection (e.g. --config or --inline-rules)
- * @returns {Array<Record<string, unknown>>}
- */
-function runBatchedScan(binary, repoRoot, absPaths, ruleArgs) {
-  /** @type {Array<Record<string, unknown>>} */
-  const matches = [];
-  for (const batch of batchByArgLength(absPaths, MAX_SCAN_ARG_LENGTH)) {
-    const result = spawnSync(
-      binary,
-      ['scan', ...batch, ...ruleArgs, '--json'],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-        maxBuffer: 64 * 1024 * 1024,
-      }
-    );
-    if (result.error || (result.status !== 0 && !result.stdout?.trim())) {
-      log.debug('ast-grep scan batch failed', {
-        error: errorMessage(result.error) || result.stderr?.trim(),
-      });
-      continue;
-    }
-    matches.push(...parseScanJson(result.stdout ?? ''));
-  }
-  return matches;
-}
-
-/**
- * Split absolute file paths into batches whose joined length stays under
- * maxLen, so no single spawn exceeds the OS command-line limit.
- *
- * @param {string[]} absPaths
- * @param {number} maxLen
- * @returns {string[][]}
- */
-export function batchByArgLength(absPaths, maxLen) {
-  /** @type {string[][]} */
-  const batches = [];
-  /** @type {string[]} */
-  let current = [];
-  let length = 0;
-  for (const absPath of absPaths) {
-    const added = absPath.length + 1;
-    if (current.length > 0 && length + added > maxLen) {
-      batches.push(current);
-      current = [];
-      length = 0;
-    }
-    current.push(absPath);
-    length += added;
-  }
-  if (current.length > 0) {
-    batches.push(current);
-  }
-  return batches;
 }
 
 /**
@@ -737,19 +667,6 @@ function extractSymbols(repoRoot, candidateFiles) {
   }
 
   return symbols;
-}
-
-/**
- * @param {string} stdout
- * @returns {Array<Record<string, unknown>>}
- */
-function parseScanJson(stdout) {
-  const trimmed = stdout.trim();
-  if (!trimmed) {
-    return [];
-  }
-  const data = JSON.parse(trimmed);
-  return Array.isArray(data) ? data : [];
 }
 
 /**
