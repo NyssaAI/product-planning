@@ -188,6 +188,8 @@ User-facing workflow starts (6 buttons):
 
 Automatic (not user buttons): `using-dev-tools` (session router), `using-ai-plan` during **design-spec** / **write-plan** when code exists.
 
+Maintenance (user-invocable, not a core button): **`align-project-structure`** — audit/onboard a repo to the project-structure standard; enforces the `docs/` layout, auto-fixes safe deviations, plans the rest.
+
 **Feature chain:** `design-spec` → `write-plan` (internal) → **`execute-plan`** (verify → run → open PR; review feedback → `receiving-code-review` → update PR; after approval → regression-check → merge → cleanup)
 
 **Backlog chain:** **`add-backlog`** → (when work begins) **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
@@ -247,6 +249,7 @@ During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **re
 **Standards** (bundled — `standards/` + `manifest.json`)
 - **using-core-standards** - Project structure, errors, logging, testing, DDD, workflow artifacts
 - **using-dotnet-standards** / **using-nextjs-standards** / **using-postgres-standards** / **using-python-standards** - Stack-specific rules
+- **align-project-structure** - Audit a repo against `standards/project-structure.md`: enforce the `docs/` layout, auto-apply safe fixes (incl. `docs/agent-files` → `docs/agent-plan`), plan the rest
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)

@@ -1,5 +1,11 @@
 # dev-tools Release Notes
 
+## v6.1.0 (2026-06-14)
+
+### Added
+
+- **`align-project-structure`** — onboard or audit a repo against the dev-tools project-structure standard. Enforces the `docs/` section, auto-fixes safe deviations (including the `docs/agent-files` → `docs/agent-plan` move and `--init` / `--migrate`), and produces a correction plan for anything that rewrites human-authored content.
+
 ## v6.0.0 (2026-06-14)
 
 Major release — breaking changes to the planning-doc layout and schemas.
