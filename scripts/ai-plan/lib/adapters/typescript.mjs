@@ -65,8 +65,24 @@ const SKIP_DIRS = new Set([
   'obj',
 ]);
 
-const IMPORT_RE =
-  /\b(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\s+from\s+)?['"]([^'"]+)['"]|import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+// ast-grep inline rules matching module specifiers structurally on the
+// tree-sitter parse tree: static imports, `export … from` re-exports, dynamic
+// `import()`, and `require()`. Matching the actual `source` node (rather than
+// regex over text) ignores imports inside comments and strings and captures
+// CommonJS requires the previous regex missed. One rule per ast-grep language.
+const IMPORT_RULES = ['TypeScript', 'JavaScript']
+  .map(
+    (language) => `id: ai-plan-imports-${language.toLowerCase()}
+language: ${language}
+metadata: { mapKind: import }
+rule:
+  any:
+    - { kind: import_statement, has: { field: source, pattern: $SRC } }
+    - { kind: export_statement, has: { field: source, pattern: $SRC } }
+    - { pattern: import($SRC) }
+    - { pattern: require($SRC) }`
+  )
+  .join('\n---\n');
 
 const adapter = {
   id: 'typescript',
@@ -107,15 +123,11 @@ export function extract(repoRoot, files) {
     const tsconfig = loadTsConfig(repoRoot);
     const workspacePackages = readWorkspacePackages(repoRoot);
     const symbolsByFile = extractSymbols(repoRoot, candidateFiles);
+    const specifiersByFile = extractModuleSpecifiers(repoRoot, candidateFiles);
     const edgeWeights = new Map();
 
     for (const source of candidateFiles) {
-      const absSource = path.join(repoRoot, source);
-      if (!existsSync(absSource)) {
-        continue;
-      }
-      const text = readFileSync(absSource, 'utf8');
-      for (const specifier of readModuleSpecifiers(text)) {
+      for (const specifier of specifiersByFile.get(source) ?? []) {
         const target = resolveSpecifier(repoRoot, source, specifier, {
           candidateSet,
           tsconfig,
@@ -195,18 +207,154 @@ function hasTypeScriptFiles(repoRoot) {
 }
 
 /**
- * @param {string} text
- * @returns {string[]}
+ * Extract module specifiers per file via a single ast-grep scan over the
+ * tree-sitter parse tree (see IMPORT_RULES). Returns a map of repo-relative
+ * file -> specifier strings (quotes stripped), parallel to extractSymbols.
+ *
+ * @param {string} repoRoot
+ * @param {string[]} candidateFiles
+ * @returns {Map<string, string[]>}
  */
-function readModuleSpecifiers(text) {
-  const specifiers = [];
-  for (const match of text.matchAll(IMPORT_RE)) {
-    const specifier = match[1] ?? match[2];
-    if (specifier) {
-      specifiers.push(specifier);
-    }
+function extractModuleSpecifiers(repoRoot, candidateFiles) {
+  const byFile = new Map(candidateFiles.map((file) => [file, []]));
+  if (candidateFiles.length === 0) {
+    return byFile;
   }
-  return specifiers;
+
+  try {
+    const binary = resolveAstGrepBinary({
+      toolkitDir: CODE_MAP_DIR,
+      projectRoot: repoRoot,
+    });
+    if (!existsSync(binary)) {
+      log.debug('ast-grep binary not found for imports', { binary });
+      return byFile;
+    }
+
+    const matches = runBatchedScan(
+      binary,
+      repoRoot,
+      candidateFiles.map((file) => path.join(repoRoot, file)),
+      ['--inline-rules', IMPORT_RULES]
+    );
+    const candidateSet = new Set(candidateFiles);
+    for (const match of matches) {
+      const file = normalizePath(
+        path.relative(repoRoot, String(match.file ?? ''))
+      );
+      if (!candidateSet.has(file)) {
+        continue;
+      }
+      const specifier = moduleSpecifierFromMatch(match);
+      if (specifier) {
+        byFile.get(file).push(specifier);
+      }
+    }
+  } catch (error) {
+    log.debug('module specifier extraction failed', {
+      error: errorMessage(error),
+    });
+  }
+
+  return byFile;
+}
+
+// Conservative cap on the total length of file-path arguments per ast-grep
+// invocation, well under the Windows ~32 KB command-line limit (the rest of the
+// budget covers the binary path, the inline rules, and flags).
+const MAX_SCAN_ARG_LENGTH = 24000;
+
+/**
+ * Run `ast-grep scan` over the given absolute file paths, batching the argv so
+ * no single invocation exceeds the OS command-line limit (ENAMETOOLONG on large
+ * repos). Returns the merged match objects across all batches.
+ *
+ * @param {string} binary
+ * @param {string} repoRoot
+ * @param {string[]} absPaths
+ * @param {string[]} ruleArgs ast-grep rule selection (e.g. --config or --inline-rules)
+ * @returns {Array<Record<string, unknown>>}
+ */
+function runBatchedScan(binary, repoRoot, absPaths, ruleArgs) {
+  /** @type {Array<Record<string, unknown>>} */
+  const matches = [];
+  for (const batch of batchByArgLength(absPaths, MAX_SCAN_ARG_LENGTH)) {
+    const result = spawnSync(
+      binary,
+      ['scan', ...batch, ...ruleArgs, '--json'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        maxBuffer: 64 * 1024 * 1024,
+      }
+    );
+    if (result.error || (result.status !== 0 && !result.stdout?.trim())) {
+      log.debug('ast-grep scan batch failed', {
+        error: errorMessage(result.error) || result.stderr?.trim(),
+      });
+      continue;
+    }
+    matches.push(...parseScanJson(result.stdout ?? ''));
+  }
+  return matches;
+}
+
+/**
+ * Split absolute file paths into batches whose joined length stays under
+ * maxLen, so no single spawn exceeds the OS command-line limit.
+ *
+ * @param {string[]} absPaths
+ * @param {number} maxLen
+ * @returns {string[][]}
+ */
+export function batchByArgLength(absPaths, maxLen) {
+  /** @type {string[][]} */
+  const batches = [];
+  /** @type {string[]} */
+  let current = [];
+  let length = 0;
+  for (const absPath of absPaths) {
+    const added = absPath.length + 1;
+    if (current.length > 0 && length + added > maxLen) {
+      batches.push(current);
+      current = [];
+      length = 0;
+    }
+    current.push(absPath);
+    length += added;
+  }
+  if (current.length > 0) {
+    batches.push(current);
+  }
+  return batches;
+}
+
+/**
+ * @param {Record<string, unknown>} match
+ * @returns {string | null}
+ */
+function moduleSpecifierFromMatch(match) {
+  const meta = /** @type {{ single?: Record<string, { text?: string }> }} */ (
+    match.metaVariables
+  );
+  const raw = meta?.single?.SRC?.text;
+  return raw ? stripStringQuotes(raw) : null;
+}
+
+/**
+ * @param {string} raw a string-literal node's source text, including quotes
+ * @returns {string}
+ */
+function stripStringQuotes(raw) {
+  const trimmed = raw.trim();
+  const quote = trimmed[0];
+  if (
+    (quote === "'" || quote === '"' || quote === '`') &&
+    trimmed.at(-1) === quote
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
 }
 
 /**
@@ -552,31 +700,12 @@ function extractSymbols(repoRoot, candidateFiles) {
       return symbols;
     }
 
-    const result = spawnSync(
+    const matches = runBatchedScan(
       binary,
-      [
-        'scan',
-        ...candidateFiles.map((file) => path.join(repoRoot, file)),
-        '--config',
-        SG_CONFIG_PATH,
-        '--json',
-        '--include-metadata',
-      ],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-        maxBuffer: 64 * 1024 * 1024,
-      }
+      repoRoot,
+      candidateFiles.map((file) => path.join(repoRoot, file)),
+      ['--config', SG_CONFIG_PATH, '--include-metadata']
     );
-
-    if (result.error || (result.status !== 0 && !result.stdout?.trim())) {
-      log.debug('ast-grep symbol scan failed', {
-        error: errorMessage(result.error) || result.stderr?.trim(),
-      });
-      return symbols;
-    }
-
-    const matches = parseScanJson(result.stdout ?? '');
     const candidateSet = new Set(candidateFiles);
     for (const match of matches) {
       const file = normalizePath(
