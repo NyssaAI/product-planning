@@ -15,12 +15,35 @@
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createLogger } from '../logger.mjs';
+import { resolveAstGrepBinary } from '../../../lib/resolve-ast-grep.mjs';
+import { runBatchedScan } from './sg-scan.mjs';
 
 const log = createLogger({ module: 'adapter-csharp' });
 
-const TYPE_DECL =
-  /\b(?:(class|interface|struct|enum)|record(?:\s+(class|struct))?)\s+([A-Z][A-Za-z0-9_]*)(?:\s*<[^>{;]+>)?/g;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const CODE_MAP_DIR = path.resolve(__dirname, '../../../code-map');
+
+// Structural type-declaration rules: match each C# declaration node on the
+// tree-sitter parse tree and capture its name. Replaces the previous TYPE_DECL
+// regex so declarations are sourced from the syntax tree, not text. One rule
+// per declaration kind (any visibility).
+const CSHARP_DECL_RULES = [
+  ['class', 'class_declaration'],
+  ['interface', 'interface_declaration'],
+  ['struct', 'struct_declaration'],
+  ['enum', 'enum_declaration'],
+  ['record', 'record_declaration'],
+]
+  .map(
+    ([kind, node]) => `id: ai-plan-csharp-${kind}
+language: CSharp
+metadata: { mapKind: ${kind} }
+rule: { kind: ${node}, has: { field: name, pattern: $NAME } }`
+  )
+  .join('\n---\n');
+
 const IDENT = /\b[A-Z][A-Za-z0-9_]*\b/g;
 const QUALIFIED_IDENT = /\b[A-Z][A-Za-z0-9_]*(?:\.[A-Z][A-Za-z0-9_]*)+\b/g;
 const SKIP_DIRS = new Set([
@@ -69,6 +92,7 @@ function extractGraph(repoRoot, files) {
     projectIncludesSource(f, projectForFile(f, projects))
   );
   const globalUsings = collectGlobalUsings(repoRoot, csFiles, projects);
+  const declsByFile = extractDeclarationsByFile(repoRoot, csFiles);
 
   /** @type {Map<string, FileInfo>} */
   const fileInfos = new Map();
@@ -88,7 +112,12 @@ function extractGraph(repoRoot, files) {
     const clean = maskCommentsAndStrings(content);
     const namespace = declaredNamespace(clean) ?? inferredNamespace(rel, project);
     const fileUsings = parseUsings(clean);
-    const declarations = parseDeclarations(content, clean, rel, namespace, project);
+    const declarations = buildDeclarations(
+      declsByFile.get(rel) ?? [],
+      rel,
+      namespace,
+      project
+    );
     const info = {
       path: rel,
       content,
@@ -404,30 +433,88 @@ function collectGlobalUsings(repoRoot, files, projects) {
 }
 
 /**
- * @param {string} content
- * @param {string} clean
+ * Run one batched ast-grep scan over the C# files and group type declarations
+ * (name, kind, line) by file. Sourced from the tree-sitter parse tree.
+ *
+ * @param {string} repoRoot
+ * @param {string[]} csFiles repo-relative .cs files
+ * @returns {Map<string, { simpleName: string, kind: string, line: number }[]>}
+ */
+function extractDeclarationsByFile(repoRoot, csFiles) {
+  /** @type {Map<string, { simpleName: string, kind: string, line: number }[]>} */
+  const byFile = new Map(csFiles.map((file) => [file, []]));
+  if (csFiles.length === 0) {
+    return byFile;
+  }
+
+  try {
+    const binary = resolveAstGrepBinary({
+      toolkitDir: CODE_MAP_DIR,
+      projectRoot: repoRoot,
+    });
+    if (!existsSync(binary)) {
+      log.debug('ast-grep binary not found for C# declarations', { binary });
+      return byFile;
+    }
+
+    const matches = runBatchedScan(
+      binary,
+      repoRoot,
+      csFiles.map((file) => path.join(repoRoot, file)),
+      ['--inline-rules', CSHARP_DECL_RULES, '--include-metadata']
+    );
+    const candidateSet = new Set(csFiles);
+    for (const match of matches) {
+      const file = normalizePath(
+        path.relative(repoRoot, String(match.file ?? ''))
+      );
+      if (!candidateSet.has(file)) {
+        continue;
+      }
+      const meta = /** @type {{ single?: Record<string, { text?: string }> }} */ (
+        match.metaVariables
+      );
+      const simpleName = meta?.single?.NAME?.text;
+      if (!simpleName) {
+        continue;
+      }
+      const metadata = /** @type {{ mapKind?: string }} */ (match.metadata ?? {});
+      const range = /** @type {{ start?: { line?: number } }} */ (match.range);
+      byFile.get(file).push({
+        simpleName,
+        kind: metadata.mapKind ?? 'class',
+        line: (range?.start?.line ?? 0) + 1,
+      });
+    }
+  } catch (error) {
+    log.debug('C# declaration extraction failed', { error: errorMessage(error) });
+  }
+
+  return byFile;
+}
+
+/**
+ * Build namespace-qualified TypeDecls for a file from its structural
+ * declarations plus the file's namespace and owning project.
+ *
+ * @param {{ simpleName: string, kind: string, line: number }[]} names
  * @param {string} rel
  * @param {string} namespace
  * @param {ProjectInfo | null} project
  * @returns {TypeDecl[]}
  */
-function parseDeclarations(content, clean, rel, namespace, project) {
-  /** @type {TypeDecl[]} */
-  const declarations = [];
-  for (const match of clean.matchAll(TYPE_DECL)) {
-    const kind = match[1] ?? match[2] ?? 'record';
-    const simpleName = match[3];
-    declarations.push({
+function buildDeclarations(names, rel, namespace, project) {
+  return names
+    .map(({ simpleName, kind, line }) => ({
       simpleName,
       fullName: namespace ? `${namespace}.${simpleName}` : simpleName,
       namespace,
       kind,
-      line: lineOf(content, match.index ?? 0),
+      line,
       path: rel,
       project,
-    });
-  }
-  return declarations.sort((a, b) => a.line - b.line || a.fullName.localeCompare(b.fullName));
+    }))
+    .sort((a, b) => a.line - b.line || a.fullName.localeCompare(b.fullName));
 }
 
 /**
@@ -606,17 +693,6 @@ function maskCommentsAndStrings(content) {
  */
 function maskExceptNewlines(text) {
   return text.replace(/[^\n\r]/g, ' ');
-}
-
-/** @param {string} content @param {number} index */
-function lineOf(content, index) {
-  let line = 1;
-  for (let i = 0; i < index && i < content.length; i += 1) {
-    if (content[i] === '\n') {
-      line += 1;
-    }
-  }
-  return line;
 }
 
 /**
