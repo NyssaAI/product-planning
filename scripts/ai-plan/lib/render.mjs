@@ -1,4 +1,5 @@
 import { summarizeDescription } from './summarize.mjs';
+import { classifyNodeOrganization } from './node-organization.mjs';
 
 /**
  * @param {ReturnType<import('./build.mjs').buildAiPlanModel>} model
@@ -37,6 +38,7 @@ export function renderIndex(model, config) {
     );
   }
   lines.push('');
+  renderCodeOrganization(lines, model);
   lines.push('## Artifacts');
   lines.push('');
   lines.push(`- **Module graph:** [module-map.json](./module-map.json)`);
@@ -61,6 +63,58 @@ export function renderIndex(model, config) {
   lines.push('- Bugs: `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/`');
   lines.push('');
   return `${lines.join('\n')}\n`;
+}
+
+/**
+ * Append a Node/TypeScript code-organization view: discovered modules grouped
+ * by structural role (app routes, API routes, feature packages, shared libs,
+ * state stores, native/platform), each pointing at its module doc and the
+ * `code-map.json` slice. Emits nothing when there are no modules.
+ *
+ * @param {string[]} lines
+ * @param {ReturnType<import('./build.mjs').buildAiPlanModel>} model
+ */
+function renderCodeOrganization(lines, model) {
+  const groups = classifyNodeOrganization(model.modules ?? []);
+  if (groups.length === 0) {
+    return;
+  }
+
+  lines.push('## Code organization (Node/TypeScript)');
+  lines.push('');
+  lines.push(
+    'Read the module doc for the role you are touching; filter `code-map.json` by `moduleId` to get that module\'s slice (files, symbols, endpoints).'
+  );
+  lines.push('');
+
+  for (const group of groups) {
+    lines.push(`### ${group.title}`);
+    lines.push('');
+    for (const mod of group.modules) {
+      const root = String(mod.root ?? '').replace(/\\/g, '/').replace(/\/$/, '');
+      const rootText = root && root !== '.' ? `\`${root}/\`` : '`./` (repo root)';
+      const routeCount = mod.httpRoutes?.length ?? 0;
+      const routeNote = routeCount > 0 ? ` — ${routeCount} HTTP route${routeCount === 1 ? '' : 's'}` : '';
+      lines.push(
+        `- **${mod.name ?? mod.id}** (\`moduleId: ${mod.id}\`) — ${rootText} — [module doc](./modules/${mod.id}.md)${routeNote}`
+      );
+    }
+    lines.push('');
+  }
+
+  const entryRows = (model.modules ?? [])
+    .filter((mod) => (mod.entryPoints?.length ?? 0) > 0)
+    .map((mod) => ({ id: mod.id, entryPoints: mod.entryPoints.slice(0, 4) }));
+  if (entryRows.length > 0) {
+    lines.push('### Public entry points');
+    lines.push('');
+    for (const row of entryRows) {
+      lines.push(
+        `- \`${row.id}\`: ${row.entryPoints.map((e) => `\`${e}\``).join(', ')}`
+      );
+    }
+    lines.push('');
+  }
 }
 
 /**

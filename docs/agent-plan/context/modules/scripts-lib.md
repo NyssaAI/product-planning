@@ -35,6 +35,7 @@
 ## Configuration
 
 - `package.json`
+- `code-map.config.json`
 
 ## Key symbols (sample)
 

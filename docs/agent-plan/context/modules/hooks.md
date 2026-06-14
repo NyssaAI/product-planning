@@ -26,6 +26,7 @@
 ## Configuration
 
 - `package.json`
+- `code-map.config.json`
 
 ## After planning
 

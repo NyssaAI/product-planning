@@ -2,7 +2,7 @@
 
 **Inject with your task doc only.** Do not load other module files or the full code map for planning.
 
-**What this module does:** `code-map` — 5 files under `scripts/code-map/`.
+**What this module does:** `code-map` — 7 files under `scripts/code-map/`.
 
 ## Capabilities (owns)
 
@@ -46,6 +46,7 @@
 ## Configuration
 
 - `package.json`
+- `code-map.config.json`
 
 ## Key symbols (sample)
 

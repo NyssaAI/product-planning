@@ -104,9 +104,9 @@ jamaynor **standards** and **ai-plan** ship inside dev-tools by design. This is 
 | hooks | `hooks` — 1 file under `hooks/`. | Code under `hooks/` | `docs/agent-plan/context/modules/hooks.md` |
 | opencode | `.opencode` — 1 file under `.opencode/`. | DevToolsPlugin | `docs/agent-plan/context/modules/opencode.md` |
 | scripts | `scripts` — 1 file under `scripts/`. | Code under `scripts/` | `docs/agent-plan/context/modules/scripts.md` |
-| scripts-ai-plan | `ai-plan` — 32 files under `scripts/ai-plan/`. | ADAPTERS; API_ROUTE_CANDIDATES; CODE_ROOT_CANDIDATES | `docs/agent-plan/context/modules/scripts-ai-plan.md` |
-| scripts-code-map | `code-map` — 5 files under `scripts/code-map/`. | DEFAULT_SCAN_ROOTS; SOURCE_EXTENSIONS; SUPPORTED_LANGUAGES | `docs/agent-plan/context/modules/scripts-code-map.md` |
+| scripts-ai-plan | `ai-plan` — 33 files under `scripts/ai-plan/`. | ADAPTERS; API_ROUTE_CANDIDATES; CODE_ROOT_CANDIDATES | `docs/agent-plan/context/modules/scripts-ai-plan.md` |
+| scripts-code-map | `code-map` — 7 files under `scripts/code-map/`. | DEFAULT_SCAN_ROOTS; SOURCE_EXTENSIONS; SUPPORTED_LANGUAGES | `docs/agent-plan/context/modules/scripts-code-map.md` |
 | scripts-lib | `lib` — 2 files under `scripts/lib/`. | findPluginRoot; resolveAstGrepBinary | `docs/agent-plan/context/modules/scripts-lib.md` |
 | skills | `skills` — 4 files under `skills/`. | waitForEvent; waitForEventCount; waitForEventMatch | `docs/agent-plan/context/modules/skills.md` |
-| test | `test` — 14 files under `test/`. | Code under `test/` | `docs/agent-plan/context/modules/test.md` |
+| test | `test` — 20 files under `test/`. | Code under `test/` | `docs/agent-plan/context/modules/test.md` |
 <!-- ai-plan:module-map:end -->

@@ -2,7 +2,7 @@
 
 **Inject with your task doc only.** Do not load other module files or the full code map for planning.
 
-**What this module does:** `test` — 14 files under `test/`.
+**What this module does:** `test` — 20 files under `test/`.
 
 ## Capabilities (owns)
 
@@ -12,15 +12,6 @@
 
 - scripts-ai-plan concerns → scripts-ai-plan module
 - scripts-code-map concerns → scripts-code-map module
-
-## Public API
-
-| Symbol | Signature | Summary |
-|--------|-----------|---------|
-| `analyze_main_session` | `def analyze_main_session(filepath)` |  |
-| `format_tokens` | `def format_tokens(n)` |  |
-| `calculate_cost` | `def calculate_cost(usage, input_cost_per_m=3.0, output_cost_per_m=15.0)` |  |
-| `main` | `def main()` |  |
 
 ## Boundaries
 
@@ -45,10 +36,7 @@
 ## Configuration
 
 - `package.json`
-
-## Key symbols (sample)
-
-- `test/claude-code/analyze-token-usage.py`: analyze_main_session, format_tokens, calculate_cost, main
+- `code-map.config.json`
 
 ## After planning
 

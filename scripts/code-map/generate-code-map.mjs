@@ -21,10 +21,13 @@ import {
   SOURCE_EXTENSIONS,
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
+import { loadAiPlanConfig } from '../ai-plan/lib/config.mjs';
+import { discoverModules } from '../ai-plan/lib/discover-modules.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
 import { extractEndpoints } from './lib/endpoint-extractor.mjs';
+import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
@@ -357,8 +360,9 @@ function buildCodeMapDocument(symbols, options) {
     ]),
   ].sort();
   const endpoints = extractEndpoints(REPO_ROOT, endpointFiles);
+  const moduleContext = loadModuleContext();
 
-  return {
+  const document = {
     schemaVersion: '1.0',
     generated: new Date().toISOString(),
     roots: [...options.scanRoots],
@@ -369,6 +373,28 @@ function buildCodeMapDocument(symbols, options) {
     files,
     endpoints,
   };
+
+  return annotateCodeMapWithModules(document, moduleContext.modules, {
+    outputDir: moduleContext.outputDir,
+  });
+}
+
+/**
+ * @returns {{ outputDir: string, modules: Array<{ id: string, name?: string, root: string }> }}
+ */
+function loadModuleContext() {
+  try {
+    const config = loadAiPlanConfig(REPO_ROOT);
+    return {
+      outputDir: config.outputDir,
+      modules: discoverModules(REPO_ROOT, config),
+    };
+  } catch {
+    return {
+      outputDir: 'docs/agent-plan/context',
+      modules: [],
+    };
+  }
 }
 
 /**
