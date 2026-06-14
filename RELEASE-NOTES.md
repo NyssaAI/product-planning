@@ -1,5 +1,9 @@
 # dev-tools Release Notes
 
+## v6.2.1 (2026-06-14)
+
+Maintenance/republish patch — no functional changes since v6.2.0.
+
 ## v6.2.0 (2026-06-14)
 
 ### Added

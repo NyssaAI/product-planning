@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [6.2.1] - 2026-06-14
+
+### Maintenance
+
+- Patch/republish release — no functional changes since 6.2.0.
+
 ## [6.2.0] - 2026-06-14
 
 ### Added
