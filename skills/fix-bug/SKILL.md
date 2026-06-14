@@ -42,7 +42,7 @@ One canonical lifecycle:
 If user does not already have `bug_id`:
 
 - invoke `dev-tools:fix-bug-log`
-- produce `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+- produce `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
 - commit discovery artifact
 
 If `bug_id` exists:
@@ -53,7 +53,7 @@ If `bug_id` exists:
 
 Before proposing or implementing fixes:
 
-1. Read `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md` (symptom, any known root cause, contributing factors)
+1. Read `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md` (symptom, any known root cause, contributing factors)
 2. **REQUIRED SUB-SKILL:** invoke `dev-tools:systematic-debugging` — complete at least Phase 1; continue through Phase 3 (Hypothesis and Verification) before resolve
 3. Explicitly state **root-cause hypothesis** and **evidence** (reproduction, logs, trace, recent changes)
 4. Report **confidence** (confirmed / likely / needs more data). If needs more data, stay in analyze — do not proceed to resolve
@@ -79,7 +79,7 @@ If any simple-bug criterion fails, use the complex bug route.
 
 ### Step 4B: Complex bug route
 
-- invoke `dev-tools:design-spec` with the bug detail file at `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md` as input
+- invoke `dev-tools:design-spec` with the bug detail file at `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md` as input
 - carry the analyzed root-cause hypothesis and evidence into the design discussion
 - after the spec and plan are approved, implementation proceeds through `dev-tools:execute-plan`
 - do not invoke `fix-bug-resolve` for the same bug unless the design process narrows it back to the simple bug route and your human partner explicitly agrees

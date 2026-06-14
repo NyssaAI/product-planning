@@ -19,7 +19,7 @@ One canonical lifecycle:
 
 ## Hard policy
 
-- Do not implement plan tasks without a written plan in `docs/agent-files/plans/` (unless your human partner explicitly points at another plan path).
+- Do not implement plan tasks without a written plan in `docs/agent-plan/plans/` (unless your human partner explicitly points at another plan path).
 - Do not invoke `execute-plan-run`, `execute-plan-run-inline`, or `execute-plan-finish` directly — only via this skill.
 - Do not invoke `merge-pr` directly — use **execute-plan** for post-review closeout.
 - Do not apply PR review feedback or requested changes blindly — invoke **receiving-code-review** first.
@@ -49,7 +49,7 @@ Before loading or executing tasks:
 
 ### Step 2: Run
 
-Load the plan from `docs/agent-files/plans/` (path from handoff, user, or latest if unambiguous).
+Load the plan from `docs/agent-plan/plans/` (path from handoff, user, or latest if unambiguous).
 
 **Default (subagents available):**
 

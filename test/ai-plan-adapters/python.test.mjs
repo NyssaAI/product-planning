@@ -30,8 +30,8 @@ function edgeKey(edge) {
 function aiPlanConfig() {
   return {
     projectName: 'python-fixture',
-    outputDir: 'docs/agent-files/context',
-    codeMapOutput: 'docs/agent-files/context/code-map.json',
+    outputDir: 'docs/agent-plan/context',
+    codeMapOutput: 'docs/agent-plan/context/code-map.json',
     docs: {
       product: ['docs/product.md'],
       roadmap: ['docs/roadmap.md'],

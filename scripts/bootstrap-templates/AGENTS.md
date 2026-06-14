@@ -15,15 +15,15 @@ The repo must provide (default paths under `docs/`):
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task / backlog / bug detail | Always |
-| L1 | **One** `docs/agent-files/context/modules/<module>.md` | During planning — pick module from `docs/agent-files/context/index.md` |
+| L1 | **One** `docs/agent-plan/context/modules/<module>.md` | During planning — pick module from `docs/agent-plan/context/index.md` |
 | L2 | `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` | When product context needed |
-| L3 | `docs/agent-files/context/code-map.json` | After the plan names symbols — implementation only |
+| L3 | `docs/agent-plan/context/code-map.json` | After the plan names symbols — implementation only |
 
 Never inject all module files or the full code map during planning.
 
 ## Regenerate (conditional startup step)
 
-Regenerate **only when needed**: if `docs/agent-files/context/index.md` is missing, or source files are newer than it. If the index is current, skip this section entirely.
+Regenerate **only when needed**: if `docs/agent-plan/context/index.md` is missing, or source files are newer than it. If the index is current, skip this section entirely.
 
 **Pre-flight checks — run before regenerating, skip (do not abort the session) if any fail:**
 
@@ -50,6 +50,6 @@ node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs"
 
 ## Workflow artifacts
 
-- Backlog: `docs/agent-files/backlog/{YYYY.MM.DD-HHMMSS-slug}/`
-- Plans: `docs/agent-files/plans/` — use **dev-tools:execute-plan** when the plugin is installed (not internal run/finish sub-skills)
-- Bugs: `docs/agent-files/bugs/{YYYY.MM.DD-HHMMSS-slug}/` — use **dev-tools:fix-bug** when the plugin is installed
+- Backlog: `docs/agent-plan/backlog/{YYYY.MM.DD-HHMMSS-slug}/`
+- Plans: `docs/agent-plan/plans/` — use **dev-tools:execute-plan** when the plugin is installed (not internal run/finish sub-skills)
+- Bugs: `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/` — use **dev-tools:fix-bug** when the plugin is installed

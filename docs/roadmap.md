@@ -12,10 +12,10 @@ dev-tools is maintained by jamaynor as a multi-platform agent workflow plugin (s
 
 ## Conventions
 
-- Spec output: `docs/specs/`
-- Plan output: `docs/plans/`
+- Spec output: `docs/agent-plan/specs/`
+- Plan output: `docs/agent-plan/plans/`
 - Tests directory: `test/` (maintainer evals; not shipped to end users)
-- Plugin docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`
+- Plugin docs: `docs/product.md`, `docs/roadmap.md`, `docs/features.md`, `docs/tech-stack.md`
 
 ## Maintenance
 

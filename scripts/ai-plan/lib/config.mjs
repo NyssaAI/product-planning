@@ -16,7 +16,7 @@ import {
  * @property {string[]} [capabilities] Capability bullets — override the inferred ones
  * @property {string[]} [doesNotOwn] "{capability} → {module} module" entries — override the inferred ones
  * @property {string[]} [flows]
- * @property {boolean} [preserveModule] When true, ai-plan does not overwrite docs/agent-files/context/modules/<id>.md
+ * @property {boolean} [preserveModule] When true, ai-plan does not overwrite docs/agent-plan/context/modules/<id>.md
  * @property {boolean} [preserveScope] Deprecated alias for preserveModule (read as fallback)
  */
 
@@ -70,11 +70,11 @@ export function loadAiPlanConfig(repoRoot, opts = {}) {
         ? raw.projectName
         : readProjectName(repoRoot),
     outputDir:
-      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/agent-files/context',
+      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/agent-plan/context',
     codeMapOutput:
       typeof raw.codeMapOutput === 'string'
         ? raw.codeMapOutput
-        : 'docs/agent-files/context/code-map.json',
+        : 'docs/agent-plan/context/code-map.json',
     docs,
     briefMaxCharsPerDoc:
       typeof raw.briefMaxCharsPerDoc === 'number'
@@ -167,7 +167,7 @@ export function writeStarterConfigs(repoRoot) {
       codeMapPath,
       `${JSON.stringify(
         {
-          output: 'docs/agent-files/context/code-map.json',
+          output: 'docs/agent-plan/context/code-map.json',
           roots,
         },
         null,

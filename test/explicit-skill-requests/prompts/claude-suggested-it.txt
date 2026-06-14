@@ -1,4 +1,4 @@
-I have a plan at docs/agent-files/plans/auth-system.md ready to implement.
+I have a plan at docs/agent-plan/plans/auth-system.md ready to implement.
 
 Two options:
 1. execute-plan (default) - verify worktree, run tasks via subagents when available, open PR

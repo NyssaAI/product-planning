@@ -1,6 +1,6 @@
 ---
 description: AI Plan progressive disclosure for feature planning
-globs: src/**, docs/agent-files/backlog/**, docs/agent-files/bugs/**
+globs: src/**, docs/agent-plan/backlog/**, docs/agent-plan/bugs/**
 alwaysApply: false
 ---
 
@@ -8,4 +8,4 @@ alwaysApply: false
 
 **Canonical rules:** **AGENTS.md** in this repo + dev-tools **using-ai-plan** skill.
 
-When planning: L0 task, then **one** `docs/agent-files/context/modules/<module>.md` (L1). Regenerate: `npm run ai-plan`. Index: `docs/agent-files/context/index.md`.
+When planning: L0 task, then **one** `docs/agent-plan/context/modules/<module>.md` (L1). Regenerate: `npm run ai-plan`. Index: `docs/agent-plan/context/index.md`.

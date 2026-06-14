@@ -40,8 +40,8 @@ Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md`. Use 24
 
 Construct paths using full `bug_id` = `{timestamp}-{slug}`:
 
-- Directory: `docs/agent-files/bugs/{bug_id}/`
-- Detail file: `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+- Directory: `docs/agent-plan/bugs/{bug_id}/`
+- Detail file: `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
 
 Example `bug_id`: `2026.04.24-094512-login-500-valid-credentials`
 
@@ -89,7 +89,7 @@ Tell the user:
 
 > Bug documented and committed:
 >
-> - `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+> - `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
 > - Commit: `{sha}`
 > - Pushed: yes / no (no remote configured)
 >

@@ -162,7 +162,7 @@ Start a new session in your chosen platform and ask for something that should tr
 - **Feature work:** "help me plan this feature" → **`design-spec`**
 - **Backlog item:** "add this to the backlog" → **`add-backlog`**
 - **Bug report only:** "document this bug for later, don't fix it" → **`add-bug`**
-- **Implement plan:** "implement the plan" / path under `docs/plans/` → **`execute-plan`**
+- **Implement plan:** "implement the plan" / path under `docs/agent-plan/plans/` → **`execute-plan`**
 - **Bug work:** "I found a bug in login" → **`fix-bug`** (not `systematic-debugging` directly)
 
 The agent should automatically invoke the relevant dev-tools skill.
@@ -206,7 +206,7 @@ Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`,
 
 2. **using-git-worktrees** - **Hard gate** inside **design-spec** after spec approval, before any plan (not a separate user entry point). Creates feature branch + isolated worktree (never `main`/`master`), runs setup, verifies clean test baseline.
 
-3. **write-plan** - Invoked by design-spec inside that worktree. Uses **ai-plan** module graph (`docs/ai-plan/scopes/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
+3. **write-plan** - Invoked by design-spec inside that worktree. Uses **ai-plan** module graph (`docs/agent-plan/context/modules/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
 
 **AI Plan:** **using-ai-plan** runs automatically during design-spec and write-plan when the repo has code (regenerates when stale). Manual `/ai-plan` or `npm run ai-plan` after module structure changes. Bundled generators: `scripts/code-map/`, `scripts/ai-plan/`. Maintainer details: `scripts/ai-plan/README.md`.
 
@@ -230,14 +230,14 @@ During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **re
 
 **Artifact-producing workflows**
 - **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
-- **add-backlog** - Add a planned work item to `docs/backlog/` with a detail file
-- **add-bug** - Add a bug report to `docs/agent-files/bugs/` without analyzing or fixing it
+- **add-backlog** - Add a planned work item to `docs/agent-plan/backlog/` with a detail file
+- **add-bug** - Add a bug report to `docs/agent-plan/bugs/` without analyzing or fixing it
 - **fix-bug** - Canonical bug orchestrator. Simple one-file bugs can be fixed directly after analysis; complex bugs route through `design-spec` and `execute-plan`. Sub-skills: `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`. Step 2 analyze uses `systematic-debugging`.
 
 **Collaboration** 
 - **design-spec** - Socratic design refinement (spec before code)
 - **write-plan** - Detailed implementation plans (internal; invoked by design-spec)
-- **using-ai-plan** - Code map + module graph for planning (`docs/ai-plan/`)
+- **using-ai-plan** - Code map + module graph for planning (`docs/agent-plan/context/`)
 - **execute-plan** - Canonical plan implementation entry (verify → run → finish + PR)
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist
@@ -254,9 +254,9 @@ During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **re
 
 ## Repo layout (your projects)
 
-Consumer repos follow **`standards/project-structure.md`** (in the plugin). Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`. Workflow adds `docs/specs/`, `docs/plans/`, `docs/ai-plan/`, `docs/backlog/`, `docs/bugs/`. See [docs/standards.md](docs/standards.md).
+Consumer repos follow **`standards/project-structure.md`** (in the plugin). Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/features.md`, `docs/tech-stack.md`. Workflow adds `docs/agent-plan/specs/`, `docs/agent-plan/plans/`, `docs/agent-plan/context/`, `docs/agent-plan/backlog/`, `docs/agent-plan/bugs/`. See [docs/standards.md](docs/standards.md).
 
-**This plugin repo** uses the same doc layout: [docs/product.md](docs/product.md), [docs/roadmap.md](docs/roadmap.md), [docs/tech-stack.md](docs/tech-stack.md). Maintainer index: [docs/README.md](docs/README.md). Skill evals live in `test/` (not shipped to end users).
+**This plugin repo** uses the same doc layout: [docs/product.md](docs/product.md), [docs/roadmap.md](docs/roadmap.md), [docs/features.md](docs/features.md), [docs/tech-stack.md](docs/tech-stack.md). Maintainer index: [docs/README.md](docs/README.md). Skill evals live in `test/` (not shipped to end users).
 
 ## Philosophy
 

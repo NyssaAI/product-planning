@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate docs/agent-files/context/code-map.json from ast-grep structural scan rules.
+ * Generate docs/agent-plan/context/code-map.json from ast-grep structural scan rules.
  *
  * Per-repo settings: code-map.config.json at the project root (discovered from cwd).
  */

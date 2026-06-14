@@ -90,18 +90,18 @@ function createDirWithGitkeep(actions, repoRoot, relDir) {
 function patchContextReferences(actions, repoRoot) {
   const moduleMapPath = path.join(
     repoRoot,
-    'docs/agent-files/context/module-map.json'
+    'docs/agent-plan/context/module-map.json'
   );
   if (existsSync(moduleMapPath)) {
     let text = readFileSync(moduleMapPath, 'utf8');
     const before = text;
     text = text
       .split('docs/ai-plan/CODE_MAP.json')
-      .join('docs/agent-files/context/code-map.json')
+      .join('docs/agent-plan/context/code-map.json')
       .split('"planningScope"')
       .join('"planningModule"')
       .split('docs/ai-plan/scopes/')
-      .join('docs/agent-files/context/modules/');
+      .join('docs/agent-plan/context/modules/');
     if (text !== before) {
       writeFileSync(moduleMapPath, text, 'utf8');
       actions.push({
@@ -114,13 +114,13 @@ function patchContextReferences(actions, repoRoot) {
     }
   }
 
-  const indexPath = path.join(repoRoot, 'docs/agent-files/context/index.md');
+  const indexPath = path.join(repoRoot, 'docs/agent-plan/context/index.md');
   if (existsSync(indexPath)) {
     let text = readFileSync(indexPath, 'utf8');
     const before = text;
     text = text
       .split('docs/ai-plan/')
-      .join('docs/agent-files/context/')
+      .join('docs/agent-plan/context/')
       .split('./scopes/')
       .join('./modules/')
       .split('scopes/')
@@ -142,7 +142,7 @@ function patchContextReferences(actions, repoRoot) {
 }
 
 /**
- * Migrate a repo from the legacy docs layout to docs/agent-files/.
+ * Migrate a repo from the legacy docs layout to docs/agent-plan/.
  * Every step is idempotent — re-running reports "skipped" for completed steps.
  *
  * @param {string} repoRoot
@@ -153,19 +153,19 @@ export function runMigrate(repoRoot) {
   /** @type {MigrateAction[]} */
   const actions = [];
 
-  // 1. docs/ai-plan/ → docs/agent-files/context/ with renames
-  moveIfPresent(actions, repoRoot, 'docs/ai-plan', 'docs/agent-files/context');
-  const ctx = 'docs/agent-files/context';
+  // 1. docs/ai-plan/ → docs/agent-plan/context/ with renames
+  moveIfPresent(actions, repoRoot, 'docs/ai-plan', 'docs/agent-plan/context');
+  const ctx = 'docs/agent-plan/context';
   moveIfPresent(actions, repoRoot, `${ctx}/INDEX.md`, `${ctx}/index.md`);
   moveIfPresent(actions, repoRoot, `${ctx}/CODE_MAP.json`, `${ctx}/code-map.json`);
   moveIfPresent(actions, repoRoot, `${ctx}/MODULE_MAP.json`, `${ctx}/module-map.json`);
   moveIfPresent(actions, repoRoot, `${ctx}/scopes`, `${ctx}/modules`);
 
   // 2-5. Workflow directories
-  moveIfPresent(actions, repoRoot, 'docs/specs', 'docs/agent-files/specs');
-  moveIfPresent(actions, repoRoot, 'docs/plans', 'docs/agent-files/plans');
-  moveIfPresent(actions, repoRoot, 'docs/backlog', 'docs/agent-files/backlog');
-  moveIfPresent(actions, repoRoot, 'docs/bugs', 'docs/agent-files/bugs');
+  moveIfPresent(actions, repoRoot, 'docs/specs', 'docs/agent-plan/specs');
+  moveIfPresent(actions, repoRoot, 'docs/plans', 'docs/agent-plan/plans');
+  moveIfPresent(actions, repoRoot, 'docs/backlog', 'docs/agent-plan/backlog');
+  moveIfPresent(actions, repoRoot, 'docs/bugs', 'docs/agent-plan/bugs');
 
   // 6. Patch cross-references in moved files
   patchContextReferences(actions, repoRoot);

@@ -23,7 +23,7 @@ Internal sub-skill invoked by fix-bug Step 2. Users should use **fix-bug**, not 
 
 | Skill | Step | What it does |
 |-------|------|--------------|
-| `fix-bug-log` | 1 | Write `docs/agent-files/bugs/{bug_id}/…-detail.md`, discovery commit |
+| `fix-bug-log` | 1 | Write `docs/agent-plan/bugs/{bug_id}/…-detail.md`, discovery commit |
 | **`systematic-debugging`** | **2 (Analyze)** | **Root-cause investigation** |
 | `fix-bug-resolve` | 3 | Ralph loop — failing test, fix, resolution commit |
 | `fix-bug-complete` | 4 | Verify gates and final report |

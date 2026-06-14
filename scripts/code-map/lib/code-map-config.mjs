@@ -57,7 +57,7 @@ export const SOURCE_EXTENSIONS = new Set([
 export function loadCodeMapConfig(repoRoot) {
   const configPath = path.join(repoRoot, 'code-map.config.json');
   const defaults = {
-    output: 'docs/agent-files/context/code-map.json',
+    output: 'docs/agent-plan/context/code-map.json',
     roots: DEFAULT_SCAN_ROOTS,
     languages: SUPPORTED_LANGUAGES,
   };

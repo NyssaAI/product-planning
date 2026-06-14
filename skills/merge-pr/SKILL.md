@@ -61,7 +61,7 @@ gh pr diff <PR>     # full unified diff
 **Spec file** — resolved in this order:
 
 1. The PR description's `**Spec:** <path>` line (written by execute-plan-finish)
-2. A plan file under `docs/agent-files/plans/` (or legacy `docs/plans/`) whose name matches the branch slug — read its `**Spec:**` header
+2. A plan file under `docs/agent-plan/plans/` whose name matches the branch slug — read its `**Spec:**` header
 3. Ask your human partner for the spec path
 4. No spec exists (ad-hoc work) → skip check (b) and note it in the report
 

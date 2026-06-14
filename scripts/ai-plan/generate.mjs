@@ -7,7 +7,7 @@
  *   node scripts/ai-plan/generate.mjs --init       # bootstrap repo
  *   node scripts/ai-plan/generate.mjs --doctor     # validate setup
  *   node scripts/ai-plan/generate.mjs --doctor --runtimes
- *   node scripts/ai-plan/generate.mjs --migrate    # move legacy layout to docs/agent-files/
+ *   node scripts/ai-plan/generate.mjs --migrate    # move legacy layout to docs/agent-plan/
  */
 
 import {

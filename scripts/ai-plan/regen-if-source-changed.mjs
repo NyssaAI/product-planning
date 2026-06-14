@@ -9,7 +9,7 @@
  * ({ tool_input: { file_path } }), or CLAUDE_TOOL_INPUT_FILE_PATH env var.
  *
  * Opt-out: "autoRegenerate": false in ai-plan.config.json.
- * Log: docs/agent-files/context/.regen.log in the project repo.
+ * Log: docs/agent-plan/context/.regen.log in the project repo.
  */
 
 import {
@@ -31,7 +31,7 @@ const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts'];
  * @returns {string}
  */
 function logFile(repoRoot) {
-  return path.join(repoRoot, 'docs/agent-files/context/.regen.log');
+  return path.join(repoRoot, 'docs/agent-plan/context/.regen.log');
 }
 
 /**

@@ -41,7 +41,7 @@ if (!policy.includes('Simple bugs may skip design-spec only when all simple-bug 
   fail('fix-bug policy must document the simple-bug exception');
 }
 
-if (!designSpec.includes('bug detail file at `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`')) {
+if (!designSpec.includes('bug detail file at `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`')) {
   fail('design-spec must accept bug detail files as input for complex bug fixes');
 }
 

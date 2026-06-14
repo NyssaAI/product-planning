@@ -141,7 +141,7 @@ Default-on. Re-deriving existing repos' module sets is acceptable (no opt-in/com
 
 | Standard | Key constraints for this design |
 |----------|----------------------------------|
-| project-structure | Generated module files under `docs/agent-files/context/` are machine-owned/read-only; authored adjustments (pins) live in `ai-plan.config.json`; generated vs. authored separation is explicit |
+| project-structure | Generated module files under `docs/agent-plan/context/` are machine-owned/read-only; authored adjustments (pins) live in `ai-plan.config.json`; generated vs. authored separation is explicit |
 | error-handling | `Result`-style returns for expected failures (no adapter, unreadable file, bad pin); exceptions only for unrecoverable faults; adapter failure degrades, never aborts |
 | logging | Structured logging via existing `createLogger`; fallback and adapter selection are logged |
 | testing-principles | Behavior-focused tests over fixtures with known-good module sets; deterministic-output assertions; both success and degradation paths |

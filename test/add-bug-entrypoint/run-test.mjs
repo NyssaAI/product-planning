@@ -24,8 +24,8 @@ if (!skill.includes('name: add-bug')) {
   fail('add-bug frontmatter name is missing');
 }
 
-if (!skill.includes('docs/agent-files/bugs/')) {
-  fail('add-bug must write to docs/agent-files/bugs/');
+if (!skill.includes('docs/agent-plan/bugs/')) {
+  fail('add-bug must write to docs/agent-plan/bugs/');
 }
 
 if (!skill.includes('Do NOT analyze, debug, resolve, fix, implement, or invoke systematic-debugging.')) {

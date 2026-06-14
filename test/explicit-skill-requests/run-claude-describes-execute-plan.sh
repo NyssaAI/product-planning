@@ -21,7 +21,7 @@ echo ""
 cd "$PROJECT_DIR"
 
 # Create a plan
-cat > "$PROJECT_DIR/docs/agent-files/plans/auth-system.md" << 'EOF'
+cat > "$PROJECT_DIR/docs/agent-plan/plans/auth-system.md" << 'EOF'
 # Auth System Implementation Plan
 
 ## Task 1: Add User Model
@@ -36,7 +36,7 @@ EOF
 
 # Turn 1: Have Claude describe execution options including execute-plan
 echo ">>> Turn 1: Ask Claude to describe execution options..."
-claude -p "I have a plan at docs/agent-files/plans/auth-system.md. Tell me about my options for executing it, including what execute-plan means and how it works." \
+claude -p "I have a plan at docs/agent-plan/plans/auth-system.md. Tell me about my options for executing it, including what execute-plan means and how it works." \
     --model haiku \
     --plugin-dir "$PLUGIN_DIR" \
     --dangerously-skip-permissions \
