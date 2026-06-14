@@ -8,6 +8,12 @@
 
 - DevToolsPlugin
 
+## Public API
+
+| Symbol | Signature | Summary |
+|--------|-----------|---------|
+| `DevToolsPlugin` | `export const DevToolsPlugin = async ({ client, directory })` |  |
+
 ## Boundaries
 
 | | Path |
@@ -26,6 +32,11 @@
 ## Configuration
 
 - `package.json`
+- `code-map.config.json`
+
+## Key symbols (sample)
+
+- `.opencode/plugins/dev-tools.js`: DevToolsPlugin
 
 ## After planning
 
