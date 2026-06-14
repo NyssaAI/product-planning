@@ -56,10 +56,10 @@ npm run ai-plan             # code-map + MODULE_MAP + scopes
 
 | Output | Purpose |
 |--------|---------|
-| `docs/agent-files/context/code-map.json` | Symbol index (exports, routes, line numbers) |
-| `docs/agent-files/context/module-map.json` | Module graph (`dependsOn` / `usedBy`) |
-| `docs/agent-files/context/modules/<id>.md` | **Primary artifact** — one module architecture per file |
-| `docs/agent-files/context/index.md` | Progressive disclosure guide |
+| `docs/agent-plan/context/code-map.json` | Symbol index (exports, routes, line numbers) |
+| `docs/agent-plan/context/module-map.json` | Module graph (`dependsOn` / `usedBy`) |
+| `docs/agent-plan/context/modules/<id>.md` | **Primary artifact** — one module architecture per file |
+| `docs/agent-plan/context/index.md` | Progressive disclosure guide |
 
 ## Module discovery (`modules.discover`)
 
@@ -91,9 +91,9 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --unpin <module-id>  #
 
 ```text
 L0  Task / backlog / bug detail
-L1  docs/agent-files/context/modules/<module>.md   ← one module
+L1  docs/agent-plan/context/modules/<module>.md   ← one module
 L2  docs/product.md, roadmap.md, tech-stack.md  ← optional
-L3  docs/agent-files/context/code-map.json       ← after plan names symbols
+L3  docs/agent-plan/context/code-map.json       ← after plan names symbols
 ```
 
 Do **not** inject all scopes or the full code map during planning.
@@ -154,9 +154,9 @@ devjoy ai-plan init --with-skills global
 
 Workflow skills (from `dev-tools` v5.1.0+) use generated context:
 
-- **Planning** — L0 task + spec + one `docs/agent-files/context/modules/<module>.md`; product docs at L2 if needed
-- **Backlog** — `docs/agent-files/backlog/{YYYY.MM.DD-HHMMSS-slug}/{timestamp-slug}-detail.md`
-- **Bug** — `docs/agent-files/bugs/{YYYY.MM.DD-HHMMSS-slug}/` with detail + resolution files
+- **Planning** — L0 task + spec + one `docs/agent-plan/context/modules/<module>.md`; product docs at L2 if needed
+- **Backlog** — `docs/agent-plan/backlog/{YYYY.MM.DD-HHMMSS-slug}/{timestamp-slug}-detail.md`
+- **Bug** — `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/` with detail + resolution files
 
 Regenerate after module structure changes: `devjoy ai-plan`.
 

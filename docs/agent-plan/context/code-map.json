@@ -383,7 +383,7 @@
           "kind": "function",
           "line": 151,
           "signature": "export function runMigrate(repoRoot)",
-          "summary": "Migrate a repo from the legacy docs layout to docs/agent-files/."
+          "summary": "Migrate a repo from the legacy docs layout to docs/agent-plan/."
         },
         {
           "name": "formatMigrateReport",

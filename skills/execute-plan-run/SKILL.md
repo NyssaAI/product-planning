@@ -146,7 +146,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 You: I'm using execute-plan-run (via execute-plan) to execute this plan.
 
 [Verify on feature branch in worktree — not main]
-[Read plan file once: docs/agent-files/plans/feature-plan.md]
+[Read plan file once: docs/agent-plan/plans/feature-plan.md]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 

@@ -1,6 +1,6 @@
 {
   "_comment": "Copy to your project root as code-map.config.json, then run: code-map. Tip: add \"postbuild\": \"npm run code-map\" to package.json to refresh on every build.",
-  "output": "docs/agent-files/context/code-map.json",
+  "output": "docs/agent-plan/context/code-map.json",
   "roots": ["src"],
   "languages": [
     "JavaScript",

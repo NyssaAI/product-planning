@@ -27,7 +27,7 @@ echo ""
 cd "$PROJECT_DIR"
 
 # Create a dummy plan file
-cat > "$PROJECT_DIR/docs/agent-files/plans/auth-system.md" << 'EOF'
+cat > "$PROJECT_DIR/docs/agent-plan/plans/auth-system.md" << 'EOF'
 # Auth System Implementation Plan
 
 ## Task 1: Add User Model
@@ -59,7 +59,7 @@ echo ""
 # Turn 2: Continue with more planning detail
 echo ">>> Turn 2: Continuing planning..."
 TURN2_LOG="$OUTPUT_DIR/turn2.json"
-claude -p "Good analysis. I've already written the plan to docs/agent-files/plans/auth-system.md. Now I'm ready to implement. What are my options for execution?" \
+claude -p "Good analysis. I've already written the plan to docs/agent-plan/plans/auth-system.md. Now I'm ready to implement. What are my options for execution?" \
     --continue \
     --plugin-dir "$PLUGIN_DIR" \
     --dangerously-skip-permissions \

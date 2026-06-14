@@ -42,13 +42,13 @@ The standard PR body template (Summary + Test Plan) gains a **Bug** section for 
 <1-3 bullets>
 
 ## Bug
-`docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+`docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
 
 ## Test plan
 [Checklist]
 ```
 
-`execute-plan-finish` detects the Bug section automatically: at Step 4 (PR creation), it checks whether a bug detail file exists under `docs/agent-files/bugs/` whose slug matches the current branch name (e.g. branch `fix/2026.06.11-143000-null-pointer` → `docs/agent-files/bugs/2026.06.11-143000-null-pointer/`). If found, it adds the Bug section to the PR body. No parameter passing required — the branch name is the shared key.
+`execute-plan-finish` detects the Bug section automatically: at Step 4 (PR creation), it checks whether a bug detail file exists under `docs/agent-plan/bugs/` whose slug matches the current branch name (e.g. branch `fix/2026.06.11-143000-null-pointer` → `docs/agent-plan/bugs/2026.06.11-143000-null-pointer/`). If found, it adds the Bug section to the PR body. No parameter passing required — the branch name is the shared key.
 
 ---
 
@@ -78,7 +78,7 @@ gh pr view <PR>       # title, description, status
 gh pr diff <PR>       # full unified diff
 ```
 
-**Spec file:** Extracted from the PR description body — `execute-plan-finish` writes `**Spec:** <path>` into every PR body. If not found in the PR description, the skill searches `docs/agent-files/plans/` for a plan file whose name matches the branch name and reads its `**Spec:**` header. If neither is found, asks the user for the spec path. If the user has no spec (ad-hoc work), check (b) is skipped and noted in the report.
+**Spec file:** Extracted from the PR description body — `execute-plan-finish` writes `**Spec:** <path>` into every PR body. If not found in the PR description, the skill searches `docs/agent-plan/plans/` for a plan file whose name matches the branch name and reads its `**Spec:**` header. If neither is found, asks the user for the spec path. If the user has no spec (ad-hoc work), check (b) is skipped and noted in the report.
 
 **Feature inventory:** Reads `docs/features.md` if present. If absent, check (a) is skipped and noted in the report.
 
@@ -171,7 +171,7 @@ Worktree path resolved from `git worktree list` matched against the merged branc
 
 ## Module scope
 
-**Primary module:** `main` (`docs/agent-files/context/modules/main.md`)
+**Primary module:** `main` (`docs/agent-plan/context/modules/main.md`)
 
 **Affected modules:** none (single-module plugin repo)
 

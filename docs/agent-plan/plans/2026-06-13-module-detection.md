@@ -1,6 +1,6 @@
 # Implementation Plan — Language-Agnostic Module Detection
 
-**Spec:** `docs/agent-files/specs/2026-06-13-module-detection-design.md`
+**Spec:** `docs/agent-plan/specs/2026-06-13-module-detection-design.md`
 **Branch:** `feature/module-detection` (base: `main` @ 332b29c)
 **PR target:** `main`
 **Planning area:** `scripts/ai-plan/` + `scripts/code-map/`

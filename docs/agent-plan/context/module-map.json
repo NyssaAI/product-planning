@@ -19,7 +19,7 @@
       {
         "level": 1,
         "name": "module-scope",
-        "inject": "docs/agent-files/context/modules/<module-id>.md (one file)"
+        "inject": "docs/agent-plan/context/modules/<module-id>.md (one file)"
       },
       {
         "level": 2,
@@ -30,11 +30,11 @@
       {
         "level": 3,
         "name": "code-map",
-        "inject": "docs/agent-files/context/code-map.json",
+        "inject": "docs/agent-plan/context/code-map.json",
         "when": "Plan lists symbols; need line numbers"
       }
     ],
-    "index": "docs/agent-files/context/index.md"
+    "index": "docs/agent-plan/context/index.md"
   },
   "modules": [
     {
@@ -46,7 +46,7 @@
       "usedBy": [],
       "routeCount": 0,
       "symbolCount": 0,
-      "planningModule": "docs/agent-files/context/modules/hooks.md",
+      "planningModule": "docs/agent-plan/context/modules/hooks.md",
       "description": "`hooks` — 1 file under `hooks/`.",
       "capabilities": [
         "Code under `hooks/`"
@@ -61,7 +61,7 @@
       "usedBy": [],
       "routeCount": 0,
       "symbolCount": 0,
-      "planningModule": "docs/agent-files/context/modules/opencode.md",
+      "planningModule": "docs/agent-plan/context/modules/opencode.md",
       "description": "`.opencode` — 1 file under `.opencode/`.",
       "capabilities": [
         "DevToolsPlugin"
@@ -76,7 +76,7 @@
       "usedBy": [],
       "routeCount": 0,
       "symbolCount": 50,
-      "planningModule": "docs/agent-files/context/modules/scripts.md",
+      "planningModule": "docs/agent-plan/context/modules/scripts.md",
       "description": "`scripts` — 1 file under `scripts/`.",
       "capabilities": [
         "Code under `scripts/`"
@@ -96,7 +96,7 @@
       ],
       "routeCount": 0,
       "symbolCount": 41,
-      "planningModule": "docs/agent-files/context/modules/scripts-ai-plan.md",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md",
       "description": "`ai-plan` — 32 files under `scripts/ai-plan/`.",
       "capabilities": [
         "ADAPTERS",
@@ -118,7 +118,7 @@
       ],
       "routeCount": 0,
       "symbolCount": 7,
-      "planningModule": "docs/agent-files/context/modules/scripts-code-map.md",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md",
       "description": "`code-map` — 5 files under `scripts/code-map/`.",
       "capabilities": [
         "DEFAULT_SCAN_ROOTS",
@@ -138,7 +138,7 @@
       ],
       "routeCount": 0,
       "symbolCount": 2,
-      "planningModule": "docs/agent-files/context/modules/scripts-lib.md",
+      "planningModule": "docs/agent-plan/context/modules/scripts-lib.md",
       "description": "`lib` — 2 files under `scripts/lib/`.",
       "capabilities": [
         "findPluginRoot",
@@ -154,7 +154,7 @@
       "usedBy": [],
       "routeCount": 0,
       "symbolCount": 0,
-      "planningModule": "docs/agent-files/context/modules/skills.md",
+      "planningModule": "docs/agent-plan/context/modules/skills.md",
       "description": "`skills` — 4 files under `skills/`.",
       "capabilities": [
         "waitForEvent",
@@ -174,7 +174,7 @@
       "usedBy": [],
       "routeCount": 0,
       "symbolCount": 4,
-      "planningModule": "docs/agent-files/context/modules/test.md",
+      "planningModule": "docs/agent-plan/context/modules/test.md",
       "description": "`test` — 14 files under `test/`.",
       "capabilities": [
         "Code under `test/`"
@@ -203,7 +203,7 @@
       "to": "scripts-code-map"
     }
   ],
-  "codeMap": "docs/agent-files/context/code-map.json",
+  "codeMap": "docs/agent-plan/context/code-map.json",
   "stats": {
     "moduleCount": 8,
     "routeCount": 0,

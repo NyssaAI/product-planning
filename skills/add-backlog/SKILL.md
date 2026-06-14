@@ -38,12 +38,12 @@ Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md` — the
 
 Construct the directory and file paths:
 
-- Directory: `docs/agent-files/backlog/{timestamp}-{slug}/`
-- Detail file: `docs/agent-files/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
+- Directory: `docs/agent-plan/backlog/{timestamp}-{slug}/`
+- Detail file: `docs/agent-plan/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
 
 Example:
-- `docs/agent-files/backlog/2026.04.24-102847-add-sso-via-okta/`
-- `docs/agent-files/backlog/2026.04.24-102847-add-sso-via-okta/2026.04.24-102847-add-sso-via-okta-detail.md`
+- `docs/agent-plan/backlog/2026.04.24-102847-add-sso-via-okta/`
+- `docs/agent-plan/backlog/2026.04.24-102847-add-sso-via-okta/2026.04.24-102847-add-sso-via-okta-detail.md`
 
 ## Step 3: Write detail file
 
@@ -101,11 +101,11 @@ Tell the user:
 
 > Backlog item documented and committed:
 >
-> - `docs/agent-files/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
+> - `docs/agent-plan/backlog/{timestamp}-{slug}/{timestamp}-{slug}-detail.md`
 > - Commit: `{sha}`
 > - Pushed: yes / no (no remote configured)
 >
-> The item is now in the backlog. When you're ready to work on it, invoke `dev-tools:design-spec` with this detail file as input — design-spec reads the backlog item, produces a spec in `docs/agent-files/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement.
+> The item is now in the backlog. When you're ready to work on it, invoke `dev-tools:design-spec` with this detail file as input — design-spec reads the backlog item, produces a spec in `docs/agent-plan/specs/`, then hands off to `write-plan` and **execute-plan** when ready to implement.
 
 ## Tips
 

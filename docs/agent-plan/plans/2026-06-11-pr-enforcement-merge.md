@@ -6,11 +6,11 @@
 
 **Architecture:** `fix-bug-complete` gains a final step that invokes `execute-plan-finish`. `execute-plan-finish` gains branch-name-as-key bug section detection. New `merge-pr` skill with PR input resolution, two regression checks (feature reversion + spec acceptance criteria), merge execution, and worktree cleanup.
 
-**Planning module:** `docs/ai-plan/scopes/main.md` (current layout; `docs/agent-files/context/modules/main.md` after the directory reorganization lands)
+**Planning module:** `docs/ai-plan/scopes/main.md` (current layout; `docs/agent-plan/context/modules/main.md` after the directory reorganization lands)
 
 **Spec:** `docs/specs/2026-06-11-pr-enforcement-and-merge-skill-design.md`
 
-**Coordination:** `feature/directory-reorganization` also edits `skills/fix-bug-complete/SKILL.md` and `skills/execute-plan-finish/SKILL.md` (path replacements `docs/bugs/` → `docs/agent-files/bugs/`). Merge that branch into this one before implementing to avoid conflicts in those files. The skill text written by this plan already uses the new `docs/agent-files/` paths with explicit legacy fallbacks, so it works on either layout — but landing the reorg first keeps the diffs clean.
+**Coordination:** `feature/directory-reorganization` also edits `skills/fix-bug-complete/SKILL.md` and `skills/execute-plan-finish/SKILL.md` (path replacements `docs/bugs/` → `docs/agent-plan/bugs/`). Merge that branch into this one before implementing to avoid conflicts in those files. The skill text written by this plan already uses the new `docs/agent-plan/` paths with explicit legacy fallbacks, so it works on either layout — but landing the reorg first keeps the diffs clean.
 
 ---
 
@@ -115,7 +115,7 @@ With:
 <2-3 bullets of what changed>
 
 ## Bug *(include only if this PR closes a bug — see detection below)*
-`docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+`docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
 
 ## Test Plan
 - [ ] <verification steps>
@@ -128,7 +128,7 @@ Add a detection instruction directly below the template:
 
 1. Get current branch: `git branch --show-current`
 2. Extract the slug: strip any leading `fix/`, `bugfix/`, or `bug/` prefix. The remainder is the slug.
-3. Check for `docs/agent-files/bugs/{slug}/` (or legacy `docs/bugs/{slug}/`). If the directory exists, include the Bug section in the PR body with the path `docs/agent-files/bugs/{slug}/{slug}-detail.md`.
+3. Check for `docs/agent-plan/bugs/{slug}/` (or legacy `docs/bugs/{slug}/`). If the directory exists, include the Bug section in the PR body with the path `docs/agent-plan/bugs/{slug}/{slug}-detail.md`.
 4. If the directory does not exist, omit the Bug section entirely.
 
 No parameter passing is required — the branch name is the shared key between the bug lifecycle and the PR.
@@ -150,7 +150,7 @@ git commit -m "feat(execute-plan-finish): add Bug section auto-detection to PR b
 
 Bug-fix PRs now include a ## Bug section linking to the detail file.
 Detection uses branch-name-as-key: slug from current branch matched against
-docs/agent-files/bugs/{slug}/ directory. No parameter passing required."
+docs/agent-plan/bugs/{slug}/ directory. No parameter passing required."
 ```
 
 ---
@@ -233,7 +233,7 @@ gh pr diff <PR>     # full unified diff
 ```
 
 **Spec file:** Extracted from the PR description — `execute-plan-finish` writes `**Spec:** <path>` into every PR body. If not found:
-1. Search `docs/agent-files/plans/` (or legacy `docs/plans/`) for a plan file whose name matches the branch slug
+1. Search `docs/agent-plan/plans/` (or legacy `docs/plans/`) for a plan file whose name matches the branch slug
 2. Read its `**Spec:**` header line
 3. If still not found: ask the user for the spec path
 4. If the user has no spec (ad-hoc work): skip check (b) and note it in the report
@@ -399,7 +399,7 @@ Confirm each is internally coherent and cross-references are correct.
 Walk through the full flow mentally:
 
 1. User runs `dev-tools:fix-bug`
-2. `fix-bug-log` → creates `docs/agent-files/bugs/{bug_id}/`
+2. `fix-bug-log` → creates `docs/agent-plan/bugs/{bug_id}/`
 3. `systematic-debugging` → root cause found
 4. `fix-bug-resolve` → fix committed, tests pass
 5. `fix-bug-complete` → gates verified, output report printed
@@ -421,7 +421,7 @@ Confirm `merge-pr` follows the verb-noun convention used by `fix-bug`, `add-back
 
 - [ ] **Step 4: Check for any references to old bug paths that need updating**
 
-The spec uses `docs/agent-files/bugs/` (new layout) in the Bug section detection. If the directory reorganization feature branch has not landed yet, the current `fix-bug-complete` and related files still use `docs/bugs/`. The `execute-plan-finish` detection logic (Task 2) already includes the legacy fallback. Confirm the fallback is present in the written text.
+The spec uses `docs/agent-plan/bugs/` (new layout) in the Bug section detection. If the directory reorganization feature branch has not landed yet, the current `fix-bug-complete` and related files still use `docs/bugs/`. The `execute-plan-finish` detection logic (Task 2) already includes the legacy fallback. Confirm the fallback is present in the written text.
 
 - [ ] **Step 5: Verify git log**
 

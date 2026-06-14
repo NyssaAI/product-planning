@@ -3,7 +3,7 @@
 **Date:** 2026-06-11
 **Status:** Approved
 **Target repo:** `jamaynor/dev-tools` plugin
-**Depends on:** `2026-06-11-dev-tools-directory-reorganization-design.md` — paths in this spec assume the `docs/agent-files/` layout is already in place. If implemented before the reorg, substitute `docs/ai-plan/` for `docs/agent-files/context/`.
+**Depends on:** `2026-06-11-dev-tools-directory-reorganization-design.md` — paths in this spec assume the `docs/agent-plan/` layout is already in place. If implemented before the reorg, substitute `docs/ai-plan/` for `docs/agent-plan/context/`.
 
 ## Summary
 
@@ -85,7 +85,7 @@ Flask and FastAPI routes are exclusively in decorators — the function name car
 
 ### 2.1 New structure
 
-Module files (`docs/agent-files/context/modules/<id>.md`) are reorganized capability-first:
+Module files (`docs/agent-plan/context/modules/<id>.md`) are reorganized capability-first:
 
 ```markdown
 # {id} — module
@@ -141,7 +141,7 @@ The structural sections (entry points, tests, configuration, HTTP routes, key sy
 
 ### 2.3 Rename
 
-`docs/ai-plan/scopes/` → `docs/agent-files/context/modules/`
+`docs/ai-plan/scopes/` → `docs/agent-plan/context/modules/`
 `planningScope` field in MODULE_MAP.json → `planningModule`
 `preserveScope` config flag → `preserveModule`
 "scope file" → "module file" throughout all skills and documentation.
@@ -170,7 +170,7 @@ Each module entry gains `description` and `capabilities` fields:
   "id": "auth",
   "description": "Owns all authentication concerns.",
   "capabilities": ["JWT signing", "session lifecycle", "password hashing"],
-  "planningModule": "docs/agent-files/context/modules/auth.md"
+  "planningModule": "docs/agent-plan/context/modules/auth.md"
 }
 ```
 
@@ -184,7 +184,7 @@ When `npm run ai-plan` runs, the generator rewrites a bounded section in CLAUDE.
 
 | Module | What it does | Owns | Module file |
 |--------|-------------|------|-------------|
-| auth | Authentication and session lifecycle | JWT, sessions, password hashing | docs/agent-files/context/modules/auth.md |
+| auth | Authentication and session lifecycle | JWT, sessions, password hashing | docs/agent-plan/context/modules/auth.md |
 <!-- ai-plan:module-map:end -->
 ```
 
@@ -217,7 +217,7 @@ The hook delegates to a new wrapper script `scripts/ai-plan/regen-if-source-chan
 2. Checks if it falls under a configured source root — exits silently if not (e.g. docs edits, config changes do not trigger regeneration)
 3. Checks `"autoRegenerate": false` in `ai-plan.config.json` — exits silently if opted out
 4. Spawns `generate-code-map.mjs && generate.mjs` as a detached background process so it does not block the agent
-5. Logs the run to `docs/agent-files/context/.regen.log` for debugging
+5. Logs the run to `docs/agent-plan/context/.regen.log` for debugging
 
 CLAUDE.md is updated with the new module map when the background process completes. Opt-out: set `"autoRegenerate": false` in `ai-plan.config.json`.
 
@@ -230,7 +230,7 @@ The AGENTS.md bootstrap template is updated to:
    - Required doc files present (`docs/product.md`, etc.)
    - Node version sufficient
 2. Emit a clear human-readable error on failure: `"ai-plan: skipped — @ast-grep/cli not found. Run: npm install"`
-3. Present regeneration as a conditional startup step: "If `docs/agent-files/context/index.md` is missing or source files are newer than the index, run `npm run ai-plan`."
+3. Present regeneration as a conditional startup step: "If `docs/agent-plan/context/index.md` is missing or source files are newer than the index, run `npm run ai-plan`."
 4. Respect the same `"autoRegenerate": false` flag.
 
 ### 4.3 Structured generation result
@@ -244,7 +244,7 @@ The AGENTS.md bootstrap template is updated to:
   "modules": 3,
   "warnings": ["CODE_MAP_STALE: code map is older than source files"],
   "errors": [],
-  "summary": "3 modules → docs/agent-files/context/"
+  "summary": "3 modules → docs/agent-plan/context/"
 }
 ```
 
@@ -258,7 +258,7 @@ Named error codes: `MISSING_DOCS`, `AST_GREP_NOT_FOUND`, `CODE_MAP_STALE`, `NO_M
 
 Step 1 (Load project context) is updated to:
 
-1. Check for `docs/agent-files/context/index.md` (or legacy `docs/ai-plan/INDEX.md`)
+1. Check for `docs/agent-plan/context/index.md` (or legacy `docs/ai-plan/INDEX.md`)
 2. If found, check staleness — if `index.md` is older than the most recently modified source file, run `npm run ai-plan` before continuing
 3. Read `index.md` and embed the module capability table directly into working context — no agent discretion required
 4. When the primary module is identified, read `modules/<id>.md` and embed it inline before the first clarifying question
@@ -270,7 +270,7 @@ After identifying the primary module, the plan document includes a `## Planning 
 ```markdown
 ## Planning context
 
-**Module:** `auth` (`docs/agent-files/context/modules/auth.md`)
+**Module:** `auth` (`docs/agent-plan/context/modules/auth.md`)
 
 **What this module does:** Owns all authentication concerns — credential
 validation, JWT issuance, session lifecycle, and password hashing.
@@ -293,7 +293,7 @@ The skill language shifts from guidance to instruction:
 
 ## Module scope
 
-**Primary module:** `main` (`docs/agent-files/context/modules/main.md`)
+**Primary module:** `main` (`docs/agent-plan/context/modules/main.md`)
 
 **Affected modules:** none (single-module plugin repo)
 

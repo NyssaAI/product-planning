@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use **dev-tools:execute-plan** to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Reorganize the dev-tools plugin's project structure standard to separate human-authored product docs from agent-generated and workflow artifacts. All dev-tools outputs move under `docs/agent-files/`, with generated code maps isolated in `docs/agent-files/context/`. Add three new artifact types: `docs/features.md`, `docs/use-cases/`, and `docs/design/`.
+**Goal:** Reorganize the dev-tools plugin's project structure standard to separate human-authored product docs from agent-generated and workflow artifacts. All dev-tools outputs move under `docs/agent-plan/`, with generated code maps isolated in `docs/agent-plan/context/`. Add three new artifact types: `docs/features.md`, `docs/use-cases/`, and `docs/design/`.
 
 **Architecture:** Path constants updated throughout generator scripts and skills. A new `--migrate` command added to `generate.mjs` handles idempotent migration of existing consumer repos. The `design-spec` skill gains a third input type (use-case files).
 
-**Planning scope:** `docs/ai-plan/scopes/main.md` (current layout — becomes `docs/agent-files/context/modules/main.md` once this plan ships)
+**Planning scope:** `docs/ai-plan/scopes/main.md` (current layout — becomes `docs/agent-plan/context/modules/main.md` once this plan ships)
 
 **Spec:** `docs/specs/2026-06-11-dev-tools-directory-reorganization-design.md`
 
@@ -24,13 +24,13 @@
 | `scripts/ai-plan/lib/doctor.mjs` | Validation checks | Update 2 path strings |
 | `scripts/ai-plan/lib/render.mjs` | INDEX.md renderer | Update 2 path strings in output |
 | `scripts/ai-plan/generate.mjs` | Generator entry point | Add `--migrate` command handler |
-| `skills/using-ai-plan/SKILL.md` | Planning skill | Update all `docs/ai-plan/` → `docs/agent-files/context/`; `docs/specs/` → `docs/agent-files/specs/` |
+| `skills/using-ai-plan/SKILL.md` | Planning skill | Update all `docs/ai-plan/` → `docs/agent-plan/context/`; `docs/specs/` → `docs/agent-plan/specs/` |
 | `skills/design-spec/SKILL.md` | Design spec skill | Update `docs/specs/`, `docs/backlog/`, `docs/ai-plan/` paths; add use-case input type |
 | `skills/design-spec/spec-document-reviewer-prompt.md` | Reviewer prompt | Update `docs/specs/` path |
 | `skills/design-spec/references/policy.md` | Design policy | Update `docs/specs/` path |
 | `skills/write-plan/SKILL.md` | Write plan skill | Update `docs/plans/`, `docs/ai-plan/` paths |
-| `skills/add-backlog/SKILL.md` | Backlog skill | Update `docs/backlog/` → `docs/agent-files/backlog/` |
-| `skills/fix-bug-log/SKILL.md` | Bug logging skill | Update `docs/bugs/` → `docs/agent-files/bugs/` |
+| `skills/add-backlog/SKILL.md` | Backlog skill | Update `docs/backlog/` → `docs/agent-plan/backlog/` |
+| `skills/fix-bug-log/SKILL.md` | Bug logging skill | Update `docs/bugs/` → `docs/agent-plan/bugs/` |
 | `skills/fix-bug/SKILL.md` | Bug fix orchestrator | Update `docs/bugs/` path |
 | `skills/fix-bug/checklists/lifecycle-checklist.md` | Bug lifecycle | Update 2 `docs/bugs/` references |
 | `skills/fix-bug/references/policy.md` | Bug policy | Update `docs/bugs/` reference |
@@ -65,7 +65,7 @@ docs/
 ├── design/                                  human: UI wireframes and mockups (NEW)
 ├── use-cases/                               human: structured use-case detail (NEW)
 │   └── f{n}-u{n}.md
-└── agent-files/
+└── agent-plan/
     ├── context/                             generated — do not hand-edit
     │   ├── index.md
     │   ├── code-map.json
@@ -85,13 +85,13 @@ docs/
             └── {timestamp}-{slug}-resolution.md
 ```
 
-Add the rule: "`docs/` root is human-only product docs. `docs/agent-files/` is everything the plugin touches. `docs/agent-files/context/` is machine-generated and freely overwritten."
+Add the rule: "`docs/` root is human-only product docs. `docs/agent-plan/` is everything the plugin touches. `docs/agent-plan/context/` is machine-generated and freely overwritten."
 
 Add the new artifact type definitions for `docs/features.md`, `docs/use-cases/f{n}-u{n}.md` (with frontmatter and body format), and `docs/design/`.
 
 Add the progressive-specificity chain:
 ```
-docs/product.md → docs/features.md → docs/use-cases/f{n}-u{n}.md → docs/agent-files/specs/ → docs/agent-files/plans/
+docs/product.md → docs/features.md → docs/use-cases/f{n}-u{n}.md → docs/agent-plan/specs/ → docs/agent-plan/plans/
 ```
 
 Update all references to old paths elsewhere in the document (backlog format, bugs format, etc.) to use the new paths.
@@ -108,9 +108,9 @@ Read the file. Confirm:
 
 ```bash
 git add standards/project-structure.md
-git commit -m "feat(standards): rewrite project-structure for docs/agent-files/ layout
+git commit -m "feat(standards): rewrite project-structure for docs/agent-plan/ layout
 
-Move all workflow and generated artifacts under docs/agent-files/. Add
+Move all workflow and generated artifacts under docs/agent-plan/. Add
 features.md, use-cases/, and design/ as human-authored artifact types.
 Add progressive-specificity chain documentation."
 ```
@@ -125,11 +125,11 @@ Add progressive-specificity chain documentation."
 
 - [ ] **Step 1: Update `code-map-config.mjs`**
 
-Read `scripts/code-map/lib/code-map-config.mjs`. Find the `DEFAULT_OUTPUT` constant (currently `'docs/ai-plan/CODE_MAP.json'`). Change it to `'docs/agent-files/context/code-map.json'`.
+Read `scripts/code-map/lib/code-map-config.mjs`. Find the `DEFAULT_OUTPUT` constant (currently `'docs/ai-plan/CODE_MAP.json'`). Change it to `'docs/agent-plan/context/code-map.json'`.
 
 - [ ] **Step 2: Update `generate-code-map.mjs` JSDoc**
 
-Read `scripts/code-map/generate-code-map.mjs`. Find the JSDoc comment on line 3 that references `docs/ai-plan/CODE_MAP.json`. Update it to reference `docs/agent-files/context/code-map.json`.
+Read `scripts/code-map/generate-code-map.mjs`. Find the JSDoc comment on line 3 that references `docs/ai-plan/CODE_MAP.json`. Update it to reference `docs/agent-plan/context/code-map.json`.
 
 - [ ] **Step 3: Verify both files**
 
@@ -139,9 +139,9 @@ Read the changed lines in both files. Confirm the old path string `docs/ai-plan/
 
 ```bash
 git add scripts/code-map/lib/code-map-config.mjs scripts/code-map/generate-code-map.mjs
-git commit -m "feat(code-map): update default output path to docs/agent-files/context/
+git commit -m "feat(code-map): update default output path to docs/agent-plan/context/
 
-CODE_MAP.json now defaults to docs/agent-files/context/code-map.json
+CODE_MAP.json now defaults to docs/agent-plan/context/code-map.json
 (lowercase filename, new directory structure)."
 ```
 
@@ -158,29 +158,29 @@ CODE_MAP.json now defaults to docs/agent-files/context/code-map.json
 - [ ] **Step 1: Update `config.mjs`**
 
 Read `scripts/ai-plan/lib/config.mjs`. Make these changes:
-- Line 17: JSDoc comment `docs/ai-plan/modules/<id>.md` → `docs/agent-files/context/modules/<id>.md`
-- Line 70: `'docs/ai-plan'` (default outputDir) → `'docs/agent-files/context'`
-- Line 74: `'docs/ai-plan/CODE_MAP.json'` (default codeMapOutput) → `'docs/agent-files/context/code-map.json'`
-- Line 154: `'docs/ai-plan/CODE_MAP.json'` (in writeStarterConfigs template) → `'docs/agent-files/context/code-map.json'`
+- Line 17: JSDoc comment `docs/ai-plan/modules/<id>.md` → `docs/agent-plan/context/modules/<id>.md`
+- Line 70: `'docs/ai-plan'` (default outputDir) → `'docs/agent-plan/context'`
+- Line 74: `'docs/ai-plan/CODE_MAP.json'` (default codeMapOutput) → `'docs/agent-plan/context/code-map.json'`
+- Line 154: `'docs/ai-plan/CODE_MAP.json'` (in writeStarterConfigs template) → `'docs/agent-plan/context/code-map.json'`
 
 - [ ] **Step 2: Update `bootstrap.mjs`**
 
 Read `scripts/ai-plan/lib/bootstrap.mjs`. Make these changes:
-- Line 109: `'docs/backlog'` → `'docs/agent-files/backlog'`
-- Line 110: `'docs/bugs'` → `'docs/agent-files/bugs'`
-- Line 112: `'docs/ai-plan/scopes'` → `'docs/agent-files/context/modules'` (the new layout names this directory `modules/` — see the spec tree; do NOT use `context/scopes`)
+- Line 109: `'docs/backlog'` → `'docs/agent-plan/backlog'`
+- Line 110: `'docs/bugs'` → `'docs/agent-plan/bugs'`
+- Line 112: `'docs/ai-plan/scopes'` → `'docs/agent-plan/context/modules'` (the new layout names this directory `modules/` — see the spec tree; do NOT use `context/scopes`)
 
 - [ ] **Step 3: Update `doctor.mjs`**
 
 Read `scripts/ai-plan/lib/doctor.mjs`. Make these changes:
-- Line 131: `'docs/backlog'` (in checkAgentEntrypoints array) → `'docs/agent-files/backlog'`
-- Line 132: `'docs/bugs'` (in checkAgentEntrypoints array) → `'docs/agent-files/bugs'`
+- Line 131: `'docs/backlog'` (in checkAgentEntrypoints array) → `'docs/agent-plan/backlog'`
+- Line 132: `'docs/bugs'` (in checkAgentEntrypoints array) → `'docs/agent-plan/bugs'`
 
 - [ ] **Step 4: Update `render.mjs`**
 
 Read `scripts/ai-plan/lib/render.mjs`. Make these changes:
-- Line 60: The backlog path in renderIndex output: `docs/backlog/{YYYY.MM.DD-HHMMSS-slug}/` → `docs/agent-files/backlog/{YYYY.MM.DD-HHMMSS-slug}/`
-- Line 61: The bugs path in renderIndex output: `docs/bugs/{YYYY.MM.DD-HHMMSS-slug}/` → `docs/agent-files/bugs/{YYYY.MM.DD-HHMMSS-slug}/`
+- Line 60: The backlog path in renderIndex output: `docs/backlog/{YYYY.MM.DD-HHMMSS-slug}/` → `docs/agent-plan/backlog/{YYYY.MM.DD-HHMMSS-slug}/`
+- Line 61: The bugs path in renderIndex output: `docs/bugs/{YYYY.MM.DD-HHMMSS-slug}/` → `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/`
 - Also update any reference to `docs/ai-plan/` or `docs/specs/` or `docs/plans/` in render.mjs to use the new paths.
 
 - [ ] **Step 5: Grep for remaining old paths in scripts/ai-plan/lib/**
@@ -199,10 +199,10 @@ Read each changed file. Confirm no `docs/ai-plan`, `docs/backlog`, or `docs/bugs
 
 ```bash
 git add scripts/ai-plan/lib/config.mjs scripts/ai-plan/lib/bootstrap.mjs scripts/ai-plan/lib/doctor.mjs scripts/ai-plan/lib/render.mjs
-git commit -m "feat(ai-plan): update lib path constants to docs/agent-files/
+git commit -m "feat(ai-plan): update lib path constants to docs/agent-plan/
 
-All generated artifacts now route to docs/agent-files/context/.
-Backlog and bugs route to docs/agent-files/backlog/ and docs/agent-files/bugs/."
+All generated artifacts now route to docs/agent-plan/context/.
+Backlog and bugs route to docs/agent-plan/backlog/ and docs/agent-plan/bugs/."
 ```
 
 ---
@@ -222,25 +222,25 @@ Read `scripts/ai-plan/generate.mjs` in full. Understand how existing CLI command
 
 Add a `runMigrate(repoRoot)` function to `generate.mjs` (or a new `scripts/ai-plan/lib/migrate.mjs` module if the file is large — follow the existing pattern). The function must:
 
-1. **Move `docs/ai-plan/` → `docs/agent-files/context/`** (idempotent: skip if target exists)
+1. **Move `docs/ai-plan/` → `docs/agent-plan/context/`** (idempotent: skip if target exists)
    - Rename `INDEX.md` → `index.md`
    - Rename `CODE_MAP.json` → `code-map.json`
    - Rename `MODULE_MAP.json` → `module-map.json`
    - Rename `scopes/` → `modules/` (the old layout names this directory `scopes/`; contents move unchanged)
 
-2. **Move `docs/specs/` → `docs/agent-files/specs/`** (skip if target exists)
+2. **Move `docs/specs/` → `docs/agent-plan/specs/`** (skip if target exists)
 
-3. **Move `docs/plans/` → `docs/agent-files/plans/`** (skip if target exists)
+3. **Move `docs/plans/` → `docs/agent-plan/plans/`** (skip if target exists)
 
-4. **Move `docs/backlog/` → `docs/agent-files/backlog/`** (skip if target exists)
+4. **Move `docs/backlog/` → `docs/agent-plan/backlog/`** (skip if target exists)
 
-5. **Move `docs/bugs/` → `docs/agent-files/bugs/`** (skip if target exists)
+5. **Move `docs/bugs/` → `docs/agent-plan/bugs/`** (skip if target exists)
 
 6. **Patch cross-references in moved files:**
-   - In `docs/agent-files/context/module-map.json`: replace the `"codeMap"` field value `docs/ai-plan/CODE_MAP.json` → `docs/agent-files/context/code-map.json`
-   - In `docs/agent-files/context/module-map.json`: rename `"planningScope"` keys to `"planningModule"` and replace their values `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/` (old repos have the old field name and the `scopes/` directory)
-   - In `docs/agent-files/context/index.md`: replace `docs/ai-plan/` → `docs/agent-files/context/` (for any links that aren't already relative)
-   - In `docs/agent-files/context/index.md`: replace relative `./scopes/` links → `./modules/` (the directory was renamed in step 1, so old relative links break)
+   - In `docs/agent-plan/context/module-map.json`: replace the `"codeMap"` field value `docs/ai-plan/CODE_MAP.json` → `docs/agent-plan/context/code-map.json`
+   - In `docs/agent-plan/context/module-map.json`: rename `"planningScope"` keys to `"planningModule"` and replace their values `docs/ai-plan/scopes/` → `docs/agent-plan/context/modules/` (old repos have the old field name and the `scopes/` directory)
+   - In `docs/agent-plan/context/index.md`: replace `docs/ai-plan/` → `docs/agent-plan/context/` (for any links that aren't already relative)
+   - In `docs/agent-plan/context/index.md`: replace relative `./scopes/` links → `./modules/` (the directory was renamed in step 1, so old relative links break)
    - Relative links already pointing at `./modules/` need no change
 
 7. **Create `docs/design/`** with a `.gitkeep` file (skip if exists)
@@ -295,10 +295,10 @@ node scripts/ai-plan/generate.mjs --doctor
 
 ```bash
 git add scripts/ai-plan/generate.mjs scripts/ai-plan/lib/migrate.mjs
-git commit -m "feat(ai-plan): add --migrate command for docs/agent-files/ layout
+git commit -m "feat(ai-plan): add --migrate command for docs/agent-plan/ layout
 
 Idempotent migration of docs/ai-plan/, docs/specs/, docs/plans/,
-docs/backlog/, docs/bugs/ to new docs/agent-files/ subtree.
+docs/backlog/, docs/bugs/ to new docs/agent-plan/ subtree.
 Creates docs/design/, docs/use-cases/, docs/features.md stubs."
 ```
 
@@ -316,18 +316,18 @@ Read `skills/using-ai-plan/SKILL.md` in full.
 - [ ] **Step 2: Apply path replacements**
 
 Make these replacements throughout the file:
-- `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
-- `docs/ai-plan/CODE_MAP.json` → `docs/agent-files/context/code-map.json`
-- `docs/ai-plan/MODULE_MAP.json` → `docs/agent-files/context/module-map.json`
-- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md` (the current skill text says `scopes/` — the rename to `modules/` happens here)
-- `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/`
-- `docs/ai-plan/` → `docs/agent-files/context/` (any remaining)
-- `docs/specs/…-design.md` → `docs/agent-files/specs/…-design.md`
-- `docs/specs/` → `docs/agent-files/specs/`
+- `docs/ai-plan/INDEX.md` → `docs/agent-plan/context/index.md`
+- `docs/ai-plan/CODE_MAP.json` → `docs/agent-plan/context/code-map.json`
+- `docs/ai-plan/MODULE_MAP.json` → `docs/agent-plan/context/module-map.json`
+- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-plan/context/modules/<module-id>.md` (the current skill text says `scopes/` — the rename to `modules/` happens here)
+- `docs/ai-plan/scopes/` → `docs/agent-plan/context/modules/`
+- `docs/ai-plan/` → `docs/agent-plan/context/` (any remaining)
+- `docs/specs/…-design.md` → `docs/agent-plan/specs/…-design.md`
+- `docs/specs/` → `docs/agent-plan/specs/`
 
 Also update:
-- Line 10: "Outputs live under `docs/ai-plan/`" → "Outputs live under `docs/agent-files/context/`"
-- Line 98: "Generated artifacts live under `docs/ai-plan/`" → "Generated artifacts live under `docs/agent-files/context/`"
+- Line 10: "Outputs live under `docs/ai-plan/`" → "Outputs live under `docs/agent-plan/context/`"
+- Line 98: "Generated artifacts live under `docs/ai-plan/`" → "Generated artifacts live under `docs/agent-plan/context/`"
 - The **Repo layout** section: update path reference
 
 - [ ] **Step 3: Verify no old paths remain**
@@ -342,10 +342,10 @@ Should return nothing.
 
 ```bash
 git add skills/using-ai-plan/SKILL.md
-git commit -m "feat(using-ai-plan): update all paths to docs/agent-files/context/
+git commit -m "feat(using-ai-plan): update all paths to docs/agent-plan/context/
 
-Replaces docs/ai-plan/ with docs/agent-files/context/ and docs/specs/
-with docs/agent-files/specs/ throughout the skill."
+Replaces docs/ai-plan/ with docs/agent-plan/context/ and docs/specs/
+with docs/agent-plan/specs/ throughout the skill."
 ```
 
 ---
@@ -364,12 +364,12 @@ Read each file in full.
 - [ ] **Step 2: Update `SKILL.md` path references**
 
 Apply these replacements:
-- `docs/specs/` → `docs/agent-files/specs/`
-- `docs/backlog/` → `docs/agent-files/backlog/`
-- `docs/backlog/{id}/{id}-detail.md` → `docs/agent-files/backlog/{id}/{id}-detail.md`
-- `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
-- `docs/ai-plan/scopes/{module-id}.md` → `docs/agent-files/context/modules/{module-id}.md` (Module scope template section)
-- `docs/ai-plan/` → `docs/agent-files/context/`
+- `docs/specs/` → `docs/agent-plan/specs/`
+- `docs/backlog/` → `docs/agent-plan/backlog/`
+- `docs/backlog/{id}/{id}-detail.md` → `docs/agent-plan/backlog/{id}/{id}-detail.md`
+- `docs/ai-plan/INDEX.md` → `docs/agent-plan/context/index.md`
+- `docs/ai-plan/scopes/{module-id}.md` → `docs/agent-plan/context/modules/{module-id}.md` (Module scope template section)
+- `docs/ai-plan/` → `docs/agent-plan/context/`
 
 Also add the third input type (use-case file) to the input chain section. When given a path under `docs/use-cases/`, `design-spec` should:
 1. Read the use-case file (summary, process, success criteria)
@@ -383,11 +383,11 @@ The input type detection logic (existing: ad-hoc vs backlog path) needs a third 
 
 - [ ] **Step 3: Update `spec-document-reviewer-prompt.md`**
 
-Find the reference to `docs/specs/` and update to `docs/agent-files/specs/`.
+Find the reference to `docs/specs/` and update to `docs/agent-plan/specs/`.
 
 - [ ] **Step 4: Update `references/policy.md`**
 
-Find the reference to `docs/specs/…-design.md` and update to `docs/agent-files/specs/…-design.md`.
+Find the reference to `docs/specs/…-design.md` and update to `docs/agent-plan/specs/…-design.md`.
 
 - [ ] **Step 5: Verify no old paths remain**
 
@@ -401,10 +401,10 @@ Should return nothing.
 
 ```bash
 git add skills/design-spec/SKILL.md skills/design-spec/spec-document-reviewer-prompt.md skills/design-spec/references/policy.md
-git commit -m "feat(design-spec): update paths to agent-files; add use-case input type
+git commit -m "feat(design-spec): update paths to agent-plan; add use-case input type
 
-Specs now saved to docs/agent-files/specs/, backlog read from
-docs/agent-files/backlog/. Adds use-case file (docs/use-cases/f{n}-u{n}.md)
+Specs now saved to docs/agent-plan/specs/, backlog read from
+docs/agent-plan/backlog/. Adds use-case file (docs/use-cases/f{n}-u{n}.md)
 as a third input type that seeds acceptance criteria from success criteria."
 ```
 
@@ -421,11 +421,11 @@ Read `skills/write-plan/SKILL.md` in full.
 
 - [ ] **Step 2: Apply path replacements**
 
-- `docs/plans/` → `docs/agent-files/plans/`
-- `docs/ai-plan/INDEX.md` → `docs/agent-files/context/index.md`
-- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-files/context/modules/<module-id>.md` (the current skill text says `scopes/`)
-- `docs/ai-plan/` → `docs/agent-files/context/`
-- `docs/specs/` → `docs/agent-files/specs/`
+- `docs/plans/` → `docs/agent-plan/plans/`
+- `docs/ai-plan/INDEX.md` → `docs/agent-plan/context/index.md`
+- `docs/ai-plan/scopes/<module-id>.md` → `docs/agent-plan/context/modules/<module-id>.md` (the current skill text says `scopes/`)
+- `docs/ai-plan/` → `docs/agent-plan/context/`
+- `docs/specs/` → `docs/agent-plan/specs/`
 
 - [ ] **Step 3: Verify no old paths remain**
 
@@ -439,10 +439,10 @@ Should return nothing.
 
 ```bash
 git add skills/write-plan/SKILL.md
-git commit -m "feat(write-plan): update paths to docs/agent-files/
+git commit -m "feat(write-plan): update paths to docs/agent-plan/
 
-Plans now saved to docs/agent-files/plans/, planning context read from
-docs/agent-files/context/."
+Plans now saved to docs/agent-plan/plans/, planning context read from
+docs/agent-plan/context/."
 ```
 
 ---
@@ -458,9 +458,9 @@ Read `skills/add-backlog/SKILL.md` in full.
 
 - [ ] **Step 2: Apply path replacements**
 
-- `docs/backlog/` → `docs/agent-files/backlog/`
-- All example paths: `docs/backlog/2026.04.24-102847-…` → `docs/agent-files/backlog/2026.04.24-102847-…`
-- Reference to `docs/specs/` (handoff instruction) → `docs/agent-files/specs/`
+- `docs/backlog/` → `docs/agent-plan/backlog/`
+- All example paths: `docs/backlog/2026.04.24-102847-…` → `docs/agent-plan/backlog/2026.04.24-102847-…`
+- Reference to `docs/specs/` (handoff instruction) → `docs/agent-plan/specs/`
 
 - [ ] **Step 3: Verify no old paths remain**
 
@@ -474,9 +474,9 @@ Should return nothing.
 
 ```bash
 git add skills/add-backlog/SKILL.md
-git commit -m "feat(add-backlog): update paths to docs/agent-files/backlog/
+git commit -m "feat(add-backlog): update paths to docs/agent-plan/backlog/
 
-Backlog items now created under docs/agent-files/backlog/."
+Backlog items now created under docs/agent-plan/backlog/."
 ```
 
 ---
@@ -498,35 +498,35 @@ Read each file in full.
 
 - [ ] **Step 2: Update `fix-bug-log/SKILL.md`**
 
-- Description: `docs/bugs/` → `docs/agent-files/bugs/`
-- All `docs/bugs/{bug_id}/` → `docs/agent-files/bugs/{bug_id}/`
-- All `docs/bugs/{bug_id}/{bug_id}-detail.md` → `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
+- Description: `docs/bugs/` → `docs/agent-plan/bugs/`
+- All `docs/bugs/{bug_id}/` → `docs/agent-plan/bugs/{bug_id}/`
+- All `docs/bugs/{bug_id}/{bug_id}-detail.md` → `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
 
 - [ ] **Step 3: Update `fix-bug/SKILL.md`**
 
-- All `docs/bugs/` references → `docs/agent-files/bugs/`
+- All `docs/bugs/` references → `docs/agent-plan/bugs/`
 
 - [ ] **Step 4: Update `fix-bug/checklists/lifecycle-checklist.md`**
 
-- `docs/bugs/{bug_id}/{bug_id}-detail.md` → `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
-- `docs/bugs/{bug_id}/{bug_id}-resolution.md` → `docs/agent-files/bugs/{bug_id}/{bug_id}-resolution.md`
+- `docs/bugs/{bug_id}/{bug_id}-detail.md` → `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
+- `docs/bugs/{bug_id}/{bug_id}-resolution.md` → `docs/agent-plan/bugs/{bug_id}/{bug_id}-resolution.md`
 
 - [ ] **Step 5: Update `fix-bug/references/policy.md`**
 
-- `docs/bugs/{bug_id}/` → `docs/agent-files/bugs/{bug_id}/`
+- `docs/bugs/{bug_id}/` → `docs/agent-plan/bugs/{bug_id}/`
 
 - [ ] **Step 6: Update `fix-bug/templates/fix-bug-summary-template.md`**
 
-- `docs/bugs/{bug_id}/{bug_id}-detail.md` → `docs/agent-files/bugs/{bug_id}/{bug_id}-detail.md`
-- `docs/bugs/{bug_id}/{bug_id}-resolution.md` → `docs/agent-files/bugs/{bug_id}/{bug_id}-resolution.md`
+- `docs/bugs/{bug_id}/{bug_id}-detail.md` → `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
+- `docs/bugs/{bug_id}/{bug_id}-resolution.md` → `docs/agent-plan/bugs/{bug_id}/{bug_id}-resolution.md`
 
 - [ ] **Step 7: Update `fix-bug-resolve/SKILL.md`**
 
-- All `docs/bugs/` references → `docs/agent-files/bugs/`
+- All `docs/bugs/` references → `docs/agent-plan/bugs/`
 
 - [ ] **Step 8: Update `fix-bug-complete/SKILL.md`**
 
-- All `docs/bugs/` references → `docs/agent-files/bugs/`
+- All `docs/bugs/` references → `docs/agent-plan/bugs/`
 
 - [ ] **Step 9: Grep for remaining old paths across the entire fix-bug cluster**
 
@@ -540,10 +540,10 @@ Should return nothing.
 
 ```bash
 git add skills/fix-bug-log/SKILL.md skills/fix-bug/SKILL.md skills/fix-bug/checklists/lifecycle-checklist.md skills/fix-bug/references/policy.md skills/fix-bug/templates/fix-bug-summary-template.md skills/fix-bug-resolve/SKILL.md skills/fix-bug-complete/SKILL.md
-git commit -m "feat(fix-bug): update all paths to docs/agent-files/bugs/
+git commit -m "feat(fix-bug): update all paths to docs/agent-plan/bugs/
 
 Bug reports and resolutions now written to and read from
-docs/agent-files/bugs/ across the full fix-bug skill cluster."
+docs/agent-plan/bugs/ across the full fix-bug skill cluster."
 ```
 
 ---
@@ -570,12 +570,12 @@ grep -rn "docs/ai-plan\|docs/specs\|docs/plans\|docs/backlog\|docs/bugs" scripts
 - [ ] **Step 3: Apply replacements in each affected file**
 
 For each file found:
-- `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/` (apply before the catch-all below so `scopes` doesn't survive)
-- `docs/ai-plan/` → `docs/agent-files/context/` (any remaining)
-- `docs/specs/` → `docs/agent-files/specs/`
-- `docs/plans/` → `docs/agent-files/plans/`
-- `docs/backlog/` → `docs/agent-files/backlog/`
-- `docs/bugs/` → `docs/agent-files/bugs/`
+- `docs/ai-plan/scopes/` → `docs/agent-plan/context/modules/` (apply before the catch-all below so `scopes` doesn't survive)
+- `docs/ai-plan/` → `docs/agent-plan/context/` (any remaining)
+- `docs/specs/` → `docs/agent-plan/specs/`
+- `docs/plans/` → `docs/agent-plan/plans/`
+- `docs/backlog/` → `docs/agent-plan/backlog/`
+- `docs/bugs/` → `docs/agent-plan/bugs/`
 
 - [ ] **Step 4: Verify no old paths remain**
 
@@ -589,9 +589,9 @@ Should return nothing.
 
 ```bash
 git add scripts/bootstrap-templates/
-git commit -m "feat(bootstrap-templates): update path references to docs/agent-files/
+git commit -m "feat(bootstrap-templates): update path references to docs/agent-plan/
 
-Generated AGENTS.md stubs now reference new docs/agent-files/ layout."
+Generated AGENTS.md stubs now reference new docs/agent-plan/ layout."
 ```
 
 ---
@@ -630,7 +630,7 @@ node scripts/code-map/generate-code-map.mjs
 node scripts/ai-plan/generate.mjs
 ```
 
-Confirm output goes to `docs/agent-files/context/code-map.json` and `docs/agent-files/context/index.md`, and module files land in `docs/agent-files/context/modules/` (not `context/scopes/`).
+Confirm output goes to `docs/agent-plan/context/code-map.json` and `docs/agent-plan/context/index.md`, and module files land in `docs/agent-plan/context/modules/` (not `context/scopes/`).
 
 - [ ] **Step 4: Spot-check key skill files**
 

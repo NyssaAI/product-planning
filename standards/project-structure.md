@@ -16,7 +16,7 @@ All development repos created should follow this standard
 │   │   └── f{n}-u{n}.md
 │   │
 │   │  --- Everything the plugin touches ---
-│   └── agent-files/
+│   └── agent-plan/
 │       ├── context/                                - generated — do not hand-edit, freely overwritten
 │       │   ├── index.md                            - how to inject module files during planning
 │       │   ├── code-map.json                       - symbol index (lookup after plan names files)
@@ -44,7 +44,7 @@ All development repos created should follow this standard
 └── CLAUDE.md                                       - repo-specific instructions
 ```
 
-**Rule:** `docs/` root is human-only product docs. `docs/agent-files/` is everything the plugin touches. `docs/agent-files/context/` is machine-generated and freely overwritten.
+**Rule:** `docs/` root is human-only product docs. `docs/agent-plan/` is everything the plugin touches. `docs/agent-plan/context/` is machine-generated and freely overwritten.
 
 ## Timestamp format
 
@@ -119,17 +119,17 @@ docs/features.md              Feature inventory — one step more detailed than 
        ↓
 docs/use-cases/f{n}-u{n}.md   Use-case detail — one step more detailed than feature
        ↓
-docs/agent-files/specs/       Design spec — technical design for one use case (design-spec output)
+docs/agent-plan/specs/       Design spec — technical design for one use case (design-spec output)
        ↓
-docs/agent-files/plans/       Implementation plan (write-plan output)
+docs/agent-plan/plans/       Implementation plan (write-plan output)
 ```
 
 ### Two axes of documentation (do not conflate)
 
 | Axis | Location | Answers |
 |------|----------|---------|
-| **Work item** | `agent-files/specs/`, `agent-files/plans/`, `agent-files/backlog/`, `agent-files/bugs/` | What are we building *in this task*? Design and steps for one feature or fix. |
-| **Code module** | `docs/agent-files/context/modules/<module-id>.md` | What does this *part of the codebase* own? Boundaries, dependencies, routes, test roots — derived from the repo. |
+| **Work item** | `agent-plan/specs/`, `agent-plan/plans/`, `agent-plan/backlog/`, `agent-plan/bugs/` | What are we building *in this task*? Design and steps for one feature or fix. |
+| **Code module** | `docs/agent-plan/context/modules/<module-id>.md` | What does this *part of the codebase* own? Boundaries, dependencies, routes, test roots — derived from the repo. |
 
 Planning a roadmap item: **spec** (intent) + **one module file** (architecture for the module you will touch) → **plan** (tasks). Do not substitute a module file for a spec or vice versa.
 
@@ -137,13 +137,13 @@ Planning a roadmap item: **spec** (intent) + **one module file** (architecture f
 
 | Path | Created by | Timestamp format |
 |------|------------|------------------|
-| `docs/agent-files/specs/…-design.md` | design-spec | `YYYY-MM-DD` |
-| `docs/agent-files/plans/….md` | write-plan (via design-spec) | `YYYY-MM-DD` |
-| `docs/agent-files/context/modules/*.md` | ai-plan generate | regenerated when modules change |
-| `docs/agent-files/backlog/…/` | add-backlog | `YYYY.MM.DD-HHMMSS` |
-| `docs/agent-files/bugs/…/` | fix-bug-log (via fix-bug) | `YYYY.MM.DD-HHMMSS` |
+| `docs/agent-plan/specs/…-design.md` | design-spec | `YYYY-MM-DD` |
+| `docs/agent-plan/plans/….md` | write-plan (via design-spec) | `YYYY-MM-DD` |
+| `docs/agent-plan/context/modules/*.md` | ai-plan generate | regenerated when modules change |
+| `docs/agent-plan/backlog/…/` | add-backlog | `YYYY.MM.DD-HHMMSS` |
+| `docs/agent-plan/bugs/…/` | fix-bug-log (via fix-bug) | `YYYY.MM.DD-HHMMSS` |
 
-For product/roadmap context during planning, read `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly — do not maintain duplicate excerpts under `agent-files/context/`.
+For product/roadmap context during planning, read `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` directly — do not maintain duplicate excerpts under `agent-plan/context/`.
 
 Regenerate ai-plan after module structure changes (`npm run ai-plan` or plugin scripts). Module files with `preserveModule` in config are not overwritten.
 

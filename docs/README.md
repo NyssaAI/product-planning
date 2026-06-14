@@ -1,6 +1,6 @@
 # dev-tools documentation
 
-Documentation for the **dev-tools plugin repository**. Plugin overview docs follow `standards/project-structure.md` (`docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md`).
+Documentation for the **dev-tools plugin repository**. Plugin overview docs follow `standards/project-structure.md` (`docs/product.md`, `docs/roadmap.md`, `docs/features.md`, `docs/tech-stack.md`).
 
 **User-facing install and platform guides:** [README.md](../README.md) (Claude Code, Cursor, Codex, OpenCode, Gemini).
 
@@ -10,6 +10,7 @@ Documentation for the **dev-tools plugin repository**. Plugin overview docs foll
 |-----|---------|
 | [product.md](product.md) | What dev-tools is (PRD) |
 | [roadmap.md](roadmap.md) | Maintenance and direction |
+| [features.md](features.md) | Feature inventory (status table) |
 | [tech-stack.md](tech-stack.md) | This repo's stack and conventions |
 | [standards.md](standards.md) | Bundled `standards/` layout and **workflow entry points** for consumers |
 | [testing.md](testing.md) | Skill eval and integration tests (`test/`) |
@@ -18,8 +19,8 @@ Documentation for the **dev-tools plugin repository**. Plugin overview docs foll
 
 | Directory | Purpose |
 |-----------|---------|
-| [specs/](specs/) | Design specs (current) |
-| [plans/](plans/) | Implementation plans (current) |
+| [agent-plan/specs/](agent-plan/specs/) | Design specs (current) |
+| [agent-plan/plans/](agent-plan/plans/) | Implementation plans (current) |
 
 Superseded plans (OpenCode symlink era, early visual companion, historical skill iterations) were removed from the tree; retrieve them from git history before this cleanup if needed (`docs/archive/` through May 2026).
 

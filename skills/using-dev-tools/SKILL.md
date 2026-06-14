@@ -115,10 +115,10 @@ When multiple skills could apply, use this order:
 
 "New project" / missing `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` → **plan-product** first; then **design-spec** when ready to build.
 "Let's build X" → **design-spec** first (single-module spec when code exists), then write-plan (via design-spec) → **execute-plan** when ready to implement.
-"Work on backlog item X" / path under `docs/agent-files/backlog/` → **add-backlog** if not documented; then **design-spec** (reads backlog detail) → write-plan → **execute-plan** when ready.
+"Work on backlog item X" / path under `docs/agent-plan/backlog/` → **add-backlog** if not documented; then **design-spec** (reads backlog detail) → write-plan → **execute-plan** when ready.
 "Add to backlog" / new planned work item → **add-backlog** only.
 "Add bug" / "document this bug for later" / "do not fix it now" → **add-bug** only.
-"Implement the plan" / "go" / path under `docs/agent-files/plans/` → **execute-plan** only (not execute-plan-run or execute-plan-finish directly).
+"Implement the plan" / "go" / path under `docs/agent-plan/plans/` → **execute-plan** only (not execute-plan-run or execute-plan-finish directly).
 "Fix this bug" → **fix-bug** only. It logs/analyzes, then chooses simple direct TDD fix or complex route through **design-spec** → **execute-plan**.
 "Address PR review feedback" / "review requested changes" / "fix review comments" -> **execute-plan** (review follow-up invokes **receiving-code-review** before code changes).
 "Merge the PR" / "PR is approved" / "land it" -> **execute-plan** (post-review closeout invokes internal **merge-pr**).

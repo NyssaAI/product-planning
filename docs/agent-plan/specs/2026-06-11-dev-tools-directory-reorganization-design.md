@@ -6,7 +6,7 @@
 
 ## Summary
 
-Reorganize the dev-tools plugin's project structure standard to separate human-authored product docs from agent-generated and workflow artifacts. All dev-tools outputs move under `docs/agent-files/`, with generated code maps isolated in `docs/agent-files/context/`. Three new artifact types are added to the standard: `docs/features.md` (feature inventory), `docs/use-cases/` (structured use-case detail files), and `docs/design/` (reserved folder for UI design artifacts).
+Reorganize the dev-tools plugin's project structure standard to separate human-authored product docs from agent-generated and workflow artifacts. All dev-tools outputs move under `docs/agent-plan/`, with generated code maps isolated in `docs/agent-plan/context/`. Three new artifact types are added to the standard: `docs/features.md` (feature inventory), `docs/use-cases/` (structured use-case detail files), and `docs/design/` (reserved folder for UI design artifacts).
 
 ## Scope
 
@@ -35,7 +35,7 @@ docs/
 ├── design/                                  human: UI wireframes and mockups (NEW)
 ├── use-cases/                               human: structured use-case detail (NEW)
 │   └── f{n}-u{n}.md
-└── agent-files/
+└── agent-plan/
     ├── context/                             generated — do not hand-edit
     │   ├── index.md
     │   ├── code-map.json
@@ -55,7 +55,7 @@ docs/
             └── {timestamp}-{slug}-resolution.md
 ```
 
-**Rule:** `docs/` root is human-only product docs. `docs/agent-files/` is everything the plugin touches. `docs/agent-files/context/` is machine-generated and freely overwritten.
+**Rule:** `docs/` root is human-only product docs. `docs/agent-plan/` is everything the plugin touches. `docs/agent-plan/context/` is machine-generated and freely overwritten.
 
 ---
 
@@ -130,9 +130,9 @@ docs/features.md         Feature inventory — one step more detailed than PRD
        ↓
 docs/use-cases/f{n}-u{n}.md   Use-case detail — one step more detailed than feature
        ↓
-docs/agent-files/specs/  Design spec — technical design for one use case (design-spec output)
+docs/agent-plan/specs/  Design spec — technical design for one use case (design-spec output)
        ↓
-docs/agent-files/plans/  Implementation plan (write-plan output)
+docs/agent-plan/plans/  Implementation plan (write-plan output)
 ```
 
 ---
@@ -143,20 +143,20 @@ docs/agent-files/plans/  Implementation plan (write-plan output)
 
 | File | Change |
 |------|--------|
-| `scripts/code-map/generate-code-map.mjs` | Default output → `docs/agent-files/context/code-map.json` |
+| `scripts/code-map/generate-code-map.mjs` | Default output → `docs/agent-plan/context/code-map.json` |
 | `scripts/code-map/lib/code-map-config.mjs` | `DEFAULT_OUTPUT` constant updated |
-| `scripts/ai-plan/generate.mjs` | All outputs under `docs/ai-plan/` → `docs/agent-files/context/` |
+| `scripts/ai-plan/generate.mjs` | All outputs under `docs/ai-plan/` → `docs/agent-plan/context/` |
 | `scripts/ai-plan/lib/*.mjs` | Path constants throughout |
 
 ### Skills
 
 | Skill | Change |
 |-------|--------|
-| `using-ai-plan` | `docs/ai-plan/index.md` → `docs/agent-files/context/index.md`; all scope references updated |
-| `design-spec` | `docs/specs/` → `docs/agent-files/specs/`; add use-case file as third input type |
-| `write-plan` | `docs/plans/` → `docs/agent-files/plans/` |
-| `add-backlog` | `docs/backlog/` → `docs/agent-files/backlog/` |
-| `fix-bug` / `fix-bug-log` | `docs/bugs/` → `docs/agent-files/bugs/` |
+| `using-ai-plan` | `docs/ai-plan/index.md` → `docs/agent-plan/context/index.md`; all scope references updated |
+| `design-spec` | `docs/specs/` → `docs/agent-plan/specs/`; add use-case file as third input type |
+| `write-plan` | `docs/plans/` → `docs/agent-plan/plans/` |
+| `add-backlog` | `docs/backlog/` → `docs/agent-plan/backlog/` |
+| `fix-bug` / `fix-bug-log` | `docs/bugs/` → `docs/agent-plan/bugs/` |
 
 ### Standards
 
@@ -187,19 +187,19 @@ docs/agent-files/plans/  Implementation plan (write-plan output)
 
 Steps (all idempotent — skips if target already exists):
 
-1. Move `docs/ai-plan/` → `docs/agent-files/context/`
+1. Move `docs/ai-plan/` → `docs/agent-plan/context/`
    - Rename `INDEX.md` → `index.md`
    - Rename `CODE_MAP.json` → `code-map.json`
    - Rename `MODULE_MAP.json` → `module-map.json`
    - Rename `scopes/` → `modules/` (contents move unchanged)
-2. Move `docs/specs/` → `docs/agent-files/specs/`
-3. Move `docs/plans/` → `docs/agent-files/plans/`
-4. Move `docs/backlog/` → `docs/agent-files/backlog/`
-5. Move `docs/bugs/` → `docs/agent-files/bugs/`
+2. Move `docs/specs/` → `docs/agent-plan/specs/`
+3. Move `docs/plans/` → `docs/agent-plan/plans/`
+4. Move `docs/backlog/` → `docs/agent-plan/backlog/`
+5. Move `docs/bugs/` → `docs/agent-plan/bugs/`
 6. Patch cross-references in moved files:
-   - `module-map.json` `"codeMap"` field: `docs/ai-plan/CODE_MAP.json` → `docs/agent-files/context/code-map.json`
+   - `module-map.json` `"codeMap"` field: `docs/ai-plan/CODE_MAP.json` → `docs/agent-plan/context/code-map.json`
    - `index.md` module links: relative `./scopes/` references → `./modules/` (the directory is renamed in step 1, so old relative links break)
-   - `module-map.json` `"planningScope"` keys: rename to `"planningModule"`; values `docs/ai-plan/scopes/` → `docs/agent-files/context/modules/`
+   - `module-map.json` `"planningScope"` keys: rename to `"planningModule"`; values `docs/ai-plan/scopes/` → `docs/agent-plan/context/modules/`
 7. Create `docs/design/` with `.gitkeep`
 8. Create `docs/use-cases/` with `.gitkeep`
 9. Create `docs/features.md` stub (table header + one commented example row)

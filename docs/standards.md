@@ -54,7 +54,7 @@ User-facing install overview: [README.md](../README.md#workflow-entry-points).
 
 ## Repo layout
 
-The canonical directory tree is **`standards/project-structure.md`**. All workflow artifacts (`docs/specs/`, `docs/plans/`, `docs/ai-plan/`, `docs/backlog/`, `docs/bugs/`) are defined there.
+The canonical directory tree is **`standards/project-structure.md`**. All workflow artifacts (`docs/agent-plan/specs/`, `docs/agent-plan/plans/`, `docs/agent-plan/context/`, `docs/agent-plan/backlog/`, `docs/agent-plan/bugs/`) are defined there.
 
 ## Modifying standards
 

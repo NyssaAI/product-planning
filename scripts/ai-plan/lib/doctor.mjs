@@ -128,8 +128,8 @@ function checkAgentEntrypoints(repoRoot) {
   for (const [id, rel] of [
     ['agents-md', 'AGENTS.md'],
     ['claude-md', 'CLAUDE.md'],
-    ['backlog-dir', 'docs/agent-files/backlog'],
-    ['bugs-dir', 'docs/agent-files/bugs'],
+    ['backlog-dir', 'docs/agent-plan/backlog'],
+    ['bugs-dir', 'docs/agent-plan/bugs'],
   ]) {
     const full = path.join(repoRoot, rel);
     checks.push({

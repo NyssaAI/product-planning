@@ -1,19 +1,19 @@
 ---
 name: using-ai-plan
-description: Use when implementation planning needs scoped repo context from docs/agent-files/context module graphs or code maps
+description: Use when implementation planning needs scoped repo context from docs/agent-plan/context module graphs or code maps
 ---
 
 # Using AI Plan
 
 **Canonical source** for ai-plan behavior. The `/ai-plan` command, `scripts/bootstrap-templates/AGENTS.md`, and `.cursor/rules/ai-plan.mdc` are thin wrappers — update this skill first when rules change.
 
-Repository-agnostic **code map + module graph** for planning. Outputs live under `docs/agent-files/context/` in the **target repository** (not inside the plugin).
+Repository-agnostic **code map + module graph** for planning. Outputs live under `docs/agent-plan/context/` in the **target repository** (not inside the plugin).
 
 **Announce at start:** "I'm using the using-ai-plan skill to load planning context."
 
 ## When to Use
 
-- **write-plan** — REQUIRED when `docs/agent-files/context/index.md` exists or the repo has `package.json` / polyglot source roots (invoked by design-spec)
+- **write-plan** — REQUIRED when `docs/agent-plan/context/index.md` exists or the repo has `package.json` / polyglot source roots (invoked by design-spec)
 - **design-spec** (existing codebases) — read `index.md` and `module-map.json` summary for module boundaries; auto-regenerates index if stale
 - After **plan-product** or when `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` exist
 
@@ -21,14 +21,14 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 
 ## Progressive Disclosure (mandatory)
 
-**Primary ai-plan artifact:** `docs/agent-files/context/modules/<module-id>.md` — a self-contained architectural description of one code module (boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols). This is not a duplicate of `docs/agent-files/specs/` or `docs/agent-files/plans/`; those are *work-item* docs. Module files are *module* docs.
+**Primary ai-plan artifact:** `docs/agent-plan/context/modules/<module-id>.md` — a self-contained architectural description of one code module (boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols). This is not a duplicate of `docs/agent-plan/specs/` or `docs/agent-plan/plans/`; those are *work-item* docs. Module files are *module* docs.
 
 | Level | Inject | When |
 |-------|--------|------|
-| L0 | Task + `docs/agent-files/specs/…-design.md` (if feature work) | Always |
-| L1 | **One** `docs/agent-files/context/modules/<module-id>.md` | **During write-plan** — Read the module file now (Read tool). Do not defer or summarize. |
+| L0 | Task + `docs/agent-plan/specs/…-design.md` (if feature work) | Always |
+| L1 | **One** `docs/agent-plan/context/modules/<module-id>.md` | **During write-plan** — Read the module file now (Read tool). Do not defer or summarize. |
 | L2 | `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` | When product context needed |
-| L3 | `docs/agent-files/context/code-map.json` | **After** plan names symbols — implementation only |
+| L3 | `docs/agent-plan/context/code-map.json` | **After** plan names symbols — implementation only |
 
 `module-map.json` informs task ordering; do not paste the whole file into context.
 
@@ -72,15 +72,15 @@ If `--write-scripts` copied tooling into the repo, prefer `npm run ai-plan` from
 
 ## Pick a Module File (write-plan)
 
-1. Read `docs/agent-files/context/index.md` — module table links to `modules/<id>.md`
+1. Read `docs/agent-plan/context/index.md` — module table links to `modules/<id>.md`
 2. Match the spec / roadmap item to **one** module (ask if ambiguous)
-3. Read `docs/agent-files/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read **only** that one module file
-4. Use `docs/agent-files/context/module-map.json` only for dependency ordering between tasks (do not paste the whole file into context)
+3. Read `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read **only** that one module file
+4. Use `docs/agent-plan/context/module-map.json` only for dependency ordering between tasks (do not paste the whole file into context)
 
 Record in the plan header:
 
 ```markdown
-**Planning module:** `docs/agent-files/context/modules/<module-id>.md`
+**Planning module:** `docs/agent-plan/context/modules/<module-id>.md`
 ```
 
 ## Staleness
@@ -91,11 +91,11 @@ Regenerate when:
 - Public API or route structure changed materially
 - Module file missing for the module you need
 
-**Staleness gate:** if `docs/agent-files/context/index.md` is missing, or any source file is newer than it, run `npm run ai-plan` **before any planning step** — do not proceed with stale context. Tell your human partner: "Module graph was stale — regenerated before planning."
+**Staleness gate:** if `docs/agent-plan/context/index.md` is missing, or any source file is newer than it, run `npm run ai-plan` **before any planning step** — do not proceed with stale context. Tell your human partner: "Module graph was stale — regenerated before planning."
 
 ## Repo layout
 
-Generated artifacts live under `docs/agent-files/context/` per **`standards/project-structure.md`** (bundled in dev-tools). Do not invent alternate paths.
+Generated artifacts live under `docs/agent-plan/context/` per **`standards/project-structure.md`** (bundled in dev-tools). Do not invent alternate paths.
 
 ## Integration
 
