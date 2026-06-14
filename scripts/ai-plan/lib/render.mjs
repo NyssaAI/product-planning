@@ -257,7 +257,15 @@ export function renderModuleScope(model, mod) {
 
   lines.push('## After planning');
   lines.push('');
-  lines.push(`- Symbols: [\`code-map.json\`](../code-map.json)`);
+  if ((mod.symbolCount ?? 0) > 0) {
+    lines.push(
+      `- **Code-map slice:** filter [\`code-map.json\`](../code-map.json) by \`moduleId: ${mod.id}\` to get this module's files, symbols, and endpoints`
+    );
+  } else {
+    lines.push(
+      `- **No code-map coverage** for \`moduleId: ${mod.id}\` — its root is outside the code-map scan roots or fully delegated to child modules, so [\`code-map.json\`](../code-map.json) has no slice for it`
+    );
+  }
   lines.push('- Open only files your plan names');
   lines.push('');
 

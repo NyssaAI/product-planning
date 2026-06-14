@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { ownerRoot, normalizeRoot } from '../../ai-plan/lib/module-ownership.mjs';
 
 /**
  * @typedef {object} ModuleLink
@@ -17,9 +18,10 @@ import path from 'node:path';
  */
 export function annotateCodeMapWithModules(codeMap, modules, options) {
   const moduleLinks = modules.map((mod) => toModuleLink(mod, options.outputDir));
-  const matchable = [...moduleLinks].sort(
-    (a, b) => normalizedRoot(b.root).length - normalizedRoot(a.root).length
+  const linkByRoot = new Map(
+    moduleLinks.map((mod) => [normalizeRoot(mod.root), mod])
   );
+  const roots = moduleLinks.map((mod) => mod.root);
   const moduleStats = new Map(
     moduleLinks.map((mod) => [
       mod.id,
@@ -28,7 +30,7 @@ export function annotateCodeMapWithModules(codeMap, modules, options) {
   );
 
   const files = (codeMap.files ?? []).map((file) => {
-    const owner = findOwner(file.path, matchable);
+    const owner = findOwner(file.path, roots, linkByRoot);
     if (owner) {
       moduleStats.get(owner.id).fileCount += 1;
     }
@@ -57,7 +59,7 @@ export function annotateCodeMapWithModules(codeMap, modules, options) {
 
   const endpoints = (codeMap.endpoints ?? []).map((endpoint) => {
     const file = typeof endpoint.file === 'string' ? endpoint.file : '';
-    const owner = findOwner(file, matchable);
+    const owner = findOwner(file, roots, linkByRoot);
     if (owner) {
       moduleStats.get(owner.id).endpointCount += 1;
       return addModuleFields(endpoint, owner);
@@ -102,26 +104,16 @@ function toModuleLink(mod, outputDir) {
 }
 
 /**
+ * Disjoint owner: the module whose root is the longest prefix of `filePath`.
+ *
  * @param {string} filePath
- * @param {ModuleLink[]} modules
+ * @param {string[]} roots all module roots
+ * @param {Map<string, ModuleLink>} linkByRoot normalized-root -> module link
  * @returns {ModuleLink | null}
  */
-function findOwner(filePath, modules) {
-  const normalized = filePath.replace(/\\/g, '/');
-  return (
-    modules.find((mod) => {
-      const root = normalizedRoot(mod.root);
-      return root === '' || normalized === root || normalized.startsWith(`${root}/`);
-    }) ?? null
-  );
-}
-
-/**
- * @param {string} root
- */
-function normalizedRoot(root) {
-  const normalized = root.replace(/\\/g, '/').replace(/\/$/, '');
-  return normalized === '.' ? '' : normalized;
+function findOwner(filePath, roots, linkByRoot) {
+  const root = ownerRoot(filePath, roots);
+  return root === null ? null : linkByRoot.get(normalizeRoot(root)) ?? null;
 }
 
 /**

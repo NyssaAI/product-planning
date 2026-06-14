@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-14T17:30:28.800Z",
+  "generated": "2026-06-14T23:58:07.317Z",
   "roots": [
     "scripts",
     "hooks",
@@ -16,8 +16,8 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 37,
-  "symbolCount": 83,
+  "fileCount": 39,
+  "symbolCount": 91,
   "endpointCount": 0,
   "files": [
     {
@@ -99,12 +99,64 @@
       "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
+      "path": "scripts/ai-plan/lib/adapters/sg-scan.mjs",
+      "symbols": [
+        {
+          "name": "MAX_SCAN_ARG_LENGTH",
+          "kind": "const",
+          "line": 23,
+          "signature": "export const MAX_SCAN_ARG_LENGTH = 24000; /** * Run `ast-grep scan` over the given absolute file paths, batching the argv so * no single invocation exceeds the OS command-line limit. Returns the merged * match objects across all batches. * * @param",
+          "summary": "Conservative cap on the total length of file-path arguments per ast-grep invocation, well under the Windows ~32 KB comma",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "runBatchedScan",
+          "kind": "function",
+          "line": 36,
+          "signature": "export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs)",
+          "summary": "Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "batchByArgLength",
+          "kind": "function",
+          "line": 64,
+          "signature": "export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH)",
+          "summary": "Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "parseScanJson",
+          "kind": "function",
+          "line": 90,
+          "signature": "export function parseScanJson(stdout)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        }
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
       "path": "scripts/ai-plan/lib/adapters/typescript.mjs",
       "symbols": [
         {
           "name": "matches",
           "kind": "function",
-          "line": 83,
+          "line": 99,
           "signature": "export function matches(repoRoot)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -114,7 +166,7 @@
         {
           "name": "extract",
           "kind": "function",
-          "line": 103,
+          "line": 119,
           "signature": "export function extract(repoRoot, files)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -239,7 +291,7 @@
         {
           "name": "buildAiPlanModel",
           "kind": "function",
-          "line": 38,
+          "line": 39,
           "signature": "export function buildAiPlanModel(repoRoot, config, codeMapInput)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -672,7 +724,7 @@
         {
           "name": "detectEntryPoints",
           "kind": "function",
-          "line": 45,
+          "line": 46,
           "signature": "export function detectEntryPoints(repoRoot, moduleRoot)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -682,7 +734,7 @@
         {
           "name": "detectTestRoots",
           "kind": "function",
-          "line": 88,
+          "line": 89,
           "signature": "export function detectTestRoots(repoRoot, moduleRoot)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -692,7 +744,7 @@
         {
           "name": "detectConfigFiles",
           "kind": "function",
-          "line": 123,
+          "line": 124,
           "signature": "export function detectConfigFiles(repoRoot)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -702,8 +754,8 @@
         {
           "name": "detectPublicSurface",
           "kind": "function",
-          "line": 152,
-          "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)",
+          "line": 154,
+          "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot, allModuleRoots = [moduleRoot])",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
           "moduleRoot": "scripts/ai-plan",
@@ -712,7 +764,7 @@
         {
           "name": "inferFlows",
           "kind": "function",
-          "line": 191,
+          "line": 190,
           "signature": "export function inferFlows(repoRoot, allModules, mod)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -722,7 +774,7 @@
         {
           "name": "inferCapabilities",
           "kind": "function",
-          "line": 246,
+          "line": 245,
           "signature": "export function inferCapabilities(repoRoot, mod, enrichment)",
           "summary": "Infers a prose description, capability bullets, and does-not-own entries from a module's name, routes, entry points, and",
           "moduleId": "scripts-ai-plan",
@@ -733,7 +785,7 @@
         {
           "name": "inferOutOfScope",
           "kind": "function",
-          "line": 326,
+          "line": 325,
           "signature": "export function inferOutOfScope(allModules, mod)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -743,8 +795,59 @@
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 351,
+          "line": 350,
           "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        }
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "path": "scripts/ai-plan/lib/module-ownership.mjs",
+      "symbols": [
+        {
+          "name": "normalizeRoot",
+          "kind": "function",
+          "line": 15,
+          "signature": "export function normalizeRoot(root)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "rootContains",
+          "kind": "function",
+          "line": 27,
+          "signature": "export function rootContains(root, filePath)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "ownerRoot",
+          "kind": "function",
+          "line": 40,
+          "signature": "export function ownerRoot(filePath, roots)",
+          "summary": "The most-specific (longest) root that contains `filePath`, or null.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "ownsFile",
+          "kind": "function",
+          "line": 65,
+          "signature": "export function ownsFile(moduleRoot, filePath, allRoots)",
+          "summary": "Whether `moduleRoot` is the disjoint owner of `filePath` among `allRoots`.",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
           "moduleRoot": "scripts/ai-plan",
@@ -1096,7 +1199,7 @@
         {
           "name": "annotateCodeMapWithModules",
           "kind": "function",
-          "line": 18,
+          "line": 19,
           "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
           "summary": "Add module ownership to a code-map document and expose a flat symbol index.",
           "moduleId": "scripts-code-map",
@@ -1247,8 +1350,8 @@
       "name": "ai-plan",
       "root": "scripts/ai-plan",
       "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md",
-      "fileCount": 27,
-      "symbolCount": 68,
+      "fileCount": 29,
+      "symbolCount": 76,
       "endpointCount": 0
     },
     {
@@ -1346,10 +1449,57 @@
       "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
+      "file": "scripts/ai-plan/lib/adapters/sg-scan.mjs",
+      "name": "MAX_SCAN_ARG_LENGTH",
+      "kind": "const",
+      "line": 23,
+      "signature": "export const MAX_SCAN_ARG_LENGTH = 24000; /** * Run `ast-grep scan` over the given absolute file paths, batching the argv so * no single invocation exceeds the OS command-line limit. Returns the merged * match objects across all batches. * * @param",
+      "summary": "Conservative cap on the total length of file-path arguments per ast-grep invocation, well under the Windows ~32 KB comma",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/sg-scan.mjs",
+      "name": "runBatchedScan",
+      "kind": "function",
+      "line": 36,
+      "signature": "export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs)",
+      "summary": "Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/sg-scan.mjs",
+      "name": "batchByArgLength",
+      "kind": "function",
+      "line": 64,
+      "signature": "export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH)",
+      "summary": "Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/sg-scan.mjs",
+      "name": "parseScanJson",
+      "kind": "function",
+      "line": 90,
+      "signature": "export function parseScanJson(stdout)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
       "file": "scripts/ai-plan/lib/adapters/typescript.mjs",
       "name": "matches",
       "kind": "function",
-      "line": 83,
+      "line": 99,
       "signature": "export function matches(repoRoot)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1360,7 +1510,7 @@
       "file": "scripts/ai-plan/lib/adapters/typescript.mjs",
       "name": "extract",
       "kind": "function",
-      "line": 103,
+      "line": 119,
       "signature": "export function extract(repoRoot, files)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1468,7 +1618,7 @@
       "file": "scripts/ai-plan/lib/build.mjs",
       "name": "buildAiPlanModel",
       "kind": "function",
-      "line": 38,
+      "line": 39,
       "signature": "export function buildAiPlanModel(repoRoot, config, codeMapInput)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1824,7 +1974,7 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "detectEntryPoints",
       "kind": "function",
-      "line": 45,
+      "line": 46,
       "signature": "export function detectEntryPoints(repoRoot, moduleRoot)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1835,7 +1985,7 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "detectTestRoots",
       "kind": "function",
-      "line": 88,
+      "line": 89,
       "signature": "export function detectTestRoots(repoRoot, moduleRoot)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1846,7 +1996,7 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "detectConfigFiles",
       "kind": "function",
-      "line": 123,
+      "line": 124,
       "signature": "export function detectConfigFiles(repoRoot)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1857,8 +2007,8 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "detectPublicSurface",
       "kind": "function",
-      "line": 152,
-      "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)",
+      "line": 154,
+      "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot, allModuleRoots = [moduleRoot])",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
       "moduleRoot": "scripts/ai-plan",
@@ -1868,7 +2018,7 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "inferFlows",
       "kind": "function",
-      "line": 191,
+      "line": 190,
       "signature": "export function inferFlows(repoRoot, allModules, mod)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1879,7 +2029,7 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "inferCapabilities",
       "kind": "function",
-      "line": 246,
+      "line": 245,
       "signature": "export function inferCapabilities(repoRoot, mod, enrichment)",
       "summary": "Infers a prose description, capability bullets, and does-not-own entries from a module's name, routes, entry points, and",
       "moduleId": "scripts-ai-plan",
@@ -1891,7 +2041,7 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "inferOutOfScope",
       "kind": "function",
-      "line": 326,
+      "line": 325,
       "signature": "export function inferOutOfScope(allModules, mod)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1902,8 +2052,54 @@
       "file": "scripts/ai-plan/lib/module-enrichment.mjs",
       "name": "enrichModule",
       "kind": "function",
-      "line": 351,
+      "line": 350,
       "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-ownership.mjs",
+      "name": "normalizeRoot",
+      "kind": "function",
+      "line": 15,
+      "signature": "export function normalizeRoot(root)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-ownership.mjs",
+      "name": "rootContains",
+      "kind": "function",
+      "line": 27,
+      "signature": "export function rootContains(root, filePath)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-ownership.mjs",
+      "name": "ownerRoot",
+      "kind": "function",
+      "line": 40,
+      "signature": "export function ownerRoot(filePath, roots)",
+      "summary": "The most-specific (longest) root that contains `filePath`, or null.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-ownership.mjs",
+      "name": "ownsFile",
+      "kind": "function",
+      "line": 65,
+      "signature": "export function ownsFile(moduleRoot, filePath, allRoots)",
+      "summary": "Whether `moduleRoot` is the disjoint owner of `filePath` among `allRoots`.",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
       "moduleRoot": "scripts/ai-plan",
@@ -2151,7 +2347,7 @@
       "file": "scripts/code-map/lib/module-linker.mjs",
       "name": "annotateCodeMapWithModules",
       "kind": "function",
-      "line": 18,
+      "line": 19,
       "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
       "summary": "Add module ownership to a code-map document and expose a flat symbol index.",
       "moduleId": "scripts-code-map",

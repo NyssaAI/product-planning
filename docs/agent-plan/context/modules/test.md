@@ -2,7 +2,7 @@
 
 **Inject with your task doc only.** Do not load other module files or the full code map for planning.
 
-**What this module does:** `test` — 20 files under `test/`.
+**What this module does:** `test` — 26 files under `test/`.
 
 ## Capabilities (owns)
 
@@ -40,6 +40,6 @@
 
 ## After planning
 
-- Symbols: [`code-map.json`](../code-map.json)
+- **No code-map coverage** for `moduleId: test` — its root is outside the code-map scan roots or fully delegated to child modules, so [`code-map.json`](../code-map.json) has no slice for it
 - Open only files your plan names
 

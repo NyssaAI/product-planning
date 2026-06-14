@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { createLogger } from './logger.mjs';
+import { ownsFile } from './module-ownership.mjs';
 
 const log = createLogger({ module: 'module-enrichment' });
 
@@ -147,18 +148,16 @@ const PUBLIC_SURFACE_KIND_RANK = {
 /**
  * @param {{ path: string, symbols?: { name: string, kind: string, line: number, signature?: string, summary?: string }[] }[]} codeMapFiles
  * @param {string} moduleRoot
+ * @param {string[]} allModuleRoots all module roots, for disjoint ownership
  * @returns {{ file: string, name: string, kind: string, signature?: string, summary?: string }[]}
  */
-export function detectPublicSurface(codeMapFiles, moduleRoot) {
-  const root = moduleRoot.replace(/\\/g, '/');
-  // A module rooted at the repo top ('.') owns every file.
-  const prefix = root === '.' || root === './' ? '' : `${root}/`;
+export function detectPublicSurface(codeMapFiles, moduleRoot, allModuleRoots = [moduleRoot]) {
   /** @type {{ file: string, name: string, kind: string, signature?: string, summary?: string }[]} */
   const out = [];
 
   for (const file of codeMapFiles) {
     const p = file.path.replace(/\\/g, '/');
-    if (!p.startsWith(prefix)) {
+    if (!ownsFile(moduleRoot, p, allModuleRoots)) {
       continue;
     }
     for (const sym of file.symbols ?? []) {
@@ -356,7 +355,11 @@ export function enrichModule(repoRoot, allModules, mod, codeMapFiles) {
     entryPoints,
     testRoots: detectTestRoots(repoRoot, mod.root),
     configFiles: detectConfigFiles(repoRoot),
-    publicSurface: detectPublicSurface(codeMapFiles, mod.root),
+    publicSurface: detectPublicSurface(
+      codeMapFiles,
+      mod.root,
+      allModules.map((m) => m.root)
+    ),
     inferredFlows: inferFlows(repoRoot, allModules, mod),
     outOfScope: inferOutOfScope(allModules, mod),
     inferredCapabilities: inferCapabilities(repoRoot, mod, { entryPoints }),
