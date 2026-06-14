@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-13T22:13:01.253Z",
+  "generated": "2026-06-14T17:30:28.800Z",
   "roots": [
     "scripts",
     "hooks",
@@ -16,8 +16,9 @@
     "Go",
     "Rust"
   ],
-  "fileCount": 34,
-  "symbolCount": 78,
+  "fileCount": 37,
+  "symbolCount": 83,
+  "endpointCount": 0,
   "files": [
     {
       "path": ".opencode/plugins/dev-tools.js",
@@ -26,9 +27,17 @@
           "name": "DevToolsPlugin",
           "kind": "const",
           "line": 49,
-          "signature": "export const DevToolsPlugin = async ({ client, directory })"
+          "signature": "export const DevToolsPlugin = async ({ client, directory })",
+          "moduleId": "opencode",
+          "moduleName": ".opencode",
+          "moduleRoot": ".opencode",
+          "planningModule": "docs/agent-plan/context/modules/opencode.md"
         }
-      ]
+      ],
+      "moduleId": "opencode",
+      "moduleName": ".opencode",
+      "moduleRoot": ".opencode",
+      "planningModule": "docs/agent-plan/context/modules/opencode.md"
     },
     {
       "path": "scripts/ai-plan/lib/adapters/index.mjs",
@@ -37,16 +46,28 @@
           "name": "ADAPTERS",
           "kind": "const",
           "line": 13,
-          "signature": "export const ADAPTERS = [ csharpAdapter, pythonAdapter, typescriptAdapter, ]; /** * Select an adapter for the repo. `forcedId` (from config) wins; otherwise the"
+          "signature": "export const ADAPTERS = [ csharpAdapter, pythonAdapter, typescriptAdapter, ]; /** * Select an adapter for the repo. `forcedId` (from config) wins; otherwise the",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "selectAdapter",
           "kind": "function",
           "line": 27,
           "signature": "export function selectAdapter(repoRoot, forcedId)",
-          "summary": "Select an adapter for the repo."
+          "summary": "Select an adapter for the repo.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/adapters/python.mjs",
@@ -55,15 +76,27 @@
           "name": "matches",
           "kind": "function",
           "line": 69,
-          "signature": "export function matches(repoRoot)"
+          "signature": "export function matches(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "extract",
           "kind": "function",
           "line": 86,
-          "signature": "export function extract(repoRoot, files)"
+          "signature": "export function extract(repoRoot, files)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/adapters/typescript.mjs",
@@ -72,15 +105,27 @@
           "name": "matches",
           "kind": "function",
           "line": 83,
-          "signature": "export function matches(repoRoot)"
+          "signature": "export function matches(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "extract",
           "kind": "function",
           "line": 103,
-          "signature": "export function extract(repoRoot, files)"
+          "signature": "export function extract(repoRoot, files)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/auto-detect.mjs",
@@ -89,49 +134,85 @@
           "name": "DEFAULT_DOC_CANDIDATES",
           "kind": "const",
           "line": 5,
-          "signature": "export const DEFAULT_DOC_CANDIDATES"
+          "signature": "export const DEFAULT_DOC_CANDIDATES",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "CODE_ROOT_CANDIDATES",
           "kind": "const",
-          "line": 22
+          "line": 22,
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "API_ROUTE_CANDIDATES",
           "kind": "const",
           "line": 38,
-          "signature": "export const API_ROUTE_CANDIDATES = ["
+          "signature": "export const API_ROUTE_CANDIDATES = [",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "MODULE_GLOB_CANDIDATES",
           "kind": "const",
-          "line": 49
+          "line": 49,
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "readProjectName",
           "kind": "function",
           "line": 60,
-          "signature": "export function readProjectName(repoRoot)"
+          "signature": "export function readProjectName(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "detectCodeMapRoots",
           "kind": "function",
           "line": 80,
-          "signature": "export function detectCodeMapRoots(repoRoot)"
+          "signature": "export function detectCodeMapRoots(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "detectApiRoutes",
           "kind": "function",
           "line": 100,
-          "signature": "export function detectApiRoutes(repoRoot)"
+          "signature": "export function detectApiRoutes(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "detectSrcChildModules",
           "kind": "function",
           "line": 147,
-          "signature": "export function detectSrcChildModules(repoRoot)"
+          "signature": "export function detectSrcChildModules(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/bootstrap.mjs",
@@ -140,9 +221,17 @@
           "name": "bootstrapRepo",
           "kind": "function",
           "line": 78,
-          "signature": "export function bootstrapRepo(repoRoot, options = {})"
+          "signature": "export function bootstrapRepo(repoRoot, options = {})",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/build.mjs",
@@ -151,9 +240,17 @@
           "name": "buildAiPlanModel",
           "kind": "function",
           "line": 38,
-          "signature": "export function buildAiPlanModel(repoRoot, config, codeMapFiles)"
+          "signature": "export function buildAiPlanModel(repoRoot, config, codeMapInput)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/config.mjs",
@@ -162,27 +259,47 @@
           "name": "loadAiPlanConfig",
           "kind": "function",
           "line": 44,
-          "signature": "export function loadAiPlanConfig(repoRoot, opts = {})"
+          "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "validateRequiredDocs",
           "kind": "function",
           "line": 127,
-          "signature": "export function validateRequiredDocs(repoRoot, config)"
+          "signature": "export function validateRequiredDocs(repoRoot, config)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "resolveDocPath",
           "kind": "function",
           "line": 149,
-          "signature": "export function resolveDocPath(repoRoot, candidates)"
+          "signature": "export function resolveDocPath(repoRoot, candidates)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "writeStarterConfigs",
           "kind": "function",
           "line": 162,
-          "signature": "export function writeStarterConfigs(repoRoot)"
+          "signature": "export function writeStarterConfigs(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/detection/derive-modules.mjs",
@@ -191,9 +308,17 @@
           "name": "deriveModules",
           "kind": "function",
           "line": 55,
-          "signature": "export function deriveModules(repoRoot, fileGraph, options = {})"
+          "signature": "export function deriveModules(repoRoot, fileGraph, options = {})",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/detection/metrics.mjs",
@@ -203,37 +328,61 @@
           "kind": "function",
           "line": 19,
           "signature": "export function internalExternalWeights(edges, assign)",
-          "summary": "Internal vs."
+          "summary": "Internal vs.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "internalExternalRatio",
           "kind": "function",
           "line": 43,
           "signature": "export function internalExternalRatio(edges, assign)",
-          "summary": "internal / (internal + external)."
+          "summary": "internal / (internal + external).",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "modularity",
           "kind": "function",
           "line": 56,
           "signature": "export function modularity(edges, assign)",
-          "summary": "Newman modularity Q for an assignment (weighted, undirected)."
+          "summary": "Newman modularity Q for an assignment (weighted, undirected).",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "cohesion",
           "kind": "function",
           "line": 97,
           "signature": "export function cohesion(edges, assign, moduleId)",
-          "summary": "Cohesion of one module: internal weight / (internal + boundary)."
+          "summary": "Cohesion of one module: internal weight / (internal + boundary).",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "coupling",
           "kind": "function",
           "line": 121,
           "signature": "export function coupling(edges, assign, modA, modB)",
-          "summary": "Coupling between two modules: total cross-edge weight between them."
+          "summary": "Coupling between two modules: total cross-edge weight between them.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/detection/partitions.mjs",
@@ -242,44 +391,72 @@
           "name": "DEFAULT_EXCLUDE",
           "kind": "const",
           "line": 8,
-          "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);"
+          "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "topLevelAreas",
           "kind": "function",
           "line": 24,
           "signature": "export function topLevelAreas(files, exclude = DEFAULT_EXCLUDE)",
-          "summary": "Immediate child directories of the repo root that contain a file (e.g."
+          "summary": "Immediate child directories of the repo root that contain a file (e.g.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "filesInArea",
           "kind": "function",
           "line": 43,
           "signature": "export function filesInArea(files, area, exclude = DEFAULT_EXCLUDE)",
-          "summary": "Files under `area`, dropping any whose path crosses an excluded directory."
+          "summary": "Files under `area`, dropping any whose path crosses an excluded directory.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "maxDepth",
           "kind": "function",
           "line": 55,
           "signature": "export function maxDepth(areaFiles)",
-          "summary": "Deepest directory nesting below the area (excluding the filename)."
+          "summary": "Deepest directory nesting below the area (excluding the filename).",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "partitionAtDepth",
           "kind": "function",
           "line": 71,
           "signature": "export function partitionAtDepth(areaFiles, area, depth)",
-          "summary": "Assign each area file to the module rooted `depth` segments below the area."
+          "summary": "Assign each area file to the module rooted `depth` segments below the area.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "sizeByModule",
           "kind": "function",
           "line": 87,
           "signature": "export function sizeByModule(partition)",
-          "summary": "File count per module root for an assignment."
+          "summary": "File count per module root for an assignment.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/discover-modules.mjs",
@@ -289,15 +466,27 @@
           "kind": "function",
           "line": 30,
           "signature": "export function discoverModules(repoRoot, config, stack)",
-          "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted."
+          "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "parseNavEntries",
           "kind": "function",
           "line": 376,
-          "signature": "export function parseNavEntries(navPath)"
+          "signature": "export function parseNavEntries(navPath)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/docs.mjs",
@@ -306,16 +495,28 @@
           "name": "loadProjectBrief",
           "kind": "function",
           "line": 9,
-          "signature": "export function loadProjectBrief(repoRoot, config)"
+          "signature": "export function loadProjectBrief(repoRoot, config)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "extractConventionsFromTechStack",
           "kind": "function",
           "line": 48,
           "signature": "export function extractConventionsFromTechStack(techStackExcerpt)",
-          "summary": "Pull bullet lines from tech-stack excerpt for planner conventions."
+          "summary": "Pull bullet lines from tech-stack excerpt for planner conventions.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/doctor.mjs",
@@ -323,22 +524,38 @@
         {
           "name": "checkRuntimeReadiness",
           "kind": "function",
-          "line": 150,
-          "signature": "export function checkRuntimeReadiness(repoRoot = process.cwd())"
+          "line": 151,
+          "signature": "export function checkRuntimeReadiness(repoRoot = process.cwd())",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "runDoctor",
           "kind": "function",
-          "line": 194,
-          "signature": "export function runDoctor(repoRoot, options = {})"
+          "line": 195,
+          "signature": "export function runDoctor(repoRoot, options = {})",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "formatDoctorReport",
           "kind": "function",
-          "line": 256,
-          "signature": "export function formatDoctorReport(report)"
+          "line": 257,
+          "signature": "export function formatDoctorReport(report)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/embed.mjs",
@@ -347,16 +564,28 @@
           "name": "renderModuleMapTable",
           "kind": "function",
           "line": 15,
-          "signature": "export function renderModuleMapTable(modules)"
+          "signature": "export function renderModuleMapTable(modules)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "embedModuleMap",
           "kind": "function",
           "line": 85,
           "signature": "export function embedModuleMap(repoRoot, tableMarkdown)",
-          "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root)."
+          "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root).",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/logger.mjs",
@@ -365,15 +594,27 @@
           "name": "createLogger",
           "kind": "function",
           "line": 57,
-          "signature": "export function createLogger(bindings = {})"
+          "signature": "export function createLogger(bindings = {})",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "log",
           "kind": "const",
           "line": 87,
-          "signature": "export const log = createLogger();"
+          "signature": "export const log = createLogger();",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/migrate.mjs",
@@ -381,17 +622,29 @@
         {
           "name": "runMigrate",
           "kind": "function",
-          "line": 151,
+          "line": 161,
           "signature": "export function runMigrate(repoRoot)",
-          "summary": "Migrate a repo from the legacy docs layout to docs/agent-plan/."
+          "summary": "Migrate a repo from the legacy docs layout to docs/agent-plan/.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "formatMigrateReport",
           "kind": "function",
-          "line": 201,
-          "signature": "export function formatMigrateReport(actions)"
+          "line": 211,
+          "signature": "export function formatMigrateReport(actions)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/module-deps.mjs",
@@ -401,9 +654,17 @@
           "kind": "function",
           "line": 13,
           "signature": "export function buildModuleEdges(repoRoot, modules, config, stack)",
-          "summary": "adapter graph; falls back to a fresh extraction when omitted."
+          "summary": "adapter graph; falls back to a fresh extraction when omitted.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/module-enrichment.mjs",
@@ -412,52 +673,130 @@
           "name": "detectEntryPoints",
           "kind": "function",
           "line": 45,
-          "signature": "export function detectEntryPoints(repoRoot, moduleRoot)"
+          "signature": "export function detectEntryPoints(repoRoot, moduleRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "detectTestRoots",
           "kind": "function",
           "line": 88,
-          "signature": "export function detectTestRoots(repoRoot, moduleRoot)"
+          "signature": "export function detectTestRoots(repoRoot, moduleRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "detectConfigFiles",
           "kind": "function",
           "line": 123,
-          "signature": "export function detectConfigFiles(repoRoot)"
+          "signature": "export function detectConfigFiles(repoRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "detectPublicSurface",
           "kind": "function",
           "line": 152,
-          "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)"
+          "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "inferFlows",
           "kind": "function",
           "line": 191,
-          "signature": "export function inferFlows(repoRoot, allModules, mod)"
+          "signature": "export function inferFlows(repoRoot, allModules, mod)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "inferCapabilities",
           "kind": "function",
-          "line": 242,
+          "line": 246,
           "signature": "export function inferCapabilities(repoRoot, mod, enrichment)",
-          "summary": "Infers a prose description, capability bullets, and does-not-own entries from a module's name, routes, entry points, and"
+          "summary": "Infers a prose description, capability bullets, and does-not-own entries from a module's name, routes, entry points, and",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "inferOutOfScope",
           "kind": "function",
-          "line": 310,
-          "signature": "export function inferOutOfScope(allModules, mod)"
+          "line": 326,
+          "signature": "export function inferOutOfScope(allModules, mod)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 335,
-          "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)"
+          "line": 351,
+          "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "path": "scripts/ai-plan/lib/node-organization.mjs",
+      "symbols": [
+        {
+          "name": "NODE_ORGANIZATION_CATEGORIES",
+          "kind": "const",
+          "line": 14,
+          "signature": "export const NODE_ORGANIZATION_CATEGORIES = [",
+          "summary": "Display order for the rendered organization view.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "nodeOrganizationRole",
+          "kind": "function",
+          "line": 63,
+          "signature": "export function nodeOrganizationRole(mod)",
+          "summary": "Assign a single Node/TypeScript organizational role to a module.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
+          "name": "classifyNodeOrganization",
+          "kind": "function",
+          "line": 95,
+          "signature": "export function classifyNodeOrganization(modules)",
+          "summary": "Group modules by their Node/TypeScript role in canonical display order, omitting roles with no modules.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        }
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/pin.mjs",
@@ -467,16 +806,28 @@
           "kind": "function",
           "line": 37,
           "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
-          "summary": "Eject a derived module into `modules.pinned[]`."
+          "summary": "Eject a derived module into `modules.pinned[]`.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "unpinModule",
           "kind": "function",
           "line": 74,
           "signature": "export function unpinModule(repoRoot, moduleId)",
-          "summary": "Remove a pin by id or root, returning its subtree to auto-derivation."
+          "summary": "Remove a pin by id or root, returning its subtree to auto-derivation.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/project-root.mjs",
@@ -485,9 +836,17 @@
           "name": "findProjectRoot",
           "kind": "function",
           "line": 8,
-          "signature": "export function findProjectRoot(startDir = process.cwd())"
+          "signature": "export function findProjectRoot(startDir = process.cwd())",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/render.mjs",
@@ -495,16 +854,28 @@
         {
           "name": "renderIndex",
           "kind": "function",
-          "line": 7,
-          "signature": "export function renderIndex(model, config)"
+          "line": 8,
+          "signature": "export function renderIndex(model, config)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "renderModuleScope",
           "kind": "function",
-          "line": 70,
-          "signature": "export function renderModuleScope(model, mod)"
+          "line": 124,
+          "signature": "export function renderModuleScope(model, mod)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/repo-files.mjs",
@@ -513,16 +884,28 @@
           "name": "WALK_SKIP",
           "kind": "const",
           "line": 9,
-          "summary": "test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used as test data are not detected as the paren"
+          "summary": "test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used as test data are not detected as the paren",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         },
         {
           "name": "listRepoFiles",
           "kind": "function",
           "line": 31,
           "signature": "export function listRepoFiles(repoRoot, limit = 20000)",
-          "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped)."
+          "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped).",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/routes.mjs",
@@ -531,9 +914,17 @@
           "name": "discoverHttpRoutes",
           "kind": "function",
           "line": 25,
-          "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapFiles)"
+          "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/stack-graph.mjs",
@@ -543,9 +934,17 @@
           "kind": "function",
           "line": 20,
           "signature": "export function extractStackGraph(repoRoot, config)",
-          "summary": "Select the stack-graph adapter for the repo and run a single extraction."
+          "summary": "Select the stack-graph adapter for the repo and run a single extraction.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/stack-profiles/index.mjs",
@@ -554,9 +953,17 @@
           "name": "detectStackModules",
           "kind": "function",
           "line": 245,
-          "signature": "export function detectStackModules(repoRoot, config)"
+          "signature": "export function detectStackModules(repoRoot, config)",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/ai-plan/lib/summarize.mjs",
@@ -566,9 +973,17 @@
           "kind": "function",
           "line": 15,
           "signature": "export function summarizeDescription(description, fallbackId, lineLen = 120, maxLines = 2)",
-          "summary": "Builds the module summary shown in the index and embedded module-map tables."
+          "summary": "Builds the module summary shown in the index and embedded module-map tables.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
     },
     {
       "path": "scripts/code-map/lib/code-map-config.mjs",
@@ -577,25 +992,45 @@
           "name": "DEFAULT_SCAN_ROOTS",
           "kind": "const",
           "line": 6,
-          "signature": "export const DEFAULT_SCAN_ROOTS = ['src', 'native']; /** @type"
+          "signature": "export const DEFAULT_SCAN_ROOTS = ['src', 'native']; /** @type",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         },
         {
           "name": "SUPPORTED_LANGUAGES",
           "kind": "const",
-          "line": 9
+          "line": 9,
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         },
         {
           "name": "SOURCE_EXTENSIONS",
           "kind": "const",
-          "line": 19
+          "line": 19,
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         },
         {
           "name": "loadCodeMapConfig",
           "kind": "function",
           "line": 57,
-          "signature": "export function loadCodeMapConfig(repoRoot)"
+          "signature": "export function loadCodeMapConfig(repoRoot)",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
     },
     {
       "path": "scripts/code-map/lib/comment-extractor.mjs",
@@ -605,9 +1040,36 @@
           "kind": "function",
           "line": 49,
           "signature": "export function extractDocComment(filePath, lineNumber)",
-          "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts"
+          "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "path": "scripts/code-map/lib/endpoint-extractor.mjs",
+      "symbols": [
+        {
+          "name": "extractEndpoints",
+          "kind": "function",
+          "line": 54,
+          "signature": "export function extractEndpoints(repoRoot, files)",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+        }
+      ],
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
     },
     {
       "path": "scripts/code-map/lib/file-header-comment.mjs",
@@ -616,9 +1078,37 @@
           "name": "extractFileHeaderComment",
           "kind": "function",
           "line": 117,
-          "signature": "export function extractFileHeaderComment(content)"
+          "signature": "export function extractFileHeaderComment(content)",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "path": "scripts/code-map/lib/module-linker.mjs",
+      "symbols": [
+        {
+          "name": "annotateCodeMapWithModules",
+          "kind": "function",
+          "line": 18,
+          "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
+          "summary": "Add module ownership to a code-map document and expose a flat symbol index.",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+        }
+      ],
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
     },
     {
       "path": "scripts/code-map/lib/signature-extractor.mjs",
@@ -628,9 +1118,17 @@
           "kind": "function",
           "line": 17,
           "signature": "export function extractSignature(filePath, lineNumber)",
-          "summary": "Extracts the declaration signature starting at the given line."
+          "summary": "Extracts the declaration signature starting at the given line.",
+          "moduleId": "scripts-code-map",
+          "moduleName": "code-map",
+          "moduleRoot": "scripts/code-map",
+          "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
     },
     {
       "path": "scripts/lib/plugin-root.mjs",
@@ -639,9 +1137,17 @@
           "name": "findPluginRoot",
           "kind": "function",
           "line": 8,
-          "signature": "export function findPluginRoot(startDir)"
+          "signature": "export function findPluginRoot(startDir)",
+          "moduleId": "scripts-lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
     },
     {
       "path": "scripts/lib/resolve-ast-grep.mjs",
@@ -651,9 +1157,17 @@
           "kind": "function",
           "line": 73,
           "signature": "export function resolveAstGrepBinary(options)",
-          "summary": "Resolve ast-grep binary shipped with the dev-tools plugin."
+          "summary": "Resolve ast-grep binary shipped with the dev-tools plugin.",
+          "moduleId": "scripts-lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
         }
-      ]
+      ],
+      "moduleId": "scripts-lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
     },
     {
       "path": "skills/systematic-debugging/condition-based-waiting-example.ts",
@@ -663,23 +1177,1058 @@
           "kind": "function",
           "line": 20,
           "signature": "export function waitForEvent( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, timeoutMs = 5000 ): Promise<LaceEvent>",
-          "summary": "Wait for a specific event type to appear in thread Example: await waitForEvent(threadManager, agentThreadId, 'TOOL_RESUL"
+          "summary": "Wait for a specific event type to appear in thread Example: await waitForEvent(threadManager, agentThreadId, 'TOOL_RESUL",
+          "moduleId": "skills",
+          "moduleName": "skills",
+          "moduleRoot": "skills",
+          "planningModule": "docs/agent-plan/context/modules/skills.md"
         },
         {
           "name": "waitForEventCount",
           "kind": "function",
           "line": 60,
           "signature": "export function waitForEventCount( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, count: number, timeoutMs = 5000 ): Promise<LaceEvent[]>",
-          "summary": "Wait for a specific number of events of a given type Example: // Wait for 2 AGENT_MESSAGE events (initial response + con"
+          "summary": "Wait for a specific number of events of a given type Example: // Wait for 2 AGENT_MESSAGE events (initial response + con",
+          "moduleId": "skills",
+          "moduleName": "skills",
+          "moduleRoot": "skills",
+          "planningModule": "docs/agent-plan/context/modules/skills.md"
         },
         {
           "name": "waitForEventMatch",
           "kind": "function",
           "line": 111,
           "signature": "export function waitForEventMatch( threadManager: ThreadManager, threadId: string, predicate: (event: LaceEvent) => boolean, description: string, timeoutMs = 5000 ): Promise<LaceEvent>",
-          "summary": "Wait for an event matching a custom predicate Useful when you need to check event data, not just type Example: // Wait f"
+          "summary": "Wait for an event matching a custom predicate Useful when you need to check event data, not just type Example: // Wait f",
+          "moduleId": "skills",
+          "moduleName": "skills",
+          "moduleRoot": "skills",
+          "planningModule": "docs/agent-plan/context/modules/skills.md"
         }
-      ]
+      ],
+      "moduleId": "skills",
+      "moduleName": "skills",
+      "moduleRoot": "skills",
+      "planningModule": "docs/agent-plan/context/modules/skills.md"
+    }
+  ],
+  "endpoints": [],
+  "moduleCount": 8,
+  "modules": [
+    {
+      "id": "hooks",
+      "name": "hooks",
+      "root": "hooks",
+      "planningModule": "docs/agent-plan/context/modules/hooks.md",
+      "fileCount": 0,
+      "symbolCount": 0,
+      "endpointCount": 0
+    },
+    {
+      "id": "opencode",
+      "name": ".opencode",
+      "root": ".opencode",
+      "planningModule": "docs/agent-plan/context/modules/opencode.md",
+      "fileCount": 1,
+      "symbolCount": 1,
+      "endpointCount": 0
+    },
+    {
+      "id": "scripts",
+      "name": "scripts",
+      "root": "scripts",
+      "planningModule": "docs/agent-plan/context/modules/scripts.md",
+      "fileCount": 0,
+      "symbolCount": 0,
+      "endpointCount": 0
+    },
+    {
+      "id": "scripts-ai-plan",
+      "name": "ai-plan",
+      "root": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md",
+      "fileCount": 27,
+      "symbolCount": 68,
+      "endpointCount": 0
+    },
+    {
+      "id": "scripts-code-map",
+      "name": "code-map",
+      "root": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md",
+      "fileCount": 6,
+      "symbolCount": 9,
+      "endpointCount": 0
+    },
+    {
+      "id": "scripts-lib",
+      "name": "lib",
+      "root": "scripts/lib",
+      "planningModule": "docs/agent-plan/context/modules/scripts-lib.md",
+      "fileCount": 2,
+      "symbolCount": 2,
+      "endpointCount": 0
+    },
+    {
+      "id": "skills",
+      "name": "skills",
+      "root": "skills",
+      "planningModule": "docs/agent-plan/context/modules/skills.md",
+      "fileCount": 1,
+      "symbolCount": 3,
+      "endpointCount": 0
+    },
+    {
+      "id": "test",
+      "name": "test",
+      "root": "test",
+      "planningModule": "docs/agent-plan/context/modules/test.md",
+      "fileCount": 0,
+      "symbolCount": 0,
+      "endpointCount": 0
+    }
+  ],
+  "symbols": [
+    {
+      "file": ".opencode/plugins/dev-tools.js",
+      "name": "DevToolsPlugin",
+      "kind": "const",
+      "line": 49,
+      "signature": "export const DevToolsPlugin = async ({ client, directory })",
+      "moduleId": "opencode",
+      "moduleName": ".opencode",
+      "moduleRoot": ".opencode",
+      "planningModule": "docs/agent-plan/context/modules/opencode.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/index.mjs",
+      "name": "ADAPTERS",
+      "kind": "const",
+      "line": 13,
+      "signature": "export const ADAPTERS = [ csharpAdapter, pythonAdapter, typescriptAdapter, ]; /** * Select an adapter for the repo. `forcedId` (from config) wins; otherwise the",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/index.mjs",
+      "name": "selectAdapter",
+      "kind": "function",
+      "line": 27,
+      "signature": "export function selectAdapter(repoRoot, forcedId)",
+      "summary": "Select an adapter for the repo.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/python.mjs",
+      "name": "matches",
+      "kind": "function",
+      "line": 69,
+      "signature": "export function matches(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/python.mjs",
+      "name": "extract",
+      "kind": "function",
+      "line": 86,
+      "signature": "export function extract(repoRoot, files)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/typescript.mjs",
+      "name": "matches",
+      "kind": "function",
+      "line": 83,
+      "signature": "export function matches(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/adapters/typescript.mjs",
+      "name": "extract",
+      "kind": "function",
+      "line": 103,
+      "signature": "export function extract(repoRoot, files)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "DEFAULT_DOC_CANDIDATES",
+      "kind": "const",
+      "line": 5,
+      "signature": "export const DEFAULT_DOC_CANDIDATES",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "CODE_ROOT_CANDIDATES",
+      "kind": "const",
+      "line": 22,
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "API_ROUTE_CANDIDATES",
+      "kind": "const",
+      "line": 38,
+      "signature": "export const API_ROUTE_CANDIDATES = [",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "MODULE_GLOB_CANDIDATES",
+      "kind": "const",
+      "line": 49,
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "readProjectName",
+      "kind": "function",
+      "line": 60,
+      "signature": "export function readProjectName(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "detectCodeMapRoots",
+      "kind": "function",
+      "line": 80,
+      "signature": "export function detectCodeMapRoots(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "detectApiRoutes",
+      "kind": "function",
+      "line": 100,
+      "signature": "export function detectApiRoutes(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/auto-detect.mjs",
+      "name": "detectSrcChildModules",
+      "kind": "function",
+      "line": 147,
+      "signature": "export function detectSrcChildModules(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/bootstrap.mjs",
+      "name": "bootstrapRepo",
+      "kind": "function",
+      "line": 78,
+      "signature": "export function bootstrapRepo(repoRoot, options = {})",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/build.mjs",
+      "name": "buildAiPlanModel",
+      "kind": "function",
+      "line": 38,
+      "signature": "export function buildAiPlanModel(repoRoot, config, codeMapInput)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/config.mjs",
+      "name": "loadAiPlanConfig",
+      "kind": "function",
+      "line": 44,
+      "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/config.mjs",
+      "name": "validateRequiredDocs",
+      "kind": "function",
+      "line": 127,
+      "signature": "export function validateRequiredDocs(repoRoot, config)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/config.mjs",
+      "name": "resolveDocPath",
+      "kind": "function",
+      "line": 149,
+      "signature": "export function resolveDocPath(repoRoot, candidates)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/config.mjs",
+      "name": "writeStarterConfigs",
+      "kind": "function",
+      "line": 162,
+      "signature": "export function writeStarterConfigs(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/derive-modules.mjs",
+      "name": "deriveModules",
+      "kind": "function",
+      "line": 55,
+      "signature": "export function deriveModules(repoRoot, fileGraph, options = {})",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/metrics.mjs",
+      "name": "internalExternalWeights",
+      "kind": "function",
+      "line": 19,
+      "signature": "export function internalExternalWeights(edges, assign)",
+      "summary": "Internal vs.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/metrics.mjs",
+      "name": "internalExternalRatio",
+      "kind": "function",
+      "line": 43,
+      "signature": "export function internalExternalRatio(edges, assign)",
+      "summary": "internal / (internal + external).",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/metrics.mjs",
+      "name": "modularity",
+      "kind": "function",
+      "line": 56,
+      "signature": "export function modularity(edges, assign)",
+      "summary": "Newman modularity Q for an assignment (weighted, undirected).",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/metrics.mjs",
+      "name": "cohesion",
+      "kind": "function",
+      "line": 97,
+      "signature": "export function cohesion(edges, assign, moduleId)",
+      "summary": "Cohesion of one module: internal weight / (internal + boundary).",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/metrics.mjs",
+      "name": "coupling",
+      "kind": "function",
+      "line": 121,
+      "signature": "export function coupling(edges, assign, modA, modB)",
+      "summary": "Coupling between two modules: total cross-edge weight between them.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "name": "DEFAULT_EXCLUDE",
+      "kind": "const",
+      "line": 8,
+      "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "name": "topLevelAreas",
+      "kind": "function",
+      "line": 24,
+      "signature": "export function topLevelAreas(files, exclude = DEFAULT_EXCLUDE)",
+      "summary": "Immediate child directories of the repo root that contain a file (e.g.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "name": "filesInArea",
+      "kind": "function",
+      "line": 43,
+      "signature": "export function filesInArea(files, area, exclude = DEFAULT_EXCLUDE)",
+      "summary": "Files under `area`, dropping any whose path crosses an excluded directory.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "name": "maxDepth",
+      "kind": "function",
+      "line": 55,
+      "signature": "export function maxDepth(areaFiles)",
+      "summary": "Deepest directory nesting below the area (excluding the filename).",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "name": "partitionAtDepth",
+      "kind": "function",
+      "line": 71,
+      "signature": "export function partitionAtDepth(areaFiles, area, depth)",
+      "summary": "Assign each area file to the module rooted `depth` segments below the area.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/detection/partitions.mjs",
+      "name": "sizeByModule",
+      "kind": "function",
+      "line": 87,
+      "signature": "export function sizeByModule(partition)",
+      "summary": "File count per module root for an assignment.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/discover-modules.mjs",
+      "name": "discoverModules",
+      "kind": "function",
+      "line": 30,
+      "signature": "export function discoverModules(repoRoot, config, stack)",
+      "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/discover-modules.mjs",
+      "name": "parseNavEntries",
+      "kind": "function",
+      "line": 376,
+      "signature": "export function parseNavEntries(navPath)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/docs.mjs",
+      "name": "loadProjectBrief",
+      "kind": "function",
+      "line": 9,
+      "signature": "export function loadProjectBrief(repoRoot, config)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/docs.mjs",
+      "name": "extractConventionsFromTechStack",
+      "kind": "function",
+      "line": 48,
+      "signature": "export function extractConventionsFromTechStack(techStackExcerpt)",
+      "summary": "Pull bullet lines from tech-stack excerpt for planner conventions.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/doctor.mjs",
+      "name": "checkRuntimeReadiness",
+      "kind": "function",
+      "line": 151,
+      "signature": "export function checkRuntimeReadiness(repoRoot = process.cwd())",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/doctor.mjs",
+      "name": "runDoctor",
+      "kind": "function",
+      "line": 195,
+      "signature": "export function runDoctor(repoRoot, options = {})",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/doctor.mjs",
+      "name": "formatDoctorReport",
+      "kind": "function",
+      "line": 257,
+      "signature": "export function formatDoctorReport(report)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/embed.mjs",
+      "name": "renderModuleMapTable",
+      "kind": "function",
+      "line": 15,
+      "signature": "export function renderModuleMapTable(modules)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/embed.mjs",
+      "name": "embedModuleMap",
+      "kind": "function",
+      "line": 85,
+      "signature": "export function embedModuleMap(repoRoot, tableMarkdown)",
+      "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root).",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/logger.mjs",
+      "name": "createLogger",
+      "kind": "function",
+      "line": 57,
+      "signature": "export function createLogger(bindings = {})",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/logger.mjs",
+      "name": "log",
+      "kind": "const",
+      "line": 87,
+      "signature": "export const log = createLogger();",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/migrate.mjs",
+      "name": "runMigrate",
+      "kind": "function",
+      "line": 161,
+      "signature": "export function runMigrate(repoRoot)",
+      "summary": "Migrate a repo from the legacy docs layout to docs/agent-plan/.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/migrate.mjs",
+      "name": "formatMigrateReport",
+      "kind": "function",
+      "line": 211,
+      "signature": "export function formatMigrateReport(actions)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-deps.mjs",
+      "name": "buildModuleEdges",
+      "kind": "function",
+      "line": 13,
+      "signature": "export function buildModuleEdges(repoRoot, modules, config, stack)",
+      "summary": "adapter graph; falls back to a fresh extraction when omitted.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "detectEntryPoints",
+      "kind": "function",
+      "line": 45,
+      "signature": "export function detectEntryPoints(repoRoot, moduleRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "detectTestRoots",
+      "kind": "function",
+      "line": 88,
+      "signature": "export function detectTestRoots(repoRoot, moduleRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "detectConfigFiles",
+      "kind": "function",
+      "line": 123,
+      "signature": "export function detectConfigFiles(repoRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "detectPublicSurface",
+      "kind": "function",
+      "line": 152,
+      "signature": "export function detectPublicSurface(codeMapFiles, moduleRoot)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "inferFlows",
+      "kind": "function",
+      "line": 191,
+      "signature": "export function inferFlows(repoRoot, allModules, mod)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "inferCapabilities",
+      "kind": "function",
+      "line": 246,
+      "signature": "export function inferCapabilities(repoRoot, mod, enrichment)",
+      "summary": "Infers a prose description, capability bullets, and does-not-own entries from a module's name, routes, entry points, and",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "inferOutOfScope",
+      "kind": "function",
+      "line": 326,
+      "signature": "export function inferOutOfScope(allModules, mod)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/module-enrichment.mjs",
+      "name": "enrichModule",
+      "kind": "function",
+      "line": 351,
+      "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/node-organization.mjs",
+      "name": "NODE_ORGANIZATION_CATEGORIES",
+      "kind": "const",
+      "line": 14,
+      "signature": "export const NODE_ORGANIZATION_CATEGORIES = [",
+      "summary": "Display order for the rendered organization view.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/node-organization.mjs",
+      "name": "nodeOrganizationRole",
+      "kind": "function",
+      "line": 63,
+      "signature": "export function nodeOrganizationRole(mod)",
+      "summary": "Assign a single Node/TypeScript organizational role to a module.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/node-organization.mjs",
+      "name": "classifyNodeOrganization",
+      "kind": "function",
+      "line": 95,
+      "signature": "export function classifyNodeOrganization(modules)",
+      "summary": "Group modules by their Node/TypeScript role in canonical display order, omitting roles with no modules.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/pin.mjs",
+      "name": "pinModule",
+      "kind": "function",
+      "line": 37,
+      "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
+      "summary": "Eject a derived module into `modules.pinned[]`.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/pin.mjs",
+      "name": "unpinModule",
+      "kind": "function",
+      "line": 74,
+      "signature": "export function unpinModule(repoRoot, moduleId)",
+      "summary": "Remove a pin by id or root, returning its subtree to auto-derivation.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/project-root.mjs",
+      "name": "findProjectRoot",
+      "kind": "function",
+      "line": 8,
+      "signature": "export function findProjectRoot(startDir = process.cwd())",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/render.mjs",
+      "name": "renderIndex",
+      "kind": "function",
+      "line": 8,
+      "signature": "export function renderIndex(model, config)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/render.mjs",
+      "name": "renderModuleScope",
+      "kind": "function",
+      "line": 124,
+      "signature": "export function renderModuleScope(model, mod)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/repo-files.mjs",
+      "name": "WALK_SKIP",
+      "kind": "const",
+      "line": 9,
+      "summary": "test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used as test data are not detected as the paren",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/repo-files.mjs",
+      "name": "listRepoFiles",
+      "kind": "function",
+      "line": 31,
+      "signature": "export function listRepoFiles(repoRoot, limit = 20000)",
+      "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped).",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/routes.mjs",
+      "name": "discoverHttpRoutes",
+      "kind": "function",
+      "line": 25,
+      "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/stack-graph.mjs",
+      "name": "extractStackGraph",
+      "kind": "function",
+      "line": 20,
+      "signature": "export function extractStackGraph(repoRoot, config)",
+      "summary": "Select the stack-graph adapter for the repo and run a single extraction.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/stack-profiles/index.mjs",
+      "name": "detectStackModules",
+      "kind": "function",
+      "line": 245,
+      "signature": "export function detectStackModules(repoRoot, config)",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/summarize.mjs",
+      "name": "summarizeDescription",
+      "kind": "function",
+      "line": 15,
+      "signature": "export function summarizeDescription(description, fallbackId, lineLen = 120, maxLines = 2)",
+      "summary": "Builds the module summary shown in the index and embedded module-map tables.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/code-map/lib/code-map-config.mjs",
+      "name": "DEFAULT_SCAN_ROOTS",
+      "kind": "const",
+      "line": 6,
+      "signature": "export const DEFAULT_SCAN_ROOTS = ['src', 'native']; /** @type",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/code-map-config.mjs",
+      "name": "SUPPORTED_LANGUAGES",
+      "kind": "const",
+      "line": 9,
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/code-map-config.mjs",
+      "name": "SOURCE_EXTENSIONS",
+      "kind": "const",
+      "line": 19,
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/code-map-config.mjs",
+      "name": "loadCodeMapConfig",
+      "kind": "function",
+      "line": 57,
+      "signature": "export function loadCodeMapConfig(repoRoot)",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/comment-extractor.mjs",
+      "name": "extractDocComment",
+      "kind": "function",
+      "line": 49,
+      "signature": "export function extractDocComment(filePath, lineNumber)",
+      "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/endpoint-extractor.mjs",
+      "name": "extractEndpoints",
+      "kind": "function",
+      "line": 54,
+      "signature": "export function extractEndpoints(repoRoot, files)",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/file-header-comment.mjs",
+      "name": "extractFileHeaderComment",
+      "kind": "function",
+      "line": 117,
+      "signature": "export function extractFileHeaderComment(content)",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/module-linker.mjs",
+      "name": "annotateCodeMapWithModules",
+      "kind": "function",
+      "line": 18,
+      "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
+      "summary": "Add module ownership to a code-map document and expose a flat symbol index.",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/code-map/lib/signature-extractor.mjs",
+      "name": "extractSignature",
+      "kind": "function",
+      "line": 17,
+      "signature": "export function extractSignature(filePath, lineNumber)",
+      "summary": "Extracts the declaration signature starting at the given line.",
+      "moduleId": "scripts-code-map",
+      "moduleName": "code-map",
+      "moduleRoot": "scripts/code-map",
+      "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md"
+    },
+    {
+      "file": "scripts/lib/plugin-root.mjs",
+      "name": "findPluginRoot",
+      "kind": "function",
+      "line": 8,
+      "signature": "export function findPluginRoot(startDir)",
+      "moduleId": "scripts-lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
+    },
+    {
+      "file": "scripts/lib/resolve-ast-grep.mjs",
+      "name": "resolveAstGrepBinary",
+      "kind": "function",
+      "line": 73,
+      "signature": "export function resolveAstGrepBinary(options)",
+      "summary": "Resolve ast-grep binary shipped with the dev-tools plugin.",
+      "moduleId": "scripts-lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
+    },
+    {
+      "file": "skills/systematic-debugging/condition-based-waiting-example.ts",
+      "name": "waitForEvent",
+      "kind": "function",
+      "line": 20,
+      "signature": "export function waitForEvent( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, timeoutMs = 5000 ): Promise<LaceEvent>",
+      "summary": "Wait for a specific event type to appear in thread Example: await waitForEvent(threadManager, agentThreadId, 'TOOL_RESUL",
+      "moduleId": "skills",
+      "moduleName": "skills",
+      "moduleRoot": "skills",
+      "planningModule": "docs/agent-plan/context/modules/skills.md"
+    },
+    {
+      "file": "skills/systematic-debugging/condition-based-waiting-example.ts",
+      "name": "waitForEventCount",
+      "kind": "function",
+      "line": 60,
+      "signature": "export function waitForEventCount( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, count: number, timeoutMs = 5000 ): Promise<LaceEvent[]>",
+      "summary": "Wait for a specific number of events of a given type Example: // Wait for 2 AGENT_MESSAGE events (initial response + con",
+      "moduleId": "skills",
+      "moduleName": "skills",
+      "moduleRoot": "skills",
+      "planningModule": "docs/agent-plan/context/modules/skills.md"
+    },
+    {
+      "file": "skills/systematic-debugging/condition-based-waiting-example.ts",
+      "name": "waitForEventMatch",
+      "kind": "function",
+      "line": 111,
+      "signature": "export function waitForEventMatch( threadManager: ThreadManager, threadId: string, predicate: (event: LaceEvent) => boolean, description: string, timeoutMs = 5000 ): Promise<LaceEvent>",
+      "summary": "Wait for an event matching a custom predicate Useful when you need to check event data, not just type Example: // Wait f",
+      "moduleId": "skills",
+      "moduleName": "skills",
+      "moduleRoot": "skills",
+      "planningModule": "docs/agent-plan/context/modules/skills.md"
     }
   ]
 }

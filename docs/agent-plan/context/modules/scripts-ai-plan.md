@@ -28,7 +28,7 @@
 | `detectApiRoutes` | `export function detectApiRoutes(repoRoot)` |  |
 | `detectSrcChildModules` | `export function detectSrcChildModules(repoRoot)` |  |
 | `bootstrapRepo` | `export function bootstrapRepo(repoRoot, options = {})` |  |
-| `buildAiPlanModel` | `export function buildAiPlanModel(repoRoot, config, codeMapFiles)` |  |
+| `buildAiPlanModel` | `export function buildAiPlanModel(repoRoot, config, codeMapInput)` |  |
 | `loadAiPlanConfig` | `export function loadAiPlanConfig(repoRoot, opts = {})` |  |
 | `validateRequiredDocs` | `export function validateRequiredDocs(repoRoot, config)` |  |
 | `resolveDocPath` | `export function resolveDocPath(repoRoot, candidates)` |  |

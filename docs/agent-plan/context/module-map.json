@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-14T17:07:31.741Z",
+  "generated": "2026-06-14T17:30:29.982Z",
   "project": {
     "name": "dev-tools",
     "docs": {
@@ -75,7 +75,7 @@
       "dependsOn": [],
       "usedBy": [],
       "routeCount": 0,
-      "symbolCount": 74,
+      "symbolCount": 79,
       "planningModule": "docs/agent-plan/context/modules/scripts.md",
       "description": "`scripts` — 1 file under `scripts/`.",
       "capabilities": [
@@ -95,7 +95,7 @@
         "test"
       ],
       "routeCount": 0,
-      "symbolCount": 65,
+      "symbolCount": 68,
       "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md",
       "description": "`ai-plan` — 33 files under `scripts/ai-plan/`.",
       "capabilities": [
@@ -117,7 +117,7 @@
         "test"
       ],
       "routeCount": 0,
-      "symbolCount": 7,
+      "symbolCount": 9,
       "planningModule": "docs/agent-plan/context/modules/scripts-code-map.md",
       "description": "`code-map` — 7 files under `scripts/code-map/`.",
       "capabilities": [
@@ -207,6 +207,6 @@
   "stats": {
     "moduleCount": 8,
     "routeCount": 0,
-    "codeMapSymbols": 78
+    "codeMapSymbols": 83
   }
 }

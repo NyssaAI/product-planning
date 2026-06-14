@@ -21,7 +21,9 @@
 |--------|-----------|---------|
 | `loadCodeMapConfig` | `export function loadCodeMapConfig(repoRoot)` |  |
 | `extractDocComment` | `export function extractDocComment(filePath, lineNumber)` | Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `"""`) and extracts |
+| `extractEndpoints` | `export function extractEndpoints(repoRoot, files)` |  |
 | `extractFileHeaderComment` | `export function extractFileHeaderComment(content)` |  |
+| `annotateCodeMapWithModules` | `export function annotateCodeMapWithModules(codeMap, modules, options)` | Add module ownership to a code-map document and expose a flat symbol index. |
 | `extractSignature` | `export function extractSignature(filePath, lineNumber)` | Extracts the declaration signature starting at the given line. |
 | `DEFAULT_SCAN_ROOTS` | `export const DEFAULT_SCAN_ROOTS = ['src', 'native']; /** @type` |  |
 
@@ -52,7 +54,9 @@
 
 - `scripts/code-map/lib/code-map-config.mjs`: DEFAULT_SCAN_ROOTS, SUPPORTED_LANGUAGES, SOURCE_EXTENSIONS, loadCodeMapConfig
 - `scripts/code-map/lib/comment-extractor.mjs`: extractDocComment
+- `scripts/code-map/lib/endpoint-extractor.mjs`: extractEndpoints
 - `scripts/code-map/lib/file-header-comment.mjs`: extractFileHeaderComment
+- `scripts/code-map/lib/module-linker.mjs`: annotateCodeMapWithModules
 - `scripts/code-map/lib/signature-extractor.mjs`: extractSignature
 
 ## After planning
