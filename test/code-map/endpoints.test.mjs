@@ -85,6 +85,89 @@ app.MapMcp("/mcp");
   assert.equal(byKey.has('mcp-transport::/mcp:Api/Program.cs'), true);
 });
 
+test('extractEndpoints maps Next.js App Router route handlers', () => {
+  const root = repo();
+  write(
+    root,
+    'src/app/api/health/route.ts',
+    `import { NextResponse } from 'next/server';
+export async function GET() {
+  return NextResponse.json({ ok: true });
+}
+export async function POST(request) {
+  return NextResponse.json({ ok: true });
+}
+`
+  );
+  write(
+    root,
+    'src/app/api/users/[id]/route.js',
+    `export async function GET(_req, { params }) {
+  return Response.json({ id: params.id });
+}
+export const DELETE = async () => Response.json({});
+`
+  );
+  write(
+    root,
+    'src/app/route.ts',
+    `export function GET() {
+  return new Response('root');
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, [
+    'src/app/api/health/route.ts',
+    'src/app/api/users/[id]/route.js',
+    'src/app/route.ts',
+  ]);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  assert.equal(byKey.has('http:GET:/api/health:src/app/api/health/route.ts'), true);
+  assert.equal(byKey.has('http:POST:/api/health:src/app/api/health/route.ts'), true);
+  // Dynamic segment [id] becomes :id; both function and const-arrow exports detected.
+  assert.equal(byKey.has('http:GET:/api/users/:id:src/app/api/users/[id]/route.js'), true);
+  assert.equal(byKey.has('http:DELETE:/api/users/:id:src/app/api/users/[id]/route.js'), true);
+  // A route handler directly under app/ maps to '/'.
+  assert.equal(byKey.has('http:GET:/:src/app/route.ts'), true);
+
+  const health = byKey.get('http:GET:/api/health:src/app/api/health/route.ts');
+  assert.equal(health.framework, 'nextjs-app-router');
+});
+
+test('extractEndpoints strips route groups and maps catch-all App Router segments', () => {
+  const root = repo();
+  write(
+    root,
+    'src/app/(admin)/api/files/[...slug]/route.ts',
+    `export async function GET() { return new Response(''); }
+`
+  );
+
+  const endpoints = extractEndpoints(root, [
+    'src/app/(admin)/api/files/[...slug]/route.ts',
+  ]);
+  const found = endpoints.find((e) => e.method === 'GET');
+  // Route group (admin) is omitted; catch-all [...slug] becomes :slug*.
+  assert.equal(found.path, '/api/files/:slug*');
+});
+
+test('extractEndpoints ignores non-route exports under app/', () => {
+  const root = repo();
+  write(
+    root,
+    'src/app/dashboard/page.tsx',
+    `export default function Page() { return null; }
+export function GET() { return null; }
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['src/app/dashboard/page.tsx']);
+  // page.tsx is not a route handler file, so its GET export is not an endpoint.
+  assert.equal(endpoints.filter((e) => e.kind === 'http').length, 0);
+});
+
 test('extractEndpoints maps Python and C# MCP tool declarations', () => {
   const root = repo();
   write(

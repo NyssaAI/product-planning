@@ -13,6 +13,12 @@ import path from 'node:path';
 
 const JS_HTTP_RE =
   /\b(?:app|router|server)\.(get|post|put|delete|patch|head|options)\(\s*['"`]([^'"`]+)['"`]\s*(?:,\s*([A-Za-z_$][\w$]*))?/g;
+// Next.js App Router route handlers: a `route.{js,ts,…}` file anywhere under an
+// `app/` directory, exporting one function per HTTP method.
+const NEXT_ROUTE_FILE_RE =
+  /(?:^|\/)app\/(?:.*\/)?route\.(?:js|jsx|ts|tsx|mjs|cjs)$/;
+const NEXT_METHOD_EXPORT_RE =
+  /export\s+(?:async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s*\(|export\s+const\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s*=/g;
 const JS_MCP_RE =
   /\b(?:server|mcp)\.(tool|resource|prompt)\(\s*['"`]([^'"`]+)['"`]\s*(?:,\s*['"`]([^'"`]+)['"`])?/g;
 const PY_HTTP_RE =
@@ -69,7 +75,10 @@ export function extractEndpoints(repoRoot, files) {
 function extractEndpointsFromText(file, text) {
   const ext = path.extname(file).toLowerCase();
   if (['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(ext)) {
-    return extractJavaScriptEndpoints(file, text);
+    return [
+      ...extractJavaScriptEndpoints(file, text),
+      ...extractNextAppRouterEndpoints(file, text),
+    ];
   }
   if (ext === '.py') {
     return extractPythonEndpoints(file, text);
@@ -115,6 +124,78 @@ function extractJavaScriptEndpoints(file, text) {
   }
 
   return endpoints;
+}
+
+/**
+ * Extracts Next.js App Router endpoints. A route handler is a `route.*` file
+ * under an `app/` directory; each exported HTTP-method function (or const arrow)
+ * is one endpoint, and the URL path is derived from the directory layout.
+ *
+ * @param {string} file
+ * @param {string} text
+ * @returns {Endpoint[]}
+ */
+function extractNextAppRouterEndpoints(file, text) {
+  if (!NEXT_ROUTE_FILE_RE.test(file)) {
+    return [];
+  }
+  const routePath = nextRoutePath(file);
+  /** @type {Endpoint[]} */
+  const endpoints = [];
+  for (const match of text.matchAll(NEXT_METHOD_EXPORT_RE)) {
+    const method = match[1] ?? match[2];
+    endpoints.push({
+      kind: 'http',
+      method,
+      path: routePath,
+      file,
+      line: lineAt(text, match.index ?? 0),
+      framework: 'nextjs-app-router',
+      confidence: 'high',
+    });
+  }
+  return endpoints;
+}
+
+/**
+ * Derives the URL path for a Next.js App Router route file from its directory
+ * layout: route groups `(group)` and parallel-route slots `@slot` are dropped,
+ * `[param]` becomes `:param`, `[...param]` becomes `:param*`, and
+ * `[[...param]]` becomes `:param?`.
+ *
+ * @param {string} file repo-relative, forward-slash path ending in `/route.*`
+ * @returns {string}
+ */
+function nextRoutePath(file) {
+  const match = file.match(/(?:^|\/)app\/(.*)route\.[^/]+$/);
+  const inner = match ? match[1] : '';
+  const segments = inner
+    .split('/')
+    .filter(Boolean)
+    .filter((seg) => !/^\(.*\)$/.test(seg))
+    .filter((seg) => !seg.startsWith('@'))
+    .map(nextRouteSegment);
+  return `/${segments.join('/')}`;
+}
+
+/**
+ * @param {string} seg
+ * @returns {string}
+ */
+function nextRouteSegment(seg) {
+  const optionalCatchAll = seg.match(/^\[\[\.\.\.(.+)\]\]$/);
+  if (optionalCatchAll) {
+    return `:${optionalCatchAll[1]}?`;
+  }
+  const catchAll = seg.match(/^\[\.\.\.(.+)\]$/);
+  if (catchAll) {
+    return `:${catchAll[1]}*`;
+  }
+  const dynamic = seg.match(/^\[(.+)\]$/);
+  if (dynamic) {
+    return `:${dynamic[1]}`;
+  }
+  return seg;
 }
 
 /**
