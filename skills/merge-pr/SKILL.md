@@ -69,7 +69,7 @@ gh pr diff <PR>     # full unified diff
 
 ## Step 3: Check (a) — Feature reversion
 
-1. Read `docs/features.md`. Collect features with status `active` or `complete` — the **protected set**.
+1. Read `docs/features.md`. From the `## Inventory` list, collect features marked delivered (checked, `- [x] F-NNN: …`) — the **protected set**. Unchecked features are not yet built and cannot be reverted.
 2. Scan the diff for deleted files and large deletion blocks (20+ consecutive `-` lines in a single file):
    ```bash
    gh pr diff <PR> --name-only          # full file list

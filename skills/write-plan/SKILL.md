@@ -38,7 +38,7 @@ When the project has source code and `docs/product.md` / `docs/roadmap.md` / `do
 
 1. **REQUIRED SUB-SKILL:** `dev-tools:using-ai-plan`
 2. If `docs/agent-plan/context/index.md` is missing or module files are outdated, run generate in the **project repo** (see using-ai-plan) before writing tasks — do not plan against stale context
-3. Read `docs/agent-plan/context/index.md` now (Read tool) — pick **one** module matching the spec's **Primary module** (from design-spec's Module scope section) or the spec / roadmap item if no module scope section
+3. Read `docs/agent-plan/context/index.md` now (Read tool) — load the module(s) matching the spec's **Primary modules** (from design-spec's Module scope section), or the spec / roadmap item if no module scope section
 4. Read `docs/agent-plan/context/modules/<module-id>.md` now (Read tool). Do not summarize or skip — the module's architectural picture (capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots, entry points) supplies file paths and task order. It complements the feature **spec**, it does not replace it
 5. Order tasks respecting module dependencies (leaves or dependency-safe order per module-map edges)
 6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `code-map.json`, or other module files during planning
@@ -58,7 +58,7 @@ If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip 
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during design-spec. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
-If the spec's **Module scope** lists more than one primary module without justification, push back: ask whether to split into separate specs/plans scoped to one module each.
+If the spec's **Module scope** lists multiple primary modules, confirm each is genuinely required to deliver the behavior (not a dependency merely called). If some are independent slices that could ship on their own, push back: suggest splitting into separate specs/plans. Keep the set minimal — but a coherent behavior spanning modules stays one plan.
 
 ## File Structure
 

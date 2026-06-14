@@ -9,7 +9,7 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 
 **Announce at start:** "I'm using the design-spec skill to refine this into a spec."
 
-**Inputs:** a new idea from conversation, OR a backlog item at `docs/agent-plan/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`), OR a bug detail file at `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`, OR a use-case file at `docs/use-cases/f{n}-u{n}.md`.
+**Inputs:** a new idea from conversation, OR a backlog item at `docs/agent-plan/backlog/{id}/{id}-detail.md` (from `dev-tools:add-backlog`), OR a bug detail file at `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`, OR a use-case file at `docs/use-cases/u-{nnn}-<slug>.md`.
 
 ## Purpose
 
@@ -56,12 +56,12 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a bug detail file, read it first (see Bug detail input below); if starting from a use-case file, read it plus the linked feature row (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item. **When the repo has source code, load planning context now — these steps are not optional:**
+1. **Load input and explore project context** — if starting from a backlog item, read its detail file first (see Backlog item input below); if starting from a bug detail file, read it first (see Bug detail input below); if starting from a use-case file, read it plus the features it lists (see Use-case input below); check files, docs, recent commits; read `docs/roadmap.md` when implementing a roadmap item. **When the repo has source code, load planning context now — these steps are not optional:**
    1. Check for `docs/agent-plan/context/index.md`
    2. If missing: run `npm run ai-plan` (or the plugin generate scripts) now, before continuing
    3. If present: check staleness — if `index.md` is older than the most recently modified source file, run `npm run ai-plan` before continuing
    4. Read `index.md` now (use the Read tool). Do not summarize or skip. The module capability table is your routing context for the whole design.
-   5. When the primary module is identified (see Single module focus below), read `docs/agent-plan/context/modules/<id>.md` now (Read tool) — before the first clarifying question, not later. Do not load other module files.
+   5. When the primary module set is identified (see Minimal module scope below), read each in-scope `docs/agent-plan/context/modules/<id>.md` now (Read tool) — before the first clarifying question, not later. Load only the modules in scope, not the whole graph.
 2. **Surface relevant standards** — detect tech stack, read applicable dev-tools (see Standards Surfacing below)
 3. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
@@ -170,14 +170,14 @@ When a bug detail file is the input, you MUST:
 
 ## Use-case input
 
-Use when the user points at a path under `docs/use-cases/` or names a use-case id (e.g. `F1-U1`).
+Use when the user points at a path under `docs/use-cases/` or names a use-case id (e.g. `U-001`).
 
-**Use-case file path:** `docs/use-cases/f{n}-u{n}.md` — frontmatter links it to a feature row in `docs/features.md`.
+**Use-case file path:** `docs/use-cases/u-{nnn}-<slug>.md`. A use case spans features: its `features:` frontmatter is a required list of the `F-` ids it requires (`docs/features.md`).
 
 **When a use-case file is the input, you MUST:**
 
 1. Read the use-case file (summary, process, success criteria)
-2. Look up the linked feature row in `docs/features.md` (the `feature:` frontmatter key)
+2. Look up **every** feature in the `features:` list in `docs/features.md` — read each one's inventory entry and definition (a use case typically spans several)
 3. Read `docs/product.md` for product context
 4. Announce: "Using use-case `{use-case-id}` as input for this design."
 5. Carry the use-case **success criteria** forward as spec **acceptance criteria**; refine during design if needed, but get user approval before changing meaning
@@ -186,36 +186,37 @@ Use when the user points at a path under `docs/use-cases/` or names a use-case i
    ```markdown
    ## Source
 
-   **Use case:** `docs/use-cases/f{n}-u{n}.md` ({use-case-name})
-   **Feature:** {feature-id} — {feature-name} (`docs/features.md`)
+   **Use case:** `docs/use-cases/u-{nnn}-<slug>.md` ({use-case-name})
+   **Features:** {comma-separated feature ids from the `features:` list} (`docs/features.md`)
    ```
 
 **Use-case files are input, not output.** Do not edit the use-case file during design unless the user explicitly asks.
 
-## Single module focus
+## Minimal module scope
 
-**Default:** scope each design to **one primary module** from `docs/agent-plan/context/index.md` when the repo has code.
+**Default:** scope each design to the **minimum set of modules needed to implement the desired behavior** — often one, but a cross-cutting use case (one that lists several features) may genuinely require more. Prefer fewer; never include a module you won't change.
 
-**During design, encourage your human partner to narrow work to a single module whenever possible.** One module → one spec → one plan → focused implementation.
+**During design, drive toward the smallest module set that delivers the behavior.** Fewer modules → tighter spec → focused plan. But do **not** split one coherent behavior across specs just to hit "one module."
 
 **When exploring the idea:**
 
-1. Use `index.md` and `module-map.json` to identify which module owns this work
-2. If the request clearly spans multiple modules, **propose splitting** into separate specs (one per module) before designing — each gets its own spec → plan → implementation cycle
-3. If splitting is impractical, designate exactly one **primary module** and list only **dependency touch points** in other modules (interfaces, not full design in those modules)
-4. Ask explicitly when ambiguous: "This looks like it belongs in `{module}` — should we scope this design to that module only?"
+1. Use `index.md` and `module-map.json` to identify which module(s) own the behavior.
+2. List the modules whose code must change to deliver it — this is the **primary set**. A module you only call through an existing interface is a **touch point**, not part of the set.
+3. If the work decomposes into independent slices that each live in one module, **propose splitting** into separate specs — each gets its own spec → plan → implementation cycle.
+4. If it's one coherent behavior spanning several modules, keep it as **one spec covering the minimum module set** — don't force a split.
+5. Ask when ambiguous: "This behavior touches `{m1}` and `{m2}` — design them together, or split into separate specs?"
 
 **In the written spec**, include:
 
 ```markdown
 ## Module scope
 
-**Primary module:** `{module-id}` (`docs/agent-plan/context/modules/{module-id}.md`)
+**Primary modules:** `{module-id}` [+ others only if the behavior requires them] (`docs/agent-plan/context/modules/{module-id}.md`)
 
-**Affected modules:** [none | list only modules touched via dependency — not co-designed]
+**Touch points:** [none | modules called via existing interface — not co-designed here]
 ```
 
-**Justify cross-module specs.** If a single spec must span multiple primary modules, state why splitting failed and get user approval before proceeding.
+**Keep the set minimal.** Every module beyond the first must be one you're actually changing to deliver this behavior, not a dependency you merely call. Justify each, and get user approval before designing a broad multi-module spec.
 
 ## Standards Surfacing
 
@@ -279,7 +280,7 @@ During step 2, detect the project's tech stack and surface the applicable standa
 **Working in existing codebases:**
 
 - Explore the current structure before proposing changes. Follow existing patterns.
-- Use the ai-plan index to anchor design in real module boundaries — prefer changing one module's internals over cross-cutting edits
+- Use the ai-plan index to anchor design in real module boundaries — prefer the fewest modules that deliver the behavior over sprawling cross-cutting edits
 - Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
 - Don't propose unrelated refactoring. Stay focused on what serves the current goal.
 
@@ -295,7 +296,7 @@ During step 2, detect the project's tech stack and surface the applicable standa
 
   **Backlog item:** `docs/agent-plan/backlog/{id}/{id}-detail.md`
   ```
-- When the repo has code, include **Module scope** (see Single module focus above) after Source
+- When the repo has code, include **Module scope** (see Minimal module scope above) after Source
 - Include a **Standards Applied** section at the end of the design doc:
   ```markdown
   ## Standards Applied
