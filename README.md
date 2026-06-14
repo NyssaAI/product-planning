@@ -239,7 +239,7 @@ During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **re
 **Collaboration** 
 - **design-spec** - Socratic design refinement (spec before code)
 - **write-plan** - Detailed implementation plans (internal; invoked by design-spec)
-- **using-ai-plan** - Code map + module graph for planning (`docs/agent-plan/context/`)
+- **using-ai-plan** - Code map + module graph (incl. endpoint surfaces: HTTP routes, MCP tools/resources/prompts) for planning (`docs/agent-plan/context/`)
 - **execute-plan** - Canonical plan implementation entry (verify → run → finish + PR)
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist

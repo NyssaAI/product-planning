@@ -179,10 +179,15 @@ export function renderModuleScope(model, mod) {
     for (const route of mod.httpRoutes) {
       const methods =
         route.methods.length > 0 ? route.methods.join(', ') : '?';
-      lines.push(`- \`${methods}\` \`${route.path}\` → \`${route.file}\``);
+      lines.push(`- \`${methods}\` \`${route.path}\` -> \`${route.file}\``);
     }
     lines.push('');
   }
+
+  renderNamedEndpointSection(lines, 'MCP tools', mod.mcpTools);
+  renderNamedEndpointSection(lines, 'MCP resources', mod.mcpResources);
+  renderNamedEndpointSection(lines, 'MCP prompts', mod.mcpPrompts);
+  renderPathEndpointSection(lines, 'MCP transports', mod.mcpTransports);
 
   if (mod.symbolsSample.length > 0) {
     lines.push('## Key symbols (sample)');
@@ -221,4 +226,41 @@ function groupBy(items, keyFn) {
     out[key].push(item);
   }
   return out;
+}
+
+/**
+ * @param {string[]} lines
+ * @param {string} title
+ * @param {{ name?: string, path?: string, file: string }[] | undefined} endpoints
+ */
+function renderNamedEndpointSection(lines, title, endpoints) {
+  if (!endpoints?.length) {
+    return;
+  }
+  lines.push(`## ${title}`);
+  lines.push('');
+  for (const endpoint of endpoints) {
+    const label = endpoint.path
+      ? `${endpoint.name ?? '?'} (${endpoint.path})`
+      : endpoint.name ?? '?';
+    lines.push(`- \`${label}\` -> \`${endpoint.file}\``);
+  }
+  lines.push('');
+}
+
+/**
+ * @param {string[]} lines
+ * @param {string} title
+ * @param {{ path?: string, file: string }[] | undefined} endpoints
+ */
+function renderPathEndpointSection(lines, title, endpoints) {
+  if (!endpoints?.length) {
+    return;
+  }
+  lines.push(`## ${title}`);
+  lines.push('');
+  for (const endpoint of endpoints) {
+    lines.push(`- \`${endpoint.path ?? '?'}\` -> \`${endpoint.file}\``);
+  }
+  lines.push('');
 }

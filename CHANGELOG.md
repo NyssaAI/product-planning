@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [6.2.0] - 2026-06-14
+
+### Added
+
+- **Endpoint surface mapping (ai-plan / code-map)** — code-map extracts an endpoint index (HTTP routes + MCP tools/resources/prompts) via `scripts/code-map/lib/endpoint-extractor.mjs`; ai-plan enriches each module with its endpoint surface, `code-map.json` carries the endpoint index, and `--doctor` reports endpoint counts.
+
 ## [6.1.0] - 2026-06-14
 
 ### Added

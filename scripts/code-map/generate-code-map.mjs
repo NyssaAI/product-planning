@@ -10,6 +10,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
@@ -23,10 +24,27 @@ import {
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
+import { extractEndpoints } from './lib/endpoint-extractor.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
 const SG_CONFIG_PATH = path.join(TOOLKIT_DIR, 'sgconfig.yml');
+
+const ENDPOINT_SCAN_SKIP_DIRS = new Set([
+  '.git',
+  '.next',
+  '.venv',
+  '.worktrees',
+  '__pycache__',
+  'bin',
+  'build',
+  'coverage',
+  'dist',
+  'logs',
+  'node_modules',
+  'obj',
+  'venv',
+]);
 
 const HTTP_METHODS = new Set([
   'GET',
@@ -332,6 +350,13 @@ function buildCodeMapDocument(symbols, options) {
   const files = [...byFile.values()].sort((a, b) =>
     a.path.localeCompare(b.path)
   );
+  const endpointFiles = [
+    ...new Set([
+      ...files.map((file) => file.path),
+      ...sourceFilesInRoots(options.scanRoots),
+    ]),
+  ].sort();
+  const endpoints = extractEndpoints(REPO_ROOT, endpointFiles);
 
   return {
     schemaVersion: '1.0',
@@ -340,8 +365,45 @@ function buildCodeMapDocument(symbols, options) {
     languages: [...options.languages],
     fileCount: files.length,
     symbolCount: entries.length,
+    endpointCount: endpoints.length,
     files,
+    endpoints,
   };
+}
+
+/**
+ * @param {readonly string[]} roots
+ * @returns {string[]}
+ */
+function sourceFilesInRoots(roots) {
+  const files = [];
+  for (const root of roots) {
+    walkSourceFiles(path.join(REPO_ROOT, root), files);
+  }
+  return files.sort();
+}
+
+/**
+ * @param {string} dir
+ * @param {string[]} acc
+ */
+function walkSourceFiles(dir, acc) {
+  if (!existsSync(dir)) {
+    return;
+  }
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (ENDPOINT_SCAN_SKIP_DIRS.has(entry.name)) {
+      continue;
+    }
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walkSourceFiles(full, acc);
+      continue;
+    }
+    if (entry.isFile() && SOURCE_EXTENSIONS.has(path.extname(entry.name))) {
+      acc.push(path.relative(REPO_ROOT, full).replace(/\\/g, '/'));
+    }
+  }
 }
 
 function main() {

@@ -12,19 +12,26 @@ const HTTP_METHODS = new Set([
 ]);
 
 /**
- * @typedef {{ path: string, methods: string[], file: string, moduleId: string }} HttpRoute
+ * @typedef {{ kind: string, path?: string, methods: string[], method?: string, name?: string, file: string, line?: number, moduleId: string }} HttpRoute
  */
 
 /**
  * @param {string} repoRoot
  * @param {import('./config.mjs').AiPlanConfig} config
  * @param {import('./discover-modules.mjs').ModuleDef[]} modules
- * @param {{ path: string, symbols?: { name: string }[] }[]} codeMapFiles
+ * @param {{ files?: { path: string, symbols?: { name: string }[] }[], endpoints?: object[] } | { path: string, symbols?: { name: string }[] }[]} codeMapInput
  * @returns {HttpRoute[]}
  */
-export function discoverHttpRoutes(repoRoot, config, modules, codeMapFiles) {
+export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
+  const codeMapFiles = Array.isArray(codeMapInput)
+    ? codeMapInput
+    : codeMapInput.files ?? [];
+  const endpointRoutes = discoverEndpointRoutes(
+    modules,
+    Array.isArray(codeMapInput) ? [] : codeMapInput.endpoints ?? []
+  );
   if (!config.apiRoutes.enabled) {
-    return [];
+    return endpointRoutes;
   }
 
   const apiRoot = path.join(repoRoot, config.apiRoutes.root);
@@ -48,7 +55,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapFiles) {
 
   const moduleIds = new Set(modules.map((m) => m.id));
 
-  return routeFiles
+  const legacyRoutes = routeFiles
     .map((abs) => {
       const rel = path.relative(repoRoot, abs).replace(/\\/g, '/');
       const apiPath = filePathToApiRoute(
@@ -57,6 +64,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapFiles) {
         config.apiRoutes.pathPrefix
       );
       return {
+        kind: 'http',
         path: apiPath,
         methods: methodsByFile.get(rel) ?? [],
         file: rel,
@@ -64,6 +72,94 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapFiles) {
       };
     })
     .sort((a, b) => a.path.localeCompare(b.path));
+
+  return dedupeRoutes([...endpointRoutes, ...legacyRoutes]);
+}
+
+/**
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @param {object[]} endpoints
+ * @returns {HttpRoute[]}
+ */
+function discoverEndpointRoutes(modules, endpoints) {
+  const moduleIds = new Set(modules.map((m) => m.id));
+  const normalized = [];
+
+  for (const endpoint of endpoints) {
+    const item = /** @type {{ kind?: string, method?: string, path?: string, name?: string, file?: string, line?: number }} */ (endpoint);
+    if (!item.kind || !item.file) {
+      continue;
+    }
+    normalized.push({
+      kind: item.kind,
+      path: item.path,
+      methods: item.method ? [item.method] : [],
+      method: item.method,
+      name: item.name,
+      file: item.file,
+      line: item.line,
+      moduleId: moduleIdFromFile(item.file, modules, moduleIds),
+    });
+  }
+
+  return normalized.sort(
+    (a, b) =>
+      a.moduleId.localeCompare(b.moduleId) ||
+      (a.kind ?? '').localeCompare(b.kind ?? '') ||
+      (a.path ?? a.name ?? '').localeCompare(b.path ?? b.name ?? '') ||
+      a.file.localeCompare(b.file)
+  );
+}
+
+/**
+ * @param {HttpRoute[]} routes
+ * @returns {HttpRoute[]}
+ */
+function dedupeRoutes(routes) {
+  const byKey = new Map();
+  for (const route of routes) {
+    const key = [
+      route.kind,
+      route.methods.join(','),
+      route.path ?? '',
+      route.name ?? '',
+      route.file,
+    ].join('\0');
+    if (!byKey.has(key)) {
+      byKey.set(key, route);
+    }
+  }
+  return [...byKey.values()].sort(
+    (a, b) =>
+      a.moduleId.localeCompare(b.moduleId) ||
+      (a.kind ?? '').localeCompare(b.kind ?? '') ||
+      (a.path ?? a.name ?? '').localeCompare(b.path ?? b.name ?? '') ||
+      a.file.localeCompare(b.file)
+  );
+}
+
+/**
+ * @param {string} file
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @param {Set<string>} moduleIds
+ * @returns {string}
+ */
+function moduleIdFromFile(file, modules, moduleIds) {
+  const normalized = file.replace(/\\/g, '/');
+  const owner = modules
+    .filter((mod) => {
+      const root = mod.root.replace(/\\/g, '/').replace(/\/$/, '');
+      if (root === '.' || root === '') {
+        return true;
+      }
+      return normalized === root || normalized.startsWith(`${root}/`);
+    })
+    .sort((a, b) => b.root.length - a.root.length)[0];
+  if (owner) {
+    return owner.id;
+  }
+  const fromPath = moduleIdFromApiPath(normalized, moduleIds);
+  return moduleIds.has(fromPath) ? fromPath : 'platform';
 }
 
 /**
