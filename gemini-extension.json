@@ -1,6 +1,6 @@
 {
   "name": "dev-tools",
   "description": "Development workflow skills: TDD, debugging, design-spec, execute-plan, fix-bug, ai-plan code/module graph, git worktrees, PR workflow, and product planning",
-  "version": "5.2.0",
+  "version": "6.0.0",
   "contextFileName": "GEMINI.md"
 }

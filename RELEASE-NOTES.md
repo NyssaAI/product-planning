@@ -1,5 +1,24 @@
 # dev-tools Release Notes
 
+## v6.0.0 (2026-06-14)
+
+Major release — breaking changes to the planning-doc layout and schemas.
+
+### Highlights
+
+- **`docs/features.md` is now a real artifact.** `plan-product` creates it: an `F-001` checkbox inventory + AI-refined definitions, seeded from the PRD. The roadmap sequences features by id.
+- **Use cases are cross-cutting.** A use case (`U-001`) lists the features it spans in a required, searchable `features:` frontmatter list — no longer a child of one feature.
+- **Specs scope to the minimum module set** needed for the behavior, not exactly one module.
+
+### Breaking changes & migration
+
+| Change | What to do |
+|--------|-----------|
+| `docs/agent-files/` → `docs/agent-plan/` | `git mv docs/agent-files docs/agent-plan`. (`generate.mjs --migrate` handles older `docs/ai-plan/`, `docs/specs/`, `docs/plans/`, `docs/backlog/`, `docs/bugs/` layouts but **not** `agent-files`.) |
+| Legacy path fallbacks removed | Ensure all artifacts live under `docs/agent-plan/`. |
+| `features.md` table → checkbox + definitions; `F1` → `F-001` | Rewrite `docs/features.md` to the `## Inventory` / `## Definitions` format; renumber feature ids to `F-001`. |
+| Use-case schema: `F-001-U1` → `U-001`; `feature:` → `features:` list; `f{n}-u{n}.md` → `u-{nnn}-<slug>.md` | Rename use-case files and convert frontmatter to a `features:` list. |
+
 ## v5.1.0 (2026-05-21)
 
 ### Five workflow entry points
