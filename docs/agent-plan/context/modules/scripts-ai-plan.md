@@ -2,7 +2,7 @@
 
 **Inject with your task doc only.** Do not load other module files or the full code map for planning.
 
-**What this module does:** `ai-plan` — 33 files under `scripts/ai-plan/`.
+**What this module does:** `ai-plan` — 35 files under `scripts/ai-plan/`.
 
 ## Capabilities (owns)
 
@@ -21,6 +21,9 @@
 | `selectAdapter` | `export function selectAdapter(repoRoot, forcedId)` | Select an adapter for the repo. |
 | `matches` | `export function matches(repoRoot)` |  |
 | `extract` | `export function extract(repoRoot, files)` |  |
+| `runBatchedScan` | `export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs)` | Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command |
+| `batchByArgLength` | `export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH)` | Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command |
+| `parseScanJson` | `export function parseScanJson(stdout)` |  |
 | `matches` | `export function matches(repoRoot)` |  |
 | `extract` | `export function extract(repoRoot, files)` |  |
 | `readProjectName` | `export function readProjectName(repoRoot)` |  |
@@ -35,9 +38,6 @@
 | `writeStarterConfigs` | `export function writeStarterConfigs(repoRoot)` |  |
 | `deriveModules` | `export function deriveModules(repoRoot, fileGraph, options = {})` |  |
 | `internalExternalWeights` | `export function internalExternalWeights(edges, assign)` | Internal vs. |
-| `internalExternalRatio` | `export function internalExternalRatio(edges, assign)` | internal / (internal + external). |
-| `modularity` | `export function modularity(edges, assign)` | Newman modularity Q for an assignment (weighted, undirected). |
-| `cohesion` | `export function cohesion(edges, assign, moduleId)` | Cohesion of one module: internal weight / (internal + boundary). |
 
 ## Boundaries
 
@@ -66,6 +66,7 @@
 
 - `scripts/ai-plan/lib/adapters/index.mjs`: ADAPTERS, selectAdapter
 - `scripts/ai-plan/lib/adapters/python.mjs`: matches, extract
+- `scripts/ai-plan/lib/adapters/sg-scan.mjs`: MAX_SCAN_ARG_LENGTH, runBatchedScan, batchByArgLength, parseScanJson
 - `scripts/ai-plan/lib/adapters/typescript.mjs`: matches, extract
 - `scripts/ai-plan/lib/auto-detect.mjs`: DEFAULT_DOC_CANDIDATES, CODE_ROOT_CANDIDATES, API_ROUTE_CANDIDATES, MODULE_GLOB_CANDIDATES, readProjectName, detectCodeMapRoots, detectApiRoutes, detectSrcChildModules
 - `scripts/ai-plan/lib/bootstrap.mjs`: bootstrapRepo
@@ -73,10 +74,9 @@
 - `scripts/ai-plan/lib/config.mjs`: loadAiPlanConfig, validateRequiredDocs, resolveDocPath, writeStarterConfigs
 - `scripts/ai-plan/lib/detection/derive-modules.mjs`: deriveModules
 - `scripts/ai-plan/lib/detection/metrics.mjs`: internalExternalWeights, internalExternalRatio, modularity, cohesion, coupling
-- `scripts/ai-plan/lib/detection/partitions.mjs`: DEFAULT_EXCLUDE, topLevelAreas, filesInArea, maxDepth, partitionAtDepth, sizeByModule
 
 ## After planning
 
-- Symbols: [`code-map.json`](../code-map.json)
+- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: scripts-ai-plan` to get this module's files, symbols, and endpoints
 - Open only files your plan names
 

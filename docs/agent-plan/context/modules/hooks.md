@@ -30,6 +30,6 @@
 
 ## After planning
 
-- Symbols: [`code-map.json`](../code-map.json)
+- **No code-map coverage** for `moduleId: hooks` — its root is outside the code-map scan roots or fully delegated to child modules, so [`code-map.json`](../code-map.json) has no slice for it
 - Open only files your plan names
 

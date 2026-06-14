@@ -7,6 +7,7 @@ import { extractStackGraph } from './stack-graph.mjs';
 import { discoverHttpRoutes } from './routes.mjs';
 import { createLogger } from './logger.mjs';
 import { enrichModule } from './module-enrichment.mjs';
+import { ownsFile } from './module-ownership.mjs';
 
 const log = createLogger({ module: 'build' });
 
@@ -115,8 +116,9 @@ export function buildAiPlanModel(repoRoot, config, codeMapInput) {
     };
   });
 
+  const allModuleRoots = routeModules.map((mod) => mod.root);
   const enrichedModules = routeModules.map((mod) => {
-    const symbols = symbolsUnderPrefix(codeMapFiles, `${mod.root}/`);
+    const symbols = symbolsForModule(codeMapFiles, mod.root, allModuleRoots);
     const dependents = edges
       .filter((e) => e.to === mod.id)
       .map((e) => e.from);
@@ -233,16 +235,19 @@ export function buildAiPlanModel(repoRoot, config, codeMapInput) {
 }
 
 /**
+ * Symbols a module owns under the disjoint ownership model: a file belongs to
+ * the module with the longest matching root, so a parent module excludes files
+ * claimed by a more specific child module (matching the code-map linker).
+ *
  * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[]} files
- * @param {string} prefix
+ * @param {string} moduleRoot
+ * @param {string[]} allModuleRoots
  */
-function symbolsUnderPrefix(files, prefix) {
-  // A module rooted at the repo top ('.') owns every file.
-  const normalized = prefix === './' || prefix === '.' ? '' : prefix;
+function symbolsForModule(files, moduleRoot, allModuleRoots) {
   const out = [];
   for (const file of files) {
     const p = file.path.replace(/\\/g, '/');
-    if (!p.startsWith(normalized)) {
+    if (!ownsFile(moduleRoot, p, allModuleRoots)) {
       continue;
     }
     for (const sym of file.symbols ?? []) {

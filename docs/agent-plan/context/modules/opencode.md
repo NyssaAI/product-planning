@@ -40,6 +40,6 @@
 
 ## After planning
 
-- Symbols: [`code-map.json`](../code-map.json)
+- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: opencode` to get this module's files, symbols, and endpoints
 - Open only files your plan names
 
