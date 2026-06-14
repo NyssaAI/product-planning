@@ -91,8 +91,8 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --unpin <module-id>  #
 
 ```text
 L0  Task / backlog / bug detail
-L1  docs/agent-plan/context/modules/<module>.md   ← one module
-L2  docs/product.md, roadmap.md, tech-stack.md  ← optional
+L1  docs/agent-plan/context/modules/<module>.md   ← minimum module set
+L2  docs/product.md, features.md, roadmap.md, tech-stack.md  ← optional
 L3  docs/agent-plan/context/code-map.json       ← after plan names symbols
 ```
 

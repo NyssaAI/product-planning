@@ -1,6 +1,6 @@
 ---
 name: plan-product
-description: Use when starting a new project or when docs/product.md, docs/roadmap.md, or docs/tech-stack.md are missing or outdated.
+description: Use when starting a new project or when docs/product.md, docs/features.md, docs/roadmap.md, or docs/tech-stack.md are missing or outdated.
 ---
 
 # Plan Product
@@ -17,17 +17,19 @@ You MUST complete these steps in order:
 
 1. **Check for existing product docs**
 2. **Gather PRD content** (for product.md)
-3. **Gather roadmap** (for roadmap.md)
-4. **Establish tech stack** (for tech-stack.md)
-5. **Scaffold docs subtree** (bugs/, backlog/)
-6. **Generate files**
-7. **Confirm completion**
-8. **Ai-plan note** — when the repo will contain source code, tell your human partner that **using-ai-plan** runs automatically during **design-spec** and **write-plan** once code exists (regenerates `docs/agent-plan/context/` when stale). Manual `/ai-plan` or `npm run ai-plan` is only needed after structural module changes — not at project bootstrap.
+3. **Define features** (for features.md) — derive the `F-001…` breakdown from the functional requirements, then AI-refine each definition with the user
+4. **Gather roadmap** (for roadmap.md) — sequence the features into phases
+5. **Establish tech stack** (for tech-stack.md)
+6. **Scaffold docs subtree** (bugs/, backlog/)
+7. **Generate files**
+8. **Confirm completion**
+9. **Ai-plan note** — when the repo will contain source code, tell your human partner that **using-ai-plan** runs automatically during **design-spec** and **write-plan** once code exists (regenerates `docs/agent-plan/context/` when stale). Manual `/ai-plan` or `npm run ai-plan` is only needed after structural module changes — not at project bootstrap.
 
 ## Step 1: Check for Existing Product Docs
 
 Check if `docs/` contains any of these files:
 - `product.md`
+- `features.md`
 - `roadmap.md`
 - `tech-stack.md`
 
@@ -39,6 +41,7 @@ Also check directory scaffolding:
 
 > I found existing product documentation:
 > - product.md: [exists/missing]
+> - features.md: [exists/missing]
 > - roadmap.md: [exists/missing]
 > - tech-stack.md: [exists/missing]
 > - bugs/ scaffolding: [present/missing]
@@ -96,14 +99,28 @@ A PRD captures what the product is, who it's for, what success means, and what's
 
 14. **What's still undecided or needs research?** — known unknowns, areas you'll discover more about as you build. Better to surface these now than hit them as surprises later.
 
-## Step 3: Gather Roadmap (for roadmap.md)
+## Step 3: Define Features (for features.md)
 
-Ask these questions one at a time:
+`docs/features.md` is the feature-level breakdown of the application — one step more specific than the PRD's functional requirements, one step less specific than a use case. It is the unit the roadmap sequences (Step 4) and the capability set that use cases reference (each use case lists the features it requires in its `features:` frontmatter).
 
-1. **What milestones follow MVP?** — phases 2, 3, 4… with brief names and scope descriptions. Can be "none yet" / "TBD".
-2. **What's the rough order?** — which milestone blocks which, any hard dependencies, any parallel tracks.
+1. **Seed from the functional requirements.** Take the FRs from Step 2e and the MVP scope from Step 2d and draft a feature list. Usually one feature per FR — but merge tightly-coupled FRs into a single feature, and split a broad FR into several. Number them sequentially, zero-padded: `F-001`, `F-002`, …
+2. **Confirm the inventory.** Present the draft list (ids + short names) with AskUserQuestion. Let the user rename, merge, split, add, or drop features. Finalize numbers in order once confirmed; a removed number is retired, never reused.
+3. **AI-refine each definition.** For every confirmed feature, draft a 1–3 sentence definition from the product context — what the feature is, who it serves, where its boundary lies. Show the drafts to the user and fold in their edits. This is the "AI-refined, human-confirmed" half. Keep definitions feature-level, not implementation detail.
+4. **All features start unchecked.** At planning time nothing is built, so every inventory entry is `- [ ]`. A box becomes `- [x]` only when the feature is delivered.
 
-## Step 4: Establish Tech Stack (for tech-stack.md)
+The file has two parts — a checkbox **Inventory** for scanning and a **Definitions** section below. See the template in Step 7.
+
+## Step 4: Gather Roadmap (for roadmap.md)
+
+The roadmap sequences the features from Step 3 into delivery phases — feature ids are the shared key, so the two files stay in sync. Ask these questions one at a time:
+
+1. **Which features make up the MVP (Phase 1)?** — default to the features covering the MVP scope from Step 2d; the user confirms or adjusts, referencing ids (`F-001`, `F-003`, …).
+2. **How are the remaining features grouped into later phases?** — phases 2, 3, … with brief names; assign the non-MVP features to phases. Can be "none yet" / "TBD".
+3. **What's the rough order and dependencies?** — which phase blocks which, hard dependencies, parallel tracks.
+
+Every feature should land in some phase (or be explicitly deferred). Reference features by id, not restated prose.
+
+## Step 5: Establish Tech Stack (for tech-stack.md)
 
 dev-tools bundles jamaynor development standards (`standards/` + `manifest.json`). Rather than duplicating guidance, `tech-stack.md` should enumerate technologies in use and reference the matching **dev-tools:using-*-standards** skills.
 
@@ -116,7 +133,7 @@ Grouping skills available in this plugin:
 - `dev-tools:using-postgres-standards`
 - `dev-tools:using-python-standards`
 
-### 4a. Ask what technologies the project uses
+### 5a. Ask what technologies the project uses
 
 Use AskUserQuestion:
 
@@ -128,21 +145,21 @@ Use AskUserQuestion:
 > - Python
 > - Other (not covered by bundled standards)
 
-### 4b. For each selected tech with a matching standards category
+### 5b. For each selected tech with a matching standards category
 
 Reference the matching `dev-tools:using-*-standards` skill in `tech-stack.md`. Do NOT dump standards content — the skill reference is enough; skills auto-trigger during design and implementation.
 
-### 4c. For any "Other" technologies
+### 5c. For any "Other" technologies
 
 Use AskUserQuestion:
 
 > What other technologies are in use? (hosting, key libraries, external APIs, build tools, observability stack, etc.)
 
-## Step 5: Scaffold docs subtree
+## Step 6: Scaffold docs subtree
 
 Per `standards/project-structure.md`, scaffold `docs/`:
 
-- `product.md`, `roadmap.md`, `tech-stack.md` (created in Step 6)
+- `product.md`, `features.md`, `roadmap.md`, `tech-stack.md` (created in Step 7)
 - `agent-plan/bugs/`, `agent-plan/backlog/` — empty until fix-bug / add-backlog
 - `agent-plan/specs/`, `agent-plan/plans/` — empty until design-spec / write-plan
 - `agent-plan/context/modules/` — empty until ai-plan generate (after source code exists)
@@ -157,7 +174,7 @@ docs/agent-plan/plans/.gitkeep
 docs/agent-plan/context/modules/.gitkeep
 ```
 
-## Step 6: Generate Files
+## Step 7: Generate Files
 
 Create `docs/` if it doesn't exist. Generate each file with the content gathered. Any section the user deferred should appear as `[To be defined]`.
 
@@ -217,29 +234,57 @@ Create `docs/` if it doesn't exist. Generate each file with the content gathered
 [Step 2h.14]
 ```
 
+### docs/features.md
+
+The Inventory mirrors the confirmed feature list (Step 3); every entry starts unchecked. The Definitions section carries the AI-refined, user-confirmed definition for each id, in the same order.
+
+```markdown
+# Features
+
+## Inventory
+
+- [ ] F-001: [feature name]
+- [ ] F-002: [feature name]
+- …
+
+## Definitions
+
+### F-001: [feature name]
+
+[1–3 sentence definition — what it is, who it serves, its boundary.]
+
+### F-002: [feature name]
+
+[definition]
+```
+
 ### docs/roadmap.md
+
+Each phase lists the feature ids it delivers (from Step 4). The MVP phase is the Step 4.1 feature set.
 
 ```markdown
 # Roadmap
 
 ## Phase 1: MVP
 
-[MVP scope from product.md]
+Features: F-001, F-002, … [the MVP set from Step 4.1]
 
-## Phase 2: [name from Step 3.1]
+[One-line framing of the MVP from product.md scope]
 
-[Scope from Step 3.1]
+## Phase 2: [name from Step 4.2]
 
-## Phase 3: [name from Step 3.1]
+Features: [ids assigned to this phase]
 
-[Scope from Step 3.1]
+## Phase 3: [name from Step 4.2]
+
+Features: [ids assigned to this phase]
 
 ## Dependencies and order
 
-[From Step 3.2]
+[From Step 4.3 — which phase blocks which, parallel tracks]
 ```
 
-Include only phases the user specified. If no post-MVP phases provided, write "No post-MVP roadmap yet. Update after MVP is scoped and validated."
+Include only phases the user specified. Every `F-` id in `features.md` should appear in some phase or be noted as deferred. If no post-MVP phases provided, write "No post-MVP roadmap yet. Update after MVP is scoped and validated."
 
 ### docs/tech-stack.md
 
@@ -254,7 +299,7 @@ Include only phases the user specified. If no post-MVP phases provided, write "N
 
 ## Applicable standards (dev-tools)
 
-(For each tech category selected in Step 4a, include the matching line. Omit unselected categories. Always include cross-cutting.)
+(For each tech category selected in Step 5a, include the matching line. Omit unselected categories. Always include cross-cutting.)
 
 - **.NET:** `dev-tools:using-dotnet-standards`
 - **Next.js:** `dev-tools:using-nextjs-standards`
@@ -264,17 +309,18 @@ Include only phases the user specified. If no post-MVP phases provided, write "N
 
 ## Other technologies
 
-[From Step 4c — hosting, libraries, external APIs, build tools, etc.]
+[From Step 5c — hosting, libraries, external APIs, build tools, etc.]
 ```
 
-## Step 7: Confirm Completion
+## Step 8: Confirm Completion
 
 After creating all files and directories, tell the user:
 
 > Product documentation created per `standards/project-structure.md`:
 >
 > - `docs/product.md` (PRD)
-> - `docs/roadmap.md`
+> - `docs/features.md` (feature breakdown, `F-001…`)
+> - `docs/roadmap.md` (phases sequencing the features)
 > - `docs/tech-stack.md`
 > - `docs/agent-plan/bugs/`, `docs/agent-plan/backlog/`, `docs/agent-plan/specs/`, `docs/agent-plan/plans/`, `docs/agent-plan/context/modules/` (scaffolded)
 >

@@ -7,6 +7,7 @@ Mirrors **dev-tools:using-ai-plan** (canonical skill in the dev-tools plugin). W
 The repo must provide (default paths under `docs/`):
 
 - **product.md** — what the product is
+- **features.md** — feature-level breakdown (`F-001…`); roadmap sequences these
 - **roadmap.md** — direction and priorities
 - **tech-stack.md** — stack and conventions
 
@@ -15,8 +16,8 @@ The repo must provide (default paths under `docs/`):
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task / backlog / bug detail | Always |
-| L1 | **One** `docs/agent-plan/context/modules/<module>.md` | During planning — pick module from `docs/agent-plan/context/index.md` |
-| L2 | `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` | When product context needed |
+| L1 | The **minimum module set** `docs/agent-plan/context/modules/<module>.md` for the behavior | During planning — pick modules from `docs/agent-plan/context/index.md` |
+| L2 | `docs/product.md`, `docs/features.md`, `docs/roadmap.md`, `docs/tech-stack.md` | When product context needed |
 | L3 | `docs/agent-plan/context/code-map.json` | After the plan names symbols — implementation only |
 
 Never inject all module files or the full code map during planning.

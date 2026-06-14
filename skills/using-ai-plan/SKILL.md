@@ -70,11 +70,11 @@ Replace `<PLUGIN_ROOT>` with `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the 
 
 If `--write-scripts` copied tooling into the repo, prefer `npm run ai-plan` from the project root.
 
-## Pick a Module File (write-plan)
+## Pick the Module File(s) (write-plan)
 
 1. Read `docs/agent-plan/context/index.md` — module table links to `modules/<id>.md`
-2. Match the spec / roadmap item to **one** module (ask if ambiguous)
-3. Read `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read **only** that one module file
+2. Match the spec / roadmap item to its **Primary modules** — the minimum set needed for the behavior (ask if ambiguous)
+3. Read each in-scope `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read **only** the module file(s) in scope, not the whole graph
 4. Use `docs/agent-plan/context/module-map.json` only for dependency ordering between tasks (do not paste the whole file into context)
 
 Record in the plan header:
@@ -102,7 +102,7 @@ Generated artifacts live under `docs/agent-plan/context/` per **`standards/proje
 | Skill | Role |
 |-------|------|
 | **plan-product** | Creates docs that feed ai-plan |
-| **design-spec** | Auto-regenerates index if stale; reads index + module-map; **single primary module per spec** |
+| **design-spec** | Auto-regenerates index if stale; reads index + module-map; **minimum module set per spec** |
 | **using-core-standards** | Project structure, test layout, timestamp rules |
 | **using-git-worktrees** | Before write-plan |
 | **write-plan** | Consumes L1 module file + module-map edges + standards from spec |

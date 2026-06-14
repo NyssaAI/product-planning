@@ -13,7 +13,7 @@ All development repos created should follow this standard
 │   ├── features.md                                 - feature inventory (status table)
 │   ├── design/                                     - UI wireframes and mockups (no enforced schema)
 │   ├── use-cases/                                  - structured use-case detail
-│   │   └── f{n}-u{n}.md
+│   │   └── u-{nnn}-<slug>.md
 │   │
 │   │  --- Everything the plugin touches ---
 │   └── agent-plan/
@@ -63,36 +63,45 @@ Every repo must have at minimum:
 
 ### docs/features.md
 
-Human-maintained feature inventory. Linked from use-case frontmatter.
+Human-authored, AI-refined feature-level breakdown of the application. Two parts: a checkbox **inventory** for scanning, and per-feature **definitions**. Features are numbered `F-001`, `F-002`, … (zero-padded, sequential) and are the unit `docs/roadmap.md` sequences into phases. A checked box (`[x]`) means the feature is delivered; unchecked (`[ ]`) means not yet built.
 
 ```markdown
 # Features
 
-| #  | Feature            | Status  | Summary                                              |
-|----|--------------------|---------|------------------------------------------------------|
-| F1 | Actor Registration | active  | Provisional registration workflow with accept/reject |
-| F2 | Host Registry      | planned | SSH tunnel registration and management               |
+## Inventory
+
+- [ ] F-001: Actor Registration
+- [x] F-002: Host Registry
+
+## Definitions
+
+### F-001: Actor Registration
+
+Provisional registration workflow with accept/reject. The author drafts the intent; AI refines it into a crisp definition of what the feature is, who it serves, and where its boundary lies.
+
+### F-002: Host Registry
+
+SSH tunnel registration and management — register hosts, list them, and revoke access.
 ```
 
-Status values: `planned` | `active` | `complete` | `deferred`
+Feature ids (`F-001`) are referenced by `docs/roadmap.md` phases and by use-case frontmatter (the `features:` list). Feature numbers are never reused; a removed feature's number is retired, not reassigned.
 
-### docs/use-cases/f{n}-u{n}.md
+### docs/use-cases/u-{nnn}-<slug>.md
 
-One file per use case. A third input type for `design-spec` alongside ad-hoc ideas and backlog items.
+One file per use case, capturing a user's end-to-end goal. A use case is the **user-journey** view of the product — *not* a child of a single feature. One journey typically **spans several features**, so use cases and features relate many-to-many. Use-case ids are independent and sequential: `U-001`, `U-002`, … A third input type for `design-spec` alongside ad-hoc ideas and backlog items.
 
 ```markdown
 ---
 product: <Product Name>
-feature: F1
-feature-name: Actor Registration
-use-case: F1-U1
-use-case-name: Register a new actor
+use-case: U-001
+use-case-name: Register a host and start tunneling
+features: [F-001, F-002, F-005]   # required, non-empty — every feature this journey exercises
 status: active
 ---
 
-# F1-U1: Register a new actor
+# U-001: Register a host and start tunneling
 
-Brief prose describing what the actor is trying to do and why it matters.
+Brief prose describing what the user is trying to accomplish end-to-end and why it matters.
 
 ## Process
 
@@ -104,24 +113,34 @@ Brief prose describing what the actor is trying to do and why it matters.
 - [ ] Criterion 2
 ```
 
+`features:` is a **required, non-empty list** of the feature ids the journey requires. Because feature ids are distinctive, the list is searchable: `grep -l "F-002" docs/use-cases/*.md` finds every use case that touches a feature. Status values: `planned` | `active` | `complete` | `deferred`.
+
 ### docs/design/
 
 Reserved folder for UI wireframes, mockups, and layout specs. No enforced schema. Created during migration; teams populate it freely.
 
-## Progressive specificity chain
+## From product to plan
 
-Each level adds specificity to the previous. This chain is the canonical input path into `design-spec`:
+`product.md` decomposes into **two cross-referencing views**, not a single waterfall:
+
+- **`features.md`** — the *capability* view (what the system does), `F-001…`
+- **`docs/use-cases/`** — the *user-journey* view (what a user accomplishes), `U-001…`
+
+They relate **many-to-many**: a use case lists the features it requires (`features:` frontmatter); a feature is exercised by many use cases. `design-spec` takes one use case as input, reads the features it references for context, and produces a spec → plan.
 
 ```
-docs/product.md               PRD — what the product is
-       ↓
-docs/features.md              Feature inventory — one step more detailed than PRD
-       ↓
-docs/use-cases/f{n}-u{n}.md   Use-case detail — one step more detailed than feature
-       ↓
-docs/agent-plan/specs/       Design spec — technical design for one use case (design-spec output)
-       ↓
-docs/agent-plan/plans/       Implementation plan (write-plan output)
+                 docs/product.md   PRD — what the product is and why
+                        │
+          ┌─────────────┴─────────────┐
+          ▼                           ▼
+   docs/features.md           docs/use-cases/u-{nnn}-<slug>.md
+   (capabilities, F-001…) ◄── (user journeys, U-001…;
+                many-to-many   list required features F-…)
+                                      │  design-spec: one use case +
+                                      ▼  its referenced features
+                       docs/agent-plan/specs/    Design spec (design-spec output)
+                                      ▼
+                       docs/agent-plan/plans/    Implementation plan (write-plan output)
 ```
 
 ### Two axes of documentation (do not conflate)
@@ -131,7 +150,7 @@ docs/agent-plan/plans/       Implementation plan (write-plan output)
 | **Work item** | `agent-plan/specs/`, `agent-plan/plans/`, `agent-plan/backlog/`, `agent-plan/bugs/` | What are we building *in this task*? Design and steps for one feature or fix. |
 | **Code module** | `docs/agent-plan/context/modules/<module-id>.md` | What does this *part of the codebase* own? Boundaries, dependencies, routes, test roots — derived from the repo. |
 
-Planning a roadmap item: **spec** (intent) + **one module file** (architecture for the module you will touch) → **plan** (tasks). Do not substitute a module file for a spec or vice versa.
+Planning a roadmap item: **spec** (intent) + **the module file(s)** for the minimum module set you will touch (architecture) → **plan** (tasks). Do not substitute a module file for a spec or vice versa.
 
 ### Workflow artifacts (dev-tools)
 

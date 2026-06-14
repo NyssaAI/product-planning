@@ -93,6 +93,13 @@ export function bootstrapRepo(repoRoot, options = {}) {
   );
   writeIfMissing(
     repoRoot,
+    'docs/features.md',
+    readTemplate('docs-features.md'),
+    created,
+    skipped
+  );
+  writeIfMissing(
+    repoRoot,
     'docs/roadmap.md',
     readTemplate('docs-roadmap.md'),
     created,

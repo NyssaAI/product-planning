@@ -11,6 +11,7 @@ Skills use Claude Code tool names. When you encounter these in a skill, use your
 | `Grep` (search file content) | `grep` |
 | `Glob` (search files by name) | `glob` |
 | `Skill` tool (invoke a skill) | `skill` |
+| `AskUserQuestion` (structured multiple-choice prompt) | No equivalent — ask the question in plain text, list the options, and wait for the user's reply before proceeding |
 | `WebFetch` | `web_fetch` |
 | `Task` tool (dispatch subagent) | `task` (see [Agent types](#agent-types)) |
 | Multiple `Task` calls (parallel) | Multiple `task` calls |
