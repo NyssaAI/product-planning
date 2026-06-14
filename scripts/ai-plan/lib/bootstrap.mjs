@@ -166,13 +166,20 @@ function mergePackageScripts(repoRoot, created, skipped) {
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
   const scripts = pkg.scripts ?? {};
   const additions = {
-    'code-map': 'node scripts/code-map/generate-code-map.mjs',
-    'ai-plan': 'node scripts/ai-plan/generate.mjs',
+    'code-map': pluginScriptCommand('scripts/code-map/generate-code-map.mjs'),
+    'ai-plan': pluginScriptCommand('scripts/ai-plan/generate.mjs'),
+  };
+  const legacyLocalScripts = {
+    'code-map': 'scripts/code-map/generate-code-map.mjs',
+    'ai-plan': 'scripts/ai-plan/generate.mjs',
   };
 
   let changed = false;
   for (const [key, value] of Object.entries(additions)) {
-    if (!scripts[key]) {
+    if (
+      !scripts[key] ||
+      isLegacyLocalScript(scripts[key], legacyLocalScripts[key])
+    ) {
       scripts[key] = value;
       changed = true;
     }
@@ -187,6 +194,44 @@ function mergePackageScripts(repoRoot, created, skipped) {
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
   log.info('bootstrap merged package.json scripts');
   created.push('package.json (scripts)');
+}
+
+/**
+ * Build a cross-platform npm script that resolves the current installed
+ * dev-tools plugin root at runtime instead of using repo-local copied tooling.
+ *
+ * @param {string} scriptRelPath
+ * @returns {string}
+ */
+function pluginScriptCommand(scriptRelPath) {
+  const script = scriptRelPath.replace(/\\/g, '/');
+  const js = [
+    "const { spawnSync } = require('node:child_process');",
+    "const path = require('node:path');",
+    "const root = process.env.CLAUDE_PLUGIN_ROOT || process.env.CURSOR_PLUGIN_ROOT;",
+    "if (!root) { console.error('dev-tools plugin root not found. Set CLAUDE_PLUGIN_ROOT or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
+    `const script = path.join(root, ${JSON.stringify(script)});`,
+    "const result = spawnSync(process.execPath, [script, ...process.argv.slice(1)], { stdio: 'inherit' });",
+    "if (result.error) { console.error(result.error.message); process.exit(1); }",
+    'process.exit(result.status ?? 1);',
+  ].join('');
+  return `node -e ${JSON.stringify(js)} --`;
+}
+
+/**
+ * @param {unknown} value
+ * @param {string} scriptRelPath
+ * @returns {boolean}
+ */
+function isLegacyLocalScript(value, scriptRelPath) {
+  if (typeof value !== 'string') {
+    return false;
+  }
+  const normalized = value.trim().replace(/\\/g, '/');
+  return (
+    normalized === `node ${scriptRelPath}` ||
+    normalized === `node ./${scriptRelPath}`
+  );
 }
 
 const REGEN_HOOK_MATCHER = 'Write|Edit';
