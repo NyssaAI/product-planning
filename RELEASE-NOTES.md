@@ -1,5 +1,11 @@
 # dev-tools Release Notes
 
+## v6.2.0 (2026-06-14)
+
+### Added
+
+- **Endpoint surface mapping** — ai-plan and code-map now detect and index HTTP routes and MCP tools/resources/prompts, enriching module docs with their endpoint surface. `--doctor` reports endpoint counts.
+
 ## v6.1.0 (2026-06-14)
 
 ### Added
