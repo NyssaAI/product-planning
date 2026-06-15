@@ -1,6 +1,6 @@
 # skills (`skills`) — module
 
-**Inject with your task doc only.** Do not load other module files or the full code map for planning.
+**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
 **What this module does:** `skills` — 4 files under `skills/`.
 
@@ -12,11 +12,11 @@
 
 ## Public API
 
-| Symbol | Signature | Summary |
-|--------|-----------|---------|
-| `waitForEvent` | `export function waitForEvent( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, timeoutMs = 5000 ): Promise<LaceEvent>` | Wait for a specific event type to appear in thread Example: await waitForEvent(threadManager, agentThreadId, 'TOOL_RESUL |
-| `waitForEventCount` | `export function waitForEventCount( threadManager: ThreadManager, threadId: string, eventType: LaceEventType, count: number, timeoutMs = 5000 ): Promise<LaceEvent[]>` | Wait for a specific number of events of a given type Example: // Wait for 2 AGENT_MESSAGE events (initial response + con |
-| `waitForEventMatch` | `export function waitForEventMatch( threadManager: ThreadManager, threadId: string, predicate: (event: LaceEvent) => boolean, description: string, timeoutMs = 5000 ): Promise<LaceEvent>` | Wait for an event matching a custom predicate Useful when you need to check event data, not just type Example: // Wait f |
+| Symbol | Summary |
+|--------|---------|
+| `waitForEvent` | Wait for a specific event type to appear in thread Example: await waitForEvent(threadManager, agentThreadId, 'TOOL_RESUL |
+| `waitForEventCount` | Wait for a specific number of events of a given type Example: // Wait for 2 AGENT_MESSAGE events (initial response + con |
+| `waitForEventMatch` | Wait for an event matching a custom predicate Useful when you need to check event data, not just type Example: // Wait f |
 
 ## Boundaries
 

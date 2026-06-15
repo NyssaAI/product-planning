@@ -1,20 +1,21 @@
 # lib (`scripts-lib`) — module
 
-**Inject with your task doc only.** Do not load other module files or the full code map for planning.
+**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
-**What this module does:** `lib` — 2 files under `scripts/lib/`.
+**What this module does:** `lib` — 4 files under `scripts/lib/`.
 
 ## Capabilities (owns)
 
+- BASE_SKIP_DIRS
 - findPluginRoot
-- resolveAstGrepBinary
+- parseScanJson
 
 ## Public API
 
-| Symbol | Signature | Summary |
-|--------|-----------|---------|
-| `findPluginRoot` | `export function findPluginRoot(startDir)` |  |
-| `resolveAstGrepBinary` | `export function resolveAstGrepBinary(options)` | Resolve ast-grep binary shipped with the dev-tools plugin. |
+| Symbol | Summary |
+|--------|---------|
+| `findPluginRoot` |  |
+| `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the dev-tools plugin. |
 
 ## Boundaries
 

@@ -1,6 +1,6 @@
 # ai-plan (`scripts-ai-plan`) — module
 
-**Inject with your task doc only.** Do not load other module files or the full code map for planning.
+**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
 **What this module does:** `ai-plan` — 35 files under `scripts/ai-plan/`.
 
@@ -12,39 +12,40 @@
 
 ## Does not own
 
+- scripts-code-map concerns → scripts-code-map module
 - scripts-lib concerns → scripts-lib module
 
 ## Public API
 
-| Symbol | Signature | Summary |
-|--------|-----------|---------|
-| `selectAdapter` | `export function selectAdapter(repoRoot, forcedId)` | Select an adapter for the repo. |
-| `matches` | `export function matches(repoRoot)` |  |
-| `extract` | `export function extract(repoRoot, files)` |  |
-| `runBatchedScan` | `export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs)` | Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command |
-| `batchByArgLength` | `export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH)` | Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command |
-| `parseScanJson` | `export function parseScanJson(stdout)` |  |
-| `matches` | `export function matches(repoRoot)` |  |
-| `extract` | `export function extract(repoRoot, files)` |  |
-| `readProjectName` | `export function readProjectName(repoRoot)` |  |
-| `detectCodeMapRoots` | `export function detectCodeMapRoots(repoRoot)` |  |
-| `detectApiRoutes` | `export function detectApiRoutes(repoRoot)` |  |
-| `detectSrcChildModules` | `export function detectSrcChildModules(repoRoot)` |  |
-| `bootstrapRepo` | `export function bootstrapRepo(repoRoot, options = {})` |  |
-| `buildAiPlanModel` | `export function buildAiPlanModel(repoRoot, config, codeMapInput)` |  |
-| `loadAiPlanConfig` | `export function loadAiPlanConfig(repoRoot, opts = {})` |  |
-| `validateRequiredDocs` | `export function validateRequiredDocs(repoRoot, config)` |  |
-| `resolveDocPath` | `export function resolveDocPath(repoRoot, candidates)` |  |
-| `writeStarterConfigs` | `export function writeStarterConfigs(repoRoot)` |  |
-| `deriveModules` | `export function deriveModules(repoRoot, fileGraph, options = {})` |  |
-| `internalExternalWeights` | `export function internalExternalWeights(edges, assign)` | Internal vs. |
+| Symbol | Summary |
+|--------|---------|
+| `selectAdapter` | Select an adapter for the repo. |
+| `matches` |  |
+| `extract` |  |
+| `runBatchedScan` | Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command |
+| `batchByArgLength` | Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command |
+| `parseScanJson` |  |
+| `matches` |  |
+| `extract` |  |
+| `readProjectName` |  |
+| `detectCodeMapRoots` |  |
+| `detectApiRoutes` |  |
+| `detectSrcChildModules` |  |
+| `bootstrapRepo` |  |
+| `buildAiPlanModel` |  |
+| `loadAiPlanConfig` |  |
+| `validateRequiredDocs` |  |
+| `resolveDocPath` |  |
+| `writeStarterConfigs` |  |
+| `deriveModules` |  |
+| `internalExternalWeights` | Internal vs. |
 
 ## Boundaries
 
 | | Path |
 |--|------|
 | Root | `scripts/ai-plan/` |
-| Depends on modules | scripts-lib |
+| Depends on modules | scripts-code-map, scripts-lib |
 | Used by | scripts-code-map, test |
 | Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
 

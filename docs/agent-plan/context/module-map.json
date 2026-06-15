@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-14T23:58:09.107Z",
+  "generated": "2026-06-15T01:02:09.583Z",
   "project": {
     "name": "dev-tools",
     "docs": {
@@ -88,6 +88,7 @@
       "root": "scripts/ai-plan",
       "source": "derived",
       "dependsOn": [
+        "scripts-code-map",
         "scripts-lib"
       ],
       "usedBy": [
@@ -114,6 +115,7 @@
         "scripts-lib"
       ],
       "usedBy": [
+        "scripts-ai-plan",
         "test"
       ],
       "routeCount": 0,
@@ -139,10 +141,11 @@
       "routeCount": 0,
       "symbolCount": 2,
       "planningModule": "docs/agent-plan/context/modules/scripts-lib.md",
-      "description": "`lib` — 2 files under `scripts/lib/`.",
+      "description": "`lib` — 4 files under `scripts/lib/`.",
       "capabilities": [
+        "BASE_SKIP_DIRS",
         "findPluginRoot",
-        "resolveAstGrepBinary"
+        "parseScanJson"
       ]
     },
     {
@@ -182,6 +185,10 @@
     }
   ],
   "edges": [
+    {
+      "from": "scripts-ai-plan",
+      "to": "scripts-code-map"
+    },
     {
       "from": "scripts-ai-plan",
       "to": "scripts-lib"

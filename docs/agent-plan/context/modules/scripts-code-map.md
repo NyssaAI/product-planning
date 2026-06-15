@@ -1,6 +1,6 @@
 # code-map (`scripts-code-map`) — module
 
-**Inject with your task doc only.** Do not load other module files or the full code map for planning.
+**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
 **What this module does:** `code-map` — 7 files under `scripts/code-map/`.
 
@@ -17,15 +17,15 @@
 
 ## Public API
 
-| Symbol | Signature | Summary |
-|--------|-----------|---------|
-| `loadCodeMapConfig` | `export function loadCodeMapConfig(repoRoot)` |  |
-| `extractDocComment` | `export function extractDocComment(filePath, lineNumber)` | Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `"""`) and extracts |
-| `extractEndpoints` | `export function extractEndpoints(repoRoot, files)` |  |
-| `extractFileHeaderComment` | `export function extractFileHeaderComment(content)` |  |
-| `annotateCodeMapWithModules` | `export function annotateCodeMapWithModules(codeMap, modules, options)` | Add module ownership to a code-map document and expose a flat symbol index. |
-| `extractSignature` | `export function extractSignature(filePath, lineNumber)` | Extracts the declaration signature starting at the given line. |
-| `DEFAULT_SCAN_ROOTS` | `export const DEFAULT_SCAN_ROOTS = ['src', 'native']; /** @type` |  |
+| Symbol | Summary |
+|--------|---------|
+| `loadCodeMapConfig` |  |
+| `extractDocComment` | Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `"""`) and extracts |
+| `extractEndpoints` |  |
+| `extractFileHeaderComment` |  |
+| `annotateCodeMapWithModules` | Add module ownership to a code-map document and expose a flat symbol index. |
+| `extractSignature` | Extracts the declaration signature starting at the given line. |
+| `DEFAULT_SCAN_ROOTS` |  |
 
 ## Boundaries
 
@@ -33,7 +33,7 @@
 |--|------|
 | Root | `scripts/code-map/` |
 | Depends on modules | scripts-ai-plan, scripts-lib |
-| Used by | test |
+| Used by | scripts-ai-plan, test |
 | Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
 
 ## Flows
