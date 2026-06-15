@@ -43,7 +43,7 @@ cp "$PROMPT_FILE" "$OUTPUT_DIR/prompt.txt"
 
 # Create a minimal project directory for the test
 PROJECT_DIR="$OUTPUT_DIR/project"
-mkdir -p "$PROJECT_DIR/docs/plans"
+mkdir -p "$PROJECT_DIR/docs/agent-plan/plans"
 
 # Create a dummy plan file for mid-conversation tests
 cat > "$PROJECT_DIR/docs/agent-plan/plans/auth-system.md" << 'EOF'
