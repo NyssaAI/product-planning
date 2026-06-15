@@ -8,7 +8,17 @@
 import csharpAdapter from './csharp.mjs';
 import pythonAdapter from './python.mjs';
 import typescriptAdapter from './typescript.mjs';
+import { createLogger } from '../logger.mjs';
 
+const log = createLogger({ module: 'adapters' });
+
+// Adapter/code-map asymmetry: code-map ships ast-grep rules for Go and Java
+// (see scripts/code-map/sgconfig.yml + rules/), but ai-plan has NO stack-graph
+// adapter for them — only csharp/python/typescript below. For a Go/Java repo,
+// code-map still extracts symbols/endpoints, but ai-plan cannot build the
+// import/reference FileGraph used for module dependsOn/usedBy edges. Writing
+// those adapters is out of scope here; selectAdapter warns instead of silently
+// returning null so the gap is observable.
 /** @type {import('../detection/types.mjs').StackGraphAdapter[]} */
 export const ADAPTERS = [
   csharpAdapter,
@@ -26,7 +36,14 @@ export const ADAPTERS = [
  */
 export function selectAdapter(repoRoot, forcedId) {
   if (forcedId) {
-    return ADAPTERS.find((a) => a.id === forcedId) ?? null;
+    const forced = ADAPTERS.find((a) => a.id === forcedId) ?? null;
+    if (!forced) {
+      log.warn(
+        `no ai-plan stack-graph adapter for ${forcedId}; code-map symbols only`,
+        { language: forcedId }
+      );
+    }
+    return forced;
   }
   for (const adapter of ADAPTERS) {
     if (adapter.matches(repoRoot)) {

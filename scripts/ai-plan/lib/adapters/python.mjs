@@ -5,7 +5,6 @@
  * symbols and resolving intra-repo import edges.
  */
 
-import { spawnSync } from 'node:child_process';
 import {
   existsSync,
   readFileSync,
@@ -15,6 +14,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../../../lib/resolve-ast-grep.mjs';
 import { createLogger } from '../logger.mjs';
+import { runBatchedScan } from './sg-scan.mjs';
+import { symbolNameFromMatch } from '../../../lib/sg-result.mjs';
+import { BASE_SKIP_DIRS } from '../../../lib/skip-dirs.mjs';
 
 const log = createLogger({ module: 'python-adapter' });
 
@@ -30,23 +32,16 @@ const PYTHON_MARKERS = new Set([
   'Pipfile',
 ]);
 
+// Shared base infra/test-output dirs plus Python virtualenv and tool caches.
 const SKIP_DIRS = new Set([
-  '.git',
+  ...BASE_SKIP_DIRS,
+  '.venv',
+  'venv',
+  '__pycache__',
   '.mypy_cache',
   '.pytest_cache',
   '.ruff_cache',
   '.tox',
-  '.venv',
-  '.worktrees',
-  '__fixtures__',
-  '__pycache__',
-  'bin',
-  'build',
-  'dist',
-  'fixtures',
-  'node_modules',
-  'obj',
-  'venv',
 ]);
 
 const FROM_IMPORT_RE = /^\s*from\s+([.\w][\w.]*|\.+)\s+import\s+(.+)$/gm;
@@ -397,31 +392,12 @@ function extractSymbols(repoRoot, candidateFiles) {
       return symbols;
     }
 
-    const result = spawnSync(
+    const matches = runBatchedScan(
       binary,
-      [
-        'scan',
-        ...candidateFiles.map((file) => path.join(repoRoot, file)),
-        '--config',
-        SG_CONFIG_PATH,
-        '--json',
-        '--include-metadata',
-      ],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-        maxBuffer: 64 * 1024 * 1024,
-      }
+      repoRoot,
+      candidateFiles.map((file) => path.join(repoRoot, file)),
+      ['--config', SG_CONFIG_PATH, '--include-metadata']
     );
-
-    if (result.error || (result.status !== 0 && !result.stdout?.trim())) {
-      log.debug('ast-grep symbol scan failed', {
-        error: errorMessage(result.error) || result.stderr?.trim(),
-      });
-      return symbols;
-    }
-
-    const matches = parseScanJson(result.stdout ?? '');
     const candidateSet = new Set(candidateFiles);
     for (const match of matches) {
       const file = normalizePath(
@@ -453,30 +429,6 @@ function extractSymbols(repoRoot, candidateFiles) {
   }
 
   return symbols;
-}
-
-/**
- * @param {string} stdout
- * @returns {Array<Record<string, unknown>>}
- */
-function parseScanJson(stdout) {
-  const trimmed = stdout.trim();
-  if (!trimmed) {
-    return [];
-  }
-  const data = JSON.parse(trimmed);
-  return Array.isArray(data) ? data : [];
-}
-
-/**
- * @param {Record<string, unknown>} match
- * @returns {string | null}
- */
-function symbolNameFromMatch(match) {
-  const meta = /** @type {{ single?: Record<string, { text?: string }> }} */ (
-    match.metaVariables
-  );
-  return meta?.single?.NAME?.text ?? null;
 }
 
 /**

@@ -3,7 +3,7 @@ import path from 'node:path';
 import { detectCodeMapRoots } from '../../ai-plan/lib/auto-detect.mjs';
 
 /** @type {readonly string[]} */
-export const DEFAULT_SCAN_ROOTS = ['src', 'native'];
+export const DEFAULT_SCAN_ROOTS = ['src'];
 
 /** @type {readonly string[]} */
 export const SUPPORTED_LANGUAGES = [
@@ -13,9 +13,13 @@ export const SUPPORTED_LANGUAGES = [
   'Java',
   'Python',
   'Go',
-  'Rust',
 ];
 
+// Extensions that drive file detection. The first block has ast-grep
+// scan rules; everything from `.kt` down is detected-but-unsupported — it has
+// NO ast-grep rules or stack-graph adapter, so such files contribute to root
+// detection only and yield no symbols. Do not remove them without confirming
+// detection elsewhere does not depend on them.
 export const SOURCE_EXTENSIONS = new Set([
   '.js',
   '.jsx',
@@ -29,7 +33,7 @@ export const SOURCE_EXTENSIONS = new Set([
   '.java',
   '.py',
   '.go',
-  '.rs',
+  // Detected-but-unsupported (no rules/adapter) below this line:
   '.kt',
   '.kts',
   '.rb',

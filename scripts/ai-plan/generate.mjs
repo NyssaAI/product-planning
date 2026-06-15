@@ -241,7 +241,8 @@ function runGenerate() {
 
   const embedded = embedModuleMap(
     REPO_ROOT,
-    renderModuleMapTable(model.modules)
+    renderModuleMapTable(model.modules),
+    model.generated
   );
 
   if (model.modules.length === 0) {

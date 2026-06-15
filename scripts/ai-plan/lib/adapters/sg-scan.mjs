@@ -9,11 +9,18 @@
  * Public Interface:
  * - runBatchedScan(binary, repoRoot, absPaths, ruleArgs) -> match[]
  * - batchByArgLength(absPaths, maxLen?) -> string[][]
- * - parseScanJson(stdout) -> match[]
+ *
+ * JSON parsing (`parseScanJson`) lives in scripts/lib/sg-result.mjs and is
+ * re-exported here for adapters that already import from this module.
  */
 
 import { spawnSync } from 'node:child_process';
 import { createLogger } from '../logger.mjs';
+import { parseScanJson } from '../../../lib/sg-result.mjs';
+
+// Re-export the shared JSON parser so existing adapter imports from this module
+// keep working after the helper moved to scripts/lib/sg-result.mjs.
+export { parseScanJson };
 
 const log = createLogger({ module: 'sg-scan' });
 
@@ -81,19 +88,6 @@ export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH) {
     batches.push(current);
   }
   return batches;
-}
-
-/**
- * @param {string} stdout
- * @returns {Array<Record<string, unknown>>}
- */
-export function parseScanJson(stdout) {
-  const trimmed = stdout.trim();
-  if (!trimmed) {
-    return [];
-  }
-  const data = JSON.parse(trimmed);
-  return Array.isArray(data) ? data : [];
 }
 
 /**

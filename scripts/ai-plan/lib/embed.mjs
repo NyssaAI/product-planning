@@ -34,9 +34,11 @@ export function renderModuleMapTable(modules) {
  *
  * @param {string} filePath
  * @param {string} tableMarkdown
+ * @param {string} [generated] ISO timestamp shared with index.md, stamped into
+ *   the managed block so the staleness gate can observe drift from index.md
  * @returns {boolean} true when the file was written
  */
-function embedIntoFile(filePath, tableMarkdown) {
+function embedIntoFile(filePath, tableMarkdown, generated) {
   if (!existsSync(filePath)) {
     return false;
   }
@@ -45,7 +47,11 @@ function embedIntoFile(filePath, tableMarkdown) {
     START_MARKER,
     '## Module map (auto-updated — do not edit)',
     '',
+    // Always-loaded coarse table: route through the index to pick the module set.
+    'Start at `docs/agent-plan/context/index.md` to pick the module set.',
+    '',
     tableMarkdown,
+    `<!-- ai-plan:module-map generated ${generated ?? new Date().toISOString()} -->`,
     END_MARKER,
   ].join('\n');
 
@@ -80,13 +86,14 @@ function embedIntoFile(filePath, tableMarkdown) {
  *
  * @param {string} repoRoot
  * @param {string} tableMarkdown from renderModuleMapTable
+ * @param {string} [generated] ISO timestamp shared with index.md (model.generated)
  * @returns {string[]} relative paths of files updated
  */
-export function embedModuleMap(repoRoot, tableMarkdown) {
+export function embedModuleMap(repoRoot, tableMarkdown, generated) {
   /** @type {string[]} */
   const updated = [];
   for (const name of ['CLAUDE.md', 'AGENTS.md']) {
-    if (embedIntoFile(path.join(repoRoot, name), tableMarkdown)) {
+    if (embedIntoFile(path.join(repoRoot, name), tableMarkdown, generated)) {
       updated.push(name);
     }
   }

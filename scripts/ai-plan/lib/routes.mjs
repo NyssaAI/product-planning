@@ -1,5 +1,9 @@
 import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
+import {
+  extractEndpoints,
+  nextRouteSegment,
+} from '../../code-map/lib/endpoint-extractor.mjs';
 
 const HTTP_METHODS = new Set([
   'GET',
@@ -26,10 +30,22 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
   const codeMapFiles = Array.isArray(codeMapInput)
     ? codeMapInput
     : codeMapInput.files ?? [];
-  const endpointRoutes = discoverEndpointRoutes(
-    modules,
-    Array.isArray(codeMapInput) ? [] : codeMapInput.endpoints ?? []
-  );
+  const providedEndpoints = Array.isArray(codeMapInput)
+    ? []
+    : codeMapInput.endpoints ?? [];
+  // When the code-map carries no endpoints (e.g. ai-plan ran without a fresh
+  // code-map pass), recover C#/FastAPI/MCP/Next.js endpoints by scanning the
+  // code-map's own file list with the same endpoint extractor code-map uses.
+  // This reuses the already-enumerated source files rather than re-walking the
+  // tree, so non-Next.js endpoints survive without a full code-map run.
+  const endpoints =
+    providedEndpoints.length > 0
+      ? providedEndpoints
+      : extractEndpoints(
+          repoRoot,
+          codeMapFiles.map((file) => file.path)
+        );
+  const endpointRoutes = discoverEndpointRoutes(modules, endpoints);
   if (!config.apiRoutes.enabled) {
     return endpointRoutes;
   }
@@ -194,8 +210,16 @@ function filePathToApiRoute(relPath, routeFileName, pathPrefix) {
       route = route.slice(prefix.length);
     }
   }
-  route = route.replace(/\[([^\]]+)\]/g, ':$1');
-  return route || '/';
+  // Use the single Next.js path translator from endpoint-extractor so route
+  // groups `(group)`, parallel-route slots `@slot`, and the full dynamic-segment
+  // family (`[param]`, `[...param]`, `[[...param]]`) translate consistently.
+  const segments = route
+    .split('/')
+    .filter(Boolean)
+    .filter((seg) => !/^\(.*\)$/.test(seg))
+    .filter((seg) => !seg.startsWith('@'))
+    .map(nextRouteSegment);
+  return `/${segments.join('/')}`.replace(/\/+$/, '') || '/';
 }
 
 /**
