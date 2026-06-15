@@ -174,6 +174,6 @@ Report any skipped steps (e.g. "worktree already removed", "check (b) skipped �
 ## Integration
 
 - **dev-tools:execute-plan** — parent orchestrator for post-review PR closeout
-- **dev-tools:execute-plan-finish** — creates the PR this skill later merges (writes the `**Spec:**` line and Bug section it reads)
+- **dev-tools:execute-plan-finish** — creates the PR this skill later merges (writes the `**Spec:**` line when a plan exists, and the Bug section it reads)
 - **dev-tools:fix-bug-complete** — invokes execute-plan-finish for bug-fix PRs
 - **dev-tools:using-git-worktrees** — created the worktree this skill cleans up

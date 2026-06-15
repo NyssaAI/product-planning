@@ -125,15 +125,15 @@ gh pr view --json url --jq .url
 
 If that command returns a PR URL, do **not** create another PR. Report that the existing PR was updated after the push.
 
-When a spec or plan exists for this work, also include a `**Spec:** <path>` line in the Summary section — the post-review closeout phase reads it for the acceptance-criteria regression check.
+**Spec line:** when a plan exists for this work, read the plan header's `**Spec:**` line and ALWAYS propagate it into the Summary section as a `**Spec:** <path>` line — the post-review closeout phase reads it for the acceptance-criteria regression check. Omit it only when the plan's Spec is `none`. (If there is no plan but a spec is otherwise known, include it the same way.)
 
-**Bug section detection (before calling `gh pr create`):** check whether this branch closes a documented bug — the branch name is the shared key, no parameter passing required:
+**Bug section detection (before calling `gh pr create`):** check whether this branch closes a documented bug — the branch name is the shared key, no parameter passing required. Bug directories are keyed by the full `{bug_id}` = `{timestamp}-{slug}` (e.g. `2026.04.24-094512-login-500`), so match the slug as a directory-name **suffix**:
 
 1. Get the current branch: `git branch --show-current`
 2. Extract the slug: strip any leading `fix/`, `bugfix/`, or `bug/` prefix; the remainder is the slug
-3. Check for `docs/agent-plan/bugs/{slug}/`
-4. If the directory exists: include the Bug section with the path `docs/agent-plan/bugs/{slug}/{slug}-detail.md`
-5. If not: omit the Bug section entirely
+3. Find the bug directory whose name ends with `-{slug}` (glob `docs/agent-plan/bugs/*-{slug}/`); the matched directory name IS the full `{bug_id}`
+4. If a directory matches: include the Bug section with the path `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
+5. If none matches: omit the Bug section entirely
 
 **After `gh pr create` succeeds or an existing PR is found:** Report the PR URL to your human partner. Do not merge the PR yourself. When they're ready after review, **dev-tools:execute-plan** runs post-review closeout, which invokes internal merge-pr for regression checks, merge, and worktree cleanup.
 

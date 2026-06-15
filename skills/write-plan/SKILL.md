@@ -27,7 +27,7 @@ Do NOT write or save an implementation plan until you are in an isolated worktre
 - `dev-tools:using-git-worktrees` completed in this session (or you are already in that feature worktree)
 - Current branch is a feature branch — not `main` or `master`
 - Know the branch name and worktree path for the plan header
-- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/agent-plan/context/` if stale, then load **one** L1 module file for the target module
+- **AI Plan (when repo has source code):** invoke `dev-tools:using-ai-plan` — regenerate `docs/agent-plan/context/` if stale, then read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map
 
 **Save plans to:** `docs/agent-plan/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
@@ -58,7 +58,7 @@ If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip 
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during design-spec. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
-If the spec's **Module scope** lists multiple primary modules, confirm each is genuinely required to deliver the behavior (not a dependency merely called). If some are independent slices that could ship on their own, push back: suggest splitting into separate specs/plans. Keep the set minimal — but a coherent behavior spanning modules stays one plan.
+If the spec's **Module scope** lists multiple primary modules, confirm each is genuinely required to deliver the behavior (not a dependency merely called). If some are independent module-scoped work that could ship on their own, push back: suggest splitting into separate specs/plans. Keep the set minimal — but a coherent behavior spanning modules stays one plan.
 
 ## File Structure
 
@@ -98,6 +98,8 @@ This structure informs the task decomposition. Each task should produce self-con
 **Branch:** `[feature-branch-name]` (feature branch — not main/master)
 
 **Worktree:** `[absolute path to worktree]`
+
+**Spec:** `[path-to-spec-or "none"]` (stable link back to the spec; carried into the PR Summary by execute-plan-finish)
 
 **Integration:** Pull request via `gh pr create` when implementation completes (`dev-tools:execute-plan` → `execute-plan-finish`)
 

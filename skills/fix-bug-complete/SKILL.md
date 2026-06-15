@@ -18,7 +18,7 @@ Verify all completion gates after **fix-bug-resolve** and post the final report.
 Only mark complete when **all** are true:
 
 - [ ] `bug_id` exists and detail file exists: `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
-- [ ] Discovery committed separately (from fix-bug-log)
+- [ ] Discovery committed separately (from add-bug or fix-bug-log)
 - [ ] Root cause investigated (fix-bug Step 2 / systematic-debugging completed with hypothesis + evidence)
 - [ ] Full test suite passes
 - [ ] Root cause addressed (not just symptom)
