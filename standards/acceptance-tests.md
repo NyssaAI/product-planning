@@ -5,7 +5,7 @@ Agent acceptance tests (AATs) use Cucumber feature files to define expected beha
 ## Directory structure
 
 ```
-docs/acceptance-tests/
+test/acceptance-tests/
 └── {timestamp}-{slug}/
     ├── {slug}.feature              - Cucumber feature file
     └── ...                         - supporting step definitions, fixtures

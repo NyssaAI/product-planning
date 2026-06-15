@@ -7,6 +7,7 @@
 | **Unit** | Function/class | ms | Every save | Logic, branches, edge cases |
 | **Integration** | Component + real dependencies | seconds | Every commit | Real DB, API calls, interactions |
 | **E2E** | Full user workflow | 10-30s | Before release | Critical paths only |
+| **Acceptance / AAT** | Behavior vs. spec acceptance criteria | seconds-minutes | Per work item | Gherkin/Cucumber `.feature` files in `test/acceptance-tests/` (see [acceptance-tests.md](acceptance-tests.md)) |
 
 ---
 

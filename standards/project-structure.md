@@ -23,24 +23,23 @@ All development repos created should follow this standard
 │       │   ├── module-map.json                     - machine-readable dependency graph
 │       │   └── modules/
 │       │       └── <module-id>.md                  - module architecture (boundaries, deps, routes, tests)
-│       ├── specs/                                  - workflow: approved design docs
+│       ├── specs/                                  - workflow: approved design specs
 │       │   └── YYYY-MM-DD-<topic>-design.md
 │       ├── plans/                                  - workflow: implementation plans
 │       │   └── YYYY-MM-DD-<feature-name>.md
 │       ├── backlog/                                - workflow: queued work items
-│       │   └── {YYYY.MM.DD-HHMMSS-slug}/
+│       │   └── {timestamp}-{slug}/
 │       │       └── {timestamp}-{slug}-detail.md
 │       └── bugs/                                   - workflow: bug reports and resolutions
-│           └── {YYYY.MM.DD-HHMMSS-slug}/
+│           └── {timestamp}-{slug}/
 │               ├── {timestamp}-{slug}-detail.md
 │               └── {timestamp}-{slug}-resolution.md
 ├── src/                                            - source code (feature-folder structure)
 ├── test/                                           - test code (mirrors src/ structure)
-│   └── acceptance-tests/                           - shell tests the execise the binary from the commandline and collect errors and logs
+│   └── acceptance-tests/                           - Gherkin/Cucumber AATs that exercise expected behavior (see acceptance-tests.md)
 │       └── {timestamp}-{slug}/
-│           ├──  {test-script}
-│           ├──  {test results}
-│           └──  logs/
+│           ├──  {slug}.feature                      - Cucumber feature file (Given/When/Then)
+│           └──  ...                                 - supporting step definitions, fixtures
 └── CLAUDE.md                                       - repo-specific instructions
 ```
 
@@ -48,7 +47,7 @@ All development repos created should follow this standard
 
 ## Timestamp format
 
-See [timestamp-format.md](timestamp-format.md).
+In path templates above, `{timestamp}` = `YYYY.MM.DD-HHMMSS`. See [timestamp-format.md](timestamp-format.md).
 
 ## Required files
 
