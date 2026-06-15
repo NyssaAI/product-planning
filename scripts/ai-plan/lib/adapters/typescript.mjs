@@ -22,7 +22,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../../../lib/resolve-ast-grep.mjs';
 import { createLogger } from '../logger.mjs';
-import { runBatchedScan, parseScanJson } from './sg-scan.mjs';
+import { runBatchedScan } from './sg-scan.mjs';
+import { symbolNameFromMatch } from '../../../lib/sg-result.mjs';
+import { BASE_SKIP_DIRS } from '../../../lib/skip-dirs.mjs';
 
 const log = createLogger({ module: 'typescript-adapter' });
 
@@ -50,20 +52,8 @@ const RESOLVE_EXTENSIONS = [
   '.cjs',
 ];
 
-const SKIP_DIRS = new Set([
-  '.git',
-  '.next',
-  '.worktrees',
-  '__fixtures__',
-  'bin',
-  'build',
-  'coverage',
-  'dist',
-  'fixtures',
-  'logs',
-  'node_modules',
-  'obj',
-]);
+// TypeScript adds no language-specific skip dirs beyond the shared base.
+const SKIP_DIRS = new Set([...BASE_SKIP_DIRS]);
 
 // ast-grep inline rules matching module specifiers structurally on the
 // tree-sitter parse tree: static imports, `export … from` re-exports, dynamic
@@ -667,17 +657,6 @@ function extractSymbols(repoRoot, candidateFiles) {
   }
 
   return symbols;
-}
-
-/**
- * @param {Record<string, unknown>} match
- * @returns {string | null}
- */
-function symbolNameFromMatch(match) {
-  const meta = /** @type {{ single?: Record<string, { text?: string }> }} */ (
-    match.metaVariables
-  );
-  return meta?.single?.NAME?.text ?? meta?.single?.METHOD?.text ?? null;
 }
 
 /**

@@ -16,7 +16,7 @@ Formally document a new backlog item (planned work, not a current bug or in-flig
 You MUST complete these steps in order:
 
 1. **Gather backlog-item info** — summary, context, scope, acceptance criteria, short slug
-2. **Generate paths** — canonical timestamp + slug
+2. **Generate paths** — the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md) + slug
 3. **Write detail file**
 4. **Commit and push**
 5. **Confirm completion**
@@ -36,6 +36,8 @@ Ask these questions one at a time:
 
 Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md` — the time-component variant, used for artifacts that may be filed multiple times per day (bugs, backlog items). Use 24-hour local time at the moment of creation. Example: `2026.04.24-102847`. (Specs and plans use the date-only `YYYY-MM-DD` variant instead.)
 
+The work-item id format `{timestamp}-{slug}` is shared across workflow artifacts (backlog calls it `{id}`, bug calls it `{bug_id}`).
+
 Construct the directory and file paths:
 
 - Directory: `docs/agent-plan/backlog/{timestamp}-{slug}/`
@@ -52,7 +54,7 @@ Create the directory if missing. Write the detail file using this template:
 ```markdown
 # Backlog: {slug}
 
-**Added:** {timestamp in canonical format}
+**Added:** {timestamp in the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md)}
 
 ## Summary
 
@@ -77,7 +79,7 @@ Create the directory if missing. Write the detail file using this template:
 {from Step 1.5}
 ```
 
-Substitute `{slug}` with the human-readable slug (without timestamp prefix in the heading for readability), and `{timestamp}` with the canonical format.
+Substitute `{slug}` with the human-readable slug (without timestamp prefix in the heading for readability), and `{timestamp}` with the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md).
 
 If the user's input for any field is bulletable (multiple items), format as a Markdown bullet list in the output. If it's narrative, render as paragraphs.
 

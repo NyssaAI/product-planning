@@ -11,7 +11,7 @@ docs/agent-plan/bugs/
 
 ## Workflow
 
-1. **Discovery** — When a bug is found, run **dev-tools:fix-bug** (Step 1: **fix-bug-log**). Create the dated directory and detail file. Commit and push.
+1. **Discovery** — When a bug is found, run **dev-tools:fix-bug** (Step 1: **fix-bug-log**). Create the dated directory and detail file. Commit and push. The detail file has an alternate producer: **dev-tools:add-bug** captures a bug for later without entering the fix lifecycle. The discovery commit verb is therefore `docs(bug): add` (capture-only, via add-bug) or `docs(bug): discover` (active fix lifecycle, via fix-bug-log).
 2. **Resolution** — **fix-bug** continues through analyze, resolve, and complete. When the fix is done, **fix-bug-resolve** creates the resolution file. Commit and push separately from discovery.
 3. **No batching** — Each step gets its own commit and push. Do not combine discovery and resolution into one commit.
 

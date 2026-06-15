@@ -129,7 +129,8 @@ function hasSourceFiles(dir) {
         continue;
       }
       const full = path.join(current, entry.name);
-      if (entry.isFile() && /\.(m?[jt]sx?|cs|py|go|rs)$/i.test(entry.name)) {
+      // Languages with ast-grep rules/adapters (Rust removed: no rules exist).
+      if (entry.isFile() && /\.(m?[jt]sx?|cs|py|go)$/i.test(entry.name)) {
         return true;
       }
       if (entry.isDirectory()) {

@@ -18,7 +18,7 @@ Do NOT analyze, debug, resolve, fix, implement, or invoke systematic-debugging.
 You MUST complete these steps in order:
 
 1. **Gather bug info** - symptom, root cause if already known, contributing factors, short slug
-2. **Generate paths** - canonical timestamp + slug to form `bug_id`
+2. **Generate paths** - the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md) + slug to form `bug_id`
 3. **Write detail file**
 4. **Commit and push**
 5. **Confirm completion**
@@ -38,7 +38,7 @@ Do not investigate unknown root cause during this skill. Capture what is known a
 
 Use the `YYYY.MM.DD-HHMMSS` variant from `standards/timestamp-format.md`. Use 24-hour local time at the moment of creation. Example: `2026.04.24-094512`.
 
-Construct paths using full `bug_id` = `{timestamp}-{slug}`:
+Construct paths using full `bug_id` = `{timestamp}-{slug}`. The work-item id format `{timestamp}-{slug}` is shared across workflow artifacts (backlog calls it `{id}`, bug calls it `{bug_id}`).
 
 - Directory: `docs/agent-plan/bugs/{bug_id}/`
 - Detail file: `docs/agent-plan/bugs/{bug_id}/{bug_id}-detail.md`
@@ -52,7 +52,7 @@ Create the directory if missing. Write the detail file using this template:
 ```markdown
 # Bug: {slug}
 
-**Discovered:** {timestamp in canonical format}
+**Discovered:** {timestamp in the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md)}
 
 ## Symptom
 
@@ -94,6 +94,8 @@ Tell the user:
 > - Pushed: yes / no (no remote configured)
 >
 > The bug is now documented. When ready to fix it, invoke `dev-tools:fix-bug` with this `bug_id`.
+
+A bug captured via add-bug satisfies fix-bug's discovery gate: this `docs(bug): add` commit is the discovery commit, so fix-bug skips its own logging step when started from this `bug_id`.
 
 Stop after confirmation. Do not continue into analysis or implementation.
 

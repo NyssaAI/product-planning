@@ -5,7 +5,7 @@ description: Use when implementation planning needs scoped repo context from doc
 
 # Using AI Plan
 
-**Canonical source** for ai-plan behavior. The `/ai-plan` command, `scripts/bootstrap-templates/AGENTS.md`, and `.cursor/rules/ai-plan.mdc` are thin wrappers — update this skill first when rules change.
+**Canonical source** for ai-plan behavior. The `/ai-plan` command, `scripts/bootstrap-templates/AGENTS.md`, `.cursor/rules/ai-plan.mdc`, `hooks/hooks.json` (the TaskCreated prompt), and the embedded module-map table in `CLAUDE.md` / `AGENTS.md` are thin wrappers that must stay in sync with this skill — update this skill first when rules change.
 
 Repository-agnostic **code map + module graph** for planning. Outputs live under `docs/agent-plan/context/` in the **target repository** (not inside the plugin).
 
@@ -26,13 +26,13 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task + `docs/agent-plan/specs/…-design.md` (if feature work) | Always |
-| L1 | **One** `docs/agent-plan/context/modules/<module-id>.md` | **During write-plan** — Read the module file now (Read tool). Do not defer or summarize. |
+| L1 | **In-scope** `docs/agent-plan/context/modules/<module-id>.md` set | **During write-plan** — Read the minimum in-scope module set now (Read tool). Do not defer or summarize. |
 | L2 | `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` | When product context needed |
 | L3 | `docs/agent-plan/context/code-map.json` | **After** plan names symbols — implementation only |
 
 `module-map.json` informs task ordering; do not paste the whole file into context.
 
-**Never** inject all module files or the full code map during planning.
+Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
 ## Generate (target repo)
 
@@ -74,7 +74,7 @@ If `--write-scripts` copied tooling into the repo, prefer `npm run ai-plan` from
 
 1. Read `docs/agent-plan/context/index.md` — module table links to `modules/<id>.md`
 2. Match the spec / roadmap item to its **Primary modules** — the minimum set needed for the behavior (ask if ambiguous)
-3. Read each in-scope `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read **only** the module file(s) in scope, not the whole graph
+3. Read each in-scope `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map
 4. Use `docs/agent-plan/context/module-map.json` only for dependency ordering between tasks (do not paste the whole file into context)
 
 Record in the plan header:
@@ -91,7 +91,13 @@ Regenerate when:
 - Public API or route structure changed materially
 - Module file missing for the module you need
 
-**Staleness gate:** if `docs/agent-plan/context/index.md` is missing, or any source file is newer than it, run `npm run ai-plan` **before any planning step** — do not proceed with stale context. Tell your human partner: "Module graph was stale — regenerated before planning."
+**Staleness gate:** run `npm run ai-plan` (or `node scripts/ai-plan/generate.mjs`) **before any planning step** when any of these hold — do not proceed with stale context:
+
+- `docs/agent-plan/context/index.md` is missing
+- any source file is newer than `index.md`
+- the embedded module-map section in `CLAUDE.md` / `AGENTS.md` is missing, or its generated timestamp is older than `index.md` (the generator stamps that section when it writes it)
+
+Tell your human partner: "Module graph was stale — regenerated before planning."
 
 ## Repo layout
 

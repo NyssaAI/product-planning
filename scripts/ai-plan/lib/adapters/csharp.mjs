@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { createLogger } from '../logger.mjs';
 import { resolveAstGrepBinary } from '../../../lib/resolve-ast-grep.mjs';
 import { runBatchedScan } from './sg-scan.mjs';
+import { BASE_SKIP_DIRS } from '../../../lib/skip-dirs.mjs';
 
 const log = createLogger({ module: 'adapter-csharp' });
 
@@ -46,15 +47,8 @@ rule: { kind: ${node}, has: { field: name, pattern: $NAME } }`
 
 const IDENT = /\b[A-Z][A-Za-z0-9_]*\b/g;
 const QUALIFIED_IDENT = /\b[A-Z][A-Za-z0-9_]*(?:\.[A-Z][A-Za-z0-9_]*)+\b/g;
-const SKIP_DIRS = new Set([
-  'bin',
-  'obj',
-  'node_modules',
-  '.git',
-  '.vs',
-  'fixtures',
-  '__fixtures__',
-]);
+// Shared base infra/test-output dirs plus the Visual Studio cache.
+const SKIP_DIRS = new Set([...BASE_SKIP_DIRS, '.vs']);
 
 /** @type {import('../detection/types.mjs').StackGraphAdapter} */
 const csharpAdapter = {

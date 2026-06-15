@@ -2,7 +2,7 @@
 
 ## Writing timestamps
 
-All new dated directories and files use this format:
+All new dated directories and files use the `YYYY.MM.DD-HHMMSS` write format:
 
 ```
 YYYY.MM.DD-HHMMSS

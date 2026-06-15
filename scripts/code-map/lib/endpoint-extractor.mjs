@@ -3,6 +3,8 @@
  *
  * Public Interface:
  * - extractEndpoints(repoRoot, files) -> Endpoint[]
+ * - nextRoutePath(file) -> string  (Next.js App Router file -> URL path)
+ * - nextRouteSegment(seg) -> string  (single path-segment translator)
  *
  * Dependencies:
  * - Node fs/path for local source reads
@@ -166,7 +168,7 @@ function extractNextAppRouterEndpoints(file, text) {
  * @param {string} file repo-relative, forward-slash path ending in `/route.*`
  * @returns {string}
  */
-function nextRoutePath(file) {
+export function nextRoutePath(file) {
   const match = file.match(/(?:^|\/)app\/(.*)route\.[^/]+$/);
   const inner = match ? match[1] : '';
   const segments = inner
@@ -182,7 +184,7 @@ function nextRoutePath(file) {
  * @param {string} seg
  * @returns {string}
  */
-function nextRouteSegment(seg) {
+export function nextRouteSegment(seg) {
   const optionalCatchAll = seg.match(/^\[\[\.\.\.(.+)\]\]$/);
   if (optionalCatchAll) {
     return `:${optionalCatchAll[1]}?`;

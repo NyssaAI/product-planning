@@ -22,9 +22,9 @@ export function renderIndex(model, config) {
     lines.push(`| L${level.level} ${level.name} | ${level.inject} | ${when} |`);
   }
   lines.push('');
-  lines.push('**Default for a feature:** L0 task + **one** L1 module file. Add L2 only if product/stack context is unclear.');
+  lines.push('**Default for a feature:** L0 task + the minimum in-scope L1 module set — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module\'s boundary. Never inject all module files or the full code map. Add L2 only if product/stack context is unclear.');
   lines.push('');
-  lines.push('## Module files (pick one)');
+  lines.push('## Module files (pick the in-scope set)');
   lines.push('');
   lines.push('| Module | What it does | Owns | Module file |');
   lines.push('|--------|--------------|------|-------------|');
@@ -43,10 +43,29 @@ export function renderIndex(model, config) {
   lines.push('');
   lines.push(`- **Module graph:** [module-map.json](./module-map.json)`);
   lines.push(`- **Symbol index:** [\`code-map.json\`](./code-map.json)`);
-  lines.push(`- **Product docs:** \`docs/product.md\`, \`docs/roadmap.md\`, \`docs/tech-stack.md\` (read directly — do not duplicate in BRIEF)`);
-  lines.push('');
-  if (model.project.docs.product) {
-    lines.push(`- Source docs: \`${model.project.docs.product}\`, roadmap, tech-stack`);
+  // Emit "read directly" pointers only for product docs that actually resolved
+  // (docs.mjs silently skips missing ones); flag unresolved docs instead of
+  // pointing at a path that does not exist.
+  const docs = model.project.docs ?? {};
+  const resolvedDocs = [
+    ['product', docs.product],
+    ['roadmap', docs.roadmap],
+    ['tech-stack', docs.techStack],
+  ].filter(([, value]) => Boolean(value));
+  const missingDocs = [
+    ['product', docs.product],
+    ['roadmap', docs.roadmap],
+    ['tech-stack', docs.techStack],
+  ].filter(([, value]) => !value);
+  if (resolvedDocs.length > 0) {
+    const pointers = resolvedDocs
+      .map(([, value]) => `\`${value}\``)
+      .join(', ');
+    lines.push(`- **Product docs:** ${pointers} (read directly — do not duplicate in BRIEF)`);
+  }
+  if (missingDocs.length > 0) {
+    const names = missingDocs.map(([label]) => label).join(', ');
+    lines.push(`- **Product docs (not present — run plan-product):** ${names}`);
   }
   lines.push('');
   lines.push('## Conventions');
@@ -126,7 +145,7 @@ export function renderModuleScope(model, mod) {
   lines.push(`# ${mod.name} (\`${mod.id}\`) — module`);
   lines.push('');
   lines.push(
-    '**Inject with your task doc only.** Do not load other module files or the full code map for planning.'
+    '**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module\'s boundary. Never inject all module files or the full code map.'
   );
   lines.push('');
 
@@ -159,14 +178,14 @@ export function renderModuleScope(model, mod) {
   if (apiRows.length > 0) {
     lines.push('## Public API');
     lines.push('');
-    lines.push('| Symbol | Signature | Summary |');
-    lines.push('|--------|-----------|---------|');
+    // L1 lists the public symbol name + a one-line summary only. Full
+    // signatures and line numbers stay in the L3 code-map (code-map.json) to
+    // keep this module doc at a planning altitude rather than implementation.
+    lines.push('| Symbol | Summary |');
+    lines.push('|--------|---------|');
     for (const sym of apiRows.slice(0, 20)) {
-      const signature = sym.signature
-        ? `\`${sym.signature.replace(/\|/g, '\\|')}\``
-        : '';
       const summary = (sym.summary ?? '').replace(/\|/g, '\\|');
-      lines.push(`| \`${sym.name}\` | ${signature} | ${summary} |`);
+      lines.push(`| \`${sym.name}\` | ${summary} |`);
     }
     lines.push('');
   }

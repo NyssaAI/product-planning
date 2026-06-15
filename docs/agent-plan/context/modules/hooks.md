@@ -1,6 +1,6 @@
 # hooks (`hooks`) — module
 
-**Inject with your task doc only.** Do not load other module files or the full code map for planning.
+**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
 **What this module does:** `hooks` — 1 file under `hooks/`.
 

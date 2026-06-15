@@ -22,7 +22,7 @@ Formally document a newly-discovered bug, conforming to `standards/bug-workflow.
 You MUST complete these steps in order:
 
 1. **Gather bug info** — symptom, root cause (if known), contributing factors, short slug
-2. **Generate paths** — canonical timestamp + slug → `bug_id`
+2. **Generate paths** — the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md) + slug → `bug_id`
 3. **Write detail file**
 4. **Commit and push** (discovery commit)
 5. **Confirm logged** — return `bug_id` to parent fix-bug skill
@@ -54,7 +54,7 @@ Create the directory if missing. Write the detail file using this template:
 ```markdown
 # Bug: {slug}
 
-**Discovered:** {timestamp in canonical format}
+**Discovered:** {timestamp in the `YYYY.MM.DD-HHMMSS` write format (see standards/timestamp-format.md)}
 
 ## Symptom
 
@@ -62,7 +62,7 @@ Create the directory if missing. Write the detail file using this template:
 
 ## Root cause
 
-{from Step 1.2 — or "Unknown at time of writing (investigate during fix-bug Step 2)"}
+{from Step 1.2 — or "Unknown at time of writing"}
 
 ## Contributing factors
 

@@ -20,5 +20,3 @@ languageGlobs:
     - '*.py'
   Go:
     - '*.go'
-  Rust:
-    - '*.rs'

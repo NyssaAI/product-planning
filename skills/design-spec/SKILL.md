@@ -67,7 +67,7 @@ You MUST create a task for each of these items and complete them in order:
 4. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 5. **Propose 2-3 approaches** — with trade-offs and your recommendation (informed by surfaced standards)
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
-7. **Write design doc** — save to `docs/agent-plan/specs/YYYY-MM-DD-<topic>-design.md` and commit (include Standards Applied section)
+7. **Write design spec** — save to `docs/agent-plan/specs/YYYY-MM-DD-<topic>-design.md` and commit (include Standards Applied section)
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **User reviews written spec** — ask user to review the spec file before proceeding
 10. **Set up isolated workspace** — REQUIRED SUB-SKILL: invoke `dev-tools:using-git-worktrees` (feature branch + worktree, not main/master)
@@ -85,7 +85,7 @@ digraph design_spec {
     "Propose 2-3 approaches\n(informed by standards)" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Write design doc\n(include Standards Applied)" [shape=box];
+    "Write design spec\n(include Standards Applied)" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
     "Invoke using-git-worktrees skill" [shape=box];
@@ -101,10 +101,10 @@ digraph design_spec {
     "Propose 2-3 approaches\n(informed by standards)" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc\n(include Standards Applied)" [label="yes"];
-    "Write design doc\n(include Standards Applied)" -> "Spec self-review\n(fix inline)";
+    "User approves design?" -> "Write design spec\n(include Standards Applied)" [label="yes"];
+    "Write design spec\n(include Standards Applied)" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
-    "User reviews spec?" -> "Write design doc\n(include Standards Applied)" [label="changes requested"];
+    "User reviews spec?" -> "Write design spec\n(include Standards Applied)" [label="changes requested"];
     "User reviews spec?" -> "Invoke using-git-worktrees skill" [label="approved"];
     "Invoke using-git-worktrees skill" -> "On feature branch?\n(not main/master)";
     "On feature branch?\n(not main/master)" -> "Invoke using-git-worktrees skill" [label="no"];
@@ -241,7 +241,7 @@ During step 2, detect the project's tech stack and surface the applicable standa
 4. Let the surfaced standards inform your approach proposals and design decisions
 5. If a standard contradicts a design choice, flag the conflict explicitly
 
-**In the design doc:** Include a "Standards Applied" section listing which standards informed the design and any key constraints they impose. This ensures the implementation plan and implementer know which rules to follow.
+**In the design spec:** Include a "Standards Applied" section listing which standards informed the design and any key constraints they impose. This ensures the implementation plan and implementer know which rules to follow.
 
 ## The Process
 
@@ -290,14 +290,21 @@ During step 2, detect the project's tech stack and surface the applicable standa
 
 - Write the validated design (spec) to `docs/agent-plan/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override this default)
-- If design started from a backlog item, include a **Source** section near the top of the design doc:
+  - This spec path is carried into the plan's `**Spec:**` header when `write-plan` runs (Step 11), so the spec and plan stay linked — no separate id scheme.
+- If design started from a backlog item, include a **Source** section near the top of the design spec:
   ```markdown
   ## Source
 
   **Backlog item:** `docs/agent-plan/backlog/{id}/{id}-detail.md`
   ```
 - When the repo has code, include **Module scope** (see Minimal module scope above) after Source
-- Include a **Standards Applied** section at the end of the design doc:
+- Include an **Acceptance criteria** section with a checkbox list — this heading is mandatory and must read exactly `## Acceptance criteria` (merge-pr's regression check string-matches it). Carry use-case "success criteria" forward here as spec "acceptance criteria" (see Use-case input above):
+  ```markdown
+  ## Acceptance criteria
+
+  - [ ] {testable assertion the implementation must satisfy}
+  ```
+- Include a **Standards Applied** section at the end of the design spec:
   ```markdown
   ## Standards Applied
 

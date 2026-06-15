@@ -16,6 +16,8 @@ import {
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../lib/resolve-ast-grep.mjs';
+import { parseScanJson, symbolNameFromMatch } from '../lib/sg-result.mjs';
+import { BASE_SKIP_DIRS } from '../lib/skip-dirs.mjs';
 import {
   loadCodeMapConfig,
   SOURCE_EXTENSIONS,
@@ -33,20 +35,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
 const SG_CONFIG_PATH = path.join(TOOLKIT_DIR, 'sgconfig.yml');
 
+// Shared base infra/test-output dirs (includes fixtures/__fixtures__ so the
+// endpoint walker no longer leaks fixture endpoints) plus Python virtualenv dirs.
 const ENDPOINT_SCAN_SKIP_DIRS = new Set([
-  '.git',
-  '.next',
+  ...BASE_SKIP_DIRS,
   '.venv',
-  '.worktrees',
-  '__pycache__',
-  'bin',
-  'build',
-  'coverage',
-  'dist',
-  'logs',
-  'node_modules',
-  'obj',
   'venv',
+  '__pycache__',
 ]);
 
 const HTTP_METHODS = new Set([
@@ -203,30 +198,6 @@ function kindRank(kind) {
     return 2;
   }
   return 1;
-}
-
-/**
- * @param {string} stdout
- * @returns {Array<Record<string, unknown>>}
- */
-function parseScanJson(stdout) {
-  const trimmed = stdout.trim();
-  if (!trimmed) {
-    return [];
-  }
-  const data = JSON.parse(trimmed);
-  return Array.isArray(data) ? data : [];
-}
-
-/**
- * @param {Record<string, unknown>} match
- * @returns {string | null}
- */
-function symbolNameFromMatch(match) {
-  const meta = /** @type {{ single?: Record<string, { text?: string }> }} */ (
-    match.metaVariables
-  );
-  return meta?.single?.NAME?.text ?? meta?.single?.METHOD?.text ?? null;
 }
 
 /**
