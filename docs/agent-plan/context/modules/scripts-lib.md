@@ -24,7 +24,7 @@
 | | Path |
 |--|------|
 | Root | `scripts/lib/` |
-| Used by | scripts-ai-plan, scripts-code-map |
+| Used by | scripts, scripts-ai-plan, scripts-code-map |
 | Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
 
 ## Flows
