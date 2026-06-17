@@ -1,5 +1,16 @@
 # dev-tools Release Notes
 
+## v6.4.0 (2026-06-17)
+
+### Added
+
+- **Polyglot pre-push test gate** — a deterministic `git pre-push` hook that runs a consumer repo's unit/integration tests and blocks the push on failure. Auto-detects npm/pnpm/yarn, `dotnet test`, pytest (strict), `go test`, and `cargo test`; override via `ai-plan.config.json` `test.commands`. Install with `/setup-test-gate` (or `node "${CLAUDE_PLUGIN_ROOT}/scripts/setup-test-gate.mjs"`). A self-contained runner is **vendored** into the repo (`.githooks/test-gate.mjs`), so the hook works under plain `git` with no plugin env vars; the installer is non-destructive (integrates with husky / `core.hooksPath`) and idempotent. Bypass with `git push --no-verify`.
+- **Playwright E2E finish-ask** — `execute-plan-finish` now detects a Playwright suite and asks (each push) whether to run E2E before pushing. "No" never blocks; the run/skip is recorded in the final response and the PR Test Plan. E2E is never run by the git hook.
+
+### Changed
+
+- **`align-project-structure`** audits for a missing pre-push test gate and offers to install it (ask-first) when a repo has a runnable suite but nothing runs it before push.
+
 ## v6.3.0 (2026-06-17)
 
 ### Added

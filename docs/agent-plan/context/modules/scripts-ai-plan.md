@@ -32,13 +32,13 @@
 | `detectSrcChildModules` |  |
 | `bootstrapRepo` |  |
 | `buildAiPlanModel` |  |
+| `parseTestConfig` | Parse + validate the `test` config field used by the pre-push test gate. |
 | `loadAiPlanConfig` |  |
 | `validateRequiredDocs` |  |
 | `resolveDocPath` |  |
 | `writeStarterConfigs` |  |
 | `deriveModules` |  |
 | `internalExternalWeights` | Internal vs. |
-| `internalExternalRatio` | internal / (internal + external). |
 
 ## Boundaries
 
@@ -72,7 +72,7 @@
 - `scripts/ai-plan/lib/auto-detect.mjs`: DEFAULT_DOC_CANDIDATES, CODE_ROOT_CANDIDATES, API_ROUTE_CANDIDATES, MODULE_GLOB_CANDIDATES, readProjectName, detectCodeMapRoots, detectApiRoutes, detectSrcChildModules
 - `scripts/ai-plan/lib/bootstrap.mjs`: bootstrapRepo
 - `scripts/ai-plan/lib/build.mjs`: buildAiPlanModel
-- `scripts/ai-plan/lib/config.mjs`: loadAiPlanConfig, validateRequiredDocs, resolveDocPath, writeStarterConfigs
+- `scripts/ai-plan/lib/config.mjs`: parseTestConfig, loadAiPlanConfig, validateRequiredDocs, resolveDocPath, writeStarterConfigs
 - `scripts/ai-plan/lib/detection/derive-modules.mjs`: deriveModules
 - `scripts/ai-plan/lib/detection/metrics.mjs`: internalExternalWeights, internalExternalRatio, modularity, cohesion, coupling
 

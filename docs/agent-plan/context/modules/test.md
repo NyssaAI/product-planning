@@ -2,7 +2,7 @@
 
 **Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
-**What this module does:** `test` — 26 files under `test/`.
+**What this module does:** `test` — 29 files under `test/`.
 
 ## Capabilities (owns)
 
@@ -12,13 +12,14 @@
 
 - scripts-ai-plan concerns → scripts-ai-plan module
 - scripts-code-map concerns → scripts-code-map module
+- scripts-test-gate concerns → scripts-test-gate module
 
 ## Boundaries
 
 | | Path |
 |--|------|
 | Root | `test/` |
-| Depends on modules | scripts-ai-plan, scripts-code-map |
+| Depends on modules | scripts-ai-plan, scripts-code-map, scripts-test-gate |
 | Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
 
 ## Flows

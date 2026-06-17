@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-17T12:27:27.421Z",
+  "generated": "2026-06-17T23:19:43.449Z",
   "roots": [
     "scripts",
     "hooks",
@@ -15,8 +15,8 @@
     "Python",
     "Go"
   ],
-  "fileCount": 41,
-  "symbolCount": 95,
+  "fileCount": 44,
+  "symbolCount": 101,
   "endpointCount": 0,
   "files": [
     {
@@ -298,9 +298,20 @@
       "path": "scripts/ai-plan/lib/config.mjs",
       "symbols": [
         {
+          "name": "parseTestConfig",
+          "kind": "function",
+          "line": 48,
+          "signature": "export function parseTestConfig(raw)",
+          "summary": "Parse + validate the `test` config field used by the pre-push test gate.",
+          "moduleId": "scripts-ai-plan",
+          "moduleName": "ai-plan",
+          "moduleRoot": "scripts/ai-plan",
+          "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+        },
+        {
           "name": "loadAiPlanConfig",
           "kind": "function",
-          "line": 44,
+          "line": 64,
           "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -310,7 +321,7 @@
         {
           "name": "validateRequiredDocs",
           "kind": "function",
-          "line": 127,
+          "line": 148,
           "signature": "export function validateRequiredDocs(repoRoot, config)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -320,7 +331,7 @@
         {
           "name": "resolveDocPath",
           "kind": "function",
-          "line": 149,
+          "line": 170,
           "signature": "export function resolveDocPath(repoRoot, candidates)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -330,7 +341,7 @@
         {
           "name": "writeStarterConfigs",
           "kind": "function",
-          "line": 162,
+          "line": 183,
           "signature": "export function writeStarterConfigs(repoRoot)",
           "moduleId": "scripts-ai-plan",
           "moduleName": "ai-plan",
@@ -1332,6 +1343,88 @@
       "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
     },
     {
+      "path": "scripts/setup-test-gate.mjs",
+      "symbols": [
+        {
+          "name": "setupTestGate",
+          "kind": "function",
+          "line": 202,
+          "signature": "export function setupTestGate(repo, pluginRoot)",
+          "summary": "Install (or refresh) the test gate into `repo`.",
+          "moduleId": "scripts",
+          "moduleName": "scripts",
+          "moduleRoot": "scripts",
+          "planningModule": "docs/agent-plan/context/modules/scripts.md"
+        }
+      ],
+      "moduleId": "scripts",
+      "moduleName": "scripts",
+      "moduleRoot": "scripts",
+      "planningModule": "docs/agent-plan/context/modules/scripts.md"
+    },
+    {
+      "path": "scripts/test-gate/detect.mjs",
+      "symbols": [
+        {
+          "name": "detectTestCommands",
+          "kind": "function",
+          "line": 150,
+          "signature": "export function detectTestCommands(repoRoot)",
+          "summary": "Produce the ordered polyglot list of unit/integration test commands.",
+          "moduleId": "scripts-test-gate",
+          "moduleName": "test-gate",
+          "moduleRoot": "scripts/test-gate",
+          "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+        },
+        {
+          "name": "detectPlaywright",
+          "kind": "function",
+          "line": 187,
+          "signature": "export function detectPlaywright(repoRoot)",
+          "summary": "Detect Playwright E2E.",
+          "moduleId": "scripts-test-gate",
+          "moduleName": "test-gate",
+          "moduleRoot": "scripts/test-gate",
+          "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+        },
+        {
+          "name": "resolveTestPlan",
+          "kind": "function",
+          "line": 217,
+          "signature": "export function resolveTestPlan(repoRoot)",
+          "summary": "Resolve the effective test plan, honoring ai-plan.config.json `test` field.",
+          "moduleId": "scripts-test-gate",
+          "moduleName": "test-gate",
+          "moduleRoot": "scripts/test-gate",
+          "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+        }
+      ],
+      "moduleId": "scripts-test-gate",
+      "moduleName": "test-gate",
+      "moduleRoot": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+    },
+    {
+      "path": "scripts/test-gate/run.mjs",
+      "symbols": [
+        {
+          "name": "runGate",
+          "kind": "function",
+          "line": 32,
+          "signature": "export function runGate(repoRoot, { spawn } = {})",
+          "summary": "Run the gate for a repo.",
+          "moduleId": "scripts-test-gate",
+          "moduleName": "test-gate",
+          "moduleRoot": "scripts/test-gate",
+          "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+        }
+      ],
+      "moduleId": "scripts-test-gate",
+      "moduleName": "test-gate",
+      "moduleRoot": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+    },
+    {
       "path": "skills/systematic-debugging/condition-based-waiting-example.ts",
       "symbols": [
         {
@@ -1375,7 +1468,7 @@
     }
   ],
   "endpoints": [],
-  "moduleCount": 8,
+  "moduleCount": 9,
   "modules": [
     {
       "id": "hooks",
@@ -1400,8 +1493,8 @@
       "name": "scripts",
       "root": "scripts",
       "planningModule": "docs/agent-plan/context/modules/scripts.md",
-      "fileCount": 0,
-      "symbolCount": 0,
+      "fileCount": 1,
+      "symbolCount": 1,
       "endpointCount": 0
     },
     {
@@ -1410,7 +1503,7 @@
       "root": "scripts/ai-plan",
       "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md",
       "fileCount": 29,
-      "symbolCount": 75,
+      "symbolCount": 76,
       "endpointCount": 0
     },
     {
@@ -1429,6 +1522,15 @@
       "planningModule": "docs/agent-plan/context/modules/scripts-lib.md",
       "fileCount": 4,
       "symbolCount": 5,
+      "endpointCount": 0
+    },
+    {
+      "id": "scripts-test-gate",
+      "name": "test-gate",
+      "root": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md",
+      "fileCount": 2,
+      "symbolCount": 4,
       "endpointCount": 0
     },
     {
@@ -1676,9 +1778,21 @@
     },
     {
       "file": "scripts/ai-plan/lib/config.mjs",
+      "name": "parseTestConfig",
+      "kind": "function",
+      "line": 48,
+      "signature": "export function parseTestConfig(raw)",
+      "summary": "Parse + validate the `test` config field used by the pre-push test gate.",
+      "moduleId": "scripts-ai-plan",
+      "moduleName": "ai-plan",
+      "moduleRoot": "scripts/ai-plan",
+      "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md"
+    },
+    {
+      "file": "scripts/ai-plan/lib/config.mjs",
       "name": "loadAiPlanConfig",
       "kind": "function",
-      "line": 44,
+      "line": 64,
       "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1689,7 +1803,7 @@
       "file": "scripts/ai-plan/lib/config.mjs",
       "name": "validateRequiredDocs",
       "kind": "function",
-      "line": 127,
+      "line": 148,
       "signature": "export function validateRequiredDocs(repoRoot, config)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1700,7 +1814,7 @@
       "file": "scripts/ai-plan/lib/config.mjs",
       "name": "resolveDocPath",
       "kind": "function",
-      "line": 149,
+      "line": 170,
       "signature": "export function resolveDocPath(repoRoot, candidates)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -1711,7 +1825,7 @@
       "file": "scripts/ai-plan/lib/config.mjs",
       "name": "writeStarterConfigs",
       "kind": "function",
-      "line": 162,
+      "line": 183,
       "signature": "export function writeStarterConfigs(repoRoot)",
       "moduleId": "scripts-ai-plan",
       "moduleName": "ai-plan",
@@ -2494,6 +2608,66 @@
       "moduleName": "lib",
       "moduleRoot": "scripts/lib",
       "planningModule": "docs/agent-plan/context/modules/scripts-lib.md"
+    },
+    {
+      "file": "scripts/setup-test-gate.mjs",
+      "name": "setupTestGate",
+      "kind": "function",
+      "line": 202,
+      "signature": "export function setupTestGate(repo, pluginRoot)",
+      "summary": "Install (or refresh) the test gate into `repo`.",
+      "moduleId": "scripts",
+      "moduleName": "scripts",
+      "moduleRoot": "scripts",
+      "planningModule": "docs/agent-plan/context/modules/scripts.md"
+    },
+    {
+      "file": "scripts/test-gate/detect.mjs",
+      "name": "detectTestCommands",
+      "kind": "function",
+      "line": 150,
+      "signature": "export function detectTestCommands(repoRoot)",
+      "summary": "Produce the ordered polyglot list of unit/integration test commands.",
+      "moduleId": "scripts-test-gate",
+      "moduleName": "test-gate",
+      "moduleRoot": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+    },
+    {
+      "file": "scripts/test-gate/detect.mjs",
+      "name": "detectPlaywright",
+      "kind": "function",
+      "line": 187,
+      "signature": "export function detectPlaywright(repoRoot)",
+      "summary": "Detect Playwright E2E.",
+      "moduleId": "scripts-test-gate",
+      "moduleName": "test-gate",
+      "moduleRoot": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+    },
+    {
+      "file": "scripts/test-gate/detect.mjs",
+      "name": "resolveTestPlan",
+      "kind": "function",
+      "line": 217,
+      "signature": "export function resolveTestPlan(repoRoot)",
+      "summary": "Resolve the effective test plan, honoring ai-plan.config.json `test` field.",
+      "moduleId": "scripts-test-gate",
+      "moduleName": "test-gate",
+      "moduleRoot": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
+    },
+    {
+      "file": "scripts/test-gate/run.mjs",
+      "name": "runGate",
+      "kind": "function",
+      "line": 32,
+      "signature": "export function runGate(repoRoot, { spawn } = {})",
+      "summary": "Run the gate for a repo.",
+      "moduleId": "scripts-test-gate",
+      "moduleName": "test-gate",
+      "moduleRoot": "scripts/test-gate",
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md"
     },
     {
       "file": "skills/systematic-debugging/condition-based-waiting-example.ts",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-17T12:27:29.036Z",
+  "generated": "2026-06-17T23:19:44.300Z",
   "project": {
     "name": "dev-tools",
     "docs": {
@@ -72,14 +72,16 @@
       "name": "scripts",
       "root": "scripts",
       "source": "derived",
-      "dependsOn": [],
+      "dependsOn": [
+        "scripts-lib"
+      ],
       "usedBy": [],
       "routeCount": 0,
-      "symbolCount": 0,
+      "symbolCount": 1,
       "planningModule": "docs/agent-plan/context/modules/scripts.md",
-      "description": "`scripts` — 1 file under `scripts/`.",
+      "description": "`scripts` — 2 files under `scripts/`.",
       "capabilities": [
-        "Code under `scripts/`"
+        "setupTestGate"
       ]
     },
     {
@@ -96,7 +98,7 @@
         "test"
       ],
       "routeCount": 0,
-      "symbolCount": 75,
+      "symbolCount": 76,
       "planningModule": "docs/agent-plan/context/modules/scripts-ai-plan.md",
       "description": "`ai-plan` — 35 files under `scripts/ai-plan/`.",
       "capabilities": [
@@ -135,6 +137,7 @@
       "source": "derived",
       "dependsOn": [],
       "usedBy": [
+        "scripts",
         "scripts-ai-plan",
         "scripts-code-map"
       ],
@@ -146,6 +149,25 @@
         "BASE_SKIP_DIRS",
         "findPluginRoot",
         "parseScanJson"
+      ]
+    },
+    {
+      "id": "scripts-test-gate",
+      "name": "test-gate",
+      "root": "scripts/test-gate",
+      "source": "derived",
+      "dependsOn": [],
+      "usedBy": [
+        "test"
+      ],
+      "routeCount": 0,
+      "symbolCount": 4,
+      "planningModule": "docs/agent-plan/context/modules/scripts-test-gate.md",
+      "description": "`test-gate` — 2 files under `scripts/test-gate/`.",
+      "capabilities": [
+        "detectPlaywright",
+        "detectTestCommands",
+        "resolveTestPlan"
       ]
     },
     {
@@ -172,13 +194,14 @@
       "source": "derived",
       "dependsOn": [
         "scripts-ai-plan",
-        "scripts-code-map"
+        "scripts-code-map",
+        "scripts-test-gate"
       ],
       "usedBy": [],
       "routeCount": 0,
       "symbolCount": 0,
       "planningModule": "docs/agent-plan/context/modules/test.md",
-      "description": "`test` — 26 files under `test/`.",
+      "description": "`test` — 29 files under `test/`.",
       "capabilities": [
         "Code under `test/`"
       ]
@@ -186,6 +209,10 @@
   ],
   "edges": [
     {
+      "from": "scripts",
+      "to": "scripts-lib"
+    },
+    {
       "from": "scripts-ai-plan",
       "to": "scripts-code-map"
     },
@@ -208,12 +235,16 @@
     {
       "from": "test",
       "to": "scripts-code-map"
+    },
+    {
+      "from": "test",
+      "to": "scripts-test-gate"
     }
   ],
   "codeMap": "docs/agent-plan/context/code-map.json",
   "stats": {
-    "moduleCount": 8,
+    "moduleCount": 9,
     "routeCount": 0,
-    "codeMapSymbols": 95
+    "codeMapSymbols": 101
   }
 }
