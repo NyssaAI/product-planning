@@ -48,6 +48,7 @@ Skip any step = lying, not verifying
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | VCS diff shows changes | Agent reports "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
+| Tests pass (repo has E2E) | Offered to run the E2E suite (e.g. Playwright) before claiming done | Unit/integration passing alone |
 
 ## Red Flags - STOP
 

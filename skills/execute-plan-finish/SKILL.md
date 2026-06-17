@@ -97,6 +97,19 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Default target for the PR: `main`, or `master` if that is the repo default. If unclear, ask once: "PR base branch: main — correct?"
 
+### Step 3.5: Offer E2E (Playwright) before push
+
+The pre-push test gate runs unit/integration tests deterministically; it does **not** run slow E2E. If the repo has an E2E suite, offer to run it here — a non-interactive git hook cannot ask, so this is the ask point.
+
+1. **Detect Playwright:** a `playwright.config.{ts,js,mjs,cjs}` exists AND `@playwright/test` is a (dev)dependency (or `ai-plan.config.json` `test.e2e` is set). If absent → skip this step entirely.
+2. **Ask the human** (each push): "This repo has Playwright E2E tests. Run them before pushing? (yes / no)"
+3. **On yes** → run the E2E command(s) (`ai-plan.config.json` `test.e2e`, else `npx playwright test`). If they **fail**, do not push — report failures and stop (same as Step 1). If they pass, continue.
+4. **On no** → **never block**. Continue to push, and record the skip:
+   - in your final response to the human ("E2E (Playwright) skipped at your request"), and
+   - as a Test Plan entry in the PR body (Step 4): `- [ ] E2E (Playwright) — skipped this push`.
+
+Do not run E2E without asking, and do not let a "no" stop the push.
+
 ### Step 4: Push and Create or Update Pull Request
 
 ```bash
@@ -113,6 +126,7 @@ gh pr create --base <base-branch> --title "<title>" --body "$(cat <<'EOF'
 
 ## Test Plan
 - [ ] <verification steps>
+- [ ] E2E (Playwright) — <ran & passed | skipped this push | n/a>  *(from Step 3.5; include only when the repo has an E2E suite)*
 EOF
 )"
 ```

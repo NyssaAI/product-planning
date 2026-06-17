@@ -31,6 +31,7 @@ Invoke `dev-tools:using-core-standards` to load `standards/project-structure.md`
 - `src/` feature-folder layout; `test/` mirroring `src/`; `test/acceptance-tests/`
 - `CLAUDE.md` / `AGENTS.md` present; `docs/design/`, `docs/use-cases/`
 - `ai-plan.config.json` present; auto-regen `PostToolUse` hook wired and every `.claude/settings.json` hook points at `docs/agent-plan/context/` paths (Step 3 auto-fixes both)
+- **Pre-push test gate** wired — the repo runs its tests before `git push`. Detect "not wired": no `pre-push` hook invokes the test gate (no `.githooks/test-gate.mjs` + guarded `pre-push`, no husky/`core.hooksPath` `pre-push` calling it). When the repo has a runnable suite but no gate → Step 4 offers to install it.
 
 Scan with Glob/Grep/ls. Classify each finding **ERROR** (docs/ deviation) or **WARNING** (advisory).
 
@@ -54,6 +55,7 @@ These rewrite human-authored content or are ambiguous. Present a numbered plan a
 - **`features.md` in old format** → convert the table to `## Inventory` + `## Definitions` and renumber `F1` → `F-001` (needs human judgment on names/definitions).
 - **Use-case files in old schema** (`F-001-U1`, singular `feature:`, `f{n}-u{n}.md`) → `U-001`, required `features:` list, `u-{nnn}-<slug>.md`.
 - **Empty / stub required docs** → recommend `dev-tools:plan-product` to author a real PRD, roadmap, and feature breakdown (interactive).
+- **No pre-push test gate** (repo has a runnable suite but nothing runs it before push) → offer to install it: `node "<PLUGIN_ROOT>/scripts/setup-test-gate.mjs"`. Ask first — it adds a `pre-push` git hook and may set `core.hooksPath` (a git-behavior change, per clone), so it is not a silent Step 3 auto-fix. The installer is non-destructive (integrates with existing husky/`core.hooksPath` hooks) and idempotent. Skip the offer when `ai-plan.config.json` sets `test.enabled:false`.
 - **Clobber risk** (a populated `docs/agent-plan/` alongside `docs/agent-files/`) → manual merge.
 
 ## Step 5 — Report
