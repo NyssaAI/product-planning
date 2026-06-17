@@ -30,7 +30,7 @@ Invoke `dev-tools:using-core-standards` to load `standards/project-structure.md`
 
 - `src/` feature-folder layout; `test/` mirroring `src/`; `test/acceptance-tests/`
 - `CLAUDE.md` / `AGENTS.md` present; `docs/design/`, `docs/use-cases/`
-- `ai-plan.config.json` + regeneration hook wired
+- `ai-plan.config.json` present; auto-regen `PostToolUse` hook wired and every `.claude/settings.json` hook points at `docs/agent-plan/context/` paths (Step 3 auto-fixes both)
 
 Scan with Glob/Grep/ls. Classify each finding **ERROR** (docs/ deviation) or **WARNING** (advisory).
 
@@ -41,8 +41,11 @@ Apply these without asking (all non-destructive), then report each. Use `npm run
 - **Missing required docs or subtree dirs** → `generate.mjs --init` (writes template stubs only where missing; creates the agent-plan subtree).
 - **Legacy `docs/agent-files/`** → `git mv docs/agent-files docs/agent-plan`, then replace `agent-files` → `agent-plan` in tracked references (`ai-plan.config.json` `outputDir`, `.claude/settings.json` regen hook, README/CLAUDE.md/AGENTS.md/CI). **Guard:** if `docs/agent-plan/` already exists with content, do NOT move — escalate to Step 4.
 - **Pre-reorg roots** (`docs/specs/`, `docs/plans/`, `docs/backlog/`, `docs/bugs/`, `docs/ai-plan/`) → `generate.mjs --migrate` (idempotent; skips any target that already exists).
+- **Regen hook missing or stale** → ensure the auto-regen hook is wired and every hook points at current context paths. This is broader than the `agent-files` → `agent-plan` sweep above — do it even when no `agent-files` token exists:
+  - **Missing hook** → if `.claude/settings.json` has no `PostToolUse` hook invoking `regen-if-source-changed.mjs`, run `generate.mjs --write-scripts` to add it (plus the `code-map`/`ai-plan` package scripts). Skip if `ai-plan.config.json` sets `"autoRegenerate": false`.
+  - **Stale path in any hook** → rewrite **every** hook that references an out-of-date context-map path — the regen `command` hook *and* advisory `agent` hooks (e.g. a `TaskCreated` reminder) — to the canonical `docs/agent-plan/context/code-map.json` and `docs/agent-plan/context/module-map.json`. Catch legacy variants the token sweep misses: `docs/ai-plan/code_map.json` / `module_map.json`, underscore filenames (`code_map`/`module_map`), and any path missing the `context/` segment.
 
-Re-verify after applying: `git grep -c agent-files` → no matches; the expected dirs/files are now present.
+Re-verify after applying: `git grep -c agent-files` → no matches; a `PostToolUse` regen hook is present (unless opted out); no hook references `code_map`/`module_map` or a non-`context/` map path; the expected dirs/files are now present.
 
 ## Step 4 — Plan the rest (ask before applying)
 
@@ -82,3 +85,4 @@ These rewrite human-authored content or are ambiguous. Present a numbered plan a
 - Moving onto a populated `docs/agent-plan/` (clobber) instead of merging.
 - Auto-converting `features.md` / use-case content without approval — it is human-authored.
 - Forgetting config / regen-hook path references after the `agent-files` move, so regeneration writes to the old location.
+- Leaving the regen hook unwired, or only fixing the regen `command` hook while an advisory `agent` hook still points at a legacy `docs/ai-plan/code_map.json` path — Step 3 wires the missing hook and rewrites stale paths in *every* hook.

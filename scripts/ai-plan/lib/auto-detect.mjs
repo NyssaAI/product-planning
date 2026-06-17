@@ -32,6 +32,7 @@ export const CODE_ROOT_CANDIDATES = [
   'server',
   'client',
   'core',
+  'test',
 ];
 
 /** @type {readonly { root: string, routeFile: string, pathPrefix: string }[]} */
