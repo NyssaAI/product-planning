@@ -2,7 +2,7 @@
   "name": "dev-tools",
   "displayName": "Dev Tools",
   "description": "Development workflow skills: TDD, debugging, design-spec, execute-plan, fix-bug, ai-plan code/module graph, git worktrees, PR workflow, and product planning",
-  "version": "6.2.5",
+  "version": "6.3.0",
   "author": {
     "name": "jamaynor"
   },

@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SELF = fileURLToPath(import.meta.url);
-const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts'];
+const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts', 'test'];
 
 /**
  * @param {string} repoRoot

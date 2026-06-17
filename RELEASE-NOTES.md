@@ -1,5 +1,15 @@
 # dev-tools Release Notes
 
+## v6.3.0 (2026-06-17)
+
+### Added
+
+- **`test/` is scanned by default** — `test` is now a default code-map scan root (`CODE_ROOT_CANDIDATES`) and a default regen trigger (`DEFAULT_SOURCE_ROOTS`). Test projects (e.g. .NET `test/*` solutions) now appear in the code-map / module-map, and edits under `test/` auto-regenerate context. Previously `test/` was ignored, so test modules reported `symbolCount: 0`.
+
+### Changed
+
+- **`align-project-structure` wires and repairs the regeneration hook** — Step 3 now adds a missing `PostToolUse` auto-regen hook via `--write-scripts` (respecting `"autoRegenerate": false`), and rewrites stale context-map paths in *every* `.claude/settings.json` hook — including advisory `agent` hooks like a `TaskCreated` reminder — catching legacy variants the `agent-files` → `agent-plan` token sweep misses (`docs/ai-plan/code_map.json` / `module_map.json`, underscore filenames, and any path missing the `context/` segment).
+
 ## v6.2.1 (2026-06-14)
 
 Maintenance/republish patch — no functional changes since v6.2.0.
