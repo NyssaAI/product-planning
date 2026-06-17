@@ -37,19 +37,30 @@ One canonical lifecycle:
 
 ## Execution steps
 
+### Step 0: Entrypoint gate — confirm a plan exists
+
+This skill is the entrypoint for implementing a plan. **Before any worktree or code work**, resolve intent and the plan:
+
+1. **Route by request type first:**
+   - merge / land / close out an already reviewed PR → skip to **Step 5: Post-review closeout** (no plan load needed).
+   - address PR review feedback / requested changes → go to **Step 4: Review feedback follow-up** after worktree verification (works off the existing branch — no new plan required).
+   - otherwise (implement work) → continue this gate.
+2. **Resolve the plan path:** an explicit path your human partner or a handoff gave you, else the single plan file under `docs/agent-plan/plans/`.
+3. **HARD GATE — no plan, no run.** If no plan file exists and none was provided: **STOP here.** Do NOT invoke `using-git-worktrees`, do NOT create a branch, do NOT leave `main`, do NOT start implementing. Tell your human partner there is no plan to execute and route them to `dev-tools:design-spec` (which produces a spec → plan), or ask them to point at a specific plan path.
+4. **Ambiguity:** if multiple plans exist and none was specified, do NOT silently pick the latest — list them and ask which to run.
+5. Carry the resolved plan path into Steps 1–2.
+
 ### Step 1: Verify
 
-Before loading or executing tasks:
+Before executing tasks (plan path already resolved in Step 0):
 
-- if the request is to merge, land, or close out an already reviewed PR, skip to **Step 5: Post-review closeout**
-- if the request is to address PR review feedback or requested changes, continue to **Step 4: Review feedback follow-up** after worktree verification
 - invoke `dev-tools:using-git-worktrees` if not already on the plan's feature branch/worktree
 - confirm current branch is not `main`/`master`
 - match plan header **Branch** and **Worktree** to current directory
 
 ### Step 2: Run
 
-Load the plan from `docs/agent-plan/plans/` (path from handoff, user, or latest if unambiguous).
+Load the plan path resolved in Step 0. Do NOT re-resolve to "latest" here — if Step 0 did not yield a single plan, you should not have reached Step 2.
 
 **Default (subagents available):**
 
