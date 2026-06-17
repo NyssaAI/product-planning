@@ -24,7 +24,6 @@
 | `extract` |  |
 | `runBatchedScan` | Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command |
 | `batchByArgLength` | Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command |
-| `parseScanJson` |  |
 | `matches` |  |
 | `extract` |  |
 | `readProjectName` |  |
@@ -39,6 +38,7 @@
 | `writeStarterConfigs` |  |
 | `deriveModules` |  |
 | `internalExternalWeights` | Internal vs. |
+| `internalExternalRatio` | internal / (internal + external). |
 
 ## Boundaries
 
@@ -67,7 +67,7 @@
 
 - `scripts/ai-plan/lib/adapters/index.mjs`: ADAPTERS, selectAdapter
 - `scripts/ai-plan/lib/adapters/python.mjs`: matches, extract
-- `scripts/ai-plan/lib/adapters/sg-scan.mjs`: MAX_SCAN_ARG_LENGTH, runBatchedScan, batchByArgLength, parseScanJson
+- `scripts/ai-plan/lib/adapters/sg-scan.mjs`: MAX_SCAN_ARG_LENGTH, runBatchedScan, batchByArgLength
 - `scripts/ai-plan/lib/adapters/typescript.mjs`: matches, extract
 - `scripts/ai-plan/lib/auto-detect.mjs`: DEFAULT_DOC_CANDIDATES, CODE_ROOT_CANDIDATES, API_ROUTE_CANDIDATES, MODULE_GLOB_CANDIDATES, readProjectName, detectCodeMapRoots, detectApiRoutes, detectSrcChildModules
 - `scripts/ai-plan/lib/bootstrap.mjs`: bootstrapRepo

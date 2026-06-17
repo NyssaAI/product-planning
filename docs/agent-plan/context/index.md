@@ -1,6 +1,6 @@
 # dev-tools — AI planning index
 
-Generated: 2026-06-15T01:02:09.583Z. Regenerate: `npm run ai-plan`.
+Generated: 2026-06-17T12:27:29.036Z. Regenerate: `npm run ai-plan`.
 
 ## Progressive disclosure (for planning agents)
 

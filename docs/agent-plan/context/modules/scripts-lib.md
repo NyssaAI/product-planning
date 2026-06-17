@@ -16,6 +16,8 @@
 |--------|---------|
 | `findPluginRoot` |  |
 | `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the dev-tools plugin. |
+| `parseScanJson` |  |
+| `symbolNameFromMatch` |  |
 
 ## Boundaries
 
@@ -42,6 +44,8 @@
 
 - `scripts/lib/plugin-root.mjs`: findPluginRoot
 - `scripts/lib/resolve-ast-grep.mjs`: resolveAstGrepBinary
+- `scripts/lib/sg-result.mjs`: parseScanJson, symbolNameFromMatch
+- `scripts/lib/skip-dirs.mjs`: BASE_SKIP_DIRS
 
 ## After planning
 

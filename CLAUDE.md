@@ -39,5 +39,5 @@ Start at `docs/agent-plan/context/index.md` to pick the module set.
 | scripts-lib | `lib` — 4 files under `scripts/lib/`. | BASE_SKIP_DIRS; findPluginRoot; parseScanJson | `docs/agent-plan/context/modules/scripts-lib.md` |
 | skills | `skills` — 4 files under `skills/`. | waitForEvent; waitForEventCount; waitForEventMatch | `docs/agent-plan/context/modules/skills.md` |
 | test | `test` — 26 files under `test/`. | Code under `test/` | `docs/agent-plan/context/modules/test.md` |
-<!-- ai-plan:module-map generated 2026-06-15T01:02:09.583Z -->
+<!-- ai-plan:module-map generated 2026-06-17T12:27:29.036Z -->
 <!-- ai-plan:module-map:end -->
