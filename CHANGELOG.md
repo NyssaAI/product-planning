@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [6.4.1] - 2026-06-18
+
+### Fixed
+
+- **ai-plan enforcement** — `using-ai-plan`, `write-plan`, `execute-plan`, and the TaskCreated hook now treat module-first planning context as an enforced gate. Plans for repos with ai-plan artifacts must carry a `Planning module` header and `Planning context` section before implementation can start.
+
 ## [6.2.1] - 2026-06-14
 
 ### Maintenance

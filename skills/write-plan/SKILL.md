@@ -43,6 +43,10 @@ When the project has source code and `docs/product.md` / `docs/roadmap.md` / `do
 5. Order tasks respecting module dependencies (leaves or dependency-safe order per module-map edges)
 6. Do **not** load `BRIEF.md` (duplicate of product/roadmap/tech-stack), full `code-map.json`, or other module files during planning
 
+<HARD-GATE>
+HARD GATE — ai-plan evidence: when ai-plan artifacts exist, do NOT save the implementation plan unless it contains both the `**Planning module:** docs/agent-plan/context/modules/<module-id>.md` header entry and the `## Planning context` section populated from the module file(s) you read. If the module evidence is missing or ambiguous, stop and reload `docs/agent-plan/context/index.md` plus the minimum in-scope module set before writing the plan.
+</HARD-GATE>
+
 If no ai-plan artifacts exist and the repo is greenfield with no code yet, skip this section.
 
 ## Development Standards (bundled)

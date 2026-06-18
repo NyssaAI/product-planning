@@ -1,5 +1,11 @@
 # dev-tools Release Notes
 
+## v6.4.1 (2026-06-18)
+
+### Fixed
+
+- **ai-plan context enforcement** — `design-spec` / `write-plan` must preserve module-first planning evidence, and `execute-plan` now stops before implementation when a plan omits the required ai-plan context. The TaskCreated hook also describes this as enforced behavior, not optional guidance.
+
 ## v6.4.0 (2026-06-17)
 
 ### Added

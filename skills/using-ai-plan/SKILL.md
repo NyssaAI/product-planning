@@ -23,6 +23,10 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 
 **Primary ai-plan artifact:** `docs/agent-plan/context/modules/<module-id>.md` — a self-contained architectural description of one code module (boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols). This is not a duplicate of `docs/agent-plan/specs/` or `docs/agent-plan/plans/`; those are *work-item* docs. Module files are *module* docs.
 
+## Module-first enforcement
+
+This is an enforced planning contract, not advice. `design-spec` must load `index.md` and the in-scope module file(s) before design questions; `write-plan` must save module evidence in the plan; `execute-plan` must reject implementation plans that omit that evidence when ai-plan artifacts exist.
+
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task + `docs/agent-plan/specs/…-design.md` (if feature work) | Always |
@@ -33,6 +37,16 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 `module-map.json` informs task ordering; do not paste the whole file into context.
 
 Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
+
+## Planning context evidence
+
+Every implementation plan for a repo with ai-plan artifacts must include:
+
+- `**Planning module:** docs/agent-plan/context/modules/<module-id>.md` in the plan header
+- `## Planning context` with the selected module id, description, capabilities, and does-not-own facts copied from the module file
+- Task ordering that respects `module-map.json` dependency edges when multiple modules are in scope
+
+If those fields are missing, the plan is not executable. Regenerate or rewrite the plan before implementation; do not infer the missing module context during `execute-plan`.
 
 ## Generate (target repo)
 
@@ -112,6 +126,7 @@ Generated artifacts live under `docs/agent-plan/context/` per **`standards/proje
 | **using-core-standards** | Project structure, test layout, timestamp rules |
 | **using-git-worktrees** | Before write-plan |
 | **write-plan** | Consumes L1 module file + module-map edges + standards from spec |
-| **execute-plan** / **execute-plan-run** / **execute-plan-run-inline** | L3 code-map for named symbols only |
+| **execute-plan** | Enforces the saved planning context evidence before implementation |
+| **execute-plan-run** / **execute-plan-run-inline** | L3 code-map for named symbols only |
 
 See `scripts/ai-plan/README.md` and `docs/standards.md` in the plugin for details.

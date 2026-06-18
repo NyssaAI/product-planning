@@ -48,7 +48,12 @@ This skill is the entrypoint for implementing a plan. **Before any worktree or c
 2. **Resolve the plan path:** an explicit path your human partner or a handoff gave you, else the single plan file under `docs/agent-plan/plans/`.
 3. **HARD GATE — no plan, no run.** If no plan file exists and none was provided: **STOP here.** Do NOT invoke `using-git-worktrees`, do NOT create a branch, do NOT leave `main`, do NOT start implementing. Tell your human partner there is no plan to execute and route them to `dev-tools:design-spec` (which produces a spec → plan), or ask them to point at a specific plan path.
 4. **Ambiguity:** if multiple plans exist and none was specified, do NOT silently pick the latest — list them and ask which to run.
-5. Carry the resolved plan path into Steps 1–2.
+5. **HARD GATE — ai-plan evidence.** If `docs/agent-plan/context/index.md` exists in the repo, read the resolved plan before Step 1 and verify it contains:
+   - `**Planning module:** docs/agent-plan/context/modules/<module-id>.md`
+   - `## Planning context`
+   - a `**Module:** <module-id>` entry matching the planning module path
+   If any field is missing or inconsistent, **STOP here.** Do NOT invoke `using-git-worktrees`, do NOT invoke `execute-plan-run`, and do NOT implement from the plan. Tell your human partner the plan is missing enforced ai-plan context and route back to `dev-tools:design-spec` / `write-plan` to regenerate it.
+6. Carry the resolved plan path into Steps 1–2.
 
 ### Step 1: Verify
 
