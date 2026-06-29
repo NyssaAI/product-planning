@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [7.0.0] - 2026-06-29
+
+### Changed (BREAKING)
+
+- **Slimmed dev-tools to the ai-plan / code-map subsystem.** The plugin now ships only the
+  ai-plan code/module-graph generator: `scripts/ai-plan/`, `scripts/code-map/`, `scripts/lib/`,
+  bootstrap templates, the `/ai-plan` command, and the `using-ai-plan` skill — across all five
+  harnesses (Claude Code, Cursor, Codex, OpenCode, Gemini).
+
+### Removed
+
+- All other skills (design-spec, write-plan, execute-plan*, fix-bug*, plan-product,
+  test-driven-development, systematic-debugging, requesting/receiving-code-review, merge-pr,
+  dispatching-parallel-agents, align-project-structure, add-backlog, add-bug,
+  verification-before-completion, writing-skills, using-dev-tools, using-*-standards,
+  using-git-worktrees).
+- The ralph-loop and setup-test-gate commands, the `code-reviewer` agent, and all hooks
+  (SessionStart / Stop / TaskCreated).
+- The bundled `standards/` tree and its `manifest.json` registry.
+- Repo dev-infrastructure for removed features: test-gate / ralph / version-bump scripts, the
+  `.githooks/` pre-push gate, and their tests.
+
 ## [6.4.1] - 2026-06-18
 
 ### Fixed

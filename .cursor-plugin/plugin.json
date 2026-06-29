@@ -2,7 +2,7 @@
   "name": "dev-tools",
   "displayName": "Dev Tools",
   "description": "ai-plan: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, OpenCode, and Gemini",
-  "version": "6.4.1",
+  "version": "7.0.0",
   "author": {
     "name": "jamaynor"
   },
