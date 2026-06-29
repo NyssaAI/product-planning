@@ -1,22 +1,20 @@
 # Roadmap
 
-dev-tools is maintained by jamaynor as a multi-platform agent workflow plugin (skills, standards, ai-plan, hooks).
+dev-tools is maintained by jamaynor as a multi-platform **ai-plan** code/module-graph generator
+(skill + `/ai-plan` command + generators), supported across Claude Code, Cursor, Codex, OpenCode,
+and Gemini.
 
 ## Recent direction
 
-- Consolidated standards and ai-plan into a single plugin (v5.0.8+)
-- Single entrypoint for bug workflow (`fix-bug`)
-- Single entrypoint for plan execution (`execute-plan`)
-- Verb-named workflow entry points (`plan-product`, `add-backlog`, `add-bug`, `design-spec`, `execute-plan`, `fix-bug`)
-- Worktree hard gate and required PR at branch finish
+- Slimmed the plugin to the ai-plan / code-map subsystem — removed the broader workflow skills,
+  the bundled standards, and the hooks (v7.0.0)
 
 ## Conventions
 
-- Spec output: `docs/agent-plan/specs/`
-- Plan output: `docs/agent-plan/plans/`
-- Tests directory: `test/` (maintainer evals; not shipped to end users)
+- Generated context: `docs/agent-plan/context/`
+- Tests directory: `test/` (ai-plan + code-map; not shipped to end users)
 - Plugin docs: `docs/product.md`, `docs/roadmap.md`, `docs/features.md`, `docs/tech-stack.md`
 
 ## Maintenance
 
-Selective merges from upstream skill ecosystems when useful — keeping jamaynor path conventions and bundled standards intact.
+Keep the generators repository-agnostic and the five harness adapters in sync.

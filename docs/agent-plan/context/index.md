@@ -1,6 +1,6 @@
 # dev-tools — AI planning index
 
-Generated: 2026-06-17T23:19:44.300Z. Regenerate: `npm run ai-plan`.
+Generated: 2026-06-29T14:09:31.280Z. Regenerate: `npm run ai-plan`.
 
 ## Progressive disclosure (for planning agents)
 
@@ -17,15 +17,9 @@ Generated: 2026-06-17T23:19:44.300Z. Regenerate: `npm run ai-plan`.
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
-| hooks (`hooks`) | `hooks` — 1 file under `hooks/`. | Code under `hooks/` | [modules/hooks.md](./modules/hooks.md) |
-| .opencode (`opencode`) | `.opencode` — 1 file under `.opencode/`. | DevToolsPlugin | [modules/opencode.md](./modules/opencode.md) |
-| scripts (`scripts`) | `scripts` — 2 files under `scripts/`. | setupTestGate | [modules/scripts.md](./modules/scripts.md) |
-| ai-plan (`scripts-ai-plan`) | `ai-plan` — 35 files under `scripts/ai-plan/`. | ADAPTERS; API_ROUTE_CANDIDATES; CODE_ROOT_CANDIDATES | [modules/scripts-ai-plan.md](./modules/scripts-ai-plan.md) |
-| code-map (`scripts-code-map`) | `code-map` — 7 files under `scripts/code-map/`. | DEFAULT_SCAN_ROOTS; SOURCE_EXTENSIONS; SUPPORTED_LANGUAGES | [modules/scripts-code-map.md](./modules/scripts-code-map.md) |
-| lib (`scripts-lib`) | `lib` — 4 files under `scripts/lib/`. | BASE_SKIP_DIRS; findPluginRoot; parseScanJson | [modules/scripts-lib.md](./modules/scripts-lib.md) |
-| test-gate (`scripts-test-gate`) | `test-gate` — 2 files under `scripts/test-gate/`. | detectPlaywright; detectTestCommands; resolveTestPlan | [modules/scripts-test-gate.md](./modules/scripts-test-gate.md) |
-| skills (`skills`) | `skills` — 4 files under `skills/`. | waitForEvent; waitForEventCount; waitForEventMatch | [modules/skills.md](./modules/skills.md) |
-| test (`test`) | `test` — 29 files under `test/`. | Code under `test/` | [modules/test.md](./modules/test.md) |
+| ai-plan (`ai-plan`) | Code/module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/ai-plan/` | [modules/ai-plan.md](./modules/ai-plan.md) |
+| code-map (`code-map`) | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | [modules/code-map.md](./modules/code-map.md) |
+| lib (`lib`) | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | [modules/lib.md](./modules/lib.md) |
 
 ## Code organization (Node/TypeScript)
 
@@ -33,22 +27,12 @@ Read the module doc for the role you are touching; filter `code-map.json` by `mo
 
 ### Shared & core libraries
 
-- **lib** (`moduleId: scripts-lib`) — `scripts/lib/` — [module doc](./modules/scripts-lib.md)
+- **lib** (`moduleId: lib`) — `scripts/lib/` — [module doc](./modules/lib.md)
 
 ### Other modules
 
-- **hooks** (`moduleId: hooks`) — `hooks/` — [module doc](./modules/hooks.md)
-- **.opencode** (`moduleId: opencode`) — `.opencode/` — [module doc](./modules/opencode.md)
-- **scripts** (`moduleId: scripts`) — `scripts/` — [module doc](./modules/scripts.md)
-- **ai-plan** (`moduleId: scripts-ai-plan`) — `scripts/ai-plan/` — [module doc](./modules/scripts-ai-plan.md)
-- **code-map** (`moduleId: scripts-code-map`) — `scripts/code-map/` — [module doc](./modules/scripts-code-map.md)
-- **test-gate** (`moduleId: scripts-test-gate`) — `scripts/test-gate/` — [module doc](./modules/scripts-test-gate.md)
-- **skills** (`moduleId: skills`) — `skills/` — [module doc](./modules/skills.md)
-- **test** (`moduleId: test`) — `test/` — [module doc](./modules/test.md)
-
-### Public entry points
-
-- `test`: `test/ai-plan-adapters/fixtures/typescript-repo/src/shared/index.ts`
+- **ai-plan** (`moduleId: ai-plan`) — `scripts/ai-plan/` — [module doc](./modules/ai-plan.md)
+- **code-map** (`moduleId: code-map`) — `scripts/code-map/` — [module doc](./modules/code-map.md)
 
 ## Artifacts
 

@@ -9,7 +9,7 @@
     "discover": "auto"
   },
   "test": {
-    "_comment": "Optional. Overrides the pre-push test gate (scripts/setup-test-gate.mjs). Omit `commands` to auto-detect (npm/dotnet/pytest/go/cargo). `e2e` is offered as a per-push ask in the finish workflow, never run by the git hook. Set enabled:false to disable the gate.",
+    "_comment": "Optional. Test command(s) ai-plan records for the repo. Omit `commands` to auto-detect (npm/dotnet/pytest/go/cargo). Set enabled:false to omit.",
     "commands": ["npm test"],
     "e2e": ["npx playwright test"],
     "enabled": true

@@ -1,3 +1,0 @@
-I have a plan at docs/agent-plan/plans/auth-system.md that's ready to implement.
-
-execute-plan, please

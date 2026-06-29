@@ -1,1 +1,0 @@
-I'm starting a greenfield project and we don't have docs/product.md, docs/roadmap.md, or docs/tech-stack.md yet. Help me establish the foundational product documentation before we write any code.

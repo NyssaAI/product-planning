@@ -1,5 +1,24 @@
 # dev-tools Release Notes
 
+## v7.0.0 (2026-06-29)
+
+### Changed (BREAKING)
+
+- **dev-tools is now just ai-plan.** The plugin was slimmed to its code/module-graph generator —
+  `scripts/ai-plan/`, `scripts/code-map/`, `scripts/lib/`, bootstrap templates, the `/ai-plan`
+  command, and the `using-ai-plan` skill — kept working across all five harnesses (Claude Code,
+  Cursor, Codex, OpenCode, Gemini).
+
+### Removed
+
+- Every other skill (design-spec, write-plan, execute-plan, fix-bug, plan-product, TDD,
+  systematic-debugging, code-review skills, worktrees, backlog/bug capture, writing-skills,
+  using-dev-tools, and the standards skills).
+- The ralph-loop / setup-test-gate commands, the `code-reviewer` agent, all hooks, the bundled
+  `standards/` tree (and `manifest.json`), and the test-gate / ralph / version-bump dev-tooling.
+
+If you relied on a removed workflow, pin `v6.4.1` or migrate that workflow into its own plugin.
+
 ## v6.4.1 (2026-06-18)
 
 ### Fixed

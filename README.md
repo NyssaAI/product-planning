@@ -1,23 +1,41 @@
 # dev-tools
 
-dev-tools is a complete software development workflow for your coding agents: **process skills** (design-spec → write-plan → execute-plan → PR), **jamaynor development standards** (bundled — no separate dev-standards plugin), and **ai-plan** code/module graph generators.
+dev-tools is **ai-plan** — a repository-agnostic code/module-graph generator for coding agents.
+It scans your repo and produces scoped planning context: a **code map** (symbol + endpoint
+index), a **module map** (dependency graph), and a **per-module architecture file** for each
+module. Agents load the minimum context they need to plan a change, instead of the whole codebase.
 
-## How it works
+It runs across five agent runtimes — Claude Code, Cursor, Codex, OpenCode, and Gemini.
 
-It starts from the moment you fire up your coding agent. As soon as it sees that you're building something, it *doesn't* just jump into trying to write code. Instead, it steps back and asks you what you're really trying to do. 
+## What it generates
 
-Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
+Outputs land under `docs/agent-plan/context/` in your repository:
 
-After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
+| Output | Purpose |
+|--------|---------|
+| `modules/<id>.md` | **Primary artifact** — one module's architecture (boundaries, `dependsOn`/`usedBy`, routes, test roots, sample symbols) |
+| `module-map.json` | Module dependency graph for task ordering |
+| `code-map.json` | Symbol index + endpoint index (HTTP routes, MCP tools/resources/prompts) |
+| `index.md` | Progressive-disclosure guide to the module set |
 
-Next up, once you say "go", it launches **execute-plan**, having agents work through each engineering task, inspecting and reviewing their work, and opening a PR when done. After the PR is reviewed and approved, **execute-plan** also owns the closeout: regression checks, merge, and cleanup. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+The only required inputs are three product docs: `docs/product.md`, `docs/roadmap.md`,
+`docs/tech-stack.md`. Everything else (modules, code roots, endpoint surfaces) is auto-detected.
 
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has dev-tools skills.
+## How agents use it
 
+Progressive disclosure — load context in levels, never all at once:
+
+- **L0** the task description
+- **L1** the in-scope `modules/<id>.md` file(s) for the area being changed
+- **L2** the product docs, when product context is needed
+- **L3** `code-map.json`, only after the plan names specific symbols
+
+The **`dev-tools:using-ai-plan`** skill is the canonical guide to this workflow and staleness rules.
 
 ## Installation
 
-**Note:** Installation differs by platform. Claude Code or Cursor have built-in plugin marketplaces. Codex and OpenCode require manual setup.
+**Note:** Installation differs by platform. Claude Code and Cursor have built-in plugin
+marketplaces. Codex and OpenCode require manual setup.
 
 ### Claude Code (via Plugin Marketplace)
 
@@ -75,28 +93,13 @@ cmd /c mklink /J "$env:USERPROFILE\.agents\skills\dev-tools" "$env:USERPROFILE\.
 
 3. Restart Codex (skills are discovered at startup).
 
-**Optional — multi-agent for plan execution:** Enable Codex multi-agent so **`execute-plan`** can use subagents for task dispatch (internal `execute-plan-run`; fallback is inline via `execute-plan-run-inline`). `dispatching-parallel-agents` also benefits from multi-agent:
-
-```toml
-[features]
-multi_agent = true
-```
-
 **Verify:** `ls -la ~/.agents/skills/dev-tools` (symlink/junction to your skills directory).
 
 **Update:** `cd ~/.codex/dev-tools && git pull` (instant via symlink).
 
 **Uninstall:** `rm ~/.agents/skills/dev-tools` (Windows: `Remove-Item "$env:USERPROFILE\.agents\skills\dev-tools"`). Optionally remove `~/.codex/dev-tools`.
 
-**Migrating from an old bootstrap install:** Pull latest, create the symlink (step 2), remove any `dev-tools-codex bootstrap` block from `~/.codex/AGENTS.md`, restart Codex.
-
 **Troubleshooting:** If skills don't appear — check symlink, confirm `~/.codex/dev-tools/skills` exists, restart Codex. On Windows, run PowerShell as admin if junction creation fails.
-
-Tell Codex to read this section:
-
-```text
-Fetch and follow the Codex installation section from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/README.md
-```
 
 ### OpenCode
 
@@ -108,11 +111,9 @@ Add dev-tools to the `plugin` array in `opencode.json` (global or project-level)
 }
 ```
 
-Restart OpenCode. The plugin auto-installs and registers all skills.
+Restart OpenCode. The plugin auto-installs and registers the skill.
 
-**Verify:** Ask "Tell me about your dev-tools skills".
-
-**Usage:** OpenCode's native `skill` tool — `use skill tool to list skills`, `use skill tool to load dev-tools/design-spec`.
+**Verify:** `use skill tool to load dev-tools/using-ai-plan`.
 
 **Personal skills:** `~/.config/opencode/skills/<name>/SKILL.md`. **Project skills:** `.opencode/skills/` in your repo. Priority: project > personal > dev-tools.
 
@@ -120,27 +121,11 @@ Restart OpenCode. The plugin auto-installs and registers all skills.
 
 ```json
 {
-  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v5.1.0"]
+  "plugin": ["dev-tools@git+https://github.com/jamaynor/dev-tools.git#v6.4.0"]
 }
 ```
 
-**Migrating from symlink install:** Remove old symlinks (`~/.config/opencode/plugins/dev-tools.js`, `~/.config/opencode/skills/dev-tools`), optional clone under `~/.config/opencode/dev-tools`, and any `skills.paths` entry for dev-tools in `opencode.json`. Then use the plugin line above.
-
-**Tool mapping** (skills use Claude Code names; OpenCode adapts automatically):
-
-| Claude Code | OpenCode |
-|-------------|----------|
-| `TodoWrite` | `todowrite` |
-| `Task` (subagents) | `@mention` |
-| `Skill` | native `skill` tool |
-
-**Troubleshooting:** `opencode run --print-logs "hello" 2>&1 | grep -i dev-tools` — confirm plugin loads and `opencode.json` is correct. If bootstrap is missing, confirm your OpenCode version supports plugin hooks and restart after config changes.
-
-Tell OpenCode to read this section:
-
-```text
-Fetch and follow the OpenCode installation section from https://raw.githubusercontent.com/jamaynor/dev-tools/refs/heads/main/README.md
-```
+**Troubleshooting:** `opencode run --print-logs "hello" 2>&1 | grep -i dev-tools` — confirm the plugin loads and `opencode.json` is correct.
 
 ### Gemini CLI
 
@@ -156,138 +141,47 @@ gemini extensions update dev-tools
 
 ### Verify Installation
 
-Start a new session in your chosen platform and ask for something that should trigger a skill:
+In a repo that has `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md`, run `/ai-plan`
+(or ask your agent to "generate the ai-plan context"). It should produce
+`docs/agent-plan/context/` with `index.md`, `module-map.json`, `code-map.json`, and `modules/`.
 
-- **Greenfield project:** "starting a new project" / missing product docs → **`plan-product`**
-- **Feature work:** "help me plan this feature" → **`design-spec`**
-- **Backlog item:** "add this to the backlog" → **`add-backlog`**
-- **Bug report only:** "document this bug for later, don't fix it" → **`add-bug`**
-- **Implement plan:** "implement the plan" / path under `docs/agent-plan/plans/` → **`execute-plan`**
-- **Bug work:** "I found a bug in login" → **`fix-bug`** (not `systematic-debugging` directly)
+## Usage
 
-The agent should automatically invoke the relevant dev-tools skill.
+Bootstrap once in a project repo, then regenerate after module structure changes
+(`<PLUGIN_ROOT>` = `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed plugin directory):
 
-### Platform notes
+```bash
+# One-time bootstrap (scaffolds docs, configs, and project scripts)
+node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs" --init --write-scripts
 
-**Ralph loop (Claude Code only):** Ralph is **hook + script infrastructure**, not a workflow entry point. **`fix-bug-resolve`** (inside **`fix-bug`**) uses Ralph automatically on Claude Code via the **Stop** hook (`hooks/hooks.json`). Cursor registers only the session-start hook (`hooks/hooks-cursor.json`), so Ralph state at `.claude/ralph-loop.local.md` is not auto-continued on stop in Cursor — use Claude Code for full bug fix loops, or iterate manually in Cursor.
+# Regenerate the code map + module graph
+node "<PLUGIN_ROOT>/scripts/code-map/generate-code-map.mjs"
+node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs"
 
-**Advanced (non-bug only):** `/ralph-loop` and `/cancel-ralph` exist for optional iterative non-bug tasks on Claude Code. **Do not use `/ralph-loop` for bugs** — use **`fix-bug`**, which logs and analyzes first, then either uses the simple direct route with Ralph inside resolve or routes complex bugs through design/plan execution.
+# Check runtime readiness
+node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs" --doctor
+```
 
-## Workflow entry points
-
-User-facing workflow starts (6 buttons):
-
-| Verb name | Skill folder | Purpose |
-|-----------|--------------|---------|
-| `plan-product` | `plan-product` | New project: product, roadmap, tech-stack |
-| `add-backlog` | `add-backlog` | Add backlog item with detail file |
-| `add-bug` | `add-bug` | Add bug report with detail file |
-| `design-spec` | `design-spec` | Spec before code |
-| `execute-plan` | `execute-plan` | Implement written plan → PR |
-| `fix-bug` | `fix-bug` | Bug orchestrator: simple direct fix or complex design path |
-
-Automatic (not user buttons): `using-dev-tools` (session router), `using-ai-plan` during **design-spec** / **write-plan** when code exists.
-
-Maintenance (user-invocable, not a core button): **`align-project-structure`** — audit/onboard a repo to the project-structure standard; enforces the `docs/` layout, auto-fixes safe deviations, plans the rest.
-
-**Feature chain:** `design-spec` → `write-plan` (internal) → **`execute-plan`** (verify → run → open PR; review feedback → `receiving-code-review` → update PR; after approval → regression-check → merge → cleanup)
-
-**Backlog chain:** **`add-backlog`** → (when work begins) **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
-
-**Bug-report chain:** **`add-bug`** → (when ready to fix) **`fix-bug`**
-
-**Greenfield chain:** **`plan-product`** → **`design-spec`** → `write-plan` (internal) → **`execute-plan`** when ready
-
-**Bug chain:** **`fix-bug`** only. Simple one-file bugs can go log → analyze → direct TDD fix → complete. Complex bugs route log → analyze → **`design-spec`** → `write-plan` (internal) → **`execute-plan`**.
-
-Internal sub-skills (`user-invocable: false`): `write-plan`, `execute-plan-run`, `execute-plan-run-inline`, `execute-plan-finish`, `merge-pr`, `fix-bug-log`, `systematic-debugging`, `fix-bug-resolve`, `fix-bug-complete`.
-
-## The Basic Workflow
-
-1. **design-spec** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
-
-2. **using-git-worktrees** - **Hard gate** inside **design-spec** after spec approval, before any plan (not a separate user entry point). Creates feature branch + isolated worktree (never `main`/`master`), runs setup, verifies clean test baseline.
-
-3. **write-plan** - Invoked by design-spec inside that worktree. Uses **ai-plan** module graph (`docs/agent-plan/context/modules/<module>.md`) when present. Bite-sized tasks with exact paths; plan header records branch, worktree, planning scope, and PR target.
-
-**AI Plan:** **using-ai-plan** runs automatically during design-spec and write-plan when the repo has code (regenerates when stale). Manual `/ai-plan` or `npm run ai-plan` after module structure changes. Bundled generators: `scripts/code-map/`, `scripts/ai-plan/`. Maintainer details: `scripts/ai-plan/README.md`.
-
-4. **execute-plan** - Single entry for implementation, review feedback follow-up, and post-review closeout. **Verify** worktree → **run** tasks (`execute-plan-run` default, or `execute-plan-run-inline` fallback) → **finish** with tests, push, and PR (`execute-plan-finish`). If reviewers request changes, **execute-plan** invokes `receiving-code-review` before applying review feedback and pushing updates. After PR approval, **execute-plan** invokes internal `merge-pr` for regression checks, merge, and cleanup.
-
-During run, agents use **test-driven-development** (RED-GREEN-REFACTOR) and **requesting-code-review** between tasks where applicable.
-
-**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
-
-## What's Inside
-
-### Skills Library
-
-**Testing**
-- **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
-
-**Debugging**
-- **fix-bug** - Canonical entry for all bug work (see Artifact-producing workflows below)
-- **systematic-debugging** - Internal root-cause method used by fix-bug Step 2.
-- **verification-before-completion** - Ensure it's actually fixed
-
-**Artifact-producing workflows**
-- **plan-product** - Establish product, roadmap, and tech-stack docs for a new project
-- **add-backlog** - Add a planned work item to `docs/agent-plan/backlog/` with a detail file
-- **add-bug** - Add a bug report to `docs/agent-plan/bugs/` without analyzing or fixing it
-- **fix-bug** - Canonical bug orchestrator. Simple one-file bugs can be fixed directly after analysis; complex bugs route through `design-spec` and `execute-plan`. Sub-skills: `fix-bug-log`, `fix-bug-resolve`, `fix-bug-complete`. Step 2 analyze uses `systematic-debugging`.
-
-**Collaboration** 
-- **design-spec** - Socratic design refinement (spec before code)
-- **write-plan** - Detailed implementation plans (internal; invoked by design-spec)
-- **using-ai-plan** - Code map + module graph (incl. endpoint surfaces: HTTP routes, MCP tools/resources/prompts) for planning (`docs/agent-plan/context/`)
-- **execute-plan** - Canonical plan implementation entry (verify → run → finish + PR)
-- **dispatching-parallel-agents** - Concurrent subagent workflows
-- **requesting-code-review** - Pre-review checklist
-- **receiving-code-review** - Responding to feedback
-- **using-git-worktrees** - Parallel development branches
-
-**Standards** (bundled — `standards/` + `manifest.json`)
-- **using-core-standards** - Project structure, errors, logging, testing, DDD, workflow artifacts
-- **using-dotnet-standards** / **using-nextjs-standards** / **using-postgres-standards** / **using-python-standards** - Stack-specific rules
-- **align-project-structure** - Audit a repo against `standards/project-structure.md`: enforce the `docs/` layout, auto-apply safe fixes (incl. `docs/agent-files` → `docs/agent-plan`), plan the rest
-
-**Meta**
-- **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **using-dev-tools** - Introduction to the skills system
+After `--init --write-scripts`, the project gets `npm run ai-plan` for one-command regeneration.
+**@ast-grep/cli** is bundled with the plugin and auto-installs into the plugin root on first
+`code-map` run — do not add it to your project repo. Maintainer details:
+[`scripts/ai-plan/README.md`](scripts/ai-plan/README.md).
 
 ## Repo layout (your projects)
 
-Consumer repos follow **`standards/project-structure.md`** (in the plugin). Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/features.md`, `docs/tech-stack.md`. Workflow adds `docs/agent-plan/specs/`, `docs/agent-plan/plans/`, `docs/agent-plan/context/`, `docs/agent-plan/backlog/`, `docs/agent-plan/bugs/`. See [docs/standards.md](docs/standards.md).
+Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` (optionally
+`docs/features.md`). Generated context lands under `docs/agent-plan/context/`.
 
-**This plugin repo** uses the same doc layout: [docs/product.md](docs/product.md), [docs/roadmap.md](docs/roadmap.md), [docs/features.md](docs/features.md), [docs/tech-stack.md](docs/tech-stack.md). Maintainer index: [docs/README.md](docs/README.md). Skill evals live in `test/` (not shipped to end users).
-
-## Philosophy
-
-- **Test-Driven Development** - Write tests first, always
-- **Systematic over ad-hoc** - Process over guessing
-- **Complexity reduction** - Simplicity as primary goal
-- **Evidence over claims** - Verify before declaring success
+**This plugin repo** dogfoods ai-plan with the same layout: [docs/product.md](docs/product.md),
+[docs/roadmap.md](docs/roadmap.md), [docs/tech-stack.md](docs/tech-stack.md). Maintainer index:
+[docs/README.md](docs/README.md). Tests live in `test/` (not shipped to end users).
 
 ## Contributing
 
-Skills live directly in this repository. To contribute:
-
 1. Fork the repository
-2. Create a branch for your skill
-3. Follow the `writing-skills` skill for creating and testing new skills
+2. Create a branch for your change
+3. Run the test suite (see [docs/testing.md](docs/testing.md))
 4. Submit a PR
-
-See `skills/writing-skills/SKILL.md` for the complete guide.
-
-Run skill evals before skill PRs: `test/run-all.sh` (requires Claude Code CLI for Claude suites). See [docs/testing.md](docs/testing.md).
-
-## Updating
-
-Skills update automatically when you update the plugin:
-
-```bash
-/plugin update dev-tools
-```
 
 ## License
 

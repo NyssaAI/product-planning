@@ -1,3 +1,0 @@
-Plan is at docs/agent-plan/plans/auth-system.md.
-
-execute-plan, please. Don't waste time - verify worktree and start running tasks.
