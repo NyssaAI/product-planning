@@ -130,7 +130,7 @@ function printHelp(config) {
        node src/bin/code-map.js [options]
 
 Generate ${config.output} (JSON) from ast-grep rules.
-Uses @ast-grep/cli bundled with the dev-tools plugin (no project-repo install).
+Uses @ast-grep/cli bundled with the code-indexer plugin (no project-repo install).
 
 Languages: ${SUPPORTED_LANGUAGES.join(', ')}
 Project root: ${REPO_ROOT}

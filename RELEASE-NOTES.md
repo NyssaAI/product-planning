@@ -1,4 +1,19 @@
-# dev-tools Release Notes
+# code-indexer Release Notes
+
+## v1.0.0 (2026-06-29) — renamed to code-indexer
+
+### Changed (BREAKING)
+
+- **dev-tools is now code-indexer.** Full rename across the command (`/code-indexer`), skill
+  (`using-code-indexer`), the module-graph engine (`scripts/module-map/`), a single merged
+  `code-indexer.config.json`, and the output directory (`docs/code-index/`). Version reset to 1.0.0
+  for the new marketplace identity. Existing repos migrate their index via `--migrate`.
+
+### Removed
+
+- **OpenCode support dropped** — code-indexer ships for Claude Code, Cursor, Codex, and Gemini.
+
+*(History below predates the rename, under the dev-tools name.)*
 
 ## v7.0.0 (2026-06-29)
 

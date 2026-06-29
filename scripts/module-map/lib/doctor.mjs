@@ -87,7 +87,7 @@ function checkModuleMap(repoRoot, config) {
       id: 'module-map',
       status: 'fail',
       message: 'module-map.json not found',
-      hint: 'Run: npm run ai-plan or node <PLUGIN_ROOT>/scripts/module-map/generate.mjs',
+      hint: 'Run: npm run code-indexer or node <PLUGIN_ROOT>/scripts/module-map/generate.mjs',
     }];
   }
 
@@ -171,7 +171,7 @@ export function checkRuntimeReadiness(repoRoot = process.cwd()) {
     });
   }
 
-  for (const rel of ['.cursor/rules/ai-plan.mdc', 'skills', '.agents/skills']) {
+  for (const rel of ['.cursor/rules/code-indexer.mdc', 'skills', '.agents/skills']) {
     const full = path.join(repoRoot, rel);
     results.push({
       runtime: `project:${rel}`,

@@ -106,11 +106,11 @@ function patchContextReferences(actions, repoRoot) {
     let text = readFileSync(moduleMapPath, 'utf8');
     const before = text;
     text = text
-      .split('docs/ai-plan/CODE_MAP.json')
+      .split('docs/code-indexer/CODE_MAP.json')
       .join('docs/code-index/code-map.json')
       .split('"planningScope"')
       .join('"planningModule"')
-      .split('docs/ai-plan/scopes/')
+      .split('docs/code-indexer/scopes/')
       .join('docs/code-index/modules/');
     if (text !== before) {
       writeFileSync(moduleMapPath, text, 'utf8');
@@ -129,7 +129,7 @@ function patchContextReferences(actions, repoRoot) {
     let text = readFileSync(indexPath, 'utf8');
     const before = text;
     text = text
-      .split('docs/ai-plan/')
+      .split('docs/code-indexer/')
       .join('docs/code-index/')
       .split('./scopes/')
       .join('./modules/')
@@ -163,10 +163,10 @@ export function runMigrate(repoRoot) {
   /** @type {MigrateAction[]} */
   const actions = [];
 
-  // 1. Current layout: docs/agent-plan/context/ → docs/code-index/
-  moveIfPresent(actions, repoRoot, 'docs/agent-plan/context', 'docs/code-index');
-  // 2. Older legacy: docs/ai-plan/ → docs/code-index/ with artifact renames
-  moveIfPresent(actions, repoRoot, 'docs/ai-plan', 'docs/code-index');
+  // 1. Current layout: docs/code-index/context/ → docs/code-index/
+  moveIfPresent(actions, repoRoot, 'docs/code-index/context', 'docs/code-index');
+  // 2. Older legacy: docs/code-indexer/ → docs/code-index/ with artifact renames
+  moveIfPresent(actions, repoRoot, 'docs/code-indexer', 'docs/code-index');
   const ctx = 'docs/code-index';
   moveIfPresent(actions, repoRoot, `${ctx}/INDEX.md`, `${ctx}/index.md`);
   moveIfPresent(actions, repoRoot, `${ctx}/CODE_MAP.json`, `${ctx}/code-map.json`);

@@ -38,7 +38,7 @@ const CSHARP_DECL_RULES = [
   ['record', 'record_declaration'],
 ]
   .map(
-    ([kind, node]) => `id: ai-plan-csharp-${kind}
+    ([kind, node]) => `id: code-indexer-csharp-${kind}
 language: CSharp
 metadata: { mapKind: ${kind} }
 rule: { kind: ${node}, has: { field: name, pattern: $NAME } }`

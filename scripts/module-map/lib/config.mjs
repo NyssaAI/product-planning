@@ -16,7 +16,7 @@ import {
  * @property {string[]} [capabilities] Capability bullets — override the inferred ones
  * @property {string[]} [doesNotOwn] "{capability} → {module} module" entries — override the inferred ones
  * @property {string[]} [flows]
- * @property {boolean} [preserveModule] When true, ai-plan does not overwrite docs/code-index/modules/<id>.md
+ * @property {boolean} [preserveModule] When true, code-indexer does not overwrite docs/code-index/modules/<id>.md
  * @property {boolean} [preserveScope] Deprecated alias for preserveModule (read as fallback)
  */
 

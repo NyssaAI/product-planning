@@ -1,5 +1,5 @@
 /**
- * Portable structured logger for ai-plan generators (no @devjoy/* deps).
+ * Portable structured logger for code-indexer generators (no @devjoy/* deps).
  * Set LOG_LEVEL=debug or DEBUG_AI_PLAN=1 for full trace output.
  */
 

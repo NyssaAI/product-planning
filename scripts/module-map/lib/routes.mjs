@@ -33,7 +33,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
   const providedEndpoints = Array.isArray(codeMapInput)
     ? []
     : codeMapInput.endpoints ?? [];
-  // When the code-map carries no endpoints (e.g. ai-plan ran without a fresh
+  // When the code-map carries no endpoints (e.g. code-indexer ran without a fresh
   // code-map pass), recover C#/FastAPI/MCP/Next.js endpoints by scanning the
   // code-map's own file list with the same endpoint extractor code-map uses.
   // This reuses the already-enumerated source files rather than re-walking the

@@ -62,7 +62,7 @@ const SKIP_DIRS = new Set([...BASE_SKIP_DIRS]);
 // CommonJS requires the previous regex missed. One rule per ast-grep language.
 const IMPORT_RULES = ['TypeScript', 'JavaScript']
   .map(
-    (language) => `id: ai-plan-imports-${language.toLowerCase()}
+    (language) => `id: code-indexer-imports-${language.toLowerCase()}
 language: ${language}
 metadata: { mapKind: import }
 rule:

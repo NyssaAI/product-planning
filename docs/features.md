@@ -12,30 +12,30 @@
 - [x] F-008: Module-map embedding
 - [x] F-009: Doctor & staleness checks
 - [x] F-010: Multi-harness packaging
-- [x] F-011: `/ai-plan` command
+- [x] F-011: `/code-indexer` command
 
 ## Definitions
 
 ### F-001: Code map generation
 
 `scripts/code-map/` scans the repo with `@ast-grep/cli` and writes
-`docs/agent-plan/context/code-map.json` — a symbol index (functions, classes, types) plus an
+`docs/code-index/code-map.json` — a symbol index (functions, classes, types) plus an
 endpoint index, each with file and line. The L3 artifact, loaded only after a plan names symbols.
 
 ### F-002: Module map generation
 
-`scripts/ai-plan/` writes `docs/agent-plan/context/module-map.json` — a graph of modules with
+`scripts/module-map/` writes `docs/code-index/module-map.json` — a graph of modules with
 `dependsOn` / `usedBy` edges. Consumed for task ordering, not pasted wholesale into context.
 
 ### F-003: Per-module architecture files
 
-The primary artifact: one `docs/agent-plan/context/modules/<id>.md` per module describing its
+The primary artifact: one `docs/code-index/modules/<id>.md` per module describing its
 boundaries, capabilities, `dependsOn` / `usedBy`, public API, routes, and test roots. This is the
 L1 context an agent reads before planning a change in that module.
 
 ### F-004: Progressive-disclosure planning workflow
 
-The `using-ai-plan` skill defines the L0–L3 disclosure model (L0 task → L1 in-scope module file →
+The `using-code-indexer` skill defines the L0–L3 disclosure model (L0 task → L1 in-scope module file →
 L2 product docs → L3 code map) so agents load the minimum relevant context instead of the whole
 codebase, plus the staleness gate that triggers regeneration before planning.
 
@@ -53,8 +53,8 @@ languages, so the module files and code map expose a repo's external surface, no
 ### F-007: Bootstrap & init
 
 `generate.mjs --init --write-scripts` scaffolds the required product docs, an optional
-`ai-plan.config.json`, the `docs/agent-plan/` layout, and project `npm run ai-plan` scripts —
-turning a fresh repo into one ai-plan can generate against.
+`code-indexer.config.json`, the `docs/code-index/` layout, and project `npm run code-indexer` scripts —
+turning a fresh repo into one code-indexer can generate against.
 
 ### F-008: Module-map embedding
 
@@ -68,11 +68,11 @@ generated artifacts), and the staleness gate flags when source is newer than the
 
 ### F-010: Multi-harness packaging
 
-One generator, five runtimes: Claude Code, Cursor, Codex, OpenCode, and Gemini each load the same
+One generator, four runtimes: Claude Code, Cursor, Codex, and Gemini each load the same
 `skills/`, `commands/`, and `scripts/` via their own adapter (`.claude-plugin`, `.cursor-plugin`,
-`.codex`, `.opencode`, `gemini-extension.json`).
+`.codex`, `gemini-extension.json`).
 
-### F-011: `/ai-plan` command
+### F-011: `/code-indexer` command
 
-A one-step command that runs code-map + ai-plan generation in the current project repo, wrapping the
+A one-step command that runs code-map + code-indexer generation in the current project repo, wrapping the
 underlying `scripts/` entry points so users don't invoke Node paths by hand.

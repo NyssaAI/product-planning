@@ -32,19 +32,19 @@ function ensurePluginAstGrep(pluginRoot) {
   const pkgPath = path.join(pluginRoot, 'package.json');
   if (!existsSync(pkgPath)) {
     throw new Error(
-      `dev-tools plugin package.json not found at ${pluginRoot}`
+      `code-indexer plugin package.json not found at ${pluginRoot}`
     );
   }
 
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
   if (!pkg.dependencies?.['@ast-grep/cli']) {
     throw new Error(
-      'dev-tools plugin package.json must list @ast-grep/cli under dependencies'
+      'code-indexer plugin package.json must list @ast-grep/cli under dependencies'
     );
   }
 
   process.stderr.write(
-    `dev-tools: installing @ast-grep/cli into plugin (one-time, ${pluginRoot})…\n`
+    `code-indexer: installing @ast-grep/cli into plugin (one-time, ${pluginRoot})…\n`
   );
 
   const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
@@ -60,13 +60,13 @@ function ensurePluginAstGrep(pluginRoot) {
 
   if (result.status !== 0) {
     throw new Error(
-      `Failed to install @ast-grep/cli in dev-tools plugin (exit ${result.status ?? 'unknown'}). Ensure Node.js and npm are available.`
+      `Failed to install @ast-grep/cli in code-indexer plugin (exit ${result.status ?? 'unknown'}). Ensure Node.js and npm are available.`
     );
   }
 }
 
 /**
- * Resolve ast-grep binary shipped with the dev-tools plugin.
+ * Resolve ast-grep binary shipped with the code-indexer plugin.
  * @param {{ toolkitDir: string, projectRoot?: string }} options
  * @returns {string}
  */
@@ -108,7 +108,7 @@ export function resolveAstGrepBinary(options) {
   }
 
   throw new Error(
-    '@ast-grep/cli not found. The dev-tools plugin should install it automatically on first use. ' +
-      'If this persists, run `npm install` in the dev-tools plugin directory (CLAUDE_PLUGIN_ROOT / CURSOR_PLUGIN_ROOT).'
+    '@ast-grep/cli not found. The code-indexer plugin should install it automatically on first use. ' +
+      'If this persists, run `npm install` in the code-indexer plugin directory (CLAUDE_PLUGIN_ROOT / CURSOR_PLUGIN_ROOT).'
   );
 }

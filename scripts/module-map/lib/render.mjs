@@ -11,7 +11,7 @@ export function renderIndex(model, config) {
 
   lines.push(`# ${model.project.name} — AI planning index`);
   lines.push('');
-  lines.push(`Generated: ${model.generated}. Regenerate: \`npm run ai-plan\`.`);
+  lines.push(`Generated: ${model.generated}. Regenerate: \`npm run code-indexer\`.`);
   lines.push('');
   lines.push('## Progressive disclosure (for planning agents)');
   lines.push('');
@@ -76,7 +76,7 @@ export function renderIndex(model, config) {
   lines.push('');
   lines.push('## Cross-repo workflow');
   lines.push('');
-  lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --init` (dev-tools plugin)');
+  lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --init` (code-indexer plugin)');
   lines.push('- Validate: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --doctor`');
   lines.push('');
   return `${lines.join('\n')}\n`;

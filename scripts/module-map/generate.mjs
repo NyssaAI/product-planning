@@ -330,7 +330,7 @@ function runPinCommand(id, remove) {
 }
 
 function main() {
-  log.debug('ai-plan CLI invoked', { args, repoRoot: REPO_ROOT });
+  log.debug('code-indexer CLI invoked', { args, repoRoot: REPO_ROOT });
 
   if (pinId !== null) {
     runPinCommand(pinId, false);
