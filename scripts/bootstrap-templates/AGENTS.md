@@ -1,6 +1,6 @@
 # Agent context — any repository using AI Plan
 
-Mirrors **dev-tools:using-ai-plan** (canonical skill in the dev-tools plugin). When the plugin is installed, invoke that skill for full workflow integration with **write-plan** (via **design-spec**).
+Mirrors **dev-tools:using-ai-plan** (canonical skill in the dev-tools plugin). When the plugin is installed, invoke that skill to load scoped planning context before implementation work.
 
 ## Required project docs
 
@@ -52,5 +52,7 @@ node "<PLUGIN_ROOT>/scripts/ai-plan/generate.mjs"
 ## Workflow artifacts
 
 - Backlog: `docs/agent-plan/backlog/{YYYY.MM.DD-HHMMSS-slug}/`
-- Plans: `docs/agent-plan/plans/` — use **dev-tools:execute-plan** when the plugin is installed (not internal run/finish sub-skills)
-- Bugs: `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/` — use **dev-tools:fix-bug** when the plugin is installed
+- Plans: `docs/agent-plan/plans/`
+- Bugs: `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/`
+
+Load the relevant `docs/agent-plan/context/modules/<module>.md` before planning work in these areas.

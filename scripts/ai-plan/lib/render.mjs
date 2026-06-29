@@ -65,7 +65,7 @@ export function renderIndex(model, config) {
   }
   if (missingDocs.length > 0) {
     const names = missingDocs.map(([label]) => label).join(', ');
-    lines.push(`- **Product docs (not present — run plan-product):** ${names}`);
+    lines.push(`- **Product docs (not present):** ${names} — add these for richer context`);
   }
   lines.push('');
   lines.push('## Conventions');
@@ -232,7 +232,7 @@ export function renderModuleScope(model, mod) {
     lines.push('## Tests');
     lines.push('');
     for (const root of mod.testRoots.slice(0, 6)) {
-      lines.push(`- \`${root}/\` (mirrors module layout per standards/project-structure.md)`);
+      lines.push(`- \`${root}/\` (mirrors module source layout)`);
     }
     lines.push('');
   }

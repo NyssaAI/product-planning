@@ -5,7 +5,7 @@ description: Use when implementation planning needs scoped repo context from doc
 
 # Using AI Plan
 
-**Canonical source** for ai-plan behavior. The `/ai-plan` command, `scripts/bootstrap-templates/AGENTS.md`, `.cursor/rules/ai-plan.mdc`, `hooks/hooks.json` (the TaskCreated prompt), and the embedded module-map table in `CLAUDE.md` / `AGENTS.md` are thin wrappers that must stay in sync with this skill — update this skill first when rules change.
+**Canonical source** for ai-plan behavior. The `/ai-plan` command, `scripts/bootstrap-templates/AGENTS.md`, `.cursor/rules/ai-plan.mdc`, and the embedded module-map table in `CLAUDE.md` / `AGENTS.md` are thin wrappers that must stay in sync with this skill — update this skill first when rules change.
 
 Repository-agnostic **code map + module graph** for planning. Outputs live under `docs/agent-plan/context/` in the **target repository** (not inside the plugin).
 
@@ -13,9 +13,8 @@ Repository-agnostic **code map + module graph** for planning. Outputs live under
 
 ## When to Use
 
-- **write-plan** — REQUIRED when `docs/agent-plan/context/index.md` exists or the repo has `package.json` / polyglot source roots (invoked by design-spec)
-- **design-spec** (existing codebases) — read `index.md` and `module-map.json` summary for module boundaries; auto-regenerates index if stale
-- After **plan-product** or when `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` exist
+- **Before planning implementation work** in a repo that has `docs/agent-plan/context/` artifacts, or has `package.json` / polyglot source roots — load the in-scope module file(s) for the area you are about to change.
+- When `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` exist and you need module boundaries for an existing codebase.
 
 Do **not** use for greenfield repos with no source yet (skip until code exists).
 
@@ -23,30 +22,28 @@ Do **not** use for greenfield repos with no source yet (skip until code exists).
 
 **Primary ai-plan artifact:** `docs/agent-plan/context/modules/<module-id>.md` — a self-contained architectural description of one code module (boundaries, `dependsOn` / `usedBy`, routes, test roots, sample symbols). This is not a duplicate of `docs/agent-plan/specs/` or `docs/agent-plan/plans/`; those are *work-item* docs. Module files are *module* docs.
 
-## Module-first enforcement
-
-This is an enforced planning contract, not advice. `design-spec` must load `index.md` and the in-scope module file(s) before design questions; `write-plan` must save module evidence in the plan; `execute-plan` must reject implementation plans that omit that evidence when ai-plan artifacts exist.
+Load context in levels — never inject everything at once:
 
 | Level | Inject | When |
 |-------|--------|------|
-| L0 | Task + `docs/agent-plan/specs/…-design.md` (if feature work) | Always |
-| L1 | **In-scope** `docs/agent-plan/context/modules/<module-id>.md` set | **During write-plan** — Read the minimum in-scope module set now (Read tool). Do not defer or summarize. |
+| L0 | The task / feature description (and a design doc if feature work) | Always |
+| L1 | **In-scope** `docs/agent-plan/context/modules/<module-id>.md` set | When planning — read the minimum in-scope module set now (Read tool). Do not defer or summarize. |
 | L2 | `docs/product.md`, `docs/roadmap.md`, or `docs/tech-stack.md` | When product context needed |
-| L3 | `docs/agent-plan/context/code-map.json` | **After** plan names symbols — implementation only |
+| L3 | `docs/agent-plan/context/code-map.json` | **After** the plan names symbols — implementation only |
 
 `module-map.json` informs task ordering; do not paste the whole file into context.
 
-Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
+Read the minimum in-scope module set — usually one module file; add a directly-coupled module (via its `dependsOn` / `usedBy` edges) only when the work crosses that module's boundary. Never inject all module files or the full code map.
 
 ## Planning context evidence
 
-Every implementation plan for a repo with ai-plan artifacts must include:
+When you produce an implementation plan for a repo with ai-plan artifacts, record the module context you planned against so the plan stays reproducible:
 
 - `**Planning module:** docs/agent-plan/context/modules/<module-id>.md` in the plan header
-- `## Planning context` with the selected module id, description, capabilities, and does-not-own facts copied from the module file
+- A `## Planning context` section with the selected module id, description, capabilities, and does-not-own facts copied from the module file
 - Task ordering that respects `module-map.json` dependency edges when multiple modules are in scope
 
-If those fields are missing, the plan is not executable. Regenerate or rewrite the plan before implementation; do not infer the missing module context during `execute-plan`.
+If those fields are missing, regenerate or rewrite the plan before implementation rather than inferring the module context later.
 
 ## Generate (target repo)
 
@@ -84,11 +81,11 @@ Replace `<PLUGIN_ROOT>` with `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the 
 
 If `--write-scripts` copied tooling into the repo, prefer `npm run ai-plan` from the project root.
 
-## Pick the Module File(s) (write-plan)
+## Pick the Module File(s) (when planning)
 
 1. Read `docs/agent-plan/context/index.md` — module table links to `modules/<id>.md`
-2. Match the spec / roadmap item to its **Primary modules** — the minimum set needed for the behavior (ask if ambiguous)
-3. Read each in-scope `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map
+2. Match the task / roadmap item to its **Primary modules** — the minimum set needed for the behavior (ask if ambiguous)
+3. Read each in-scope `docs/agent-plan/context/modules/<id>.md` now (use the Read tool). Do not summarize or skip — capabilities, boundaries, `dependsOn` / `usedBy`, Public API, routes, test roots. Read the minimum in-scope module set — usually one module file; add a directly-coupled module (via its `dependsOn` / `usedBy` edges) only when the work crosses that module's boundary. Never inject all module files or the full code map
 4. Use `docs/agent-plan/context/module-map.json` only for dependency ordering between tasks (do not paste the whole file into context)
 
 Record in the plan header:
@@ -115,18 +112,6 @@ Tell your human partner: "Module graph was stale — regenerated before planning
 
 ## Repo layout
 
-Generated artifacts live under `docs/agent-plan/context/` per **`standards/project-structure.md`** (bundled in dev-tools). Do not invent alternate paths.
+Generated artifacts live under `docs/agent-plan/context/` in the target repository. Do not invent alternate paths.
 
-## Integration
-
-| Skill | Role |
-|-------|------|
-| **plan-product** | Creates docs that feed ai-plan |
-| **design-spec** | Auto-regenerates index if stale; reads index + module-map; **minimum module set per spec** |
-| **using-core-standards** | Project structure, test layout, timestamp rules |
-| **using-git-worktrees** | Before write-plan |
-| **write-plan** | Consumes L1 module file + module-map edges + standards from spec |
-| **execute-plan** | Enforces the saved planning context evidence before implementation |
-| **execute-plan-run** / **execute-plan-run-inline** | L3 code-map for named symbols only |
-
-See `scripts/ai-plan/README.md` and `docs/standards.md` in the plugin for details.
+See `scripts/ai-plan/README.md` in the plugin for generator and config details.
