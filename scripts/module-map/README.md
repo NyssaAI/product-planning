@@ -4,14 +4,14 @@
 
 **Maintainer / CLI reference** for generators and config. End users with the dev-tools plugin should follow the skill; use this file for script paths and `ai-plan.config.json` details.
 
-**Shipped in the [jamaynor/dev-tools](https://github.com/jamaynor/dev-tools) plugin** at `scripts/code-map/` and `scripts/ai-plan/`.
+**Shipped in the [jamaynor/dev-tools](https://github.com/jamaynor/dev-tools) plugin** at `scripts/code-map/` and `scripts/module-map/`.
 
 **Plugin maintainers:** run `npm install` once at the dev-tools plugin root before publishing so `node_modules/@ast-grep/cli` exists; end users get auto-install on first code-map run if the marketplace copy omits `node_modules`.
 
 From a project repo with the dev-tools plugin installed:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --init --write-scripts
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --init --write-scripts
 npm run ai-plan   # after init adds project scripts
 ```
 
@@ -46,8 +46,8 @@ npm run ai-plan             # code-map + MODULE_MAP + scopes
 {
   "scripts": {
     "code-map": "node path/to/scripts/code-map/generate.mjs",
-    "ai-plan": "node path/to/scripts/ai-plan/generate.mjs",
-    "postbuild": "npm run code-map && node path/to/scripts/ai-plan/generate.mjs"
+    "ai-plan": "node path/to/scripts/module-map/generate.mjs",
+    "postbuild": "npm run code-map && node path/to/scripts/module-map/generate.mjs"
   }
 }
 ```
@@ -74,15 +74,15 @@ Optional `modules.manual` adds modules workspaces miss (e.g. an app shell folder
 
 ### Cohesion-based detection
 
-Under `auto`, when a language adapter matches the repo (currently **C#**; others pluggable via `scripts/ai-plan/lib/adapters/`), modules are derived from the code's dependency graph: directories are grouped at the depth that maximizes coupling/cohesion (Newman modularity), producing **feature-level** modules instead of one-per-project. Deterministic; falls back to directory structure when the graph is sparse. Tune with `modules.minFiles` / `modules.maxFiles`; force an adapter with `modules.adapter`.
+Under `auto`, when a language adapter matches the repo (currently **C#**; others pluggable via `scripts/module-map/lib/adapters/`), modules are derived from the code's dependency graph: directories are grouped at the depth that maximizes coupling/cohesion (Newman modularity), producing **feature-level** modules instead of one-per-project. Deterministic; falls back to directory structure when the graph is sparse. Tune with `modules.minFiles` / `modules.maxFiles`; force an adapter with `modules.adapter`.
 
 ### Pinning (adjusting derived modules)
 
 Derived modules are recomputed every run. To freeze and adjust one, **eject** it into config:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --pin <module-id>    # eject into modules.pinned[]
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --unpin <module-id>  # return to auto-derivation
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --pin <module-id>    # eject into modules.pinned[]
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --unpin <module-id>  # return to auto-derivation
 ```
 
 `--pin` writes the module's current definition into `ai-plan.config.json` → `modules.pinned[]`. Edit its `id`/`name`/`description`/`capabilities`, or change `root` to merge a parent (or split into children) — a pinned root is authoritative and excluded from re-derivation, so adjustments survive regeneration. Generated `modules/<id>.md` files are **read-only projections**; adjust via pins, not by editing them.
@@ -112,12 +112,12 @@ See `ai-plan.config.example.json`.
 ## dev-tools plugin CLI
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --init --write-scripts
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --doctor
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --init --write-scripts
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --doctor
 node "${CLAUDE_PLUGIN_ROOT}/scripts/code-map/generate-code-map.mjs"
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs"
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --pin <module-id>     # freeze a derived module
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ai-plan/generate.mjs" --unpin <module-id>   # return it to auto
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs"
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --pin <module-id>     # freeze a derived module
+node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --unpin <module-id>   # return it to auto
 ```
 
 Set `LOG_LEVEL=debug` or `DEBUG_AI_PLAN=1` for structured trace logs on stderr.

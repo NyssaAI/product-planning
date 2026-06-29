@@ -9,7 +9,7 @@ import {
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
-import { bootstrapRepo } from '../../scripts/ai-plan/lib/bootstrap.mjs';
+import { bootstrapRepo } from '../../scripts/module-map/lib/bootstrap.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];
@@ -43,11 +43,11 @@ test('bootstrap package scripts run installed plugin tooling instead of repo-loc
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
   assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
-  assert.doesNotMatch(pkg.scripts['ai-plan'], /node scripts\/ai-plan\//);
+  assert.doesNotMatch(pkg.scripts['ai-plan'], /node scripts\/module-map\//);
   assert.match(pkg.scripts['code-map'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
   assert.match(pkg.scripts['ai-plan'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
   assert.match(pkg.scripts['code-map'], /scripts\/code-map\/generate-code-map\.mjs/);
-  assert.match(pkg.scripts['ai-plan'], /scripts\/ai-plan\/generate\.mjs/);
+  assert.match(pkg.scripts['ai-plan'], /scripts\/module-map\/generate\.mjs/);
 });
 
 test('bootstrap replaces known stale local ai-plan package scripts', () => {
@@ -57,7 +57,7 @@ test('bootstrap replaces known stale local ai-plan package scripts', () => {
     version: '0.0.0',
     scripts: {
       'code-map': 'node scripts/code-map/generate-code-map.mjs',
-      'ai-plan': 'node scripts/ai-plan/generate.mjs',
+      'ai-plan': 'node scripts/module-map/generate.mjs',
       test: 'node --test',
     },
   });
@@ -67,7 +67,7 @@ test('bootstrap replaces known stale local ai-plan package scripts', () => {
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
   assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
-  assert.doesNotMatch(pkg.scripts['ai-plan'], /node scripts\/ai-plan\//);
+  assert.doesNotMatch(pkg.scripts['ai-plan'], /node scripts\/module-map\//);
   assert.match(pkg.scripts['code-map'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
   assert.match(pkg.scripts['ai-plan'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
   assert.equal(pkg.scripts.test, 'node --test');
@@ -118,7 +118,7 @@ test('bootstrap package scripts resolve plugin scripts and forward arguments', (
   assert.deepEqual(JSON.parse(JSON.stringify(calls)), [
     [
       'node',
-      [path.join(pluginRoot, 'scripts/ai-plan/generate.mjs'), '--doctor'],
+      [path.join(pluginRoot, 'scripts/module-map/generate.mjs'), '--doctor'],
       { stdio: 'inherit' },
     ],
   ]);

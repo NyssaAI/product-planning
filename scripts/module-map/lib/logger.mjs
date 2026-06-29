@@ -43,7 +43,7 @@ function emit(level, message, fields = {}) {
   const entry = {
     timestamp: new Date().toISOString(),
     level,
-    service: 'ai-plan',
+    service: 'code-indexer',
     message,
     ...fields,
   };

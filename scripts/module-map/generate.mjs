@@ -3,11 +3,11 @@
  * AI Plan — planning context for any repository.
  *
  * Usage:
- *   node scripts/ai-plan/generate.mjs              # generate
- *   node scripts/ai-plan/generate.mjs --init       # bootstrap repo
- *   node scripts/ai-plan/generate.mjs --doctor     # validate setup
- *   node scripts/ai-plan/generate.mjs --doctor --runtimes
- *   node scripts/ai-plan/generate.mjs --migrate    # move legacy layout to docs/agent-plan/
+ *   node scripts/module-map/generate.mjs              # generate
+ *   node scripts/module-map/generate.mjs --init       # bootstrap repo
+ *   node scripts/module-map/generate.mjs --doctor     # validate setup
+ *   node scripts/module-map/generate.mjs --doctor --runtimes
+ *   node scripts/module-map/generate.mjs --migrate    # move legacy layout to docs/agent-plan/
  */
 
 import {

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderModuleScope } from '../../scripts/ai-plan/lib/render.mjs';
+import { renderModuleScope } from '../../scripts/module-map/lib/render.mjs';
 
 function mod(overrides = {}) {
   return {

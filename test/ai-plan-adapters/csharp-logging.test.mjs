@@ -11,7 +11,7 @@ const fixtureRoot = path.join(__dirname, 'fixtures', 'csharp-repo');
 
 test('csharp adapter does not log normal extraction at info level', () => {
   const script = `
-    import csharpAdapter from ${JSON.stringify(pathToFileURL(path.join(repoRoot, 'scripts/ai-plan/lib/adapters/csharp.mjs')).href)};
+    import csharpAdapter from ${JSON.stringify(pathToFileURL(path.join(repoRoot, 'scripts/module-map/lib/adapters/csharp.mjs')).href)};
     csharpAdapter.extract(${JSON.stringify(fixtureRoot)}, [
       'App/Orders/Order.cs',
       'App/Orders/OrderService.cs'

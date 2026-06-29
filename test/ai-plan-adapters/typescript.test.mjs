@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import typescriptAdapter from '../../scripts/ai-plan/lib/adapters/typescript.mjs';
-import { deriveModules } from '../../scripts/ai-plan/lib/detection/derive-modules.mjs';
+import typescriptAdapter from '../../scripts/module-map/lib/adapters/typescript.mjs';
+import { deriveModules } from '../../scripts/module-map/lib/detection/derive-modules.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixtureRoot = path.join(__dirname, 'fixtures', 'typescript-repo');

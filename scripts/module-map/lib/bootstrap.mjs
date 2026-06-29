@@ -167,11 +167,11 @@ function mergePackageScripts(repoRoot, created, skipped) {
   const scripts = pkg.scripts ?? {};
   const additions = {
     'code-map': pluginScriptCommand('scripts/code-map/generate-code-map.mjs'),
-    'ai-plan': pluginScriptCommand('scripts/ai-plan/generate.mjs'),
+    'ai-plan': pluginScriptCommand('scripts/module-map/generate.mjs'),
   };
   const legacyLocalScripts = {
     'code-map': 'scripts/code-map/generate-code-map.mjs',
-    'ai-plan': 'scripts/ai-plan/generate.mjs',
+    'ai-plan': 'scripts/module-map/generate.mjs',
   };
 
   let changed = false;
@@ -251,7 +251,7 @@ function writeClaudeHook(repoRoot, created, skipped) {
   const settingsPath = path.join(settingsDir, 'settings.json');
   const pluginRoot = path.resolve(__dirname, '../../..');
   const hookScript = path
-    .join(pluginRoot, 'scripts/ai-plan/regen-if-source-changed.mjs')
+    .join(pluginRoot, 'scripts/module-map/regen-if-source-changed.mjs')
     .replace(/\\/g, '/');
 
   /** @type {Record<string, any>} */

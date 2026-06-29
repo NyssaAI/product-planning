@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { batchByArgLength } from '../../scripts/ai-plan/lib/adapters/sg-scan.mjs';
+import { batchByArgLength } from '../../scripts/module-map/lib/adapters/sg-scan.mjs';
 
 test('batchByArgLength keeps every batch under the length budget', () => {
   // 500 paths of ~80 chars each => ~40 KB total, must split into batches.

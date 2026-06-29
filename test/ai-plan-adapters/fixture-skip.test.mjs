@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import csharpAdapter from '../../scripts/ai-plan/lib/adapters/csharp.mjs';
-import { selectAdapter } from '../../scripts/ai-plan/lib/adapters/index.mjs';
-import { listRepoFiles } from '../../scripts/ai-plan/lib/repo-files.mjs';
+import csharpAdapter from '../../scripts/module-map/lib/adapters/csharp.mjs';
+import { selectAdapter } from '../../scripts/module-map/lib/adapters/index.mjs';
+import { listRepoFiles } from '../../scripts/module-map/lib/repo-files.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // A JS repo whose ONLY C#/.csproj signal lives inside a `fixtures/` tree.

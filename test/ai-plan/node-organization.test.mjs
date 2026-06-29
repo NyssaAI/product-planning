@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { classifyNodeOrganization } from '../../scripts/ai-plan/lib/node-organization.mjs';
+import { classifyNodeOrganization } from '../../scripts/module-map/lib/node-organization.mjs';
 
 test('classifyNodeOrganization groups modules by Node/TypeScript role', () => {
   const modules = [

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildModuleEdges } from '../../scripts/ai-plan/lib/module-deps.mjs';
+import { buildModuleEdges } from '../../scripts/module-map/lib/module-deps.mjs';
 
 /**
  * Three modules where `a` imports `b` (adapter edge) and also declares a

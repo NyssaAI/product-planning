@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { parseTestConfig, loadAiPlanConfig } from '../../scripts/ai-plan/lib/config.mjs';
+import { parseTestConfig, loadAiPlanConfig } from '../../scripts/module-map/lib/config.mjs';
 
 test('parseTestConfig: absent → enabled with empty lists', () => {
   assert.deepEqual(parseTestConfig(undefined), {

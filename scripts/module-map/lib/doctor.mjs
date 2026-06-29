@@ -87,7 +87,7 @@ function checkModuleMap(repoRoot, config) {
       id: 'module-map',
       status: 'fail',
       message: 'module-map.json not found',
-      hint: 'Run: npm run ai-plan or node <PLUGIN_ROOT>/scripts/ai-plan/generate.mjs',
+      hint: 'Run: npm run ai-plan or node <PLUGIN_ROOT>/scripts/module-map/generate.mjs',
     }];
   }
 
@@ -137,7 +137,7 @@ function checkAgentEntrypoints(repoRoot) {
       id,
       status: existsSync(full) ? 'pass' : 'warn',
       message: existsSync(full) ? `${rel} present` : `${rel} missing`,
-      hint: existsSync(full) ? undefined : 'Run: node <PLUGIN_ROOT>/scripts/ai-plan/generate.mjs --init',
+      hint: existsSync(full) ? undefined : 'Run: node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --init',
     });
   }
 

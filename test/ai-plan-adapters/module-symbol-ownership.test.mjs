@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildAiPlanModel } from '../../scripts/ai-plan/lib/build.mjs';
+import { buildAiPlanModel } from '../../scripts/module-map/lib/build.mjs';
 
 function config(manual) {
   return {
@@ -33,7 +33,7 @@ test('module symbolCount is disjoint — a parent excludes child-module symbols'
   try {
     const codeMap = {
       files: [
-        { path: 'scripts/ai-plan/build.mjs', symbols: [{ name: 'foo', kind: 'function', line: 1 }] },
+        { path: 'scripts/module-map/build.mjs', symbols: [{ name: 'foo', kind: 'function', line: 1 }] },
         { path: 'scripts/version.mjs', symbols: [{ name: 'bar', kind: 'function', line: 1 }] },
       ],
       endpoints: [],
@@ -42,7 +42,7 @@ test('module symbolCount is disjoint — a parent excludes child-module symbols'
       repoRoot,
       config([
         { id: 'scripts', root: 'scripts' },
-        { id: 'aiplan', root: 'scripts/ai-plan' },
+        { id: 'aiplan', root: 'scripts/module-map' },
       ]),
       codeMap
     );
@@ -54,7 +54,7 @@ test('module symbolCount is disjoint — a parent excludes child-module symbols'
     assert.equal(byId.scripts.symbolCount, 1);
     // Public surface is likewise disjoint: parent's surface excludes build.mjs.
     const parentFiles = new Set((byId.scripts.publicSurface ?? []).map((s) => s.file));
-    assert.equal(parentFiles.has('scripts/ai-plan/build.mjs'), false);
+    assert.equal(parentFiles.has('scripts/module-map/build.mjs'), false);
     assert.equal(parentFiles.has('scripts/version.mjs'), true);
   } finally {
     rmSync(repoRoot, { recursive: true, force: true });
