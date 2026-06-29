@@ -25,8 +25,8 @@
 | `detectApiRoutes` |  |
 | `detectSrcChildModules` |  |
 | `bootstrapRepo` |  |
-| `buildAiPlanModel` |  |
-| `loadAiPlanConfig` |  |
+| `buildCodeIndexerModel` |  |
+| `loadCodeIndexerConfig` |  |
 | `validateRequiredDocs` |  |
 | `resolveDocPath` |  |
 | `writeStarterConfigs` |  |
@@ -54,6 +54,7 @@
 ## Tests
 
 - `test/` (mirrors module source layout)
+- `test/module-map/` (mirrors module source layout)
 
 ## Configuration
 
@@ -66,8 +67,8 @@
 - `scripts/module-map/lib/adapters/sg-scan.mjs`: runBatchedScan, batchByArgLength
 - `scripts/module-map/lib/auto-detect.mjs`: DEFAULT_DOC_CANDIDATES, MODULE_GLOB_CANDIDATES, readProjectName, detectCodeMapRoots, detectApiRoutes, detectSrcChildModules
 - `scripts/module-map/lib/bootstrap.mjs`: bootstrapRepo
-- `scripts/module-map/lib/build.mjs`: buildAiPlanModel
-- `scripts/module-map/lib/config.mjs`: loadAiPlanConfig, validateRequiredDocs, resolveDocPath, writeStarterConfigs
+- `scripts/module-map/lib/build.mjs`: buildCodeIndexerModel
+- `scripts/module-map/lib/config.mjs`: loadCodeIndexerConfig, validateRequiredDocs, resolveDocPath, writeStarterConfigs
 - `scripts/module-map/lib/detection/derive-modules.mjs`: deriveModules
 - `scripts/module-map/lib/detection/metrics.mjs`: internalExternalRatio, modularity, cohesion, coupling
 - `scripts/module-map/lib/detection/partitions.mjs`: DEFAULT_EXCLUDE, topLevelAreas, filesInArea, maxDepth, partitionAtDepth, sizeByModule

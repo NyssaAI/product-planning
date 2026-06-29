@@ -21,7 +21,7 @@ import {
  */
 
 /**
- * @typedef {object} AiPlanConfig
+ * @typedef {object} CodeIndexerConfig
  * @property {string} projectName
  * @property {string} outputDir
  * @property {string} codeMapOutput
@@ -39,9 +39,9 @@ const DOC_KEYS = ['product', 'roadmap', 'techStack'];
 /**
  * @param {string} repoRoot
  * @param {{ allowMissingConfig?: boolean }} [opts]
- * @returns {AiPlanConfig}
+ * @returns {CodeIndexerConfig}
  */
-export function loadAiPlanConfig(repoRoot, opts = {}) {
+export function loadCodeIndexerConfig(repoRoot, opts = {}) {
   const configPath = path.join(repoRoot, 'code-indexer.config.json');
   const configFilePresent = existsSync(configPath);
   const raw = configFilePresent
@@ -121,7 +121,7 @@ export function loadAiPlanConfig(repoRoot, opts = {}) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @returns {{ missing: string[], resolved: Record<string, string | null> }}
  */
 export function validateRequiredDocs(repoRoot, config) {

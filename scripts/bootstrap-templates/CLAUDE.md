@@ -1,6 +1,6 @@
 # CLAUDE.md — repository agent instructions
 
-## AI planning context
+## code-indexer context
 
 Follow **AGENTS.md** in this repo for code-indexer progressive disclosure (L0–L3), regenerate commands, and required product docs.
 

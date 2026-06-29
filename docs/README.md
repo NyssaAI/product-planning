@@ -14,19 +14,19 @@ Codex, Gemini).
 | [roadmap.md](roadmap.md) | Maintenance and direction |
 | [features.md](features.md) | Feature inventory (status table) |
 | [tech-stack.md](tech-stack.md) | This repo's stack and conventions |
-| [testing.md](testing.md) | The `test/` suite (code-indexer + code-map) |
 
-## Design and implementation
+## Generated context (this repo dogfoods code-indexer)
 
-| Directory | Purpose |
-|-----------|---------|
-| [code-index/context/](code-index/context/) | Generated code-indexer context for this repo (module map, code map, module files) |
-| [code-index/plans/](code-index/plans/) | Implementation plans |
-| [code-index/specs/](code-index/specs/) | Design specs |
+| Path | Purpose |
+|------|---------|
+| [code-index/index.md](code-index/index.md) | Progressive-disclosure guide to the module set |
+| [code-index/modules/](code-index/modules/) | Per-module architecture files |
+| [code-index/module-map.json](code-index/module-map.json) | Module dependency graph |
+| [code-index/code-map.json](code-index/code-map.json) | Symbol + endpoint index |
 
 ## Harness adapters (repo root)
 
-The plugin ships one feature across five agent runtimes; each adapter points at the same
+The plugin ships one feature across four agent runtimes; each adapter points at the same
 `skills/`, `commands/`, and `scripts/`:
 
 | Runtime | Adapter |

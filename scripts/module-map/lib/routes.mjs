@@ -21,7 +21,7 @@ const HTTP_METHODS = new Set([
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @param {import('./discover-modules.mjs').ModuleDef[]} modules
  * @param {{ files?: { path: string, symbols?: { name: string }[] }[], endpoints?: object[] } | { path: string, symbols?: { name: string }[] }[]} codeMapInput
  * @returns {HttpRoute[]}

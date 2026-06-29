@@ -19,10 +19,10 @@ import {
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
-import { buildAiPlanModel } from './lib/build.mjs';
+import { buildCodeIndexerModel } from './lib/build.mjs';
 import { bootstrapRepo } from './lib/bootstrap.mjs';
 import {
-  loadAiPlanConfig,
+  loadCodeIndexerConfig,
   validateRequiredDocs,
 } from './lib/config.mjs';
 import { runDoctor, formatDoctorReport } from './lib/doctor.mjs';
@@ -127,7 +127,7 @@ function runGenerate() {
   /** @type {string[]} */
   const errors = [];
 
-  const config = loadAiPlanConfig(REPO_ROOT);
+  const config = loadCodeIndexerConfig(REPO_ROOT);
   const { missing, resolved } = validateRequiredDocs(REPO_ROOT, config);
 
   if (missing.length > 0) {
@@ -154,7 +154,7 @@ function runGenerate() {
     );
   }
 
-  const model = buildAiPlanModel(REPO_ROOT, config, codeMap);
+  const model = buildCodeIndexerModel(REPO_ROOT, config, codeMap);
   model.project.docs = {
     product: resolved.product,
     roadmap: resolved.roadmap,
@@ -316,7 +316,7 @@ function runPinCommand(id, remove) {
     return;
   }
 
-  const config = loadAiPlanConfig(REPO_ROOT);
+  const config = loadCodeIndexerConfig(REPO_ROOT);
   const modules = discoverModules(REPO_ROOT, config);
   const result = pinModule(REPO_ROOT, id, modules);
   if (result.ok) {

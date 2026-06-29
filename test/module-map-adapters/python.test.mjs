@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pythonAdapter from '../../scripts/module-map/lib/adapters/python.mjs';
-import { buildAiPlanModel } from '../../scripts/module-map/lib/build.mjs';
+import { buildCodeIndexerModel } from '../../scripts/module-map/lib/build.mjs';
 import { selectAdapter } from '../../scripts/module-map/lib/adapters/index.mjs';
 import { deriveModules } from '../../scripts/module-map/lib/detection/derive-modules.mjs';
 
@@ -27,11 +27,11 @@ function edgeKey(edge) {
   return `${edge.from}->${edge.to}`;
 }
 
-function aiPlanConfig() {
+function codeIndexerConfig() {
   return {
     projectName: 'python-fixture',
-    outputDir: 'docs/agent-plan/context',
-    codeMapOutput: 'docs/agent-plan/context/code-map.json',
+    outputDir: 'docs/code-index',
+    codeMapOutput: 'docs/code-index/code-map.json',
     docs: {
       product: ['docs/product.md'],
       roadmap: ['docs/roadmap.md'],
@@ -129,9 +129,9 @@ test('python adapter graph feeds deriveModules with feature-level modules', () =
   );
 });
 
-test('ai-plan model preserves Python adapter dependencies in module graph', () => {
+test('code-indexer model preserves Python adapter dependencies in module graph', () => {
   const graph = pythonAdapter.extract(fixtureRoot, fixtureFiles);
-  const model = buildAiPlanModel(fixtureRoot, aiPlanConfig(), graph.files);
+  const model = buildCodeIndexerModel(fixtureRoot, codeIndexerConfig(), graph.files);
   const moduleEdges = new Set(
     model.moduleGraph.edges.map((edge) => `${edge.from}->${edge.to}`)
   );

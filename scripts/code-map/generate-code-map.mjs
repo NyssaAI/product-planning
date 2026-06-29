@@ -23,7 +23,7 @@ import {
   SOURCE_EXTENSIONS,
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
-import { loadAiPlanConfig } from '../module-map/lib/config.mjs';
+import { loadCodeIndexerConfig } from '../module-map/lib/config.mjs';
 import { discoverModules } from '../module-map/lib/discover-modules.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
@@ -355,7 +355,7 @@ function buildCodeMapDocument(symbols, options) {
  */
 function loadModuleContext() {
   try {
-    const config = loadAiPlanConfig(REPO_ROOT);
+    const config = loadCodeIndexerConfig(REPO_ROOT);
     return {
       outputDir: config.outputDir,
       modules: discoverModules(REPO_ROOT, config),

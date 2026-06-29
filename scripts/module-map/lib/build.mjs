@@ -33,20 +33,20 @@ function detectSharedRoot(repoRoot) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[] | { files?: { path: string, symbols?: { name: string, kind: string, line: number }[] }[], endpoints?: object[] }} codeMapInput
  */
-export function buildAiPlanModel(repoRoot, config, codeMapInput) {
+export function buildCodeIndexerModel(repoRoot, config, codeMapInput) {
   const codeMap = normalizeCodeMap(codeMapInput);
   const codeMapFiles = codeMap.files;
-  log.info('buildAiPlanModel start', { repoRoot, codeMapFileCount: codeMapFiles.length });
+  log.info('buildCodeIndexerModel start', { repoRoot, codeMapFileCount: codeMapFiles.length });
   const brief = loadProjectBrief(repoRoot, config);
   // Extract the adapter stack graph once; module discovery and module-edge
   // derivation both consume it, so this avoids re-walking and re-parsing the
   // whole repo a second time.
   const stack = extractStackGraph(repoRoot, config);
   const modules = discoverModules(repoRoot, config, stack);
-  log.debug('buildAiPlanModel discovered modules', {
+  log.debug('buildCodeIndexerModel discovered modules', {
     count: modules.length,
     ids: modules.map((m) => m.id),
   });
@@ -172,7 +172,7 @@ export function buildAiPlanModel(repoRoot, config, codeMapInput) {
     };
   });
 
-  log.info('buildAiPlanModel complete', {
+  log.info('buildCodeIndexerModel complete', {
     moduleCount: enrichedModules.length,
     routeCount: routes.length,
   });

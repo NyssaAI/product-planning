@@ -22,7 +22,7 @@ const log = createLogger({ module: 'discover-modules' });
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @param {import('./stack-graph.mjs').StackGraph | null} [stack] pre-extracted
  *   adapter graph reused by cohesion detection; extracted on demand if omitted.
  * @returns {ModuleDef[]}
@@ -57,7 +57,7 @@ export function discoverModules(repoRoot, config, stack) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @param {import('./stack-graph.mjs').StackGraph | null} [stack]
  */
 function discoverAuto(repoRoot, config, stack) {
@@ -138,7 +138,7 @@ function discoverAuto(repoRoot, config, stack) {
  * [] when no adapter matches (leaving existing JS/glob paths intact).
  *
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @param {import('./stack-graph.mjs').StackGraph | null} [stack]
  * @returns {ModuleDef[]}
  */
@@ -164,7 +164,7 @@ function discoverFromCohesion(repoRoot, config, stack) {
 
 /**
  * @param {import('./detection/types.mjs').DetectedModule} d
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @returns {ModuleDef}
  */
 function detectedToModule(d, config) {
@@ -197,7 +197,7 @@ function detectCodeRoot(repoRoot) {
 
 /**
  * @param {string} root
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 function srcChildModule(root, config) {
   const id = path.basename(root);
@@ -215,7 +215,7 @@ function srcChildModule(root, config) {
 
 /**
  * @param {ModuleDef[]} discovered
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 function mergeManual(discovered, config) {
   const ids = new Set(discovered.map((m) => m.id));
@@ -227,7 +227,7 @@ function mergeManual(discovered, config) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 function discoverFromWorkspaces(repoRoot, config) {
   const rootPkgPath = path.join(repoRoot, 'package.json');
@@ -261,7 +261,7 @@ function discoverFromWorkspaces(repoRoot, config) {
 /**
  * @param {string} repoRoot
  * @param {string} pattern
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 function discoverFromGlob(repoRoot, pattern, config) {
   const dirs = expandWorkspacePattern(repoRoot, pattern);
@@ -304,7 +304,7 @@ function expandWorkspacePattern(repoRoot, pattern) {
 /**
  * @param {string} repoRoot
  * @param {string} pkgPath
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 function readPackageAsModule(repoRoot, pkgPath, config) {
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
@@ -346,7 +346,7 @@ function packageNameToId(packageName, fallbackId) {
 
 /**
  * @param {import('./config.mjs').ManualModule} manual
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 function manualToModule(manual, config) {
   const id = manual.id;

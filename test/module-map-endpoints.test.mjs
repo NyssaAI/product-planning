@@ -3,14 +3,14 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildAiPlanModel } from '../scripts/module-map/lib/build.mjs';
+import { buildCodeIndexerModel } from '../scripts/module-map/lib/build.mjs';
 import { renderModuleScope } from '../scripts/module-map/lib/render.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];
 
 function repo() {
-  const dir = mkdtempSync(path.join(tmpdir(), 'ai-plan-endpoint-test-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-endpoint-test-'));
   tempDirs.push(dir);
   write(dir, 'docs/product.md', '# Product\n');
   write(dir, 'docs/roadmap.md', '# Roadmap\n');
@@ -30,7 +30,7 @@ test.after(() => {
   }
 });
 
-test('ai-plan renders HTTP routes and MCP capabilities from code-map endpoints', () => {
+test('code-indexer renders HTTP routes and MCP capabilities from code-map endpoints', () => {
   const root = repo();
   const config = {
     projectName: 'endpoint-fixture',
@@ -82,7 +82,7 @@ test('ai-plan renders HTTP routes and MCP capabilities from code-map endpoints',
     ],
   };
 
-  const model = buildAiPlanModel(root, config, codeMap);
+  const model = buildCodeIndexerModel(root, config, codeMap);
   const mod = model.modules.find((m) => m.id === 'api');
   const rendered = renderModuleScope(model, mod);
 
@@ -92,7 +92,7 @@ test('ai-plan renders HTTP routes and MCP capabilities from code-map endpoints',
   assert.match(rendered, /`lookup_order` -> `src\/api\/server.ts`/);
 });
 
-test('ai-plan uses code-map endpoints even when legacy apiRoutes are disabled', () => {
+test('code-indexer uses code-map endpoints even when legacy apiRoutes are disabled', () => {
   const root = repo();
   const config = {
     projectName: 'endpoint-fixture',
@@ -130,7 +130,7 @@ test('ai-plan uses code-map endpoints even when legacy apiRoutes are disabled', 
     ],
   };
 
-  const model = buildAiPlanModel(root, config, codeMap);
+  const model = buildCodeIndexerModel(root, config, codeMap);
   const mod = model.modules.find((m) => m.id === 'server');
   const rendered = renderModuleScope(model, mod);
 

@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildAiPlanModel } from '../../scripts/module-map/lib/build.mjs';
+import { buildCodeIndexerModel } from '../../scripts/module-map/lib/build.mjs';
 
 function config(manual) {
   return {
     projectName: 'fixture',
-    outputDir: 'docs/agent-plan/context',
-    codeMapOutput: 'docs/agent-plan/context/code-map.json',
+    outputDir: 'docs/code-index',
+    codeMapOutput: 'docs/code-index/code-map.json',
     docs: { product: [], roadmap: [], techStack: [] },
     briefMaxCharsPerDoc: 1200,
     modules: {
@@ -38,18 +38,18 @@ test('module symbolCount is disjoint — a parent excludes child-module symbols'
       ],
       endpoints: [],
     };
-    const model = buildAiPlanModel(
+    const model = buildCodeIndexerModel(
       repoRoot,
       config([
         { id: 'scripts', root: 'scripts' },
-        { id: 'aiplan', root: 'scripts/module-map' },
+        { id: 'modmap', root: 'scripts/module-map' },
       ]),
       codeMap
     );
 
     const byId = Object.fromEntries(model.modules.map((m) => [m.id, m]));
     // Child owns its file.
-    assert.equal(byId.aiplan.symbolCount, 1);
+    assert.equal(byId.modmap.symbolCount, 1);
     // Parent owns only the file no child claims — NOT the child's file too.
     assert.equal(byId.scripts.symbolCount, 1);
     // Public surface is likewise disjoint: parent's surface excludes build.mjs.

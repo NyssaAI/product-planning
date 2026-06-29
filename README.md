@@ -5,7 +5,7 @@ It scans your repo and produces scoped planning context: a **code map** (symbol 
 index), a **module map** (dependency graph), and a **per-module architecture file** for each
 module. Agents load the minimum context they need to plan a change, instead of the whole codebase.
 
-It runs across five agent runtimes — Claude Code, Cursor, Codex, and Gemini.
+It runs across four agent runtimes — Claude Code, Cursor, Codex, and Gemini.
 
 ## What it generates
 
@@ -154,7 +154,7 @@ Required docs: `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` (optio
 
 1. Fork the repository
 2. Create a branch for your change
-3. Run the test suite (see [docs/testing.md](docs/testing.md))
+3. Run the test suite (`npm test`)
 4. Submit a PR
 
 ## License

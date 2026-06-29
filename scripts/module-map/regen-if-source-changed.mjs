@@ -91,9 +91,9 @@ function runRegeneration() {
     __dirname,
     '../code-map/generate-code-map.mjs'
   );
-  const aiPlanScript = path.join(__dirname, 'generate.mjs');
+  const codeIndexerScript = path.join(__dirname, 'generate.mjs');
 
-  for (const script of [codeMapScript, aiPlanScript]) {
+  for (const script of [codeMapScript, codeIndexerScript]) {
     const result = spawnSync(process.execPath, [script], {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -119,14 +119,14 @@ function handleHook() {
     process.exit(0);
   }
 
-  const aiPlanConfig = readJsonIfPresent(repoRoot, 'code-indexer.config.json');
-  if (aiPlanConfig.autoRegenerate === false) {
+  const codeIndexerConfig = readJsonIfPresent(repoRoot, 'code-indexer.config.json');
+  if (codeIndexerConfig.autoRegenerate === false) {
     process.exit(0);
   }
 
   const codeMapConfig = readJsonIfPresent(repoRoot, 'code-map.config.json');
-  const sourceRoots = Array.isArray(aiPlanConfig.sourceRoots)
-    ? aiPlanConfig.sourceRoots
+  const sourceRoots = Array.isArray(codeIndexerConfig.sourceRoots)
+    ? codeIndexerConfig.sourceRoots
     : Array.isArray(codeMapConfig.roots)
       ? codeMapConfig.roots
       : DEFAULT_SOURCE_ROOTS;

@@ -79,6 +79,20 @@ generator backs all four runtimes via per-harness adapters.
 `@ast-grep/cli` is bundled with the plugin and auto-installs into the plugin root on first code-map
 run — it is never added to the consumer repo.
 
+## Planned capabilities
+
+Two commands extend the same code map + module graph into higher-level views. Both are designed and
+not yet shipped:
+
+- **`/code-indexer arch`** — builds a system-architecture document alongside the index: a Mermaid
+  component diagram rendered from `module-map.json` edges (engine), plus an agent-authored
+  system-overview prose section (`docs/code-index/system-architecture.md`).
+- **`/code-indexer patterns`** — scans for structurally-detectable code patterns and reports named
+  patterns, occurrence counts, and percent-of-codebase coverage attributed per module
+  (`docs/code-index/patterns.md` + `patterns.json`). It runs a plugin seed catalog of ast-grep rules
+  plus repo-defined extensions, with **tiered confidence** (high / medium / intent-only) so the
+  coverage figure is honest about precision — ast-grep matches structure and naming, not raw intent.
+
 ## Design principles
 
 - **Deterministic and regenerable** — the context is derived from source, never hand-curated, so it

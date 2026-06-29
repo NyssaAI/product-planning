@@ -2,14 +2,14 @@ import { summarizeDescription } from './summarize.mjs';
 import { classifyNodeOrganization } from './node-organization.mjs';
 
 /**
- * @param {ReturnType<import('./build.mjs').buildAiPlanModel>} model
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>} model
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 export function renderIndex(model, config) {
   const lines = [];
   const out = config.outputDir.replace(/\\/g, '/');
 
-  lines.push(`# ${model.project.name} — AI planning index`);
+  lines.push(`# ${model.project.name} — code-indexer index`);
   lines.push('');
   lines.push(`Generated: ${model.generated}. Regenerate: \`npm run code-indexer\`.`);
   lines.push('');
@@ -89,7 +89,7 @@ export function renderIndex(model, config) {
  * `code-map.json` slice. Emits nothing when there are no modules.
  *
  * @param {string[]} lines
- * @param {ReturnType<import('./build.mjs').buildAiPlanModel>} model
+ * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>} model
  */
 function renderCodeOrganization(lines, model) {
   const groups = classifyNodeOrganization(model.modules ?? []);
@@ -135,8 +135,8 @@ function renderCodeOrganization(lines, model) {
 }
 
 /**
- * @param {ReturnType<import('./build.mjs').buildAiPlanModel>} model
- * @param {ReturnType<import('./build.mjs').buildAiPlanModel>['modules'][number]} mod
+ * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>} model
+ * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>['modules'][number]} mod
  */
 export function renderModuleScope(model, mod) {
   const lines = [];

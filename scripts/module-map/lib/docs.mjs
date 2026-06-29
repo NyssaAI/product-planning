@@ -4,7 +4,7 @@ import { resolveDocPath } from './config.mjs';
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  */
 export function loadProjectBrief(repoRoot, config) {
   /** @type {{ product: string | null, roadmap: string | null, techStack: string | null, excerpts: Record<string, string> }} */

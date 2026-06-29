@@ -120,7 +120,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --pin <module-id>  
 node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --unpin <module-id>   # return it to auto
 ```
 
-Set `LOG_LEVEL=debug` or `DEBUG_AI_PLAN=1` for structured trace logs on stderr.
+Set `LOG_LEVEL=debug` or `DEBUG_CODE_INDEXER=1` for structured trace logs on stderr.
 
 ## DevJoy (optional)
 

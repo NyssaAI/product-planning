@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { annotateCodeMapWithModules } from '../../scripts/code-map/lib/module-linker.mjs';
 
-test('annotateCodeMapWithModules links files and symbols to their ai-plan modules', () => {
+test('annotateCodeMapWithModules links files and symbols to their code-indexer modules', () => {
   const codeMap = {
     files: [
       {
@@ -30,7 +30,7 @@ test('annotateCodeMapWithModules links files and symbols to their ai-plan module
   ];
 
   const annotated = annotateCodeMapWithModules(codeMap, modules, {
-    outputDir: 'docs/agent-plan/context',
+    outputDir: 'docs/code-index',
   });
 
   const ordersFile = annotated.files.find(
@@ -41,7 +41,7 @@ test('annotateCodeMapWithModules links files and symbols to their ai-plan module
   assert.equal(ordersFile.moduleRoot, 'src/orders');
   assert.equal(
     ordersFile.planningModule,
-    'docs/agent-plan/context/modules/orders.md'
+    'docs/code-index/modules/orders.md'
   );
   assert.equal(ordersFile.symbols[0].moduleId, 'orders');
 
@@ -50,7 +50,7 @@ test('annotateCodeMapWithModules links files and symbols to their ai-plan module
       id: 'orders',
       name: 'Orders',
       root: 'src/orders',
-      planningModule: 'docs/agent-plan/context/modules/orders.md',
+      planningModule: 'docs/code-index/modules/orders.md',
       fileCount: 1,
       symbolCount: 1,
       endpointCount: 1,
@@ -59,7 +59,7 @@ test('annotateCodeMapWithModules links files and symbols to their ai-plan module
       id: 'users',
       name: 'Users',
       root: 'src/users',
-      planningModule: 'docs/agent-plan/context/modules/users.md',
+      planningModule: 'docs/code-index/modules/users.md',
       fileCount: 1,
       symbolCount: 1,
       endpointCount: 0,
@@ -74,13 +74,13 @@ test('annotateCodeMapWithModules links files and symbols to their ai-plan module
   assert.equal(createOrder.moduleId, 'orders');
   assert.equal(
     createOrder.planningModule,
-    'docs/agent-plan/context/modules/orders.md'
+    'docs/code-index/modules/orders.md'
   );
 
   assert.equal(annotated.endpoints[0].moduleId, 'orders');
   assert.equal(
     annotated.endpoints[0].planningModule,
-    'docs/agent-plan/context/modules/orders.md'
+    'docs/code-index/modules/orders.md'
   );
 });
 
@@ -104,23 +104,23 @@ test('annotateCodeMapWithModules honors a legacy/project-configured output dir',
   };
   const modules = [{ id: 'orders', name: 'Orders', root: 'app/api/orders' }];
 
-  // Legacy projects point ai-plan output at docs/ai-plan instead of the
-  // current docs/agent-plan/context tree (problem evidence: docs/ai-plan/CODE_MAP.json).
+  // A project can point generated output at a custom dir instead of the
+  // default docs/code-index tree; planningModule paths must follow it.
   const annotated = annotateCodeMapWithModules(codeMap, modules, {
-    outputDir: 'docs/ai-plan',
+    outputDir: 'build/index-out',
   });
 
   assert.equal(
     annotated.modules[0].planningModule,
-    'docs/ai-plan/modules/orders.md'
+    'build/index-out/modules/orders.md'
   );
   const file = annotated.files[0];
   assert.equal(file.moduleId, 'orders');
-  assert.equal(file.planningModule, 'docs/ai-plan/modules/orders.md');
-  assert.equal(file.symbols[0].planningModule, 'docs/ai-plan/modules/orders.md');
+  assert.equal(file.planningModule, 'build/index-out/modules/orders.md');
+  assert.equal(file.symbols[0].planningModule, 'build/index-out/modules/orders.md');
   assert.equal(
     annotated.endpoints[0].planningModule,
-    'docs/ai-plan/modules/orders.md'
+    'build/index-out/modules/orders.md'
   );
   // Flat symbol index is present and carries module metadata for search.
   assert.equal(annotated.symbols[0].moduleId, 'orders');
@@ -140,7 +140,7 @@ test('annotateCodeMapWithModules leaves unowned files unlinked but indexed', () 
   const modules = [{ id: 'orders', name: 'Orders', root: 'src/orders' }];
 
   const annotated = annotateCodeMapWithModules(codeMap, modules, {
-    outputDir: 'docs/agent-plan/context',
+    outputDir: 'docs/code-index',
   });
 
   const file = annotated.files[0];

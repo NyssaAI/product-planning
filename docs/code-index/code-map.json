@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-29T20:46:16.841Z",
+  "generated": "2026-06-29T21:01:53.467Z",
   "roots": [
     "scripts",
     "skills"
@@ -391,10 +391,10 @@
       "path": "scripts/module-map/lib/build.mjs",
       "symbols": [
         {
-          "name": "buildAiPlanModel",
+          "name": "buildCodeIndexerModel",
           "kind": "function",
           "line": 39,
-          "signature": "export function buildAiPlanModel(repoRoot, config, codeMapInput)",
+          "signature": "export function buildCodeIndexerModel(repoRoot, config, codeMapInput)",
           "moduleId": "module-map",
           "moduleName": "module-map",
           "moduleRoot": "scripts/module-map",
@@ -410,10 +410,10 @@
       "path": "scripts/module-map/lib/config.mjs",
       "symbols": [
         {
-          "name": "loadAiPlanConfig",
+          "name": "loadCodeIndexerConfig",
           "kind": "function",
           "line": 44,
-          "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
+          "signature": "export function loadCodeIndexerConfig(repoRoot, opts = {})",
           "moduleId": "module-map",
           "moduleName": "module-map",
           "moduleRoot": "scripts/module-map",
@@ -1349,10 +1349,10 @@
     },
     {
       "file": "scripts/module-map/lib/build.mjs",
-      "name": "buildAiPlanModel",
+      "name": "buildCodeIndexerModel",
       "kind": "function",
       "line": 39,
-      "signature": "export function buildAiPlanModel(repoRoot, config, codeMapInput)",
+      "signature": "export function buildCodeIndexerModel(repoRoot, config, codeMapInput)",
       "moduleId": "module-map",
       "moduleName": "module-map",
       "moduleRoot": "scripts/module-map",
@@ -1360,10 +1360,10 @@
     },
     {
       "file": "scripts/module-map/lib/config.mjs",
-      "name": "loadAiPlanConfig",
+      "name": "loadCodeIndexerConfig",
       "kind": "function",
       "line": 44,
-      "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
+      "signature": "export function loadCodeIndexerConfig(repoRoot, opts = {})",
       "moduleId": "module-map",
       "moduleName": "module-map",
       "moduleRoot": "scripts/module-map",

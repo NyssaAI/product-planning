@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "node --test \"test/ai-plan/**/*.test.mjs\" \"test/ai-plan-adapters/*.test.mjs\" \"test/ai-plan-endpoints.test.mjs\" \"test/code-map/**/*.test.mjs\" \"scripts/**/*.test.mjs\""
+    "test": "node --test \"test/module-map/**/*.test.mjs\" \"test/module-map-adapters/**/*.test.mjs\" \"test/module-map-endpoints.test.mjs\" \"test/code-map/**/*.test.mjs\" \"scripts/**/*.test.mjs\""
   },
   "dependencies": {
     "@ast-grep/cli": "^0.42.2"

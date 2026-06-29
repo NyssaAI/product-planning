@@ -17,4 +17,4 @@ and Gemini.
 
 ## Maintenance
 
-Keep the generators repository-agnostic and the five harness adapters in sync.
+Keep the generators repository-agnostic and the four harness adapters in sync.

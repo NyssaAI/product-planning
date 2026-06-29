@@ -6,55 +6,65 @@
 - [x] F-002: Module map generation
 - [x] F-003: Per-module architecture files
 - [x] F-004: Progressive-disclosure planning workflow
-- [x] F-005: Module discovery
+- [x] F-005: Module discovery & pinning
 - [x] F-006: Endpoint surface detection
 - [x] F-007: Bootstrap & init
 - [x] F-008: Module-map embedding
 - [x] F-009: Doctor & staleness checks
-- [x] F-010: Multi-harness packaging
-- [x] F-011: `/code-indexer` command
+- [x] F-010: Legacy-layout migration
+- [x] F-011: Multi-harness packaging
+- [x] F-012: `/code-indexer` command
+- [ ] F-013: `/code-indexer arch` (planned)
+- [ ] F-014: `/code-indexer patterns` (planned)
 
 ## Definitions
 
 ### F-001: Code map generation
 
-`scripts/code-map/` scans the repo with `@ast-grep/cli` and writes
-`docs/code-index/code-map.json` — a symbol index (functions, classes, types) plus an
-endpoint index, each with file and line. The L3 artifact, loaded only after a plan names symbols.
+`scripts/code-map/generate-code-map.mjs` scans the repo with `@ast-grep/cli` structural rules and
+writes `docs/code-index/code-map.json` — a per-file symbol index (functions, classes, types, with
+extracted signatures and doc-comments) plus an endpoint index, each entry carrying file and line.
+This is the L3 artifact, loaded only after a plan names symbols.
 
 ### F-002: Module map generation
 
-`scripts/module-map/` writes `docs/code-index/module-map.json` — a graph of modules with
-`dependsOn` / `usedBy` edges. Consumed for task ordering, not pasted wholesale into context.
+`scripts/module-map/generate.mjs` writes `docs/code-index/module-map.json` — a graph of modules with
+`dependsOn` / `usedBy` edges, route/symbol counts, and per-module metadata. Consumed for task
+ordering, not pasted wholesale into context.
 
 ### F-003: Per-module architecture files
 
-The primary artifact: one `docs/code-index/modules/<id>.md` per module describing its
-boundaries, capabilities, `dependsOn` / `usedBy`, public API, routes, and test roots. This is the
-L1 context an agent reads before planning a change in that module.
+The primary artifact: one `docs/code-index/modules/<id>.md` per module describing its boundaries,
+capabilities, `does-not-own` scope, `dependsOn` / `usedBy`, public surface, routes, test roots, and
+sample symbols. This is the L1 context an agent reads before planning a change in that module.
+Hand-authored files dropped into `modules/` are preserved and pruning only removes generated ones.
 
 ### F-004: Progressive-disclosure planning workflow
 
-The `using-code-indexer` skill defines the L0–L3 disclosure model (L0 task → L1 in-scope module file →
-L2 product docs → L3 code map) so agents load the minimum relevant context instead of the whole
-codebase, plus the staleness gate that triggers regeneration before planning.
+The `using-code-indexer` skill defines the L0–L3 disclosure model (L0 task → L1 in-scope module
+file → L2 product docs → L3 code map) so agents load the minimum relevant context instead of the
+whole codebase, plus the staleness gate that triggers regeneration before planning.
 
-### F-005: Module discovery
+### F-005: Module discovery & pinning
 
-Auto-detection of modules from npm workspaces, language-adapter cohesion (Newman modularity, e.g.
-C#), stack profiles, or `src/`/`packages/` children — with `manual`, `glob`, and `workspaces`
-overrides and module pinning (eject a derived module into config to freeze and adjust it).
+Language-agnostic auto-detection derives module boundaries from a file dependency graph, choosing the
+directory depth per top-level area that maximizes cohesion (Newman modularity), with a
+directory-structure fallback for sparse graphs. Discovery also draws on language adapters (C#,
+Python, TypeScript), stack profiles, and npm workspaces, with `manual`, `glob`, and `workspaces`
+overrides. `--pin` / `--unpin` eject a derived module into `code-indexer.config.json` to freeze and
+hand-edit it (or return it to auto-derivation).
 
 ### F-006: Endpoint surface detection
 
-The code map indexes HTTP route handlers and MCP tools / resources / prompts across supported
-languages, so the module files and code map expose a repo's external surface, not just symbols.
+The code map indexes HTTP route handlers and MCP tools / resources / prompts / transports across
+supported languages, so the module files and code map expose a repo's external surface, not just
+symbols.
 
 ### F-007: Bootstrap & init
 
 `generate.mjs --init --write-scripts` scaffolds the required product docs, an optional
-`code-indexer.config.json`, the `docs/code-index/` layout, and project `npm run code-indexer` scripts —
-turning a fresh repo into one code-indexer can generate against.
+`code-indexer.config.json`, the `docs/code-index/` layout, and project `npm run code-indexer`
+scripts — turning a fresh repo into one code-indexer can generate against.
 
 ### F-008: Module-map embedding
 
@@ -63,16 +73,36 @@ Generation embeds a module-map table (with a freshness timestamp) into the repo'
 
 ### F-009: Doctor & staleness checks
 
-`generate.mjs --doctor` reports per-runtime readiness (required docs, ast-grep availability,
-generated artifacts), and the staleness gate flags when source is newer than the generated context.
+`generate.mjs --doctor` (optionally `--runtimes`) reports per-runtime readiness — required docs,
+ast-grep availability, generated artifacts — and the staleness gate flags when source is newer than
+the generated context so plans are never built against stale structure.
 
-### F-010: Multi-harness packaging
+### F-010: Legacy-layout migration
 
-One generator, four runtimes: Claude Code, Cursor, Codex, and Gemini each load the same
-`skills/`, `commands/`, and `scripts/` via their own adapter (`.claude-plugin`, `.cursor-plugin`,
-`.codex`, `gemini-extension.json`).
+`generate.mjs --migrate` moves a pre-existing legacy generated layout into the current
+`docs/code-index/` structure, so repos generated by older versions upgrade without manual file moves.
 
-### F-011: `/code-indexer` command
+### F-011: Multi-harness packaging
 
-A one-step command that runs code-map + code-indexer generation in the current project repo, wrapping the
-underlying `scripts/` entry points so users don't invoke Node paths by hand.
+One generator, four runtimes: Claude Code, Cursor, Codex, and Gemini each load the same `skills/`,
+`commands/`, and `scripts/` via their own adapter (`.claude-plugin`, `.cursor-plugin`, `.codex`,
+`gemini-extension.json`).
+
+### F-012: `/code-indexer` command
+
+A one-step command that runs code-map + module-map generation in the current project repo, wrapping
+the underlying `scripts/` entry points so users don't invoke Node paths by hand.
+
+### F-013: `/code-indexer arch` (planned)
+
+Builds a system-architecture document alongside the index: a Mermaid component diagram rendered from
+`module-map.json` edges plus an agent-authored system-overview prose section, written to
+`docs/code-index/system-architecture.md`. Designed, not yet shipped.
+
+### F-014: `/code-indexer patterns` (planned)
+
+Scans for structurally-detectable code patterns and writes `docs/code-index/patterns.md` (+
+`patterns.json`) — named patterns, occurrence counts, and percent-of-codebase coverage attributed per
+module. Runs a plugin seed catalog of ast-grep rules plus repo-defined extensions, with tiered
+confidence (high / medium / intent-only) so the coverage figure is honest about precision. Designed,
+not yet shipped.

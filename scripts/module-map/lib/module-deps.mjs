@@ -5,7 +5,7 @@ import { extractStackGraph } from './stack-graph.mjs';
 /**
  * @param {string} repoRoot
  * @param {import('./discover-modules.mjs').ModuleDef[]} modules
- * @param {import('./config.mjs').AiPlanConfig} [config]
+ * @param {import('./config.mjs').CodeIndexerConfig} [config]
  * @param {import('./stack-graph.mjs').StackGraph | null} [stack] pre-extracted
  *   adapter graph; falls back to a fresh extraction when omitted.
  * @returns {{ from: string, to: string }[]}

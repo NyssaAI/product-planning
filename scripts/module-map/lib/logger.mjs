@@ -1,6 +1,6 @@
 /**
  * Portable structured logger for code-indexer generators (no @devjoy/* deps).
- * Set LOG_LEVEL=debug or DEBUG_AI_PLAN=1 for full trace output.
+ * Set LOG_LEVEL=debug or DEBUG_CODE_INDEXER=1 for full trace output.
  */
 
 const LEVEL_RANK = /** @type {const} */ ({
@@ -18,7 +18,7 @@ function resolveLogLevel() {
   if (raw === 'debug' || raw === 'info' || raw === 'warn' || raw === 'error') {
     return raw;
   }
-  if (process.env.DEBUG_AI_PLAN === '1' || process.env.DEBUG_AI_PLAN === 'true') {
+  if (process.env.DEBUG_CODE_INDEXER === '1' || process.env.DEBUG_CODE_INDEXER === 'true') {
     return 'debug';
   }
   return 'info';

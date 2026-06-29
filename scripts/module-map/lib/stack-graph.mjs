@@ -14,7 +14,7 @@ import { listRepoFiles } from './repo-files.mjs';
  * avoids walking and parsing the whole repo twice per generate run.
  *
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} [config]
+ * @param {import('./config.mjs').CodeIndexerConfig} [config]
  * @returns {StackGraph | null}
  */
 export function extractStackGraph(repoRoot, config) {

@@ -12,7 +12,7 @@ function baseModel(modules) {
   };
 }
 
-const config = { outputDir: 'docs/agent-plan/context' };
+const config = { outputDir: 'docs/code-index' };
 
 test('renderIndex emits a Node/TypeScript code organization section grouped by role', () => {
   const model = baseModel([

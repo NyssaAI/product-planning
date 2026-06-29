@@ -24,7 +24,7 @@ test('csharp adapter does not log normal extraction at info level', () => {
     env: {
       ...process.env,
       LOG_LEVEL: '',
-      DEBUG_AI_PLAN: '',
+      DEBUG_CODE_INDEXER: '',
     },
   });
 

@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { loadAiPlanConfig, validateRequiredDocs } from './config.mjs';
-import { buildAiPlanModel } from './build.mjs';
+import { loadCodeIndexerConfig, validateRequiredDocs } from './config.mjs';
+import { buildCodeIndexerModel } from './build.mjs';
 import { createLogger } from './logger.mjs';
 
 const log = createLogger({ module: 'doctor' });
@@ -75,7 +75,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').AiPlanConfig} config
+ * @param {import('./config.mjs').CodeIndexerConfig} config
  * @returns {DoctorCheck[]}
  */
 function checkModuleMap(repoRoot, config) {
@@ -192,7 +192,7 @@ function checkRuntimeReadiness(repoRoot = process.cwd()) {
  */
 export function runDoctor(repoRoot, options = {}) {
   log.info('doctor start', { repoRoot, runtimes: options.runtimes === true });
-  const config = loadAiPlanConfig(repoRoot);
+  const config = loadCodeIndexerConfig(repoRoot);
   const { missing, resolved } = validateRequiredDocs(repoRoot, config);
 
   /** @type {DoctorCheck[]} */
@@ -223,7 +223,7 @@ export function runDoctor(repoRoot, options = {}) {
     const codeMap = JSON.parse(
       readFileSync(path.join(repoRoot, config.codeMapOutput), 'utf8')
     );
-    const model = buildAiPlanModel(repoRoot, config, codeMap);
+    const model = buildCodeIndexerModel(repoRoot, config, codeMap);
     log.debug('doctor built model for validation', {
       moduleCount: model.modules.length,
       routeCount: model.stats.routeCount,
