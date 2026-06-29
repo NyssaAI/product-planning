@@ -128,8 +128,8 @@ export function bootstrapRepo(repoRoot, options = {}) {
   if (options.withProjectManifest) {
     writeIfMissing(
       repoRoot,
-      'devjoy.project.json',
-      readTemplate('devjoy.project.json'),
+      'jamaynor.project.json',
+      readTemplate('jamaynor.project.json'),
       created,
       skipped
     );

@@ -126,7 +126,6 @@ function parseOptions() {
  */
 function printHelp(config) {
   process.stdout.write(`Usage: code-map [options]
-       devjoy code-map [options]
        node src/bin/code-map.js [options]
 
 Generate ${config.output} (JSON) from ast-grep rules.
