@@ -1,4 +1,4 @@
-# AI Plan — generate code & module graph
+# code-indexer — generate code & module graph
 
 **Agent workflow:** Invoke **code-indexer:using-code-indexer** first — it defines L0–L3 progressive disclosure, module scope selection, and staleness rules.
 

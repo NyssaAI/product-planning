@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-29T19:55:24.463Z",
+  "generated": "2026-06-29T20:19:28.718Z",
   "project": {
     "name": "code-indexer",
     "docs": {
@@ -50,7 +50,7 @@
         "code-map"
       ],
       "routeCount": 0,
-      "symbolCount": 76,
+      "symbolCount": 75,
       "planningModule": "docs/code-index/modules/module-map.md",
       "description": "Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.",
       "capabilities": [
@@ -118,6 +118,6 @@
   "stats": {
     "moduleCount": 3,
     "routeCount": 0,
-    "codeMapSymbols": 92
+    "codeMapSymbols": 91
   }
 }

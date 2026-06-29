@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-29T19:55:23.885Z",
+  "generated": "2026-06-29T20:19:28.227Z",
   "roots": [
     "scripts",
     "skills"
@@ -14,7 +14,7 @@
     "Go"
   ],
   "fileCount": 39,
-  "symbolCount": 92,
+  "symbolCount": 91,
   "endpointCount": 0,
   "files": [
     {
@@ -530,20 +530,9 @@
       "path": "scripts/module-map/lib/config.mjs",
       "symbols": [
         {
-          "name": "parseTestConfig",
-          "kind": "function",
-          "line": 48,
-          "signature": "export function parseTestConfig(raw)",
-          "summary": "Parse + validate the `test` config field used by the pre-push test gate.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-index/modules/module-map.md"
-        },
-        {
           "name": "loadAiPlanConfig",
           "kind": "function",
-          "line": 64,
+          "line": 44,
           "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -553,7 +542,7 @@
         {
           "name": "validateRequiredDocs",
           "kind": "function",
-          "line": 148,
+          "line": 127,
           "signature": "export function validateRequiredDocs(repoRoot, config)",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -563,7 +552,7 @@
         {
           "name": "resolveDocPath",
           "kind": "function",
-          "line": 170,
+          "line": 149,
           "signature": "export function resolveDocPath(repoRoot, candidates)",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -573,7 +562,7 @@
         {
           "name": "writeStarterConfigs",
           "kind": "function",
-          "line": 183,
+          "line": 162,
           "signature": "export function writeStarterConfigs(repoRoot)",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -907,7 +896,7 @@
         {
           "name": "runMigrate",
           "kind": "function",
-          "line": 161,
+          "line": 145,
           "signature": "export function runMigrate(repoRoot)",
           "summary": "Migrate a repo from the legacy docs layout to docs/code-index/.",
           "moduleId": "module-map",
@@ -918,7 +907,7 @@
         {
           "name": "formatMigrateReport",
           "kind": "function",
-          "line": 203,
+          "line": 187,
           "signature": "export function formatMigrateReport(actions)",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -1331,7 +1320,7 @@
       "root": "scripts/module-map",
       "planningModule": "docs/code-index/modules/module-map.md",
       "fileCount": 29,
-      "symbolCount": 76,
+      "symbolCount": 75,
       "endpointCount": 0
     },
     {
@@ -1747,21 +1736,9 @@
     },
     {
       "file": "scripts/module-map/lib/config.mjs",
-      "name": "parseTestConfig",
-      "kind": "function",
-      "line": 48,
-      "signature": "export function parseTestConfig(raw)",
-      "summary": "Parse + validate the `test` config field used by the pre-push test gate.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-index/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/config.mjs",
       "name": "loadAiPlanConfig",
       "kind": "function",
-      "line": 64,
+      "line": 44,
       "signature": "export function loadAiPlanConfig(repoRoot, opts = {})",
       "moduleId": "module-map",
       "moduleName": "module-map",
@@ -1772,7 +1749,7 @@
       "file": "scripts/module-map/lib/config.mjs",
       "name": "validateRequiredDocs",
       "kind": "function",
-      "line": 148,
+      "line": 127,
       "signature": "export function validateRequiredDocs(repoRoot, config)",
       "moduleId": "module-map",
       "moduleName": "module-map",
@@ -1783,7 +1760,7 @@
       "file": "scripts/module-map/lib/config.mjs",
       "name": "resolveDocPath",
       "kind": "function",
-      "line": 170,
+      "line": 149,
       "signature": "export function resolveDocPath(repoRoot, candidates)",
       "moduleId": "module-map",
       "moduleName": "module-map",
@@ -1794,7 +1771,7 @@
       "file": "scripts/module-map/lib/config.mjs",
       "name": "writeStarterConfigs",
       "kind": "function",
-      "line": 183,
+      "line": 162,
       "signature": "export function writeStarterConfigs(repoRoot)",
       "moduleId": "module-map",
       "moduleName": "module-map",
@@ -2071,7 +2048,7 @@
       "file": "scripts/module-map/lib/migrate.mjs",
       "name": "runMigrate",
       "kind": "function",
-      "line": 161,
+      "line": 145,
       "signature": "export function runMigrate(repoRoot)",
       "summary": "Migrate a repo from the legacy docs layout to docs/code-index/.",
       "moduleId": "module-map",
@@ -2083,7 +2060,7 @@
       "file": "scripts/module-map/lib/migrate.mjs",
       "name": "formatMigrateReport",
       "kind": "function",
-      "line": 203,
+      "line": 187,
       "signature": "export function formatMigrateReport(actions)",
       "moduleId": "module-map",
       "moduleName": "module-map",

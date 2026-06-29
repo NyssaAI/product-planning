@@ -76,22 +76,6 @@ function moveIfPresent(actions, repoRoot, fromRel, toRel) {
 }
 
 /**
- * @param {MigrateAction[]} actions
- * @param {string} repoRoot
- * @param {string} relDir
- */
-function createDirWithGitkeep(actions, repoRoot, relDir) {
-  const full = path.join(repoRoot, relDir);
-  if (existsSync(full)) {
-    actions.push({ kind: 'skipped', detail: `${relDir} (exists)` });
-    return;
-  }
-  mkdirSync(full, { recursive: true });
-  writeFileSync(path.join(full, '.gitkeep'), '', 'utf8');
-  actions.push({ kind: 'created', detail: `${relDir} (with .gitkeep)` });
-}
-
-/**
  * Patch cross-references inside the moved context files.
  *
  * @param {MigrateAction[]} actions

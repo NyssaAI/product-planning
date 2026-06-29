@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * AI Plan — planning context for any repository.
+ * code-indexer — planning context for any repository.
  *
  * Usage:
  *   node scripts/module-map/generate.mjs              # generate
@@ -87,7 +87,7 @@ function runInit() {
     writeScripts,
   });
   process.stdout.write(
-    `AI Plan init:\n  created: ${result.created.length}\n  skipped: ${result.skipped.length}\n`
+    `code-indexer init:\n  created: ${result.created.length}\n  skipped: ${result.skipped.length}\n`
   );
   for (const file of result.created) {
     process.stdout.write(`  + ${file}\n`);

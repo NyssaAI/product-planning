@@ -1,4 +1,4 @@
-# Agent context — any repository using AI Plan
+# Agent context — any repository using code-indexer
 
 Mirrors **code-indexer:using-code-indexer** (canonical skill in the code-indexer plugin). When the plugin is installed, invoke that skill to load scoped planning context before implementation work.
 

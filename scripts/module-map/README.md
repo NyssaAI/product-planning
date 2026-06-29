@@ -1,4 +1,4 @@
-# AI Plan
+# code-indexer
 
 **Agent workflow:** **code-indexer:using-code-indexer** skill (canonical — L0–L3 rules, module scope selection, staleness).
 
