@@ -1,1 +1,0 @@
-Log this as a bug for later: clicking Save on the account settings page shows a success toast, but the changed display name is gone after refresh. Do not fix it right now; just capture the bug report.

@@ -1,5 +1,0 @@
-I have my implementation plan ready at docs/agent-plan/plans/auth-system.md.
-
-I want to use execute-plan to implement it — verify the worktree, run tasks (subagents when available), and finish with a PR.
-
-Let's start - please read the plan and begin.

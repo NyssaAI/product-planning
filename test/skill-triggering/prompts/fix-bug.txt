@@ -1,1 +1,0 @@
-I found a bug in our login flow — users get logged out immediately after signing in. We need to document and fix it properly, not patch it ad hoc.

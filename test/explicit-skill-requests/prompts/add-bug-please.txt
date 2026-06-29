@@ -1,1 +1,0 @@
-add-bug, please - document that clicking Save on account settings loses the changed display name after refresh. Do not start fixing it.

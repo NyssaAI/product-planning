@@ -1,3 +1,0 @@
-I have a plan at docs/agent-plan/plans/auth-system.md ready to go.
-
-Use execute-plan on this - verify worktree, run the tasks, finish with a PR. Start with Task 1.
