@@ -28,3 +28,16 @@ Start at `docs/code-index/index.md` to pick the module set.
 | lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/code-index/modules/lib.md` |
 <!-- code-indexer:module-map generated 2026-06-29T14:09:31.280Z -->
 <!-- code-indexer:module-map:end -->
+
+<!-- code-index:module-map:start -->
+## Module map (auto-updated — do not edit)
+
+Start at `docs/code-index/index.md` to pick the module set.
+
+| Module | What it does | Owns | Module file |
+|--------|--------------|------|-------------|
+| module-map | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-index/modules/module-map.md` |
+| code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-index/modules/code-map.md` |
+| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/code-index/modules/lib.md` |
+<!-- code-index:module-map generated 2026-06-29T19:55:24.463Z -->
+<!-- code-index:module-map:end -->

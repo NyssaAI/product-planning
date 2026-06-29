@@ -10,8 +10,8 @@
 
 ## Does not own
 
-- ai-plan concerns → ai-plan module
 - lib concerns → lib module
+- module-map concerns → module-map module
 
 ## Public API
 
@@ -33,9 +33,9 @@
 | | Path |
 |--|------|
 | Root | `scripts/code-map/` |
-| Depends on modules | ai-plan, lib |
-| Used by | ai-plan |
-| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/ai-plan/, scripts/lib/ |
+| Depends on modules | lib, module-map |
+| Used by | module-map |
+| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/module-map/, scripts/lib/ |
 
 ## Flows
 
@@ -49,8 +49,7 @@
 ## Configuration
 
 - `package.json`
-- `ai-plan.config.json`
-- `code-map.config.json`
+- `code-indexer.config.json`
 
 ## Key symbols (sample)
 

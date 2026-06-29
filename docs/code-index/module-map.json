@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-29T14:09:31.280Z",
+  "generated": "2026-06-29T19:55:24.463Z",
   "project": {
-    "name": "dev-tools",
+    "name": "code-indexer",
     "docs": {
       "product": "docs/product.md",
       "roadmap": "docs/roadmap.md",
@@ -19,7 +19,7 @@
       {
         "level": 1,
         "name": "module-scope",
-        "inject": "docs/agent-plan/context/modules/<module-id>.md (one file)"
+        "inject": "docs/code-index/modules/<module-id>.md (one file)"
       },
       {
         "level": 2,
@@ -30,17 +30,17 @@
       {
         "level": 3,
         "name": "code-map",
-        "inject": "docs/agent-plan/context/code-map.json",
+        "inject": "docs/code-index/code-map.json",
         "when": "Plan lists symbols; need line numbers"
       }
     ],
-    "index": "docs/agent-plan/context/index.md"
+    "index": "docs/code-index/index.md"
   },
   "modules": [
     {
-      "id": "ai-plan",
-      "name": "ai-plan",
-      "root": "scripts/ai-plan",
+      "id": "module-map",
+      "name": "module-map",
+      "root": "scripts/module-map",
       "source": "manual",
       "dependsOn": [
         "code-map",
@@ -51,10 +51,10 @@
       ],
       "routeCount": 0,
       "symbolCount": 76,
-      "planningModule": "docs/agent-plan/context/modules/ai-plan.md",
-      "description": "Code/module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.",
+      "planningModule": "docs/code-index/modules/module-map.md",
+      "description": "Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.",
       "capabilities": [
-        "Feature code and services under `scripts/ai-plan/`"
+        "Feature code and services under `scripts/module-map/`"
       ]
     },
     {
@@ -63,15 +63,15 @@
       "root": "scripts/code-map",
       "source": "manual",
       "dependsOn": [
-        "ai-plan",
-        "lib"
+        "lib",
+        "module-map"
       ],
       "usedBy": [
-        "ai-plan"
+        "module-map"
       ],
       "routeCount": 0,
       "symbolCount": 11,
-      "planningModule": "docs/agent-plan/context/modules/code-map.md",
+      "planningModule": "docs/code-index/modules/code-map.md",
       "description": "ast-grep-based symbol and endpoint indexer that feeds the module graph.",
       "capabilities": [
         "Feature code and services under `scripts/code-map/`"
@@ -84,12 +84,12 @@
       "source": "manual",
       "dependsOn": [],
       "usedBy": [
-        "ai-plan",
-        "code-map"
+        "code-map",
+        "module-map"
       ],
       "routeCount": 0,
       "symbolCount": 5,
-      "planningModule": "docs/agent-plan/context/modules/lib.md",
+      "planningModule": "docs/code-index/modules/lib.md",
       "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing.",
       "capabilities": [
         "Feature code and services under `scripts/lib/`"
@@ -98,26 +98,26 @@
   ],
   "edges": [
     {
-      "from": "ai-plan",
+      "from": "code-map",
+      "to": "lib"
+    },
+    {
+      "from": "code-map",
+      "to": "module-map"
+    },
+    {
+      "from": "module-map",
       "to": "code-map"
     },
     {
-      "from": "ai-plan",
-      "to": "lib"
-    },
-    {
-      "from": "code-map",
-      "to": "ai-plan"
-    },
-    {
-      "from": "code-map",
+      "from": "module-map",
       "to": "lib"
     }
   ],
-  "codeMap": "docs/agent-plan/context/code-map.json",
+  "codeMap": "docs/code-index/code-map.json",
   "stats": {
     "moduleCount": 3,
     "routeCount": 0,
-    "codeMapSymbols": 93
+    "codeMapSymbols": 92
   }
 }

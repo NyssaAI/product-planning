@@ -13,7 +13,7 @@
 | Symbol | Summary |
 |--------|---------|
 | `findPluginRoot` |  |
-| `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the dev-tools plugin. |
+| `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the code-indexer plugin. |
 | `parseScanJson` |  |
 | `symbolNameFromMatch` |  |
 
@@ -22,8 +22,8 @@
 | | Path |
 |--|------|
 | Root | `scripts/lib/` |
-| Used by | ai-plan, code-map |
-| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/ai-plan/, scripts/code-map/ |
+| Used by | code-map, module-map |
+| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/module-map/, scripts/code-map/ |
 
 ## Flows
 
@@ -36,8 +36,7 @@
 ## Configuration
 
 - `package.json`
-- `ai-plan.config.json`
-- `code-map.config.json`
+- `code-indexer.config.json`
 
 ## Key symbols (sample)
 
