@@ -1,19 +1,17 @@
-# ai-plan (`scripts-ai-plan`) — module
+# ai-plan (`ai-plan`) — module
 
 **Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
-**What this module does:** `ai-plan` — 35 files under `scripts/ai-plan/`.
+**What this module does:** Code/module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.
 
 ## Capabilities (owns)
 
-- ADAPTERS
-- API_ROUTE_CANDIDATES
-- CODE_ROOT_CANDIDATES
+- Feature code and services under `scripts/ai-plan/`
 
 ## Does not own
 
-- scripts-code-map concerns → scripts-code-map module
-- scripts-lib concerns → scripts-lib module
+- code-map concerns → code-map module
+- lib concerns → lib module
 
 ## Public API
 
@@ -45,9 +43,9 @@
 | | Path |
 |--|------|
 | Root | `scripts/ai-plan/` |
-| Depends on modules | scripts-code-map, scripts-lib |
-| Used by | scripts-code-map, test |
-| Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
+| Depends on modules | code-map, lib |
+| Used by | code-map |
+| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/code-map/, scripts/lib/ |
 
 ## Flows
 
@@ -55,12 +53,13 @@
 
 ## Tests
 
-- `test/` (mirrors module layout per standards/project-structure.md)
-- `test/ai-plan/` (mirrors module layout per standards/project-structure.md)
+- `test/` (mirrors module source layout)
+- `test/ai-plan/` (mirrors module source layout)
 
 ## Configuration
 
 - `package.json`
+- `ai-plan.config.json`
 - `code-map.config.json`
 
 ## Key symbols (sample)
@@ -78,6 +77,6 @@
 
 ## After planning
 
-- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: scripts-ai-plan` to get this module's files, symbols, and endpoints
+- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: ai-plan` to get this module's files, symbols, and endpoints
 - Open only files your plan names
 

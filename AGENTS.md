@@ -23,14 +23,8 @@ Start at `docs/agent-plan/context/index.md` to pick the module set.
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
-| hooks | `hooks` — 1 file under `hooks/`. | Code under `hooks/` | `docs/agent-plan/context/modules/hooks.md` |
-| opencode | `.opencode` — 1 file under `.opencode/`. | DevToolsPlugin | `docs/agent-plan/context/modules/opencode.md` |
-| scripts | `scripts` — 2 files under `scripts/`. | setupTestGate | `docs/agent-plan/context/modules/scripts.md` |
-| scripts-ai-plan | `ai-plan` — 35 files under `scripts/ai-plan/`. | ADAPTERS; API_ROUTE_CANDIDATES; CODE_ROOT_CANDIDATES | `docs/agent-plan/context/modules/scripts-ai-plan.md` |
-| scripts-code-map | `code-map` — 7 files under `scripts/code-map/`. | DEFAULT_SCAN_ROOTS; SOURCE_EXTENSIONS; SUPPORTED_LANGUAGES | `docs/agent-plan/context/modules/scripts-code-map.md` |
-| scripts-lib | `lib` — 4 files under `scripts/lib/`. | BASE_SKIP_DIRS; findPluginRoot; parseScanJson | `docs/agent-plan/context/modules/scripts-lib.md` |
-| scripts-test-gate | `test-gate` — 2 files under `scripts/test-gate/`. | detectPlaywright; detectTestCommands; resolveTestPlan | `docs/agent-plan/context/modules/scripts-test-gate.md` |
-| skills | `skills` — 4 files under `skills/`. | waitForEvent; waitForEventCount; waitForEventMatch | `docs/agent-plan/context/modules/skills.md` |
-| test | `test` — 29 files under `test/`. | Code under `test/` | `docs/agent-plan/context/modules/test.md` |
-<!-- ai-plan:module-map generated 2026-06-17T23:19:44.300Z -->
+| ai-plan | Code/module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/ai-plan/` | `docs/agent-plan/context/modules/ai-plan.md` |
+| code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/agent-plan/context/modules/code-map.md` |
+| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/agent-plan/context/modules/lib.md` |
+<!-- ai-plan:module-map generated 2026-06-29T14:09:31.280Z -->
 <!-- ai-plan:module-map:end -->

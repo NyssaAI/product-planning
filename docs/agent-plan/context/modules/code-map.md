@@ -1,19 +1,17 @@
-# code-map (`scripts-code-map`) — module
+# code-map (`code-map`) — module
 
 **Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
-**What this module does:** `code-map` — 7 files under `scripts/code-map/`.
+**What this module does:** ast-grep-based symbol and endpoint indexer that feeds the module graph.
 
 ## Capabilities (owns)
 
-- DEFAULT_SCAN_ROOTS
-- SOURCE_EXTENSIONS
-- SUPPORTED_LANGUAGES
+- Feature code and services under `scripts/code-map/`
 
 ## Does not own
 
-- scripts-ai-plan concerns → scripts-ai-plan module
-- scripts-lib concerns → scripts-lib module
+- ai-plan concerns → ai-plan module
+- lib concerns → lib module
 
 ## Public API
 
@@ -35,9 +33,9 @@
 | | Path |
 |--|------|
 | Root | `scripts/code-map/` |
-| Depends on modules | scripts-ai-plan, scripts-lib |
-| Used by | scripts-ai-plan, test |
-| Out of scope | node_modules/, .git/, dist/, build/, .next/, hooks/, .opencode/, scripts/ |
+| Depends on modules | ai-plan, lib |
+| Used by | ai-plan |
+| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/ai-plan/, scripts/lib/ |
 
 ## Flows
 
@@ -45,12 +43,13 @@
 
 ## Tests
 
-- `test/` (mirrors module layout per standards/project-structure.md)
-- `test/code-map/` (mirrors module layout per standards/project-structure.md)
+- `test/` (mirrors module source layout)
+- `test/code-map/` (mirrors module source layout)
 
 ## Configuration
 
 - `package.json`
+- `ai-plan.config.json`
 - `code-map.config.json`
 
 ## Key symbols (sample)
@@ -64,6 +63,6 @@
 
 ## After planning
 
-- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: scripts-code-map` to get this module's files, symbols, and endpoints
+- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: code-map` to get this module's files, symbols, and endpoints
 - Open only files your plan names
 
