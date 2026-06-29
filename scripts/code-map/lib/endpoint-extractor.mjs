@@ -168,7 +168,7 @@ function extractNextAppRouterEndpoints(file, text) {
  * @param {string} file repo-relative, forward-slash path ending in `/route.*`
  * @returns {string}
  */
-export function nextRoutePath(file) {
+function nextRoutePath(file) {
   const match = file.match(/(?:^|\/)app\/(.*)route\.[^/]+$/);
   const inner = match ? match[1] : '';
   const segments = inner

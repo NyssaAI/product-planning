@@ -146,7 +146,7 @@ function checkAgentEntrypoints(repoRoot) {
  * @param {string} [repoRoot]
  * @returns {RuntimeReadiness[]}
  */
-export function checkRuntimeReadiness(repoRoot = process.cwd()) {
+function checkRuntimeReadiness(repoRoot = process.cwd()) {
   log.debug('doctor runtime check start', { repoRoot });
   const home = os.homedir();
 

@@ -24,7 +24,7 @@ export function normalizeRoot(root) {
  * @param {string} filePath
  * @returns {boolean} whether `root` contains `filePath`
  */
-export function rootContains(root, filePath) {
+function rootContains(root, filePath) {
   const r = normalizeRoot(root);
   const f = String(filePath ?? '').replace(/\\/g, '/');
   return r === '' || f === r || f.startsWith(`${r}/`);

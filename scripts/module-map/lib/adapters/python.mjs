@@ -61,7 +61,7 @@ export default adapter;
  * @param {string} repoRoot
  * @returns {boolean}
  */
-export function matches(repoRoot) {
+function matches(repoRoot) {
   try {
     const hasMarker = [...PYTHON_MARKERS].some((marker) =>
       existsSync(path.join(repoRoot, marker))
@@ -78,7 +78,7 @@ export function matches(repoRoot) {
  * @param {string[]} files repo-relative candidate files
  * @returns {import('../detection/types.mjs').FileGraph}
  */
-export function extract(repoRoot, files) {
+function extract(repoRoot, files) {
   try {
     const candidateFiles = normalizeCandidateFiles(files);
     const candidateSet = new Set(candidateFiles);

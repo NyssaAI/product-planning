@@ -6,7 +6,7 @@ import path from 'node:path';
  * test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used
  * as test data are not detected as the parent project's own modules.
  */
-export const WALK_SKIP = new Set([
+const WALK_SKIP = new Set([
   'bin',
   'obj',
   'node_modules',

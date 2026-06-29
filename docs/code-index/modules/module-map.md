@@ -18,12 +18,8 @@
 | Symbol | Summary |
 |--------|---------|
 | `selectAdapter` | Select an adapter for the repo. |
-| `matches` |  |
-| `extract` |  |
 | `runBatchedScan` | Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command |
 | `batchByArgLength` | Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command |
-| `matches` |  |
-| `extract` |  |
 | `readProjectName` |  |
 | `detectCodeMapRoots` |  |
 | `detectApiRoutes` |  |
@@ -35,8 +31,12 @@
 | `resolveDocPath` |  |
 | `writeStarterConfigs` |  |
 | `deriveModules` |  |
-| `internalExternalWeights` | Internal vs. |
 | `internalExternalRatio` | internal / (internal + external). |
+| `modularity` | Newman modularity Q for an assignment (weighted, undirected). |
+| `cohesion` | Cohesion of one module: internal weight / (internal + boundary). |
+| `coupling` | Coupling between two modules: total cross-edge weight between them. |
+| `topLevelAreas` | Immediate child directories of the repo root that contain a file (e.g. |
+| `filesInArea` | Files under `area`, dropping any whose path crosses an excluded directory. |
 
 ## Boundaries
 
@@ -62,16 +62,16 @@
 
 ## Key symbols (sample)
 
-- `scripts/module-map/lib/adapters/index.mjs`: ADAPTERS, selectAdapter
-- `scripts/module-map/lib/adapters/python.mjs`: matches, extract
-- `scripts/module-map/lib/adapters/sg-scan.mjs`: MAX_SCAN_ARG_LENGTH, runBatchedScan, batchByArgLength
-- `scripts/module-map/lib/adapters/typescript.mjs`: matches, extract
-- `scripts/module-map/lib/auto-detect.mjs`: DEFAULT_DOC_CANDIDATES, CODE_ROOT_CANDIDATES, API_ROUTE_CANDIDATES, MODULE_GLOB_CANDIDATES, readProjectName, detectCodeMapRoots, detectApiRoutes, detectSrcChildModules
+- `scripts/module-map/lib/adapters/index.mjs`: selectAdapter
+- `scripts/module-map/lib/adapters/sg-scan.mjs`: runBatchedScan, batchByArgLength
+- `scripts/module-map/lib/auto-detect.mjs`: DEFAULT_DOC_CANDIDATES, MODULE_GLOB_CANDIDATES, readProjectName, detectCodeMapRoots, detectApiRoutes, detectSrcChildModules
 - `scripts/module-map/lib/bootstrap.mjs`: bootstrapRepo
 - `scripts/module-map/lib/build.mjs`: buildAiPlanModel
 - `scripts/module-map/lib/config.mjs`: loadAiPlanConfig, validateRequiredDocs, resolveDocPath, writeStarterConfigs
 - `scripts/module-map/lib/detection/derive-modules.mjs`: deriveModules
-- `scripts/module-map/lib/detection/metrics.mjs`: internalExternalWeights, internalExternalRatio, modularity, cohesion, coupling
+- `scripts/module-map/lib/detection/metrics.mjs`: internalExternalRatio, modularity, cohesion, coupling
+- `scripts/module-map/lib/detection/partitions.mjs`: DEFAULT_EXCLUDE, topLevelAreas, filesInArea, maxDepth, partitionAtDepth, sizeByModule
+- `scripts/module-map/lib/discover-modules.mjs`: discoverModules, parseNavEntries
 
 ## After planning
 

@@ -11,7 +11,7 @@
  * dropped by {@link classifyNodeOrganization}.
  * @type {ReadonlyArray<{ id: string, title: string }>}
  */
-export const NODE_ORGANIZATION_CATEGORIES = [
+const NODE_ORGANIZATION_CATEGORIES = [
   { id: 'app-routes', title: 'App routes & pages' },
   { id: 'api-routes', title: 'API routes' },
   { id: 'feature-packages', title: 'Feature & tool packages' },
@@ -60,7 +60,7 @@ const NATIVE_SEGMENTS = ['native', 'ios', 'android', 'platform-native'];
  * @param {{ id: string, name?: string, root?: string, httpRoutes?: unknown[], source?: string, nav?: unknown }} mod
  * @returns {string}
  */
-export function nodeOrganizationRole(mod) {
+function nodeOrganizationRole(mod) {
   const segments = rootSegments(mod);
   const id = String(mod.id ?? '').toLowerCase();
 

@@ -16,7 +16,7 @@
  * @param {Assign} assign
  * @returns {{ internal: number, external: number }}
  */
-export function internalExternalWeights(edges, assign) {
+function internalExternalWeights(edges, assign) {
   let internal = 0;
   let external = 0;
   for (const e of edges) {

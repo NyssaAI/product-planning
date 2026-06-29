@@ -20,7 +20,7 @@ const log = createLogger({ module: 'adapters' });
 // those adapters is out of scope here; selectAdapter warns instead of silently
 // returning null so the gap is observable.
 /** @type {import('../detection/types.mjs').StackGraphAdapter[]} */
-export const ADAPTERS = [
+const ADAPTERS = [
   csharpAdapter,
   pythonAdapter,
   typescriptAdapter,

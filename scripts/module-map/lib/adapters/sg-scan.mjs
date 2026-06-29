@@ -18,16 +18,12 @@ import { spawnSync } from 'node:child_process';
 import { createLogger } from '../logger.mjs';
 import { parseScanJson } from '../../../lib/sg-result.mjs';
 
-// Re-export the shared JSON parser so existing adapter imports from this module
-// keep working after the helper moved to scripts/lib/sg-result.mjs.
-export { parseScanJson };
-
 const log = createLogger({ module: 'sg-scan' });
 
 // Conservative cap on the total length of file-path arguments per ast-grep
 // invocation, well under the Windows ~32 KB command-line limit (the rest of the
 // budget covers the binary path, the rules, and flags).
-export const MAX_SCAN_ARG_LENGTH = 24000;
+const MAX_SCAN_ARG_LENGTH = 24000;
 
 /**
  * Run `ast-grep scan` over the given absolute file paths, batching the argv so

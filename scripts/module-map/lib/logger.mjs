@@ -84,4 +84,4 @@ export function createLogger(bindings = {}) {
 }
 
 /** @type {ReturnType<typeof createLogger>} */
-export const log = createLogger();
+const log = createLogger();

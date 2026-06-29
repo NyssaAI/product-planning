@@ -20,12 +20,10 @@
 | `loadCodeMapConfig` |  |
 | `extractDocComment` | Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `"""`) and extracts |
 | `extractEndpoints` |  |
-| `nextRoutePath` | Derives the URL path for a Next.js App Router route file from its directory layout: route groups `(group)` and parallel- |
 | `nextRouteSegment` |  |
 | `extractFileHeaderComment` |  |
 | `annotateCodeMapWithModules` | Add module ownership to a code-map document and expose a flat symbol index. |
 | `extractSignature` | Extracts the declaration signature starting at the given line. |
-| `DEFAULT_SCAN_ROOTS` |  |
 | `SOURCE_EXTENSIONS` | Extensions that drive file detection. |
 
 ## Boundaries
@@ -53,9 +51,9 @@
 
 ## Key symbols (sample)
 
-- `scripts/code-map/lib/code-map-config.mjs`: DEFAULT_SCAN_ROOTS, SUPPORTED_LANGUAGES, SOURCE_EXTENSIONS, loadCodeMapConfig
+- `scripts/code-map/lib/code-map-config.mjs`: SUPPORTED_LANGUAGES, SOURCE_EXTENSIONS, loadCodeMapConfig
 - `scripts/code-map/lib/comment-extractor.mjs`: extractDocComment
-- `scripts/code-map/lib/endpoint-extractor.mjs`: extractEndpoints, nextRoutePath, nextRouteSegment
+- `scripts/code-map/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/code-map/lib/file-header-comment.mjs`: extractFileHeaderComment
 - `scripts/code-map/lib/module-linker.mjs`: annotateCodeMapWithModules
 - `scripts/code-map/lib/signature-extractor.mjs`: extractSignature

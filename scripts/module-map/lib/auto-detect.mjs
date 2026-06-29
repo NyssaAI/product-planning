@@ -19,7 +19,7 @@ export const DEFAULT_DOC_CANDIDATES = {
 };
 
 /** @type {readonly string[]} */
-export const CODE_ROOT_CANDIDATES = [
+const CODE_ROOT_CANDIDATES = [
   'src',
   'lib',
   'app',
@@ -36,7 +36,7 @@ export const CODE_ROOT_CANDIDATES = [
 ];
 
 /** @type {readonly { root: string, routeFile: string, pathPrefix: string }[]} */
-export const API_ROUTE_CANDIDATES = [
+const API_ROUTE_CANDIDATES = [
   { root: 'src/app/api', routeFile: 'route.js', pathPrefix: 'src/app' },
   { root: 'src/app/api', routeFile: 'route.ts', pathPrefix: 'src/app' },
   { root: 'app/api', routeFile: 'route.js', pathPrefix: 'app' },

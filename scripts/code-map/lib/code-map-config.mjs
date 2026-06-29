@@ -3,7 +3,7 @@ import path from 'node:path';
 import { detectCodeMapRoots } from '../../module-map/lib/auto-detect.mjs';
 
 /** @type {readonly string[]} */
-export const DEFAULT_SCAN_ROOTS = ['src'];
+const DEFAULT_SCAN_ROOTS = ['src'];
 
 /** @type {readonly string[]} */
 export const SUPPORTED_LANGUAGES = [

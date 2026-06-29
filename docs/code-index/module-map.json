@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-06-29T20:19:28.718Z",
+  "generated": "2026-06-29T20:46:17.325Z",
   "project": {
     "name": "code-indexer",
     "docs": {
@@ -50,7 +50,7 @@
         "code-map"
       ],
       "routeCount": 0,
-      "symbolCount": 75,
+      "symbolCount": 53,
       "planningModule": "docs/code-index/modules/module-map.md",
       "description": "Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.",
       "capabilities": [
@@ -70,7 +70,7 @@
         "module-map"
       ],
       "routeCount": 0,
-      "symbolCount": 11,
+      "symbolCount": 9,
       "planningModule": "docs/code-index/modules/code-map.md",
       "description": "ast-grep-based symbol and endpoint indexer that feeds the module graph.",
       "capabilities": [
@@ -118,6 +118,6 @@
   "stats": {
     "moduleCount": 3,
     "routeCount": 0,
-    "codeMapSymbols": 91
+    "codeMapSymbols": 67
   }
 }

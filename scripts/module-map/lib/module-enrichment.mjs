@@ -43,7 +43,7 @@ const CONFIG_FILE_CANDIDATES = [
  * @param {string} moduleRoot
  * @returns {string[]}
  */
-export function detectEntryPoints(repoRoot, moduleRoot) {
+function detectEntryPoints(repoRoot, moduleRoot) {
   const base = path.join(repoRoot, moduleRoot);
   /** @type {string[]} */
   const found = [];
@@ -86,7 +86,7 @@ export function detectEntryPoints(repoRoot, moduleRoot) {
  * @param {string} moduleRoot
  * @returns {string[]}
  */
-export function detectTestRoots(repoRoot, moduleRoot) {
+function detectTestRoots(repoRoot, moduleRoot) {
   /** @type {string[]} */
   const found = [];
 
@@ -121,7 +121,7 @@ export function detectTestRoots(repoRoot, moduleRoot) {
  * @param {string} repoRoot
  * @returns {string[]}
  */
-export function detectConfigFiles(repoRoot) {
+function detectConfigFiles(repoRoot) {
   /** @type {string[]} */
   const found = [];
   for (const name of CONFIG_FILE_CANDIDATES) {
@@ -151,7 +151,7 @@ const PUBLIC_SURFACE_KIND_RANK = {
  * @param {string[]} allModuleRoots all module roots, for disjoint ownership
  * @returns {{ file: string, name: string, kind: string, signature?: string, summary?: string }[]}
  */
-export function detectPublicSurface(codeMapFiles, moduleRoot, allModuleRoots = [moduleRoot]) {
+function detectPublicSurface(codeMapFiles, moduleRoot, allModuleRoots = [moduleRoot]) {
   /** @type {{ file: string, name: string, kind: string, signature?: string, summary?: string }[]} */
   const out = [];
 
@@ -187,7 +187,7 @@ export function detectPublicSurface(codeMapFiles, moduleRoot, allModuleRoots = [
  * @param {{ id: string, root: string, httpRoutes?: { path: string }[], mcpTools?: object[], mcpResources?: object[], mcpPrompts?: object[], mcpTransports?: object[] }} mod
  * @returns {string[]}
  */
-export function inferFlows(repoRoot, allModules, mod) {
+function inferFlows(repoRoot, allModules, mod) {
   /** @type {string[]} */
   const flows = [];
 
@@ -242,7 +242,7 @@ const DOMAIN_HINTS = {
  * @param {{ entryPoints: string[] }} enrichment
  * @returns {{ description: string, capabilities: string[], doesNotOwn: string[] }}
  */
-export function inferCapabilities(repoRoot, mod, enrichment) {
+function inferCapabilities(repoRoot, mod, enrichment) {
   /** @type {string[]} */
   const capabilities = [];
   /** @type {string[]} */
@@ -322,7 +322,7 @@ export function inferCapabilities(repoRoot, mod, enrichment) {
  * @param {{ id: string, root: string }} mod
  * @returns {string[]}
  */
-export function inferOutOfScope(allModules, mod) {
+function inferOutOfScope(allModules, mod) {
   /** @type {string[]} */
   const out = [
     'node_modules/',
