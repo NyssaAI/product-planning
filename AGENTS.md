@@ -2,27 +2,19 @@
 
 Same content as **CLAUDE.md** (Claude Code reads CLAUDE.md; Codex/OpenCode/Gemini read this file).
 
-This is the **dev-tools plugin** source (skills, standards, hooks, scripts) — a private repo.
+This is the **dev-tools plugin** source — the ai-plan / code-map generators (under `scripts/`), the `using-ai-plan` skill, the `/ai-plan` command, and the per-harness adapters. A private repo.
 
 ## Dependencies
 
 dev-tools ships one bundled plugin dependency: **`@ast-grep/cli`** for ai-plan/code-map (auto-installs into the plugin root on first use). Avoid adding further third-party dependencies unless adding support for a new harness (e.g., a new IDE or CLI tool); other external tools or services belong in their own plugin.
 
-## Skill changes shape agent behavior
-
-Skills are not prose — they are code that shapes agent behavior. If you modify skill content:
-
-- Use `dev-tools:writing-skills` to develop and test changes
-- Run adversarial pressure testing across multiple sessions before relying on the result
-- Carefully-tuned content (Red Flags tables, rationalization lists, "human partner" terminology) is deliberate — change it only with evidence the change is an improvement
-
 ## Plugin repo layout
 
-This repository is the **dev-tools plugin** (skills, standards, hooks, scripts) — not a consumer application repo, but it follows the same `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` layout as `standards/project-structure.md`. Do not apply consumer-repo `plan-product` scaffolding (e.g. `src/` trees, backlog folders) blindly to this repo.
+This repository is the **dev-tools plugin** (ai-plan/code-map generators under `scripts/`, the `using-ai-plan` skill, the `/ai-plan` command, and harness adapters) — not a consumer application repo, but it carries `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` because it dogfoods its own ai-plan generation. Do not scaffold consumer-repo `src/` trees or backlog folders here.
 
-## Bundled first-party content
+## Bundled content
 
-jamaynor **standards** and **ai-plan** ship inside dev-tools by design. This is first-party bundled content, not third-party plugin sprawl. Optional `@ast-grep/cli` in the plugin root supports ai-plan code-map generation.
+**ai-plan** (the code/module-graph generator) is the plugin's product. Optional `@ast-grep/cli` in the plugin root supports its code-map generation.
 
 <!-- ai-plan:module-map:start -->
 ## Module map (auto-updated — do not edit)

@@ -1,20 +1,17 @@
 {
   "name": "dev-tools",
   "version": "6.4.1",
-  "description": "Development workflow skills: TDD, debugging, design-spec, execute-plan, ai-plan code/module graph, git worktrees, PR workflow, and product planning",
+  "description": "ai-plan: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, OpenCode, and Gemini",
   "author": {
     "name": "jamaynor"
   },
   "repository": "https://github.com/jamaynor/dev-tools",
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
-    "skills",
-    "standards",
-    "tdd",
-    "debugging",
     "ai-plan",
-    "collaboration",
-    "best-practices",
-    "workflows"
+    "code-map",
+    "module-map",
+    "context",
+    "skills"
   ]
 }
