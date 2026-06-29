@@ -1,10 +1,10 @@
 ---
-description: AI Plan progressive disclosure for feature planning
+description: code-indexer progressive disclosure for feature planning
 globs: src/**, docs/code-index/backlog/**, docs/code-index/bugs/**
 alwaysApply: false
 ---
 
-# Feature planning (AI Plan)
+# Feature planning (code-indexer)
 
 **Canonical rules:** **AGENTS.md** in this repo + code-indexer **using-code-indexer** skill.
 

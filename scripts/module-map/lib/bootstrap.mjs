@@ -13,7 +13,6 @@ const log = createLogger({ module: 'bootstrap' });
  * @typedef {object} BootstrapResult
  * @property {string[]} created
  * @property {string[]} skipped
- * @property {{ configPath: string, roots: string[] }} configs
  */
 
 /**
@@ -82,7 +81,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
   /** @type {string[]} */
   const skipped = [];
 
-  const configs = writeStarterConfigs(repoRoot);
+  writeStarterConfigs(repoRoot);
 
   writeIfMissing(
     repoRoot,
@@ -146,7 +145,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
     skippedCount: skipped.length,
   });
 
-  return { created, skipped, configs };
+  return { created, skipped };
 }
 
 /**

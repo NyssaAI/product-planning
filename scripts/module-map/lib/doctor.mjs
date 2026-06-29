@@ -254,7 +254,7 @@ export function runDoctor(repoRoot, options = {}) {
  */
 export function formatDoctorReport(report) {
   const lines = [];
-  lines.push(`AI Plan doctor: ${report.ok ? 'PASS' : 'FAIL'}`);
+  lines.push(`code-indexer doctor: ${report.ok ? 'PASS' : 'FAIL'}`);
   lines.push('');
 
   for (const check of report.checks) {

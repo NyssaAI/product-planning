@@ -31,30 +31,10 @@ import {
  * @property {string | null} nav
  * @property {{ enabled: boolean, root: string, routeFile: string, pathPrefix: string }} apiRoutes
  * @property {string[]} conventions
- * @property {{ enabled: boolean, commands: string[], e2e: string[] }} test
  * @property {boolean} configFilePresent
  */
 
 const DOC_KEYS = ['product', 'roadmap', 'techStack'];
-
-/**
- * Parse + validate the `test` config field used by the pre-push test gate.
- * Malformed input is ignored (never throws): non-string command entries are
- * dropped, a non-array `commands`/`e2e` becomes `[]`, and `enabled` is only
- * `false` when explicitly set so.
- * @param {unknown} raw
- * @returns {{ enabled: boolean, commands: string[], e2e: string[] }}
- */
-export function parseTestConfig(raw) {
-  const test = raw && typeof raw === 'object' ? /** @type {any} */ (raw) : {};
-  const strings = (val) =>
-    Array.isArray(val) ? val.filter((v) => typeof v === 'string') : [];
-  return {
-    enabled: test.enabled === false ? false : true,
-    commands: strings(test.commands),
-    e2e: strings(test.e2e),
-  };
-}
 
 /**
  * @param {string} repoRoot
@@ -135,7 +115,6 @@ export function loadAiPlanConfig(repoRoot, opts = {}) {
       pathPrefix: apiDetected.pathPrefix,
     },
     conventions: Array.isArray(raw.conventions) ? raw.conventions : [],
-    test: parseTestConfig(raw.test),
     configFilePresent,
   };
 }

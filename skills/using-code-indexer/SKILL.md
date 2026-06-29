@@ -3,7 +3,7 @@ name: using-code-indexer
 description: Use when implementation planning needs scoped repo context from docs/code-index module graphs or code maps
 ---
 
-# Using AI Plan
+# Using code-indexer
 
 **Canonical source** for code-indexer behavior. The `/code-indexer` command, `scripts/bootstrap-templates/AGENTS.md`, `.cursor/rules/code-indexer.mdc`, and the embedded module-map table in `CLAUDE.md` / `AGENTS.md` are thin wrappers that must stay in sync with this skill — update this skill first when rules change.
 
