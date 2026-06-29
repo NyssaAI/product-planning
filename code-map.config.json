@@ -1,5 +1,0 @@
-{
-  "_comment": "Scope the code map to first-party source. test/ is intentionally omitted: it holds multi-language sample sub-repos under test/ai-plan-adapters/fixtures/ that are test data, not this project's code, and would otherwise pollute the map with foreign symbols.",
-  "output": "docs/agent-plan/context/code-map.json",
-  "roots": ["scripts", "skills", ".opencode"]
-}

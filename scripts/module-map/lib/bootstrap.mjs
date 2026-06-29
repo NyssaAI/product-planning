@@ -13,7 +13,7 @@ const log = createLogger({ module: 'bootstrap' });
  * @typedef {object} BootstrapResult
  * @property {string[]} created
  * @property {string[]} skipped
- * @property {{ codeMapPath: string, aiPlanPath: string, roots: string[] }} configs
+ * @property {{ configPath: string, roots: string[] }} configs
  */
 
 /**

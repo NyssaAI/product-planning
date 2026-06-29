@@ -62,7 +62,7 @@ export function parseTestConfig(raw) {
  * @returns {AiPlanConfig}
  */
 export function loadAiPlanConfig(repoRoot, opts = {}) {
-  const configPath = path.join(repoRoot, 'ai-plan.config.json');
+  const configPath = path.join(repoRoot, 'code-indexer.config.json');
   const configFilePresent = existsSync(configPath);
   const raw = configFilePresent
     ? JSON.parse(readFileSync(configPath, 'utf8'))
@@ -90,11 +90,11 @@ export function loadAiPlanConfig(repoRoot, opts = {}) {
         ? raw.projectName
         : readProjectName(repoRoot),
     outputDir:
-      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/agent-plan/context',
+      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/code-index',
     codeMapOutput:
       typeof raw.codeMapOutput === 'string'
         ? raw.codeMapOutput
-        : 'docs/agent-plan/context/code-map.json',
+        : 'docs/code-index/code-map.json',
     docs,
     briefMaxCharsPerDoc:
       typeof raw.briefMaxCharsPerDoc === 'number'
@@ -182,28 +182,14 @@ export function resolveDocPath(repoRoot, candidates) {
  */
 export function writeStarterConfigs(repoRoot) {
   const roots = detectCodeMapRoots(repoRoot);
-  const codeMapPath = path.join(repoRoot, 'code-map.config.json');
-  if (!existsSync(codeMapPath)) {
+  const configPath = path.join(repoRoot, 'code-indexer.config.json');
+  if (!existsSync(configPath)) {
     writeFileSync(
-      codeMapPath,
+      configPath,
       `${JSON.stringify(
         {
-          output: 'docs/agent-plan/context/code-map.json',
+          output: 'docs/code-index/code-map.json',
           roots,
-        },
-        null,
-        2
-      )}\n`,
-      'utf8'
-    );
-  }
-
-  const aiPlanPath = path.join(repoRoot, 'ai-plan.config.json');
-  if (!existsSync(aiPlanPath)) {
-    writeFileSync(
-      aiPlanPath,
-      `${JSON.stringify(
-        {
           docs: {
             product: ['docs/product.md'],
             roadmap: ['docs/roadmap.md'],
@@ -218,5 +204,5 @@ export function writeStarterConfigs(repoRoot) {
     );
   }
 
-  return { roots, codeMapPath, aiPlanPath };
+  return { roots, configPath };
 }

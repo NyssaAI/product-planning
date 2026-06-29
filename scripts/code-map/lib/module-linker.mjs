@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { ownerRoot, normalizeRoot } from '../../ai-plan/lib/module-ownership.mjs';
+import { ownerRoot, normalizeRoot } from '../../module-map/lib/module-ownership.mjs';
 
 /**
  * @typedef {object} ModuleLink

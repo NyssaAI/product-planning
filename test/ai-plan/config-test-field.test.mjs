@@ -41,7 +41,7 @@ test('loadAiPlanConfig: surfaces the parsed test field', () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'aiplan-test-cfg-'));
   try {
     writeFileSync(
-      path.join(dir, 'ai-plan.config.json'),
+      path.join(dir, 'code-indexer.config.json'),
       JSON.stringify({ test: { commands: ['pytest'], enabled: true } })
     );
     const config = loadAiPlanConfig(dir);

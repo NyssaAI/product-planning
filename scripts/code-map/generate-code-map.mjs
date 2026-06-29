@@ -23,8 +23,8 @@ import {
   SOURCE_EXTENSIONS,
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
-import { loadAiPlanConfig } from '../ai-plan/lib/config.mjs';
-import { discoverModules } from '../ai-plan/lib/discover-modules.mjs';
+import { loadAiPlanConfig } from '../module-map/lib/config.mjs';
+import { discoverModules } from '../module-map/lib/discover-modules.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
