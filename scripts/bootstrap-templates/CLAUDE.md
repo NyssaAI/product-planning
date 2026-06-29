@@ -2,9 +2,9 @@
 
 ## AI planning context
 
-Follow **AGENTS.md** in this repo for ai-plan progressive disclosure (L0–L3), regenerate commands, and required product docs.
+Follow **AGENTS.md** in this repo for code-indexer progressive disclosure (L0–L3), regenerate commands, and required product docs.
 
-With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the canonical workflow (module scope selection and staleness).
+With the code-indexer plugin installed, invoke **code-indexer:using-code-indexer** for the canonical workflow (module scope selection and staleness).
 
 ## Project structure
 
@@ -14,6 +14,6 @@ With the dev-tools plugin installed, invoke **dev-tools:using-ai-plan** for the 
 
 ## Workflow
 
-- Backlog items: `docs/agent-plan/backlog/{timestamp-slug}/`
-- Plans: `docs/agent-plan/plans/`
-- Bugs: `docs/agent-plan/bugs/{timestamp-slug}/`
+- Backlog items: `docs/code-index/backlog/{timestamp-slug}/`
+- Plans: `docs/code-index/plans/`
+- Bugs: `docs/code-index/bugs/{timestamp-slug}/`

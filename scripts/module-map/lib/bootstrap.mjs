@@ -120,8 +120,8 @@ export function bootstrapRepo(repoRoot, options = {}) {
   writeIfMissing(repoRoot, 'CLAUDE.md', readTemplate('CLAUDE.md'), created, skipped);
   writeIfMissing(
     repoRoot,
-    '.cursor/rules/ai-plan.mdc',
-    readTemplate('ai-plan.mdc'),
+    '.cursor/rules/code-indexer.mdc',
+    readTemplate('code-indexer.mdc'),
     created,
     skipped
   );
@@ -165,11 +165,11 @@ function mergePackageScripts(repoRoot, created, skipped) {
   const scripts = pkg.scripts ?? {};
   const additions = {
     'code-map': pluginScriptCommand('scripts/code-map/generate-code-map.mjs'),
-    'ai-plan': pluginScriptCommand('scripts/module-map/generate.mjs'),
+    'code-indexer': pluginScriptCommand('scripts/module-map/generate.mjs'),
   };
   const legacyLocalScripts = {
     'code-map': 'scripts/code-map/generate-code-map.mjs',
-    'ai-plan': 'scripts/module-map/generate.mjs',
+    'code-indexer': 'scripts/module-map/generate.mjs',
   };
 
   let changed = false;

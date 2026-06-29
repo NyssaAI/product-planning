@@ -15,7 +15,7 @@ import { bootstrapRepo } from '../../scripts/module-map/lib/bootstrap.mjs';
 const tempDirs = [];
 
 function tempRepo() {
-  const dir = mkdtempSync(path.join(tmpdir(), 'ai-plan-bootstrap-test-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-bootstrap-test-'));
   tempDirs.push(dir);
   writePackage(dir, { name: 'fixture', version: '0.0.0' });
   return dir;
@@ -43,21 +43,21 @@ test('bootstrap package scripts run installed plugin tooling instead of repo-loc
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
   assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
-  assert.doesNotMatch(pkg.scripts['ai-plan'], /node scripts\/module-map\//);
+  assert.doesNotMatch(pkg.scripts['code-indexer'], /node scripts\/module-map\//);
   assert.match(pkg.scripts['code-map'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
-  assert.match(pkg.scripts['ai-plan'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
+  assert.match(pkg.scripts['code-indexer'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
   assert.match(pkg.scripts['code-map'], /scripts\/code-map\/generate-code-map\.mjs/);
-  assert.match(pkg.scripts['ai-plan'], /scripts\/module-map\/generate\.mjs/);
+  assert.match(pkg.scripts['code-indexer'], /scripts\/module-map\/generate\.mjs/);
 });
 
-test('bootstrap replaces known stale local ai-plan package scripts', () => {
+test('bootstrap replaces known stale local code-indexer package scripts', () => {
   const root = tempRepo();
   writePackage(root, {
     name: 'fixture',
     version: '0.0.0',
     scripts: {
       'code-map': 'node scripts/code-map/generate-code-map.mjs',
-      'ai-plan': 'node scripts/module-map/generate.mjs',
+      'code-indexer': 'node scripts/module-map/generate.mjs',
       test: 'node --test',
     },
   });
@@ -67,21 +67,21 @@ test('bootstrap replaces known stale local ai-plan package scripts', () => {
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
   assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
-  assert.doesNotMatch(pkg.scripts['ai-plan'], /node scripts\/module-map\//);
+  assert.doesNotMatch(pkg.scripts['code-indexer'], /node scripts\/module-map\//);
   assert.match(pkg.scripts['code-map'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
-  assert.match(pkg.scripts['ai-plan'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
+  assert.match(pkg.scripts['code-indexer'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
   assert.equal(pkg.scripts.test, 'node --test');
 });
 
 test('bootstrap package scripts resolve plugin scripts and forward arguments', () => {
   const root = tempRepo();
-  const pluginRoot = mkdtempSync(path.join(tmpdir(), 'ai-plan-plugin-root-'));
+  const pluginRoot = mkdtempSync(path.join(tmpdir(), 'code-indexer-plugin-root-'));
   tempDirs.push(pluginRoot);
 
   bootstrapRepo(root, { writeScripts: true });
 
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
-  const match = /^node -e (".*") --$/.exec(pkg.scripts['ai-plan']);
+  const match = /^node -e (".*") --$/.exec(pkg.scripts['code-indexer']);
   assert.notEqual(match, null);
 
   const calls = [];

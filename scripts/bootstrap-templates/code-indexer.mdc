@@ -1,0 +1,11 @@
+---
+description: AI Plan progressive disclosure for feature planning
+globs: src/**, docs/code-index/backlog/**, docs/code-index/bugs/**
+alwaysApply: false
+---
+
+# Feature planning (AI Plan)
+
+**Canonical rules:** **AGENTS.md** in this repo + code-indexer **using-code-indexer** skill.
+
+When planning: L0 task, then **one** `docs/code-index/modules/<module>.md` (L1). Regenerate: `npm run code-indexer`. Index: `docs/code-index/index.md`.
