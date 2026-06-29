@@ -1,5 +1,5 @@
 /**
- * Portable structured logger for code-indexer generators (no @devjoy/* deps).
+ * Portable structured logger for code-indexer generators (no third-party deps).
  * Set LOG_LEVEL=debug or DEBUG_CODE_INDEXER=1 for full trace output.
  */
 

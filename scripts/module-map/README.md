@@ -15,8 +15,6 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --init --write-scri
 npm run code-indexer   # after init adds project scripts
 ```
 
-Upstream also lives in [jamaynor/ai-tools](https://github.com/jamaynor/ai-tools) (DevJoy CLI: `devjoy code-indexer`).
-
 ---
 
 **Repository-agnostic** planning context for AI agents. The only required inputs are your standard product documents:
@@ -122,16 +120,6 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --unpin <module-id>
 
 Set `LOG_LEVEL=debug` or `DEBUG_CODE_INDEXER=1` for structured trace logs on stderr.
 
-## DevJoy (optional)
-
-Same scripts in [jamaynor/ai-tools](https://github.com/jamaynor/ai-tools):
-
-```bash
-devjoy code-indexer init
-devjoy code-indexer doctor
-devjoy code-indexer generate
-```
-
 ## Agent entrypoint matrix
 
 | Runtime | Repo-committed entry | Global skill/plugin | Notes |
@@ -142,22 +130,6 @@ devjoy code-indexer generate
 | **OpenClaw** | `<repo>/skills/` | `~/.openclaw/skills` | Configure via `openclaw.json` |
 | **Hermes** | repo path in `~/.hermes/config.yaml` `skills.load.extraDirs` | `~/.hermes/skills` | agentskills.io `SKILL.md` |
 
-Run `devjoy code-indexer doctor --runtimes` to print per-runtime readiness (paths, project entries).
-
-## code-indexer workflow integration
-
-Install global defaults after bootstrap:
-
-```bash
-devjoy code-indexer init --with-skills global
-```
-
-Workflow skills (from `code-indexer` v5.1.0+) use generated context:
-
-- **Planning** — L0 task + spec + one `docs/code-index/context/modules/<module>.md`; product docs at L2 if needed
-- **Backlog** — `docs/code-index/backlog/{YYYY.MM.DD-HHMMSS-slug}/{timestamp-slug}-detail.md`
-- **Bug** — `docs/code-index/bugs/{YYYY.MM.DD-HHMMSS-slug}/` with detail + resolution files
-
-Regenerate after module structure changes: `devjoy code-indexer`.
+Run `node "${CLAUDE_PLUGIN_ROOT}/scripts/module-map/generate.mjs" --doctor --runtimes` to print per-runtime readiness (paths, project entries).
 
 Bootstrap templates copied to consumer repos on `--init`: `scripts/bootstrap-templates/`. Agent workflow: **code-indexer:using-code-indexer** skill.

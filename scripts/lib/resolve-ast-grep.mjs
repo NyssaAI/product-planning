@@ -83,10 +83,10 @@ export function resolveAstGrepBinary(options) {
     searchRoots.push(pluginRoot);
   }
 
-  const devjoyHome =
-    process.env.DEVJOY_HOME?.trim() ||
-    path.join(os.homedir(), '.devjoy');
-  searchRoots.push(devjoyHome);
+  const jamaynorHome =
+    process.env.JAMAYNOR_HOME?.trim() ||
+    path.join(os.homedir(), '.jamaynor');
+  searchRoots.push(jamaynorHome);
 
   if (projectRoot) {
     searchRoots.push(projectRoot);
