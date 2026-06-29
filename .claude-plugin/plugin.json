@@ -1,14 +1,14 @@
 {
-  "name": "dev-tools",
+  "name": "code-indexer",
   "version": "7.0.0",
-  "description": "ai-plan: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, OpenCode, and Gemini",
+  "description": "code-indexer: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, and Gemini",
   "author": {
     "name": "jamaynor"
   },
-  "repository": "https://github.com/jamaynor/dev-tools",
+  "repository": "https://github.com/jamaynor/code-indexer",
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
-    "ai-plan",
+    "code-indexer",
     "code-map",
     "module-map",
     "context",

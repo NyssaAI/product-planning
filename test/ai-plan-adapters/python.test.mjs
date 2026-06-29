@@ -2,10 +2,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import pythonAdapter from '../../scripts/ai-plan/lib/adapters/python.mjs';
-import { buildAiPlanModel } from '../../scripts/ai-plan/lib/build.mjs';
-import { selectAdapter } from '../../scripts/ai-plan/lib/adapters/index.mjs';
-import { deriveModules } from '../../scripts/ai-plan/lib/detection/derive-modules.mjs';
+import pythonAdapter from '../../scripts/module-map/lib/adapters/python.mjs';
+import { buildAiPlanModel } from '../../scripts/module-map/lib/build.mjs';
+import { selectAdapter } from '../../scripts/module-map/lib/adapters/index.mjs';
+import { deriveModules } from '../../scripts/module-map/lib/detection/derive-modules.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixtureRoot = path.join(__dirname, 'fixtures', 'python-repo');

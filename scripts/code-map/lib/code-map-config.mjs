@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { detectCodeMapRoots } from '../../ai-plan/lib/auto-detect.mjs';
+import { detectCodeMapRoots } from '../../module-map/lib/auto-detect.mjs';
 
 /** @type {readonly string[]} */
 export const DEFAULT_SCAN_ROOTS = ['src'];
@@ -59,9 +59,9 @@ export const SOURCE_EXTENSIONS = new Set([
  * @returns {CodeMapConfig}
  */
 export function loadCodeMapConfig(repoRoot) {
-  const configPath = path.join(repoRoot, 'code-map.config.json');
+  const configPath = path.join(repoRoot, 'code-indexer.config.json');
   const defaults = {
-    output: 'docs/agent-plan/context/code-map.json',
+    output: 'docs/code-index/code-map.json',
     roots: DEFAULT_SCAN_ROOTS,
     languages: SUPPORTED_LANGUAGES,
   };

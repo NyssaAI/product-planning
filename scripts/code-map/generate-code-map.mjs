@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate docs/agent-plan/context/code-map.json from ast-grep structural scan rules.
+ * Generate docs/code-index/code-map.json from ast-grep structural scan rules.
  *
  * Per-repo settings: code-map.config.json at the project root (discovered from cwd).
  */
@@ -23,8 +23,8 @@ import {
   SOURCE_EXTENSIONS,
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
-import { loadAiPlanConfig } from '../ai-plan/lib/config.mjs';
-import { discoverModules } from '../ai-plan/lib/discover-modules.mjs';
+import { loadAiPlanConfig } from '../module-map/lib/config.mjs';
+import { discoverModules } from '../module-map/lib/discover-modules.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
@@ -130,7 +130,7 @@ function printHelp(config) {
        node src/bin/code-map.js [options]
 
 Generate ${config.output} (JSON) from ast-grep rules.
-Uses @ast-grep/cli bundled with the dev-tools plugin (no project-repo install).
+Uses @ast-grep/cli bundled with the code-indexer plugin (no project-repo install).
 
 Languages: ${SUPPORTED_LANGUAGES.join(', ')}
 Project root: ${REPO_ROOT}
@@ -362,7 +362,7 @@ function loadModuleContext() {
     };
   } catch {
     return {
-      outputDir: 'docs/agent-plan/context',
+      outputDir: 'docs/code-index',
       modules: [],
     };
   }

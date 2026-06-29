@@ -1,10 +1,10 @@
 {
   "skills": {
-    "global": ["dev-tools"],
+    "global": ["code-indexer"],
     "project": [],
     "agents": {
-      "openclaw": { "skills": ["dev-tools"] },
-      "hermes": { "skills": ["dev-tools"] }
+      "openclaw": { "skills": ["code-indexer"] },
+      "hermes": { "skills": ["code-indexer"] }
     }
   },
   "skillsScope": "global"

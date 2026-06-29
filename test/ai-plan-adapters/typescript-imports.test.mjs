@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import typescriptAdapter from '../../scripts/ai-plan/lib/adapters/typescript.mjs';
+import typescriptAdapter from '../../scripts/module-map/lib/adapters/typescript.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];

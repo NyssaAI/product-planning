@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import csharpAdapter from '../../scripts/ai-plan/lib/adapters/csharp.mjs';
-import { buildAiPlanModel } from '../../scripts/ai-plan/lib/build.mjs';
+import csharpAdapter from '../../scripts/module-map/lib/adapters/csharp.mjs';
+import { buildAiPlanModel } from '../../scripts/module-map/lib/build.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..', '..');
@@ -108,7 +108,7 @@ test('csharp adapter exposes namespace-qualified symbols', () => {
 
 test('csharp adapter source has no NUL separators', () => {
   const source = readFileSync(
-    path.join(repoRoot, 'scripts/ai-plan/lib/adapters/csharp.mjs'),
+    path.join(repoRoot, 'scripts/module-map/lib/adapters/csharp.mjs'),
     'utf8'
   );
 

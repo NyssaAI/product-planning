@@ -7,7 +7,7 @@ carefully before using, copying, or modifying the Software.
 
 1. Definitions
 
-   "Software" means the dev-tools repository, including all source code,
+   "Software" means the code-indexer repository, including all source code,
    skills, documentation, configuration, and other materials made available
    by the copyright holder.
 
@@ -104,7 +104,7 @@ carefully before using, copying, or modifying the Software.
        or external purposes.
 
    To request a Commercial License, contact the copyright holder through
-   the repository at https://github.com/jamaynor/dev-tools.
+   the repository at https://github.com/jamaynor/code-indexer.
 
    Continued use after a trigger in this section applies without a
    Commercial License is not permitted.

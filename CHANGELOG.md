@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-29 — renamed to code-indexer
+
+### Changed (BREAKING)
+
+- **Renamed the plugin `dev-tools` → `code-indexer`** and reset versioning to 1.0.0 for the new
+  marketplace identity. Command `/ai-plan` → `/code-indexer`; skill `using-ai-plan` →
+  `using-code-indexer`; module-graph engine `scripts/ai-plan/` → `scripts/module-map/`; merged
+  `code-map.config.json` + `ai-plan.config.json` → one `code-indexer.config.json`; output
+  `docs/agent-plan/context/` → `docs/code-index/`; embed markers `ai-plan:module-map` →
+  `code-index:module-map`. A `--migrate` hop moves an existing `docs/agent-plan/context/` to
+  `docs/code-index/`.
+
+### Removed
+
+- **Dropped OpenCode support.** Removed the `.opencode/` plugin adapter, install docs, and harness
+  references — code-indexer ships for Claude Code, Cursor, Codex, and Gemini.
+
 ## [7.0.0] - 2026-06-29
 
 ### Changed (BREAKING)

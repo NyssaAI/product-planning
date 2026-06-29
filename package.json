@@ -1,8 +1,7 @@
 {
-  "name": "dev-tools",
-  "version": "7.0.0",
+  "name": "code-indexer",
+  "version": "1.0.0",
   "type": "module",
-  "main": ".opencode/plugins/dev-tools.js",
   "dependencies": {
     "@ast-grep/cli": "^0.42.2"
   }

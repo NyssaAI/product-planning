@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildAiPlanModel } from '../scripts/ai-plan/lib/build.mjs';
-import { renderModuleScope } from '../scripts/ai-plan/lib/render.mjs';
+import { buildAiPlanModel } from '../scripts/module-map/lib/build.mjs';
+import { renderModuleScope } from '../scripts/module-map/lib/render.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];

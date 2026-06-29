@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderIndex } from '../../scripts/ai-plan/lib/render.mjs';
+import { renderIndex } from '../../scripts/module-map/lib/render.mjs';
 
 function baseModel(modules) {
   return {
