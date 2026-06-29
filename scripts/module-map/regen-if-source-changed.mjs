@@ -8,8 +8,8 @@
  * Input (hook mode): Claude Code PostToolUse JSON on stdin
  * ({ tool_input: { file_path } }), or CLAUDE_TOOL_INPUT_FILE_PATH env var.
  *
- * Opt-out: "autoRegenerate": false in ai-plan.config.json.
- * Log: docs/agent-plan/context/.regen.log in the project repo.
+ * Opt-out: "autoRegenerate": false in code-indexer.config.json.
+ * Log: docs/code-index/.regen.log in the project repo.
  */
 
 import {
@@ -31,7 +31,7 @@ const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts', 'test'];
  * @returns {string}
  */
 function logFile(repoRoot) {
-  return path.join(repoRoot, 'docs/agent-plan/context/.regen.log');
+  return path.join(repoRoot, 'docs/code-index/.regen.log');
 }
 
 /**
@@ -119,7 +119,7 @@ function handleHook() {
     process.exit(0);
   }
 
-  const aiPlanConfig = readJsonIfPresent(repoRoot, 'ai-plan.config.json');
+  const aiPlanConfig = readJsonIfPresent(repoRoot, 'code-indexer.config.json');
   if (aiPlanConfig.autoRegenerate === false) {
     process.exit(0);
   }

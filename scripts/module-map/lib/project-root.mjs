@@ -8,7 +8,7 @@ import path from 'node:path';
 export function findProjectRoot(startDir = process.cwd()) {
   let dir = path.resolve(startDir);
   for (;;) {
-    if (existsSync(path.join(dir, 'ai-plan.config.json'))) {
+    if (existsSync(path.join(dir, 'code-indexer.config.json'))) {
       return dir;
     }
     if (existsSync(path.join(dir, 'code-map.config.json'))) {

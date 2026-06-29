@@ -113,10 +113,8 @@ export function bootstrapRepo(repoRoot, options = {}) {
     skipped
   );
 
-  ensureDirIfMissing(repoRoot, 'docs/agent-plan/backlog', created, skipped);
-  ensureDirIfMissing(repoRoot, 'docs/agent-plan/bugs', created, skipped);
   ensureDirIfMissing(repoRoot, 'test/unit', created, skipped);
-  ensureDirIfMissing(repoRoot, 'docs/agent-plan/context/modules', created, skipped);
+  ensureDirIfMissing(repoRoot, 'docs/code-index/modules', created, skipped);
 
   writeIfMissing(repoRoot, 'AGENTS.md', readTemplate('AGENTS.md'), created, skipped);
   writeIfMissing(repoRoot, 'CLAUDE.md', readTemplate('CLAUDE.md'), created, skipped);
@@ -198,7 +196,7 @@ function mergePackageScripts(repoRoot, created, skipped) {
 
 /**
  * Build a cross-platform npm script that resolves the current installed
- * dev-tools plugin root at runtime instead of using repo-local copied tooling.
+ * code-indexer plugin root at runtime instead of using repo-local copied tooling.
  *
  * @param {string} scriptRelPath
  * @returns {string}
@@ -209,7 +207,7 @@ function pluginScriptCommand(scriptRelPath) {
     "const { spawnSync } = require('node:child_process');",
     "const path = require('node:path');",
     "const root = process.env.CLAUDE_PLUGIN_ROOT || process.env.CURSOR_PLUGIN_ROOT;",
-    "if (!root) { console.error('dev-tools plugin root not found. Set CLAUDE_PLUGIN_ROOT or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
+    "if (!root) { console.error('code-indexer plugin root not found. Set CLAUDE_PLUGIN_ROOT or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
     `const script = path.join(root, ${JSON.stringify(script)});`,
     "const result = spawnSync(process.execPath, [script, ...process.argv.slice(1)], { stdio: 'inherit' });",
     "if (result.error) { console.error(result.error.message); process.exit(1); }",
@@ -240,7 +238,7 @@ const REGEN_HOOK_MATCHER = 'Write|Edit';
  * Adds the PostToolUse auto-regeneration hook to the project's
  * .claude/settings.json. Existing hooks are preserved; if a hook entry
  * already references regen-if-source-changed.mjs nothing is written.
- * Opt-out at runtime via "autoRegenerate": false in ai-plan.config.json.
+ * Opt-out at runtime via "autoRegenerate": false in code-indexer.config.json.
  *
  * @param {string} repoRoot
  * @param {string[]} created

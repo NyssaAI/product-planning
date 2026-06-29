@@ -7,7 +7,7 @@
  *   node scripts/module-map/generate.mjs --init       # bootstrap repo
  *   node scripts/module-map/generate.mjs --doctor     # validate setup
  *   node scripts/module-map/generate.mjs --doctor --runtimes
- *   node scripts/module-map/generate.mjs --migrate    # move legacy layout to docs/agent-plan/
+ *   node scripts/module-map/generate.mjs --migrate    # move legacy layout to docs/code-index/
  */
 
 import {
@@ -143,7 +143,7 @@ function runGenerate() {
       modules: 0,
       warnings,
       errors,
-      summary: `generation skipped — missing required docs: ${missing.join(', ')}. Run --init or configure ai-plan.config.json → docs.`,
+      summary: `generation skipped — missing required docs: ${missing.join(', ')}. Run --init or configure code-indexer.config.json → docs.`,
     };
   }
 
@@ -247,7 +247,7 @@ function runGenerate() {
 
   if (model.modules.length === 0) {
     errors.push(
-      'NO_MODULES_FOUND: module discovery produced zero modules — check ai-plan.config.json → modules'
+      'NO_MODULES_FOUND: module discovery produced zero modules — check code-indexer.config.json → modules'
     );
   }
 
@@ -277,7 +277,7 @@ function reportGenerateResult(result) {
   if (jsonMode) {
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
   } else {
-    process.stdout.write(`AI Plan: ${result.summary}\n`);
+    process.stdout.write(`code-indexer: ${result.summary}\n`);
     for (const warning of result.warnings) {
       process.stderr.write(`  warning: ${warning}\n`);
     }
@@ -307,8 +307,8 @@ function runPinCommand(id, remove) {
     const result = unpinModule(REPO_ROOT, id);
     process.stdout.write(
       result.ok
-        ? `AI Plan: unpinned ${id} — returns to auto-derivation on next regen\n`
-        : `AI Plan: cannot unpin — ${result.error}\n`
+        ? `code-indexer: unpinned ${id} — returns to auto-derivation on next regen\n`
+        : `code-indexer: cannot unpin — ${result.error}\n`
     );
     if (!result.ok) {
       process.exit(1);
@@ -321,10 +321,10 @@ function runPinCommand(id, remove) {
   const result = pinModule(REPO_ROOT, id, modules);
   if (result.ok) {
     process.stdout.write(
-      `AI Plan: pinned ${id} (root ${result.pin.root}) — edit ai-plan.config.json → modules.pinned to adjust\n`
+      `code-indexer: pinned ${id} (root ${result.pin.root}) — edit code-indexer.config.json → modules.pinned to adjust\n`
     );
   } else {
-    process.stderr.write(`AI Plan: cannot pin — ${result.error}\n`);
+    process.stderr.write(`code-indexer: cannot pin — ${result.error}\n`);
     process.exit(1);
   }
 }

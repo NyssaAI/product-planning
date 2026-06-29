@@ -78,8 +78,6 @@ export function renderIndex(model, config) {
   lines.push('');
   lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --init` (dev-tools plugin)');
   lines.push('- Validate: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --doctor`');
-  lines.push('- Backlog: `docs/agent-plan/backlog/{YYYY.MM.DD-HHMMSS-slug}/`');
-  lines.push('- Bugs: `docs/agent-plan/bugs/{YYYY.MM.DD-HHMMSS-slug}/`');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

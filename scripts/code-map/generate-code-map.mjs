@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate docs/agent-plan/context/code-map.json from ast-grep structural scan rules.
+ * Generate docs/code-index/code-map.json from ast-grep structural scan rules.
  *
  * Per-repo settings: code-map.config.json at the project root (discovered from cwd).
  */
@@ -362,7 +362,7 @@ function loadModuleContext() {
     };
   } catch {
     return {
-      outputDir: 'docs/agent-plan/context',
+      outputDir: 'docs/code-index',
       modules: [],
     };
   }

@@ -100,18 +100,18 @@ function createDirWithGitkeep(actions, repoRoot, relDir) {
 function patchContextReferences(actions, repoRoot) {
   const moduleMapPath = path.join(
     repoRoot,
-    'docs/agent-plan/context/module-map.json'
+    'docs/code-index/module-map.json'
   );
   if (existsSync(moduleMapPath)) {
     let text = readFileSync(moduleMapPath, 'utf8');
     const before = text;
     text = text
       .split('docs/ai-plan/CODE_MAP.json')
-      .join('docs/agent-plan/context/code-map.json')
+      .join('docs/code-index/code-map.json')
       .split('"planningScope"')
       .join('"planningModule"')
       .split('docs/ai-plan/scopes/')
-      .join('docs/agent-plan/context/modules/');
+      .join('docs/code-index/modules/');
     if (text !== before) {
       writeFileSync(moduleMapPath, text, 'utf8');
       actions.push({
@@ -124,13 +124,13 @@ function patchContextReferences(actions, repoRoot) {
     }
   }
 
-  const indexPath = path.join(repoRoot, 'docs/agent-plan/context/index.md');
+  const indexPath = path.join(repoRoot, 'docs/code-index/index.md');
   if (existsSync(indexPath)) {
     let text = readFileSync(indexPath, 'utf8');
     const before = text;
     text = text
       .split('docs/ai-plan/')
-      .join('docs/agent-plan/context/')
+      .join('docs/code-index/')
       .split('./scopes/')
       .join('./modules/')
       .split('scopes/')
@@ -152,7 +152,7 @@ function patchContextReferences(actions, repoRoot) {
 }
 
 /**
- * Migrate a repo from the legacy docs layout to docs/agent-plan/.
+ * Migrate a repo from the legacy docs layout to docs/code-index/.
  * Every step is idempotent — re-running reports "skipped" for completed steps.
  *
  * @param {string} repoRoot
@@ -163,28 +163,20 @@ export function runMigrate(repoRoot) {
   /** @type {MigrateAction[]} */
   const actions = [];
 
-  // 1. docs/ai-plan/ → docs/agent-plan/context/ with renames
-  moveIfPresent(actions, repoRoot, 'docs/ai-plan', 'docs/agent-plan/context');
-  const ctx = 'docs/agent-plan/context';
+  // 1. Current layout: docs/agent-plan/context/ → docs/code-index/
+  moveIfPresent(actions, repoRoot, 'docs/agent-plan/context', 'docs/code-index');
+  // 2. Older legacy: docs/ai-plan/ → docs/code-index/ with artifact renames
+  moveIfPresent(actions, repoRoot, 'docs/ai-plan', 'docs/code-index');
+  const ctx = 'docs/code-index';
   moveIfPresent(actions, repoRoot, `${ctx}/INDEX.md`, `${ctx}/index.md`);
   moveIfPresent(actions, repoRoot, `${ctx}/CODE_MAP.json`, `${ctx}/code-map.json`);
   moveIfPresent(actions, repoRoot, `${ctx}/MODULE_MAP.json`, `${ctx}/module-map.json`);
   moveIfPresent(actions, repoRoot, `${ctx}/scopes`, `${ctx}/modules`);
 
-  // 2-5. Workflow directories
-  moveIfPresent(actions, repoRoot, 'docs/specs', 'docs/agent-plan/specs');
-  moveIfPresent(actions, repoRoot, 'docs/plans', 'docs/agent-plan/plans');
-  moveIfPresent(actions, repoRoot, 'docs/backlog', 'docs/agent-plan/backlog');
-  moveIfPresent(actions, repoRoot, 'docs/bugs', 'docs/agent-plan/bugs');
-
-  // 6. Patch cross-references in moved files
+  // 3. Patch cross-references in moved files
   patchContextReferences(actions, repoRoot);
 
-  // 7-8. New human-authored directories
-  createDirWithGitkeep(actions, repoRoot, 'docs/design');
-  createDirWithGitkeep(actions, repoRoot, 'docs/use-cases');
-
-  // 9. features.md stub
+  // 4. features.md stub
   const featuresPath = path.join(repoRoot, 'docs/features.md');
   if (existsSync(featuresPath)) {
     actions.push({ kind: 'skipped', detail: 'docs/features.md (exists)' });
@@ -209,7 +201,7 @@ export function runMigrate(repoRoot) {
  * @returns {string}
  */
 export function formatMigrateReport(actions) {
-  const lines = ['AI Plan migrate:'];
+  const lines = ['code-indexer migrate:'];
   for (const action of actions) {
     lines.push(`  ${action.kind.padEnd(7)} ${action.detail}`);
   }

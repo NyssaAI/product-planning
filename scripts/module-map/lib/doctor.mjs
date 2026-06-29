@@ -111,7 +111,7 @@ function checkModuleMap(repoRoot, config) {
       id: 'module-discovery',
       status: 'warn',
       message: 'All modules use fallback discovery',
-      hint: 'Add ai-plan.config.json manual modules or improve stack detection',
+      hint: 'Add code-indexer.config.json manual modules or improve stack detection',
     });
   }
 
@@ -129,8 +129,6 @@ function checkAgentEntrypoints(repoRoot) {
   for (const [id, rel] of [
     ['agents-md', 'AGENTS.md'],
     ['claude-md', 'CLAUDE.md'],
-    ['backlog-dir', 'docs/agent-plan/backlog'],
-    ['bugs-dir', 'docs/agent-plan/bugs'],
   ]) {
     const full = path.join(repoRoot, rel);
     checks.push({
