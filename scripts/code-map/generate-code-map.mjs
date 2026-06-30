@@ -10,14 +10,12 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
-  readdirSync,
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../lib/resolve-ast-grep.mjs';
 import { parseScanJson, symbolNameFromMatch } from '../lib/sg-result.mjs';
-import { BASE_SKIP_DIRS } from '../lib/skip-dirs.mjs';
 import {
   loadCodeMapConfig,
   SOURCE_EXTENSIONS,
@@ -30,19 +28,11 @@ import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
 import { extractEndpoints } from './lib/endpoint-extractor.mjs';
 import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
+import { sourceFilesInRoots } from './lib/source-files.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
 const SG_CONFIG_PATH = path.join(TOOLKIT_DIR, 'sgconfig.yml');
-
-// Shared base infra/test-output dirs (includes fixtures/__fixtures__ so the
-// endpoint walker no longer leaks fixture endpoints) plus Python virtualenv dirs.
-const ENDPOINT_SCAN_SKIP_DIRS = new Set([
-  ...BASE_SKIP_DIRS,
-  '.venv',
-  'venv',
-  '__pycache__',
-]);
 
 const HTTP_METHODS = new Set([
   'GET',
@@ -326,7 +316,7 @@ function buildCodeMapDocument(symbols, options) {
   const endpointFiles = [
     ...new Set([
       ...files.map((file) => file.path),
-      ...sourceFilesInRoots(options.scanRoots),
+      ...sourceFilesInRoots(REPO_ROOT, options.scanRoots),
     ]),
   ].sort();
   const endpoints = extractEndpoints(REPO_ROOT, endpointFiles);
@@ -364,41 +354,6 @@ function loadModuleContext() {
       outputDir: 'docs/code-index',
       modules: [],
     };
-  }
-}
-
-/**
- * @param {readonly string[]} roots
- * @returns {string[]}
- */
-function sourceFilesInRoots(roots) {
-  const files = [];
-  for (const root of roots) {
-    walkSourceFiles(path.join(REPO_ROOT, root), files);
-  }
-  return files.sort();
-}
-
-/**
- * @param {string} dir
- * @param {string[]} acc
- */
-function walkSourceFiles(dir, acc) {
-  if (!existsSync(dir)) {
-    return;
-  }
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (ENDPOINT_SCAN_SKIP_DIRS.has(entry.name)) {
-      continue;
-    }
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      walkSourceFiles(full, acc);
-      continue;
-    }
-    if (entry.isFile() && SOURCE_EXTENSIONS.has(path.extname(entry.name))) {
-      acc.push(path.relative(REPO_ROOT, full).replace(/\\/g, '/'));
-    }
   }
 }
 

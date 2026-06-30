@@ -6,8 +6,15 @@ import path from 'node:path';
  * @returns {string | null}
  */
 export function findPluginRoot(startDir) {
-  for (const key of ['CLAUDE_PLUGIN_ROOT', 'CURSOR_PLUGIN_ROOT']) {
+  for (const key of [
+    'CODE_INDEXER_PLUGIN_ROOT',
+    'CLAUDE_PLUGIN_ROOT',
+    'CURSOR_PLUGIN_ROOT',
+  ]) {
     const raw = process.env[key]?.trim();
+    if (raw && existsSync(path.join(raw, '.codex-plugin', 'plugin.json'))) {
+      return path.resolve(raw);
+    }
     if (raw && existsSync(path.join(raw, '.claude-plugin', 'plugin.json'))) {
       return path.resolve(raw);
     }
@@ -22,6 +29,7 @@ export function findPluginRoot(startDir) {
   let dir = path.resolve(startDir);
   for (;;) {
     if (
+      existsSync(path.join(dir, '.codex-plugin', 'plugin.json')) ||
       existsSync(path.join(dir, '.claude-plugin', 'plugin.json')) ||
       existsSync(path.join(dir, '.cursor-plugin', 'plugin.json'))
     ) {

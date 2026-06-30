@@ -1,0 +1,492 @@
+{
+  "schemaVersion": "1.0",
+  "generated": "2026-06-30T13:25:07.567Z",
+  "project": {
+    "name": "code-indexer"
+  },
+  "source": {
+    "codeMap": "docs/code-index/code-map.json",
+    "moduleMap": "docs/code-index/module-map.json",
+    "sourceFiles": 55,
+    "eligibleFiles": 55,
+    "excludedFiles": [],
+    "languages": [
+      "JavaScript",
+      "TypeScript",
+      "CSharp",
+      "Java",
+      "Python",
+      "Go"
+    ]
+  },
+  "summary": {
+    "patternsEvaluated": 13,
+    "patternsMatched": 5,
+    "occurrences": 292,
+    "coveredFiles": 26,
+    "coveragePercent": 47.27,
+    "coverageByConfidence": {
+      "high": {
+        "files": 17,
+        "percent": 30.91,
+        "includedInHeadline": true
+      },
+      "medium": {
+        "files": 19,
+        "percent": 34.55,
+        "includedInHeadline": true
+      },
+      "intent-only": {
+        "files": 0,
+        "percent": 0,
+        "includedInHeadline": false
+      }
+    }
+  },
+  "modules": [
+    {
+      "id": "code-map",
+      "name": "code-map",
+      "root": "scripts/code-map",
+      "planningModule": "docs/code-index/modules/code-map.md",
+      "eligibleFiles": 15,
+      "coveredFiles": 10,
+      "coveragePercent": 66.67
+    },
+    {
+      "id": "module-map",
+      "name": "module-map",
+      "root": "scripts/module-map",
+      "planningModule": "docs/code-index/modules/module-map.md",
+      "eligibleFiles": 36,
+      "coveredFiles": 15,
+      "coveragePercent": 41.67
+    },
+    {
+      "id": "lib",
+      "name": "lib",
+      "root": "scripts/lib",
+      "planningModule": "docs/code-index/modules/lib.md",
+      "eligibleFiles": 4,
+      "coveredFiles": 1,
+      "coveragePercent": 25
+    }
+  ],
+  "patterns": [
+    {
+      "id": "markdown-lines-renderer",
+      "name": "Markdown lines renderer",
+      "language": "JavaScript",
+      "confidence": "medium",
+      "includeInHeadline": true,
+      "description": "Markdown output is assembled by pushing strings into a lines array.",
+      "source": "scripts/code-map/patterns/javascript.json",
+      "occurrenceCount": 246,
+      "fileCount": 8,
+      "coveragePercent": 14.55,
+      "modules": [
+        {
+          "id": "module-map",
+          "name": "module-map",
+          "root": "scripts/module-map",
+          "planningModule": "docs/code-index/modules/module-map.md",
+          "fileCount": 6,
+          "occurrenceCount": 163,
+          "coveragePercent": 16.67
+        },
+        {
+          "id": "code-map",
+          "name": "code-map",
+          "root": "scripts/code-map",
+          "planningModule": "docs/code-index/modules/code-map.md",
+          "fileCount": 2,
+          "occurrenceCount": 83,
+          "coveragePercent": 13.33
+        }
+      ],
+      "examples": [
+        {
+          "file": "scripts/code-map/lib/file-header-comment.mjs",
+          "line": 103,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/render.mjs",
+          "line": 7,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/render.mjs",
+          "line": 8,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/render.mjs",
+          "line": 9,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/render.mjs",
+          "line": 12,
+          "moduleId": "code-map"
+        }
+      ]
+    },
+    {
+      "id": "node-json-config-loader",
+      "name": "JSON config loader",
+      "language": "JavaScript",
+      "confidence": "high",
+      "includeInHeadline": true,
+      "description": "Runtime configuration is loaded by parsing JSON read from disk.",
+      "source": "scripts/code-map/patterns/javascript.json",
+      "occurrenceCount": 20,
+      "fileCount": 15,
+      "coveragePercent": 27.27,
+      "modules": [
+        {
+          "id": "module-map",
+          "name": "module-map",
+          "root": "scripts/module-map",
+          "planningModule": "docs/code-index/modules/module-map.md",
+          "fileCount": 10,
+          "occurrenceCount": 14,
+          "coveragePercent": 27.78
+        },
+        {
+          "id": "code-map",
+          "name": "code-map",
+          "root": "scripts/code-map",
+          "planningModule": "docs/code-index/modules/code-map.md",
+          "fileCount": 4,
+          "occurrenceCount": 5,
+          "coveragePercent": 26.67
+        },
+        {
+          "id": "lib",
+          "name": "lib",
+          "root": "scripts/lib",
+          "planningModule": "docs/code-index/modules/lib.md",
+          "fileCount": 1,
+          "occurrenceCount": 1,
+          "coveragePercent": 25
+        }
+      ],
+      "examples": [
+        {
+          "file": "scripts/code-map/lib/code-map-config.mjs",
+          "line": 76,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/catalog.mjs",
+          "line": 49,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/model.mjs",
+          "line": 30,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/runtime-config.mjs",
+          "line": 51,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/runtime-config.mjs",
+          "line": 66,
+          "moduleId": "code-map"
+        }
+      ]
+    },
+    {
+      "id": "node-generated-file-writer",
+      "name": "Generated file writer",
+      "language": "JavaScript",
+      "confidence": "medium",
+      "includeInHeadline": true,
+      "description": "Code writes generated artifacts with writeFileSync.",
+      "source": "scripts/code-map/patterns/javascript.json",
+      "occurrenceCount": 18,
+      "fileCount": 9,
+      "coveragePercent": 16.36,
+      "modules": [
+        {
+          "id": "module-map",
+          "name": "module-map",
+          "root": "scripts/module-map",
+          "planningModule": "docs/code-index/modules/module-map.md",
+          "fileCount": 6,
+          "occurrenceCount": 13,
+          "coveragePercent": 16.67
+        },
+        {
+          "id": "code-map",
+          "name": "code-map",
+          "root": "scripts/code-map",
+          "planningModule": "docs/code-index/modules/code-map.md",
+          "fileCount": 3,
+          "occurrenceCount": 5,
+          "coveragePercent": 20
+        }
+      ],
+      "examples": [
+        {
+          "file": "scripts/code-map/generate-code-map.mjs",
+          "line": 377,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/generate-patterns.mjs",
+          "line": 125,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/generate-patterns.mjs",
+          "line": 126,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/temp-rules.mjs",
+          "line": 29,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/temp-rules.mjs",
+          "line": 46,
+          "moduleId": "code-map"
+        }
+      ]
+    },
+    {
+      "id": "node-child-process-runner",
+      "name": "Child process runner",
+      "language": "JavaScript",
+      "confidence": "medium",
+      "includeInHeadline": true,
+      "description": "Code shells out through spawnSync for local tooling integration.",
+      "source": "scripts/code-map/patterns/javascript.json",
+      "occurrenceCount": 5,
+      "fileCount": 5,
+      "coveragePercent": 9.09,
+      "modules": [
+        {
+          "id": "code-map",
+          "name": "code-map",
+          "root": "scripts/code-map",
+          "planningModule": "docs/code-index/modules/code-map.md",
+          "fileCount": 2,
+          "occurrenceCount": 2,
+          "coveragePercent": 13.33
+        },
+        {
+          "id": "module-map",
+          "name": "module-map",
+          "root": "scripts/module-map",
+          "planningModule": "docs/code-index/modules/module-map.md",
+          "fileCount": 2,
+          "occurrenceCount": 2,
+          "coveragePercent": 5.56
+        },
+        {
+          "id": "lib",
+          "name": "lib",
+          "root": "scripts/lib",
+          "planningModule": "docs/code-index/modules/lib.md",
+          "fileCount": 1,
+          "occurrenceCount": 1,
+          "coveragePercent": 25
+        }
+      ],
+      "examples": [
+        {
+          "file": "scripts/code-map/generate-code-map.mjs",
+          "line": 153,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/lib/patterns/scanner.mjs",
+          "line": 96,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/lib/resolve-ast-grep.mjs",
+          "line": 51,
+          "moduleId": "lib"
+        },
+        {
+          "file": "scripts/module-map/lib/adapters/sg-scan.mjs",
+          "line": 43,
+          "moduleId": "module-map"
+        },
+        {
+          "file": "scripts/module-map/regen-if-source-changed.mjs",
+          "line": 97,
+          "moduleId": "module-map"
+        }
+      ]
+    },
+    {
+      "id": "node-cli-argv-parser",
+      "name": "Node CLI argument parser",
+      "language": "JavaScript",
+      "confidence": "high",
+      "includeInHeadline": true,
+      "description": "A Node CLI entry point reads command-line arguments from process.argv.",
+      "source": "scripts/code-map/patterns/javascript.json",
+      "occurrenceCount": 3,
+      "fileCount": 3,
+      "coveragePercent": 5.45,
+      "modules": [
+        {
+          "id": "code-map",
+          "name": "code-map",
+          "root": "scripts/code-map",
+          "planningModule": "docs/code-index/modules/code-map.md",
+          "fileCount": 2,
+          "occurrenceCount": 2,
+          "coveragePercent": 13.33
+        },
+        {
+          "id": "module-map",
+          "name": "module-map",
+          "root": "scripts/module-map",
+          "planningModule": "docs/code-index/modules/module-map.md",
+          "fileCount": 1,
+          "occurrenceCount": 1,
+          "coveragePercent": 2.78
+        }
+      ],
+      "examples": [
+        {
+          "file": "scripts/code-map/generate-code-map.mjs",
+          "line": 80,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/code-map/generate-patterns.mjs",
+          "line": 23,
+          "moduleId": "code-map"
+        },
+        {
+          "file": "scripts/module-map/generate.mjs",
+          "line": 44,
+          "moduleId": "module-map"
+        }
+      ]
+    },
+    {
+      "id": "csharp-http-attributed-method",
+      "name": "HTTP attributed method",
+      "language": "CSharp",
+      "confidence": "high",
+      "includeInHeadline": true,
+      "description": "A C# method carries an HTTP route attribute.",
+      "source": "scripts/code-map/patterns/csharp.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "csharp-public-surface-method",
+      "name": "Public surface method",
+      "language": "CSharp",
+      "confidence": "intent-only",
+      "includeInHeadline": false,
+      "description": "A public method is visible as surface-area evidence but does not prove a higher-level pattern.",
+      "source": "scripts/code-map/patterns/csharp.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "go-cobra-command-runner",
+      "name": "Cobra command runner",
+      "language": "Go",
+      "confidence": "medium",
+      "includeInHeadline": true,
+      "description": "A Cobra command struct defines a Run or RunE handler.",
+      "source": "scripts/code-map/patterns/go.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "java-http-annotated-method",
+      "name": "HTTP annotated method",
+      "language": "Java",
+      "confidence": "high",
+      "includeInHeadline": true,
+      "description": "A Java method carries a common HTTP route annotation.",
+      "source": "scripts/code-map/patterns/java.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "python-click-command",
+      "name": "Click command function",
+      "language": "Python",
+      "confidence": "medium",
+      "includeInHeadline": true,
+      "description": "A Python function is decorated as a Click command.",
+      "source": "scripts/code-map/patterns/python.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "python-decorated-route-handler",
+      "name": "Decorated route handler",
+      "language": "Python",
+      "confidence": "high",
+      "includeInHeadline": true,
+      "description": "A Python function is decorated as an HTTP route handler.",
+      "source": "scripts/code-map/patterns/python.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "typescript-dynamic-import",
+      "name": "Dynamic import boundary",
+      "language": "TypeScript",
+      "confidence": "medium",
+      "includeInHeadline": true,
+      "description": "Code dynamically imports a module at runtime.",
+      "source": "scripts/code-map/patterns/typescript.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    },
+    {
+      "id": "typescript-nest-route-method",
+      "name": "NestJS route method",
+      "language": "TypeScript",
+      "confidence": "high",
+      "includeInHeadline": true,
+      "description": "A method is decorated as a NestJS HTTP route handler.",
+      "source": "scripts/code-map/patterns/typescript.json",
+      "occurrenceCount": 0,
+      "fileCount": 0,
+      "coveragePercent": 0,
+      "modules": [],
+      "examples": []
+    }
+  ]
+}

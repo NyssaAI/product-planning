@@ -13,22 +13,22 @@
 - [x] F-009: Doctor & staleness checks
 - [x] F-010: Legacy-layout migration
 - [x] F-011: Multi-harness packaging
-- [x] F-012: `/code-indexer` command
-- [ ] F-013: `/code-indexer arch` (planned)
-- [ ] F-014: `/code-indexer patterns` (planned)
+- [x] F-012: `/ci` command
+- [x] F-013: `/ci arch`
+- [x] F-014: `/ci patterns`
 
 ## Definitions
 
 ### F-001: Code map generation
 
 `scripts/code-map/generate-code-map.mjs` scans the repo with `@ast-grep/cli` structural rules and
-writes `docs/code-index/code-map.json` — a per-file symbol index (functions, classes, types, with
+writes `docs/code-index/code-map.json` - a per-file symbol index (functions, classes, types, with
 extracted signatures and doc-comments) plus an endpoint index, each entry carrying file and line.
 This is the L3 artifact, loaded only after a plan names symbols.
 
 ### F-002: Module map generation
 
-`scripts/module-map/generate.mjs` writes `docs/code-index/module-map.json` — a graph of modules with
+`scripts/module-map/generate.mjs` writes `docs/code-index/module-map.json` - a graph of modules with
 `dependsOn` / `usedBy` edges, route/symbol counts, and per-module metadata. Consumed for task
 ordering, not pasted wholesale into context.
 
@@ -41,8 +41,8 @@ Hand-authored files dropped into `modules/` are preserved and pruning only remov
 
 ### F-004: Progressive-disclosure planning workflow
 
-The `using-code-indexer` skill defines the L0–L3 disclosure model (L0 task → L1 in-scope module
-file → L2 product docs → L3 code map) so agents load the minimum relevant context instead of the
+The `using-code-indexer` skill defines the L0-L3 disclosure model (L0 task -> L1 in-scope module
+file -> L2 product docs -> L3 code map) so agents load the minimum relevant context instead of the
 whole codebase, plus the staleness gate that triggers regeneration before planning.
 
 ### F-005: Module discovery & pinning
@@ -64,7 +64,7 @@ symbols.
 
 `generate.mjs --init --write-scripts` scaffolds the required product docs, an optional
 `code-indexer.config.json`, the `docs/code-index/` layout, and project `npm run code-indexer`
-scripts — turning a fresh repo into one code-indexer can generate against.
+scripts - turning a fresh repo into one code-indexer can generate against.
 
 ### F-008: Module-map embedding
 
@@ -73,8 +73,8 @@ Generation embeds a module-map table (with a freshness timestamp) into the repo'
 
 ### F-009: Doctor & staleness checks
 
-`generate.mjs --doctor` (optionally `--runtimes`) reports per-runtime readiness — required docs,
-ast-grep availability, generated artifacts — and the staleness gate flags when source is newer than
+`generate.mjs --doctor` (optionally `--runtimes`) reports per-runtime readiness - required docs,
+ast-grep availability, generated artifacts - and the staleness gate flags when source is newer than
 the generated context so plans are never built against stale structure.
 
 ### F-010: Legacy-layout migration
@@ -88,21 +88,24 @@ One generator, four runtimes: Claude Code, Cursor, Codex, and Gemini each load t
 `commands/`, and `scripts/` via their own adapter (`.claude-plugin`, `.cursor-plugin`, `.codex`,
 `gemini-extension.json`).
 
-### F-012: `/code-indexer` command
+### F-012: `/ci` command
 
 A one-step command that runs code-map + module-map generation in the current project repo, wrapping
-the underlying `scripts/` entry points so users don't invoke Node paths by hand.
+the underlying `scripts/` entry points so users don't invoke Node paths by hand. `/code-indexer`
+remains a compatibility alias.
 
-### F-013: `/code-indexer arch` (planned)
+### F-013: `/ci arch`
 
 Builds a system-architecture document alongside the index: a Mermaid component diagram rendered from
-`module-map.json` edges plus an agent-authored system-overview prose section, written to
-`docs/code-index/system-architecture.md`. Designed, not yet shipped.
+`module-map.json` edges plus a preserved agent-authored system-overview prose section, written to
+`docs/code-index/system-architecture.md`. The command is for repo onboarding, cross-module
+architecture review, and handoff; routine implementation planning still starts from `index.md` and
+the minimum in-scope module docs.
 
-### F-014: `/code-indexer patterns` (planned)
+### F-014: `/ci patterns`
 
-Scans for structurally-detectable code patterns and writes `docs/code-index/patterns.md` (+
-`patterns.json`) — named patterns, occurrence counts, and percent-of-codebase coverage attributed per
-module. Runs a plugin seed catalog of ast-grep rules plus repo-defined extensions, with tiered
-confidence (high / medium / intent-only) so the coverage figure is honest about precision. Designed,
-not yet shipped.
+Scans for structurally-detectable code patterns and writes `docs/code-index/patterns.md` and
+`docs/code-index/patterns.json` - named patterns, occurrence counts, and percent-of-codebase coverage
+attributed per module. Runs a plugin seed catalog of JSON ast-grep rules plus repo-defined
+extensions, with tiered confidence (high / medium / intent-only) so the coverage figure is honest
+about precision. Headline coverage uses pattern-eligible files and excludes `intent-only` signals.

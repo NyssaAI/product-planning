@@ -1,8 +1,8 @@
 {
   "name": "code-indexer",
-  "displayName": "Dev Tools",
+  "displayName": "Code Indexer",
   "description": "code-indexer: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, and Gemini",
-  "version": "7.0.0",
+  "version": "1.0.0",
   "author": {
     "name": "jamaynor"
   },

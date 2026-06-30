@@ -205,8 +205,8 @@ function pluginScriptCommand(scriptRelPath) {
   const js = [
     "const { spawnSync } = require('node:child_process');",
     "const path = require('node:path');",
-    "const root = process.env.CLAUDE_PLUGIN_ROOT || process.env.CURSOR_PLUGIN_ROOT;",
-    "if (!root) { console.error('code-indexer plugin root not found. Set CLAUDE_PLUGIN_ROOT or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
+    "const root = process.env.CODE_INDEXER_PLUGIN_ROOT || process.env.CLAUDE_PLUGIN_ROOT || process.env.CURSOR_PLUGIN_ROOT;",
+    "if (!root) { console.error('code-indexer plugin root not found. Set CODE_INDEXER_PLUGIN_ROOT, CLAUDE_PLUGIN_ROOT, or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
     `const script = path.join(root, ${JSON.stringify(script)});`,
     "const result = spawnSync(process.execPath, [script, ...process.argv.slice(1)], { stdio: 'inherit' });",
     "if (result.error) { console.error(result.error.message); process.exit(1); }",

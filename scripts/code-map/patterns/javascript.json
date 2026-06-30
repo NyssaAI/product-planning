@@ -1,0 +1,59 @@
+{
+  "patterns": [
+    {
+      "id": "node-cli-argv-parser",
+      "name": "Node CLI argument parser",
+      "language": "JavaScript",
+      "confidence": "high",
+      "description": "A Node CLI entry point reads command-line arguments from process.argv.",
+      "rule": {
+        "pattern": "process.argv.slice($$$)"
+      },
+      "tags": ["cli", "node"]
+    },
+    {
+      "id": "node-json-config-loader",
+      "name": "JSON config loader",
+      "language": "JavaScript",
+      "confidence": "high",
+      "description": "Runtime configuration is loaded by parsing JSON read from disk.",
+      "rule": {
+        "pattern": "JSON.parse(readFileSync($$$))"
+      },
+      "tags": ["config", "filesystem"]
+    },
+    {
+      "id": "node-generated-file-writer",
+      "name": "Generated file writer",
+      "language": "JavaScript",
+      "confidence": "medium",
+      "description": "Code writes generated artifacts with writeFileSync.",
+      "rule": {
+        "pattern": "writeFileSync($$$)"
+      },
+      "tags": ["filesystem", "generation"]
+    },
+    {
+      "id": "node-child-process-runner",
+      "name": "Child process runner",
+      "language": "JavaScript",
+      "confidence": "medium",
+      "description": "Code shells out through spawnSync for local tooling integration.",
+      "rule": {
+        "pattern": "spawnSync($$$)"
+      },
+      "tags": ["tooling", "process"]
+    },
+    {
+      "id": "markdown-lines-renderer",
+      "name": "Markdown lines renderer",
+      "language": "JavaScript",
+      "confidence": "medium",
+      "description": "Markdown output is assembled by pushing strings into a lines array.",
+      "rule": {
+        "pattern": "lines.push($$$)"
+      },
+      "tags": ["rendering", "markdown"]
+    }
+  ]
+}

@@ -23,7 +23,19 @@
 | `nextRouteSegment` |  |
 | `extractFileHeaderComment` |  |
 | `annotateCodeMapWithModules` | Add module ownership to a code-map document and expose a flat symbol index. |
+| `loadPatternCatalogs` |  |
+| `loadJsonArtifact` |  |
+| `buildPatternReport` |  |
+| `renderPatternsMarkdown` |  |
+| `loadPatternRuntimeConfig` |  |
+| `partitionPatternEligibleFiles` |  |
+| `runPatternScan` |  |
+| `writeTempAstGrepConfig` |  |
+| `cleanupTempAstGrepConfig` |  |
 | `extractSignature` | Extracts the declaration signature starting at the given line. |
+| `sourceFilesInRoots` |  |
+| `languageForFile` |  |
+| `isKnownSourceFile` |  |
 | `SOURCE_EXTENSIONS` | Extensions that drive file detection. |
 
 ## Boundaries
@@ -56,7 +68,11 @@
 - `scripts/code-map/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/code-map/lib/file-header-comment.mjs`: extractFileHeaderComment
 - `scripts/code-map/lib/module-linker.mjs`: annotateCodeMapWithModules
-- `scripts/code-map/lib/signature-extractor.mjs`: extractSignature
+- `scripts/code-map/lib/patterns/catalog.mjs`: loadPatternCatalogs
+- `scripts/code-map/lib/patterns/model.mjs`: loadJsonArtifact, buildPatternReport
+- `scripts/code-map/lib/patterns/render.mjs`: renderPatternsMarkdown
+- `scripts/code-map/lib/patterns/runtime-config.mjs`: loadPatternRuntimeConfig
+- `scripts/code-map/lib/patterns/scanner.mjs`: partitionPatternEligibleFiles, runPatternScan
 
 ## After planning
 

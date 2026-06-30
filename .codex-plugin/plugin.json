@@ -1,0 +1,39 @@
+{
+  "name": "code-indexer",
+  "version": "1.0.0",
+  "description": "Generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, and Gemini.",
+  "author": {
+    "name": "jamaynor"
+  },
+  "homepage": "https://github.com/jamaynor/code-indexer",
+  "repository": "https://github.com/jamaynor/code-indexer",
+  "license": "LicenseRef-Jamaynor-Commercial-1.0",
+  "keywords": [
+    "code-indexer",
+    "code-map",
+    "module-map",
+    "context",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Indexer",
+    "shortDescription": "Generate code maps and module context for agents.",
+    "longDescription": "Code Indexer scans repositories and produces scoped planning context under docs/code-index, including symbol maps, endpoint indexes, module graphs, and per-module architecture summaries for AI coding agents.",
+    "developerName": "jamaynor",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/jamaynor/code-indexer",
+    "defaultPrompt": [
+      "Generate code-indexer context for this repo",
+      "Use code-indexer context before planning",
+      "Refresh the module graph"
+    ],
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}

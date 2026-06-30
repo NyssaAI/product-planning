@@ -8,6 +8,7 @@
  *   node scripts/module-map/generate.mjs --doctor     # validate setup
  *   node scripts/module-map/generate.mjs --doctor --runtimes
  *   node scripts/module-map/generate.mjs --migrate    # move legacy layout to docs/code-index/
+ *   node scripts/module-map/generate.mjs --arch       # refresh system architecture doc
  */
 
 import {
@@ -33,6 +34,10 @@ import { findProjectRoot } from './lib/project-root.mjs';
 import { renderIndex, renderModuleScope } from './lib/render.mjs';
 import { discoverModules } from './lib/discover-modules.mjs';
 import { pinModule, unpinModule } from './lib/pin.mjs';
+import {
+  loadArchitectureModel,
+  renderSystemArchitecture,
+} from './lib/architecture.mjs';
 
 const log = createLogger({ module: 'generate' });
 
@@ -40,6 +45,7 @@ const args = process.argv.slice(2);
 const initMode = args.includes('--init') || args.includes('-i');
 const doctorMode = args.includes('--doctor');
 const migrateMode = args.includes('--migrate');
+const archMode = args.includes('--arch');
 const jsonMode = args.includes('--json');
 const runtimesMode = args.includes('--runtimes');
 const writeScripts = args.includes('--write-scripts');
@@ -73,7 +79,14 @@ function loadCodeMap(repoRoot, codeMapOutput) {
     log.warn('CODE_MAP missing', { path: codeMapOutput });
     return { files: [], endpoints: [] };
   }
-  const raw = JSON.parse(readFileSync(mapPath, 'utf8'));
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(mapPath, 'utf8'));
+  } catch {
+    const err = new Error(`INVALID_CODE_MAP: ${codeMapOutput} is not valid JSON`);
+    err.code = 'INVALID_CODE_MAP';
+    throw err;
+  }
   const files = Array.isArray(raw.files) ? raw.files : [];
   const endpoints = Array.isArray(raw.endpoints) ? raw.endpoints : [];
   log.debug('loaded CODE_MAP', { files: files.length, endpoints: endpoints.length });
@@ -115,6 +128,8 @@ function runDoctorCommand() {
  * @property {string[]} warnings Named codes: CODE_MAP_STALE, …
  * @property {string[]} errors Named codes: MISSING_DOCS, NO_MODULES_FOUND, AST_GREP_NOT_FOUND, …
  * @property {string} summary
+ * @property {string[]} [wrote]
+ * @property {number} [edges]
  */
 
 /**
@@ -271,6 +286,98 @@ function runGenerate() {
 }
 
 /**
+ * @returns {GenerateResult}
+ */
+function runArchitecture() {
+  log.info('architecture mode start', { repoRoot: REPO_ROOT });
+  /** @type {string[]} */
+  const warnings = [];
+  /** @type {string[]} */
+  const errors = [];
+  /** @type {string[]} */
+  const wrote = [];
+
+  let config;
+  let model;
+  try {
+    config = loadCodeIndexerConfig(REPO_ROOT);
+    model = loadArchitectureModel(REPO_ROOT, config);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    errors.push(message);
+    return {
+      ok: false,
+      skipped: true,
+      modules: 0,
+      edges: 0,
+      wrote,
+      warnings,
+      errors,
+      summary: `architecture skipped — ${message}`,
+    };
+  }
+
+  if (model.modules.length === 0) {
+    errors.push(
+      'NO_MODULES_FOUND: module-map.json contains zero modules — run code-indexer generation first'
+    );
+    return {
+      ok: false,
+      skipped: true,
+      modules: 0,
+      edges: model.edges.length,
+      wrote,
+      warnings,
+      errors,
+      summary: 'architecture skipped — module-map.json contains zero modules',
+    };
+  }
+
+  const outDir = path.join(REPO_ROOT, config.outputDir);
+  const archPath = path.join(outDir, 'system-architecture.md');
+  const existingMarkdown = existsSync(archPath)
+    ? readFileSync(archPath, 'utf8')
+    : '';
+
+  try {
+    mkdirSync(outDir, { recursive: true });
+    const moduleMapPath = path.join(config.outputDir, 'module-map.json');
+    writeFileSync(
+      archPath,
+      renderSystemArchitecture(model, { existingMarkdown, moduleMapPath }),
+      'utf8'
+    );
+    wrote.push(path.relative(REPO_ROOT, archPath).replace(/\\/g, '/'));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    errors.push(`ARCH_WRITE_FAILED: ${message}`);
+  }
+
+  const summary =
+    errors.length > 0
+      ? `architecture failed — ${errors.join('; ')}`
+      : `${model.modules.length} modules, ${model.edges.length} edges → ${config.outputDir}/system-architecture.md`;
+
+  log.info('architecture mode complete', {
+    ok: errors.length === 0,
+    modules: model.modules.length,
+    edges: model.edges.length,
+    wrote,
+  });
+
+  return {
+    ok: errors.length === 0,
+    skipped: false,
+    modules: model.modules.length,
+    edges: model.edges.length,
+    wrote,
+    warnings,
+    errors,
+    summary,
+  };
+}
+
+/**
  * @param {GenerateResult} result
  */
 function reportGenerateResult(result) {
@@ -358,7 +465,24 @@ function main() {
     return;
   }
 
-  reportGenerateResult(runGenerate());
+  if (archMode) {
+    reportGenerateResult(runArchitecture());
+    return;
+  }
+
+  try {
+    reportGenerateResult(runGenerate());
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    reportGenerateResult({
+      ok: false,
+      skipped: false,
+      modules: 0,
+      warnings: [],
+      errors: [message],
+      summary: `generation failed — ${message}`,
+    });
+  }
 }
 
 main();

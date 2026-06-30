@@ -44,8 +44,14 @@ test('bootstrap package scripts run installed plugin tooling instead of repo-loc
 
   assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
   assert.doesNotMatch(pkg.scripts['code-indexer'], /node scripts\/module-map\//);
-  assert.match(pkg.scripts['code-map'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
-  assert.match(pkg.scripts['code-indexer'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
+  assert.match(
+    pkg.scripts['code-map'],
+    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
+  );
+  assert.match(
+    pkg.scripts['code-indexer'],
+    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
+  );
   assert.match(pkg.scripts['code-map'], /scripts\/code-map\/generate-code-map\.mjs/);
   assert.match(pkg.scripts['code-indexer'], /scripts\/module-map\/generate\.mjs/);
 });
@@ -68,8 +74,14 @@ test('bootstrap replaces known stale local code-indexer package scripts', () => 
 
   assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
   assert.doesNotMatch(pkg.scripts['code-indexer'], /node scripts\/module-map\//);
-  assert.match(pkg.scripts['code-map'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
-  assert.match(pkg.scripts['code-indexer'], /CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/);
+  assert.match(
+    pkg.scripts['code-map'],
+    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
+  );
+  assert.match(
+    pkg.scripts['code-indexer'],
+    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
+  );
   assert.equal(pkg.scripts.test, 'node --test');
 });
 
@@ -88,7 +100,7 @@ test('bootstrap package scripts resolve plugin scripts and forward arguments', (
   let exitCode = null;
   const fakeProcess = {
     argv: ['node', '--doctor'],
-    env: { CLAUDE_PLUGIN_ROOT: pluginRoot },
+    env: { CODE_INDEXER_PLUGIN_ROOT: pluginRoot },
     execPath: 'node',
     exit(code) {
       exitCode = code;

@@ -1,8 +1,10 @@
-# code-indexer — generate code & module graph
+# code-indexer - generate code & module graph
 
-**Agent workflow:** Invoke **code-indexer:using-code-indexer** first — it defines L0–L3 progressive disclosure, module scope selection, and staleness rules.
+**Preferred shortcut:** `/ci`
 
-This command runs **generation only** in the current project repository.
+**Agent workflow:** Invoke **code-indexer:using-code-indexer** first - it defines L0-L3 progressive disclosure, module scope selection, staleness rules, `/ci arch`, and `/ci patterns`.
+
+This command runs code-indexer workflows in the current project repository.
 
 ## Prerequisites (project repo)
 
@@ -11,7 +13,7 @@ This command runs **generation only** in the current project repository.
 
 ## Commands (project root)
 
-Replace `${PLUGIN_ROOT}` with `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or your code-indexer plugin directory.
+Replace `${PLUGIN_ROOT}` with `CODE_INDEXER_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or your code-indexer plugin directory.
 
 **Bootstrap once:**
 
@@ -33,4 +35,20 @@ node "${PLUGIN_ROOT}/scripts/code-map/generate-code-map.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs"
 ```
 
-Maintainer reference: `scripts/code-indexer/README.md`.
+**System architecture (`/ci arch`):**
+
+Use only for repo onboarding, cross-module architecture review, or handoff. Apply the skill's staleness gate first; if stale, run normal `/ci`, then:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs" --arch
+```
+
+**Patterns (`/ci patterns`):**
+
+Use for architecture/style discovery and codebase consistency review. Apply the skill's staleness gate first; if stale, run normal `/ci`, then:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/code-map/generate-patterns.mjs"
+```
+
+Maintainer reference: `scripts/module-map/README.md`.

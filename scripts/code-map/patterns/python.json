@@ -1,0 +1,43 @@
+{
+  "patterns": [
+    {
+      "id": "python-decorated-route-handler",
+      "name": "Decorated route handler",
+      "language": "Python",
+      "confidence": "high",
+      "description": "A Python function is decorated as an HTTP route handler.",
+      "rule": {
+        "kind": "decorated_definition",
+        "all": [
+          {
+            "has": {
+              "kind": "decorator",
+              "regex": "@(app|router)\\.(route|get|post|put|delete|patch)\\b"
+            }
+          },
+          {
+            "has": {
+              "kind": "function_definition"
+            }
+          }
+        ]
+      },
+      "tags": ["http", "routing"]
+    },
+    {
+      "id": "python-click-command",
+      "name": "Click command function",
+      "language": "Python",
+      "confidence": "medium",
+      "description": "A Python function is decorated as a Click command.",
+      "rule": {
+        "kind": "decorated_definition",
+        "has": {
+          "kind": "decorator",
+          "regex": "@.*\\.command\\b|@click\\.command\\b"
+        }
+      },
+      "tags": ["cli"]
+    }
+  ]
+}

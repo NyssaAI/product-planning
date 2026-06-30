@@ -39,7 +39,7 @@ Regenerate **only when needed**: if `docs/code-index/index.md` is missing, or so
 npm run code-indexer
 ```
 
-Or via plugin scripts (`PLUGIN_ROOT` = code-indexer plugin directory, e.g. `CLAUDE_PLUGIN_ROOT`):
+Or via plugin scripts (`PLUGIN_ROOT` = code-indexer plugin directory, e.g. `CODE_INDEXER_PLUGIN_ROOT`):
 
 ```bash
 node "<PLUGIN_ROOT>/scripts/module-map/generate.mjs" --doctor

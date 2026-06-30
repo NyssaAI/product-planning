@@ -55,6 +55,7 @@ function ensurePluginAstGrep(pluginRoot) {
       cwd: pluginRoot,
       stdio: 'inherit',
       shell: process.platform === 'win32',
+      timeout: 120_000,
     }
   );
 
@@ -109,6 +110,6 @@ export function resolveAstGrepBinary(options) {
 
   throw new Error(
     '@ast-grep/cli not found. The code-indexer plugin should install it automatically on first use. ' +
-      'If this persists, run `npm install` in the code-indexer plugin directory (CLAUDE_PLUGIN_ROOT / CURSOR_PLUGIN_ROOT).'
+      'If this persists, run `npm install` in the code-indexer plugin directory (CODE_INDEXER_PLUGIN_ROOT / CLAUDE_PLUGIN_ROOT / CURSOR_PLUGIN_ROOT).'
   );
 }

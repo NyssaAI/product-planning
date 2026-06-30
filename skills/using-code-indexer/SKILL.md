@@ -5,7 +5,7 @@ description: Use when implementation planning needs scoped repo context from doc
 
 # Using code-indexer
 
-**Canonical source** for code-indexer behavior. The `/code-indexer` command, `scripts/bootstrap-templates/AGENTS.md`, `.cursor/rules/code-indexer.mdc`, and the embedded module-map table in `CLAUDE.md` / `AGENTS.md` are thin wrappers that must stay in sync with this skill — update this skill first when rules change.
+**Canonical source** for code-indexer behavior. The `/ci` command, the `/code-indexer` alias, `scripts/bootstrap-templates/AGENTS.md`, `.cursor/rules/code-indexer.mdc`, and the embedded module-map table in `CLAUDE.md` / `AGENTS.md` are thin wrappers that must stay in sync with this skill - update this skill first when rules change.
 
 Repository-agnostic **code map + module graph** for planning. Outputs live under `docs/code-index/` in the **target repository** (not inside the plugin).
 
@@ -17,6 +17,8 @@ Repository-agnostic **code map + module graph** for planning. Outputs live under
 - When `docs/product.md`, `docs/roadmap.md`, `docs/tech-stack.md` exist and you need module boundaries for an existing codebase.
 
 Do **not** use for greenfield repos with no source yet (skip until code exists).
+
+Use `docs/code-index/system-architecture.md` only for repo onboarding, cross-module architecture review, or human handoff. Routine implementation planning still starts with `docs/code-index/index.md` and the minimum in-scope module files.
 
 ## Progressive Disclosure (mandatory)
 
@@ -57,16 +59,54 @@ From the **project root**, using scripts bundled in the code-indexer plugin:
 
 ```bash
 # One-time bootstrap (creates docs, configs, AGENTS.md stubs)
-node "<PLUGIN_ROOT>/scripts/module-map/generate.mjs" --init --write-scripts
+node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs" --init --write-scripts
 
 # Regenerate map + module files (run code-map first internally via npm script, or both):
-node "<PLUGIN_ROOT>/scripts/code-map/generate-code-map.mjs"
-node "<PLUGIN_ROOT>/scripts/module-map/generate.mjs"
+node "${PLUGIN_ROOT}/scripts/code-map/generate-code-map.mjs"
+node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs"
 ```
 
-Replace `<PLUGIN_ROOT>` with `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed code-indexer plugin directory.
+Replace `${PLUGIN_ROOT}` with `CODE_INDEXER_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed code-indexer plugin directory.
 
-**Validate:** `node "<PLUGIN_ROOT>/scripts/module-map/generate.mjs" --doctor`
+**Validate:** `node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs" --doctor`
+
+Add `--json` to any command for machine-readable output (used by agents; emits a single JSON object to stdout).
+
+### `/ci arch` system architecture
+
+Use `/ci arch` when the user asks for a system-level architecture document, repo onboarding view, cross-module review, or handoff artifact. Do not load `system-architecture.md` as default context for routine feature planning.
+
+From the **project root**:
+
+1. Apply the staleness gate below.
+2. If the index is stale or missing, run normal `/ci` first.
+3. Generate or refresh the architecture artifact:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs" --arch
+# Machine-readable result:
+node "${PLUGIN_ROOT}/scripts/module-map/generate.mjs" --arch --json
+```
+
+The low-level `--arch` command reads the persisted module map from the configured output directory (`docs/code-index/module-map.json` by default) and writes `system-architecture.md` alongside it. It preserves the agent-authored content between `code-index:system-overview` markers. After generation, enrich that preserved overview from the module docs and product docs when the user asked for narrative architecture prose.
+
+### `/ci patterns` structural patterns
+
+Use `/ci patterns` for architecture/style discovery and codebase consistency review. Do not load `patterns.md` or `patterns.json` as default context for routine feature planning.
+
+From the **project root**:
+
+1. Apply the staleness gate below.
+2. If the index is stale or missing, run normal `/ci` first.
+3. Generate or refresh the pattern artifacts:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/code-map/generate-patterns.mjs"
+# Machine-readable result:
+node "${PLUGIN_ROOT}/scripts/code-map/generate-patterns.mjs" --json
+```
+
+The low-level patterns command reads the configured code-map output and persisted module map (`docs/code-index/code-map.json` and `docs/code-index/module-map.json` by default), scans source files with bundled and repo-configured JSON pattern catalogs, and writes `patterns.md` plus `patterns.json` in the configured output directory. Headline coverage is based on pattern-eligible files and excludes `intent-only` signals. Use `--json` to get a structured result object (includes `ok`, `wrote`, `warnings`, `errors`, `coveragePercent`).
 
 **Project `package.json` scripts** (after `--init --write-scripts`):
 
@@ -101,6 +141,8 @@ Regenerate when:
 - Module folders added/removed/renamed
 - Public API or route structure changed materially
 - Module file missing for the module you need
+- `docs/code-index/system-architecture.md` is requested and `docs/code-index/module-map.json` is missing or stale
+- `docs/code-index/patterns.md` is requested and `docs/code-index/code-map.json` or `docs/code-index/module-map.json` is missing or stale
 
 **Staleness gate:** run `npm run code-indexer` (or `node scripts/module-map/generate.mjs`) **before any planning step** when any of these hold — do not proceed with stale context:
 
@@ -114,4 +156,4 @@ Tell your human partner: "Module graph was stale — regenerated before planning
 
 Generated artifacts live under `docs/code-index/` in the target repository. Do not invent alternate paths.
 
-See `scripts/code-indexer/README.md` in the plugin for generator and config details.
+See `scripts/module-map/README.md` in the plugin for generator and config details.

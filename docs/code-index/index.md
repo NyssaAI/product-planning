@@ -1,6 +1,6 @@
 # code-indexer — code-indexer index
 
-Generated: 2026-06-29T21:01:53.884Z. Regenerate: `npm run code-indexer`.
+Generated: 2026-06-30T13:24:53.517Z. Regenerate: `npm run code-indexer`.
 
 ## Progressive disclosure (for planning agents)
 
