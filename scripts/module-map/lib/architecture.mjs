@@ -29,7 +29,7 @@ const OVERVIEW_REGION = 'system-overview';
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {import('./config.mjs').PlanProductConfig} config
  * @returns {ArchitectureModel}
  */
 export function loadArchitectureModel(repoRoot, config) {
@@ -115,33 +115,32 @@ export function renderSystemArchitecture(model, options = {}) {
   const lines = [];
   const projectName = model.project?.name ?? 'Project';
   const generated = model.generated ?? new Date(0).toISOString();
-  const moduleMapPath = normalizeRel(options.moduleMapPath ?? 'docs/code-index/module-map.json');
+  const moduleMapPath = normalizeRel(options.moduleMapPath ?? 'docs/code-map/module-map.json');
+  const modules = sortModulesByDependencyCount(model.modules);
   const overviewFallback = [
-    'Summarize the system architecture here after reviewing the generated component diagram, module responsibilities, dependency flows, and relevant product docs.',
+    'Summarize the system architecture here after reviewing the generated component tree, module responsibilities, dependency flows, and relevant product docs.',
   ].join('\n');
 
   lines.push(`# ${projectName} System Architecture`);
   lines.push('');
   lines.push(
-    `Generated from \`${moduleMapPath}\` at ${generated}. Regenerate with \`/ci arch\`.`
+    `Generated from \`${moduleMapPath}\` at ${generated}. Regenerate with \`map-architecture\`.`
   );
   lines.push('');
   lines.push('## Use This When');
   lines.push('');
   lines.push('- Use for repo onboarding, cross-module architecture review, and human handoff.');
   lines.push(
-    '- For routine implementation planning, start with `docs/code-index/index.md` and the minimum relevant module files.'
+    '- For routine implementation planning, start with the generated index and the minimum relevant module files.'
   );
   lines.push('');
   lines.push('## System Overview');
   lines.push('');
-  lines.push(
-    preserveMarkedRegion(options.existingMarkdown ?? '', OVERVIEW_REGION, overviewFallback)
-  );
+  lines.push(preserveMarkedRegion(options.existingMarkdown ?? '', OVERVIEW_REGION, overviewFallback));
   lines.push('');
-  lines.push('## Component Diagram');
+  lines.push('## Component Tree');
   lines.push('');
-  lines.push(renderArchitectureMermaid(model));
+  lines.push(renderArchitectureTree({ ...model, modules }));
   lines.push('');
   if (model.edges.length === 0) {
     lines.push('No cross-module dependency edges are recorded in `module-map.json`.');
@@ -151,7 +150,7 @@ export function renderSystemArchitecture(model, options = {}) {
   lines.push('');
   lines.push('| Module | Owns | Depends on | Used by | Module file |');
   lines.push('|--------|------|------------|---------|-------------|');
-  for (const mod of model.modules) {
+  for (const mod of modules) {
     const owns = summarizeDescription(mod.description, mod.id);
     const dependsOn = mod.dependsOn.length > 0 ? mod.dependsOn.join(', ') : '-';
     const usedBy = mod.usedBy.length > 0 ? mod.usedBy.join(', ') : '-';
@@ -171,7 +170,7 @@ export function renderSystemArchitecture(model, options = {}) {
     }
   }
   lines.push('');
-  lines.push(`<!-- code-index:system-architecture generated ${generated} -->`);
+  lines.push(`<!-- plan-product:system-architecture generated ${generated} -->`);
   return `${lines.join('\n')}\n`;
 }
 
@@ -179,69 +178,100 @@ export function renderSystemArchitecture(model, options = {}) {
  * @param {ArchitectureModel} model
  * @returns {string}
  */
-export function renderArchitectureMermaid(model) {
-  const ids = createMermaidNodeIds(model.modules);
-  const lines = ['```mermaid', 'flowchart LR'];
-  for (const mod of model.modules) {
-    lines.push(`  ${ids.get(mod.id)}["${escapeMermaidLabel(mod.name || mod.id)}"]`);
+export function renderArchitectureTree(model) {
+  const modules = sortModulesByDependencyCount(model.modules);
+  const lines = ['```text', oneLine(model.project?.name ?? 'Project')];
+  if (modules.length === 0) {
+    lines.push('`-- No modules recorded');
+    lines.push('```');
+    return lines.join('\n');
   }
-  for (const edge of model.edges) {
-    const from = ids.get(edge.from);
-    const to = ids.get(edge.to);
-    if (from && to) {
-      lines.push(`  ${from} --> ${to}`);
+
+  for (const [index, mod] of modules.entries()) {
+    const isLastModule = index === modules.length - 1;
+    const modulePrefix = isLastModule ? '`-- ' : '|-- ';
+    const childPrefix = isLastModule ? '    ' : '|   ';
+    const children = moduleTreeChildren(mod);
+
+    lines.push(`${modulePrefix}${moduleTreeLabel(mod)}`);
+    for (const [childIndex, child] of children.entries()) {
+      const childMarker = childIndex === children.length - 1 ? '`-- ' : '|-- ';
+      lines.push(`${childPrefix}${childMarker}${child}`);
     }
   }
+
   lines.push('```');
   return lines.join('\n');
 }
 
 /**
  * @param {ArchitectureModule[]} modules
- * @returns {Map<string, string>}
+ * @returns {ArchitectureModule[]}
  */
-export function createMermaidNodeIds(modules) {
-  const used = new Set();
-  const out = new Map();
-
-  for (const mod of modules) {
-    const base = sanitizeMermaidId(mod.id);
-    let candidate = base;
-    let suffix = 2;
-    while (used.has(candidate)) {
-      candidate = `${base}_${suffix}`;
-      suffix += 1;
-    }
-    used.add(candidate);
-    out.set(mod.id, candidate);
-  }
-
-  return out;
+export function sortModulesByDependencyCount(modules) {
+  return [...modules].sort(
+    (a, b) =>
+      a.dependsOn.length - b.dependsOn.length ||
+      a.id.localeCompare(b.id) ||
+      (a.name || '').localeCompare(b.name || '')
+  );
 }
 
 /**
- * @param {string} value
+ * @param {ArchitectureModule} mod
  * @returns {string}
  */
-export function sanitizeMermaidId(value) {
-  const cleaned = String(value)
-    .trim()
-    .replace(/[^A-Za-z0-9_]/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '')
-    .toLowerCase();
-  return `m_${cleaned || 'module'}`;
+function moduleTreeLabel(mod) {
+  const name = oneLine(mod.name || mod.id);
+  const id = oneLine(mod.id);
+  return name === id ? name : `${name} (${id})`;
+}
+
+/**
+ * @param {ArchitectureModule} mod
+ * @returns {string[]}
+ */
+function moduleTreeChildren(mod) {
+  const children = [];
+  if (mod.root) {
+    children.push(`root: ${oneLine(mod.root)}`);
+  }
+  children.push(`depends on: ${formatTreeList(mod.dependsOn)}`);
+  children.push(`used by: ${formatTreeList(mod.usedBy)}`);
+  return children;
+}
+
+/**
+ * @param {string[]} values
+ * @returns {string}
+ */
+function formatTreeList(values) {
+  return values.length > 0 ? values.map(oneLine).join(', ') : '-';
+}
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function oneLine(value) {
+  return String(value).replace(/\r?\n/g, ' ').trim();
 }
 
 /**
  * @param {string} existingMarkdown
  * @param {string} regionName
  * @param {string} fallbackMarkdown
+ * @param {{ replaceBodies?: string[] }} [options]
  * @returns {string}
  */
-export function preserveMarkedRegion(existingMarkdown, regionName, fallbackMarkdown) {
-  const start = `<!-- code-index:${regionName}:start -->`;
-  const end = `<!-- code-index:${regionName}:end -->`;
+export function preserveMarkedRegion(
+  existingMarkdown,
+  regionName,
+  fallbackMarkdown,
+  options = {}
+) {
+  const start = `<!-- plan-product:${regionName}:start -->`;
+  const end = `<!-- plan-product:${regionName}:end -->`;
   const startIdx = existingMarkdown.indexOf(start);
   const endIdx = existingMarkdown.indexOf(end);
   let body = fallbackMarkdown.trim();
@@ -258,6 +288,10 @@ export function preserveMarkedRegion(existingMarkdown, regionName, fallbackMarkd
       .slice(startIdx + start.length)
       .replace(/^\r?\n/, '')
       .replace(/\r?\n$/, '');
+  }
+
+  if (options.replaceBodies?.map((entry) => entry.trim()).includes(body.trim())) {
+    body = fallbackMarkdown.trim();
   }
 
   return [start, body, end].join('\n');
@@ -336,14 +370,6 @@ function normalizeRel(value) {
  */
 function escapeTableCell(value) {
   return String(value).replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
-}
-
-/**
- * @param {string} value
- * @returns {string}
- */
-function escapeMermaidLabel(value) {
-  return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
 /**

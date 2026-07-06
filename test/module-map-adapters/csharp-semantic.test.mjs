@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import csharpAdapter from '../../scripts/module-map/lib/adapters/csharp.mjs';
-import { buildCodeIndexerModel } from '../../scripts/module-map/lib/build.mjs';
+import { buildPlanProductModel } from '../../scripts/module-map/lib/build.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..', '..');
@@ -26,14 +26,14 @@ function edgeMap(graph) {
   return new Map(graph.edges.map((edge) => [`${edge.from}->${edge.to}`, edge]));
 }
 
-function codeIndexerConfig() {
+function planProductConfig() {
   return {
     projectName: 'csharp-fixture',
-    outputDir: 'docs/code-index',
-    codeMapOutput: 'docs/code-index/code-map.json',
+    outputDir: 'docs/code-map',
+    codeMapOutput: 'docs/code-map/code-map.json',
     docs: {
       product: ['docs/product.md'],
-      roadmap: ['docs/roadmap.md'],
+      features: ['docs/features.md'],
       techStack: ['docs/tech-stack.md'],
     },
     briefMaxCharsPerDoc: 1200,
@@ -115,9 +115,9 @@ test('csharp adapter source has no NUL separators', () => {
   assert.equal(source.includes('\u0000'), false);
 });
 
-test('code-indexer model preserves C# adapter dependencies in module graph', () => {
+test('plan-product model preserves C# adapter dependencies in module graph', () => {
   const graph = csharpAdapter.extract(fixtureRoot, files);
-  const model = buildCodeIndexerModel(fixtureRoot, codeIndexerConfig(), graph.files);
+  const model = buildPlanProductModel(fixtureRoot, planProductConfig(), graph.files);
   const moduleEdges = new Set(
     model.moduleGraph.edges.map((edge) => `${edge.from}->${edge.to}`)
   );

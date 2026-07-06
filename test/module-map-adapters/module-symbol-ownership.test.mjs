@@ -3,14 +3,14 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildCodeIndexerModel } from '../../scripts/module-map/lib/build.mjs';
+import { buildPlanProductModel } from '../../scripts/module-map/lib/build.mjs';
 
 function config(manual) {
   return {
     projectName: 'fixture',
-    outputDir: 'docs/code-index',
-    codeMapOutput: 'docs/code-index/code-map.json',
-    docs: { product: [], roadmap: [], techStack: [] },
+    outputDir: 'docs/code-map',
+    codeMapOutput: 'docs/code-map/code-map.json',
+    docs: { product: [], features: [], techStack: [] },
     briefMaxCharsPerDoc: 1200,
     modules: {
       discover: 'manual',
@@ -38,7 +38,7 @@ test('module symbolCount is disjoint — a parent excludes child-module symbols'
       ],
       endpoints: [],
     };
-    const model = buildCodeIndexerModel(
+    const model = buildPlanProductModel(
       repoRoot,
       config([
         { id: 'scripts', root: 'scripts' },

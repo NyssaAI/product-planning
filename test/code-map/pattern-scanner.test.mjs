@@ -66,7 +66,7 @@ test('partitionPatternEligibleFiles excludes unsupported and disabled files', ()
 });
 
 test('runPatternScan returns structural matches with pattern metadata', () => {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-pattern-scan-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-pattern-scan-'));
   tempDirs.push(dir);
   mkdirSync(path.join(dir, 'src'), { recursive: true });
   writeFileSync(
@@ -99,5 +99,42 @@ test('runPatternScan returns structural matches with pattern metadata', () => {
   assert.equal(matches[0].patternId, 'node-cli-argv-parser');
   assert.equal(matches[0].file, 'src/cli.mjs');
   assert.equal(matches[0].line, 1);
+  assert.equal(matches[0].endLine, 1);
+  assert.equal(matches[0].lineCount, 1);
   assert.equal(matches[0].confidence, 'high');
+});
+
+test('runPatternScan supports regex-only catalog detectors', () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-pattern-scan-'));
+  tempDirs.push(dir);
+  mkdirSync(path.join(dir, 'src'), { recursive: true });
+  writeFileSync(
+    path.join(dir, 'package.json'),
+    '{"name":"fixture"}\n',
+    'utf8'
+  );
+  writeFileSync(
+    path.join(dir, 'src/service.mjs'),
+    'class UserService {}\n',
+    'utf8'
+  );
+  const patterns = [
+    {
+      id: 'named-service',
+      name: 'Named service',
+      language: 'JavaScript',
+      confidence: 'medium',
+      description: 'Names indicate services.',
+      rule: { regex: '\\b[A-Za-z0-9_]*Service\\b' },
+      includeInHeadline: true,
+      source: 'fixture',
+      tags: [],
+    },
+  ];
+
+  const matches = runPatternScan(dir, patterns, ['src/service.mjs']);
+
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].patternId, 'named-service');
+  assert.equal(matches[0].file, 'src/service.mjs');
 });

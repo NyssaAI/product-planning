@@ -16,21 +16,21 @@ add a comment or reaction to the existing one instead.
 
 | Field | Value |
 |-------|-------|
-| code-indexer version | |
+| plan-product version | |
 | Harness (Claude Code, Cursor, etc.) | |
 | Harness version | |
 | Model | |
 | OS + shell | |
 
-## Is this a code-indexer issue or a platform issue?
-<!-- code-indexer is a plugin. Some reported "bugs" are actually issues
+## Is this a plan-product issue or a platform issue?
+<!-- plan-product is a plugin. Some reported "bugs" are actually issues
      in the underlying platform or model. If you're not sure, try
-     reproducing without code-indexer installed.
+     reproducing without plan-product installed.
 
-     If the problem persists without code-indexer, file the issue with
+     If the problem persists without plan-product, file the issue with
      your platform instead. -->
 
-- [ ] I confirmed this issue does not occur without code-indexer installed
+- [ ] I confirmed this issue does not occur without plan-product installed
 
 ## What happened?
 <!-- Be specific. "It doesn't work" is not a bug report. -->

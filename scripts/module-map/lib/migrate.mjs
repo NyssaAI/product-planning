@@ -76,7 +76,7 @@ function moveIfPresent(actions, repoRoot, fromRel, toRel) {
 }
 
 /**
- * Patch cross-references inside the moved context files.
+ * Patch cross-references inside generated context files.
  *
  * @param {MigrateAction[]} actions
  * @param {string} repoRoot
@@ -84,18 +84,16 @@ function moveIfPresent(actions, repoRoot, fromRel, toRel) {
 function patchContextReferences(actions, repoRoot) {
   const moduleMapPath = path.join(
     repoRoot,
-    'docs/code-index/module-map.json'
+    'docs/code-map/module-map.json'
   );
   if (existsSync(moduleMapPath)) {
     let text = readFileSync(moduleMapPath, 'utf8');
     const before = text;
     text = text
-      .split('docs/code-indexer/CODE_MAP.json')
-      .join('docs/code-index/code-map.json')
       .split('"planningScope"')
       .join('"planningModule"')
-      .split('docs/code-indexer/scopes/')
-      .join('docs/code-index/modules/');
+      .split('/scopes/')
+      .join('/modules/');
     if (text !== before) {
       writeFileSync(moduleMapPath, text, 'utf8');
       actions.push({
@@ -108,13 +106,11 @@ function patchContextReferences(actions, repoRoot) {
     }
   }
 
-  const indexPath = path.join(repoRoot, 'docs/code-index/index.md');
+  const indexPath = path.join(repoRoot, 'docs/code-map/index.md');
   if (existsSync(indexPath)) {
     let text = readFileSync(indexPath, 'utf8');
     const before = text;
     text = text
-      .split('docs/code-indexer/')
-      .join('docs/code-index/')
       .split('./scopes/')
       .join('./modules/')
       .split('scopes/')
@@ -136,7 +132,7 @@ function patchContextReferences(actions, repoRoot) {
 }
 
 /**
- * Migrate a repo from the legacy docs layout to docs/code-index/.
+ * Normalize generated code-map artifact names under docs/code-map/.
  * Every step is idempotent — re-running reports "skipped" for completed steps.
  *
  * @param {string} repoRoot
@@ -147,20 +143,18 @@ export function runMigrate(repoRoot) {
   /** @type {MigrateAction[]} */
   const actions = [];
 
-  // 1. Current layout: docs/code-index/context/ → docs/code-index/
-  moveIfPresent(actions, repoRoot, 'docs/code-index/context', 'docs/code-index');
-  // 2. Older legacy: docs/code-indexer/ → docs/code-index/ with artifact renames
-  moveIfPresent(actions, repoRoot, 'docs/code-indexer', 'docs/code-index');
-  const ctx = 'docs/code-index';
+  // 1. Flatten docs/code-map/context/ into docs/code-map.
+  moveIfPresent(actions, repoRoot, 'docs/code-map/context', 'docs/code-map');
+  const ctx = 'docs/code-map';
   moveIfPresent(actions, repoRoot, `${ctx}/INDEX.md`, `${ctx}/index.md`);
   moveIfPresent(actions, repoRoot, `${ctx}/CODE_MAP.json`, `${ctx}/code-map.json`);
   moveIfPresent(actions, repoRoot, `${ctx}/MODULE_MAP.json`, `${ctx}/module-map.json`);
   moveIfPresent(actions, repoRoot, `${ctx}/scopes`, `${ctx}/modules`);
 
-  // 3. Patch cross-references in moved files
+  // 2. Patch cross-references in moved files
   patchContextReferences(actions, repoRoot);
 
-  // 4. features.md stub
+  // 3. features.md stub
   const featuresPath = path.join(repoRoot, 'docs/features.md');
   if (existsSync(featuresPath)) {
     actions.push({ kind: 'skipped', detail: 'docs/features.md (exists)' });
@@ -185,7 +179,7 @@ export function runMigrate(repoRoot) {
  * @returns {string}
  */
 export function formatMigrateReport(actions) {
-  const lines = ['code-indexer migrate:'];
+  const lines = ['plan-product migrate:'];
   for (const action of actions) {
     lines.push(`  ${action.kind.padEnd(7)} ${action.detail}`);
   }

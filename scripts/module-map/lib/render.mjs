@@ -2,16 +2,18 @@ import { summarizeDescription } from './summarize.mjs';
 import { classifyNodeOrganization } from './node-organization.mjs';
 
 /**
- * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>} model
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {ReturnType<import('./build.mjs').buildPlanProductModel>} model
+ * @param {import('./config.mjs').PlanProductConfig} config
  */
 export function renderIndex(model, config) {
   const lines = [];
   const out = config.outputDir.replace(/\\/g, '/');
 
-  lines.push(`# ${model.project.name} — code-indexer index`);
+  lines.push(`# ${model.project.name} Code Map`);
   lines.push('');
-  lines.push(`Generated: ${model.generated}. Regenerate: \`npm run code-indexer\`.`);
+  lines.push(
+    `Generated: ${model.generated}. Regenerate with \`node <PLUGIN_ROOT>/scripts/map-code/generate.mjs\`, or \`npm run map-code\` when package scripts were installed.`
+  );
   lines.push('');
   lines.push('## Progressive disclosure (for planning agents)');
   lines.push('');
@@ -49,12 +51,12 @@ export function renderIndex(model, config) {
   const docs = model.project.docs ?? {};
   const resolvedDocs = [
     ['product', docs.product],
-    ['roadmap', docs.roadmap],
+    ['features', docs.features],
     ['tech-stack', docs.techStack],
   ].filter(([, value]) => Boolean(value));
   const missingDocs = [
     ['product', docs.product],
-    ['roadmap', docs.roadmap],
+    ['features', docs.features],
     ['tech-stack', docs.techStack],
   ].filter(([, value]) => !value);
   if (resolvedDocs.length > 0) {
@@ -76,8 +78,8 @@ export function renderIndex(model, config) {
   lines.push('');
   lines.push('## Cross-repo workflow');
   lines.push('');
-  lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --init` (code-indexer plugin)');
-  lines.push('- Validate: `node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --doctor`');
+  lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --init` (plan-product plugin)');
+  lines.push('- Validate: `node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --doctor`');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }
@@ -89,7 +91,7 @@ export function renderIndex(model, config) {
  * `code-map.json` slice. Emits nothing when there are no modules.
  *
  * @param {string[]} lines
- * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>} model
+ * @param {ReturnType<import('./build.mjs').buildPlanProductModel>} model
  */
 function renderCodeOrganization(lines, model) {
   const groups = classifyNodeOrganization(model.modules ?? []);
@@ -135,8 +137,8 @@ function renderCodeOrganization(lines, model) {
 }
 
 /**
- * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>} model
- * @param {ReturnType<import('./build.mjs').buildCodeIndexerModel>['modules'][number]} mod
+ * @param {ReturnType<import('./build.mjs').buildPlanProductModel>} model
+ * @param {ReturnType<import('./build.mjs').buildPlanProductModel>['modules'][number]} mod
  */
 export function renderModuleScope(model, mod) {
   const lines = [];

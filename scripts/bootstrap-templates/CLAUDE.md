@@ -1,19 +1,13 @@
-# CLAUDE.md — repository agent instructions
+# CLAUDE.md - Repository Agent Instructions
 
-## code-indexer context
+Follow `AGENTS.md` in this repo for plan-product progressive disclosure, regenerate commands, and required product docs.
 
-Follow **AGENTS.md** in this repo for code-indexer progressive disclosure (L0–L3), regenerate commands, and required product docs.
+With the plan-product plugin installed, invoke `plan-product:using-code-map` for scoped module context before implementation planning.
 
-With the code-indexer plugin installed, invoke **code-indexer:using-code-indexer** for the canonical workflow (module scope selection and staleness).
+## Project Structure
 
-## Project structure
-
-- Source under `src/` (feature folders)
-- Tests under `test/` mirroring `src/`
-- Docs under `docs/` including product, roadmap, tech-stack
-
-## Workflow
-
-- Backlog items: `docs/code-index/backlog/{timestamp-slug}/`
-- Plans: `docs/code-index/plans/`
-- Bugs: `docs/code-index/bugs/{timestamp-slug}/`
+- Product docs under `docs/`: `docs/product.md`, `docs/features.md`, `docs/tech-stack.md`.
+- Feature guides under `docs/features/f-nxx/`.
+- Generated code-map context under `docs/code-map/`.
+- Source under `src/`.
+- Tests under `test/`.

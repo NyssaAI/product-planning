@@ -8,8 +8,8 @@
  * Input (hook mode): Claude Code PostToolUse JSON on stdin
  * ({ tool_input: { file_path } }), or CLAUDE_TOOL_INPUT_FILE_PATH env var.
  *
- * Opt-out: "autoRegenerate": false in code-indexer.config.json.
- * Log: docs/code-index/.regen.log in the project repo.
+ * Opt-out: "autoRegenerate": false in plan-product.config.json.
+ * Log: docs/code-map/.regen.log in the project repo.
  */
 
 import {
@@ -31,7 +31,7 @@ const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts', 'test'];
  * @returns {string}
  */
 function logFile(repoRoot) {
-  return path.join(repoRoot, 'docs/code-index/.regen.log');
+  return path.join(repoRoot, 'docs/code-map/.regen.log');
 }
 
 /**
@@ -91,9 +91,9 @@ function runRegeneration() {
     __dirname,
     '../code-map/generate-code-map.mjs'
   );
-  const codeIndexerScript = path.join(__dirname, 'generate.mjs');
+  const planProductScript = path.join(__dirname, 'generate-module-map.mjs');
 
-  for (const script of [codeMapScript, codeIndexerScript]) {
+  for (const script of [codeMapScript, planProductScript]) {
     const result = spawnSync(process.execPath, [script], {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -119,16 +119,15 @@ function handleHook() {
     process.exit(0);
   }
 
-  const codeIndexerConfig = readJsonIfPresent(repoRoot, 'code-indexer.config.json');
-  if (codeIndexerConfig.autoRegenerate === false) {
+  const planProductConfig = readJsonIfPresent(repoRoot, 'plan-product.config.json');
+  if (planProductConfig.autoRegenerate === false) {
     process.exit(0);
   }
 
-  const codeMapConfig = readJsonIfPresent(repoRoot, 'code-map.config.json');
-  const sourceRoots = Array.isArray(codeIndexerConfig.sourceRoots)
-    ? codeIndexerConfig.sourceRoots
-    : Array.isArray(codeMapConfig.roots)
-      ? codeMapConfig.roots
+  const sourceRoots = Array.isArray(planProductConfig.sourceRoots)
+    ? planProductConfig.sourceRoots
+    : Array.isArray(planProductConfig.roots)
+      ? planProductConfig.roots
       : DEFAULT_SOURCE_ROOTS;
 
   const rel = path

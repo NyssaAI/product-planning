@@ -3,17 +3,17 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { buildCodeIndexerModel } from '../scripts/module-map/lib/build.mjs';
+import { buildPlanProductModel } from '../scripts/module-map/lib/build.mjs';
 import { renderModuleScope } from '../scripts/module-map/lib/render.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];
 
 function repo() {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-endpoint-test-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-endpoint-test-'));
   tempDirs.push(dir);
   write(dir, 'docs/product.md', '# Product\n');
-  write(dir, 'docs/roadmap.md', '# Roadmap\n');
+  write(dir, 'docs/features.md', '# Features\n');
   write(dir, 'docs/tech-stack.md', '# Tech Stack\n');
   return dir;
 }
@@ -30,7 +30,7 @@ test.after(() => {
   }
 });
 
-test('code-indexer renders HTTP routes and MCP capabilities from code-map endpoints', () => {
+test('plan-product renders HTTP routes and MCP capabilities from code-map endpoints', () => {
   const root = repo();
   const config = {
     projectName: 'endpoint-fixture',
@@ -38,7 +38,7 @@ test('code-indexer renders HTTP routes and MCP capabilities from code-map endpoi
     codeMapOutput: 'docs/agent-files/context/code-map.json',
     docs: {
       product: ['docs/product.md'],
-      roadmap: ['docs/roadmap.md'],
+      features: ['docs/features.md'],
       techStack: ['docs/tech-stack.md'],
     },
     briefMaxCharsPerDoc: 1200,
@@ -82,7 +82,7 @@ test('code-indexer renders HTTP routes and MCP capabilities from code-map endpoi
     ],
   };
 
-  const model = buildCodeIndexerModel(root, config, codeMap);
+  const model = buildPlanProductModel(root, config, codeMap);
   const mod = model.modules.find((m) => m.id === 'api');
   const rendered = renderModuleScope(model, mod);
 
@@ -92,7 +92,7 @@ test('code-indexer renders HTTP routes and MCP capabilities from code-map endpoi
   assert.match(rendered, /`lookup_order` -> `src\/api\/server.ts`/);
 });
 
-test('code-indexer uses code-map endpoints even when legacy apiRoutes are disabled', () => {
+test('plan-product uses code-map endpoints even when route-file scanning is disabled', () => {
   const root = repo();
   const config = {
     projectName: 'endpoint-fixture',
@@ -100,7 +100,7 @@ test('code-indexer uses code-map endpoints even when legacy apiRoutes are disabl
     codeMapOutput: 'docs/agent-files/context/code-map.json',
     docs: {
       product: ['docs/product.md'],
-      roadmap: ['docs/roadmap.md'],
+      features: ['docs/features.md'],
       techStack: ['docs/tech-stack.md'],
     },
     briefMaxCharsPerDoc: 1200,
@@ -130,7 +130,7 @@ test('code-indexer uses code-map endpoints even when legacy apiRoutes are disabl
     ],
   };
 
-  const model = buildCodeIndexerModel(root, config, codeMap);
+  const model = buildPlanProductModel(root, config, codeMap);
   const mod = model.modules.find((m) => m.id === 'server');
   const rendered = renderModuleScope(model, mod);
 

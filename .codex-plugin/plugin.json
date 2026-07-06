@@ -1,7 +1,7 @@
 {
-  "name": "code-indexer",
-  "version": "1.0.0",
-  "description": "Generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, and Gemini.",
+  "name": "plan-product",
+  "version": "2.0.0",
+  "description": "Plans products, features, and use cases, then generates code-map context for implementation planning.",
   "author": {
     "name": "jamaynor"
   },
@@ -9,17 +9,19 @@
   "repository": "https://github.com/jamaynor/code-indexer",
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
-    "code-indexer",
+    "plan-product",
+    "planning",
+    "features",
+    "use-cases",
     "code-map",
-    "module-map",
-    "context",
+    "architecture",
     "skills"
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Code Indexer",
-    "shortDescription": "Generate code maps and module context for agents.",
-    "longDescription": "Code Indexer scans repositories and produces scoped planning context under docs/code-index, including symbol maps, endpoint indexes, module graphs, and per-module architecture summaries for AI coding agents.",
+    "displayName": "plan-product",
+    "shortDescription": "Plan products, features, use cases, and code-map context.",
+    "longDescription": "plan-product helps agents define docs-based product docs, feature inventories, feature guides, and use cases, then generate code-map context for implementation planning.",
     "developerName": "jamaynor",
     "category": "Coding",
     "capabilities": [
@@ -29,9 +31,9 @@
     ],
     "websiteURL": "https://github.com/jamaynor/code-indexer",
     "defaultPrompt": [
-      "Generate code-indexer context for this repo",
-      "Use code-indexer context before planning",
-      "Refresh the module graph"
+      "Plan this product",
+      "Plan a feature",
+      "Map this repo's code"
     ],
     "brandColor": "#2563EB",
     "screenshots": []

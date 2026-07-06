@@ -2,7 +2,7 @@
  * Disjoint module ownership.
  *
  * Each file belongs to exactly one module: the one whose root is the longest
- * (most specific) prefix containing it. The code-map linker and the code-indexer
+ * (most specific) prefix containing it. The code-map linker and the plan-product
  * model both use this so they agree on which module owns a file — and therefore
  * its symbols and endpoints. A parent module never double-counts a file that a
  * more specific child module owns.

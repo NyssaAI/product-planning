@@ -6,6 +6,11 @@ import { createLogger } from './logger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = path.resolve(__dirname, '../../bootstrap-templates');
+const PLAN_PRODUCT_DIR = path.resolve(__dirname, '../../../.plan-product');
+const PLAN_PRODUCT_TEMPLATES_DIR = path.resolve(
+  __dirname,
+  '../../../.plan-product/templates'
+);
 
 const log = createLogger({ module: 'bootstrap' });
 
@@ -19,13 +24,39 @@ const log = createLogger({ module: 'bootstrap' });
  * @param {string} name
  * @returns {string}
  */
-function readTemplate(name) {
+function readBootstrapTemplate(name) {
   const templatePath = path.join(TEMPLATES_DIR, name);
   if (!existsSync(templatePath)) {
     log.warn('bootstrap template missing', { template: name, path: templatePath });
     return '';
   }
   return readFileSync(templatePath, 'utf8');
+}
+
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+function readPlanProductTemplate(name) {
+  const templatePath = path.join(PLAN_PRODUCT_TEMPLATES_DIR, name);
+  if (!existsSync(templatePath)) {
+    log.warn('plan-product template missing', { template: name, path: templatePath });
+    return '';
+  }
+  return readFileSync(templatePath, 'utf8');
+}
+
+/**
+ * @param {string} relPath
+ * @returns {string}
+ */
+function readPlanProductAsset(relPath) {
+  const fullPath = path.join(PLAN_PRODUCT_DIR, relPath);
+  if (!existsSync(fullPath)) {
+    log.warn('plan-product asset missing', { path: fullPath });
+    return '';
+  }
+  return readFileSync(fullPath, 'utf8');
 }
 
 /**
@@ -85,54 +116,99 @@ export function bootstrapRepo(repoRoot, options = {}) {
 
   writeIfMissing(
     repoRoot,
+    '.plan-product/config.json',
+    readPlanProductAsset('config.json'),
+    created,
+    skipped
+  );
+  writeIfMissing(
+    repoRoot,
+    '.plan-product/schema.json',
+    readPlanProductAsset('schema.json'),
+    created,
+    skipped
+  );
+  for (const template of [
+    'product.md',
+    'features.md',
+    'tech-stack.md',
+    'feature.md',
+    'use-case.md',
+    'pattern-library.json',
+    'pattern-expectations.json',
+  ]) {
+    writeIfMissing(
+      repoRoot,
+      `.plan-product/templates/${template}`,
+      readPlanProductTemplate(template),
+      created,
+      skipped
+    );
+  }
+
+  writeIfMissing(
+    repoRoot,
     'docs/product.md',
-    readTemplate('docs-product.md'),
+    readPlanProductTemplate('product.md'),
     created,
     skipped
   );
   writeIfMissing(
     repoRoot,
     'docs/features.md',
-    readTemplate('docs-features.md'),
-    created,
-    skipped
-  );
-  writeIfMissing(
-    repoRoot,
-    'docs/roadmap.md',
-    readTemplate('docs-roadmap.md'),
+    readPlanProductTemplate('features.md'),
     created,
     skipped
   );
   writeIfMissing(
     repoRoot,
     'docs/tech-stack.md',
-    readTemplate('docs-tech-stack.md'),
+    readPlanProductTemplate('tech-stack.md'),
     created,
     skipped
   );
 
   ensureDirIfMissing(repoRoot, 'test/unit', created, skipped);
-  ensureDirIfMissing(repoRoot, 'docs/code-index/modules', created, skipped);
-
-  writeIfMissing(repoRoot, 'AGENTS.md', readTemplate('AGENTS.md'), created, skipped);
-  writeIfMissing(repoRoot, 'CLAUDE.md', readTemplate('CLAUDE.md'), created, skipped);
+  ensureDirIfMissing(repoRoot, 'docs/features', created, skipped);
+  ensureDirIfMissing(repoRoot, 'docs/code-map/modules', created, skipped);
   writeIfMissing(
     repoRoot,
-    '.cursor/rules/code-indexer.mdc',
-    readTemplate('code-indexer.mdc'),
+    '.plan-product/patterns/library.json',
+    readPlanProductTemplate('pattern-library.json'),
+    created,
+    skipped
+  );
+  writeIfMissing(
+    repoRoot,
+    '.plan-product/patterns/expectations.json',
+    readPlanProductTemplate('pattern-expectations.json'),
+    created,
+    skipped
+  );
+
+  writeIfMissing(repoRoot, 'AGENTS.md', readBootstrapTemplate('AGENTS.md'), created, skipped);
+  writeIfMissing(repoRoot, 'CLAUDE.md', readBootstrapTemplate('CLAUDE.md'), created, skipped);
+  writeIfMissing(
+    repoRoot,
+    '.cursor/rules/code-map.mdc',
+    readBootstrapTemplate('code-map.mdc'),
     created,
     skipped
   );
 
   if (options.withProjectManifest) {
-    writeIfMissing(
-      repoRoot,
-      'jamaynor.project.json',
-      readTemplate('jamaynor.project.json'),
-      created,
-      skipped
-    );
+    const projectManifest = readBootstrapTemplate('jamaynor.project.json');
+    if (projectManifest.trim()) {
+      writeIfMissing(
+        repoRoot,
+        'jamaynor.project.json',
+        projectManifest,
+        created,
+        skipped
+      );
+    } else {
+      skipped.push('jamaynor.project.json (template missing)');
+    }
   }
 
   if (options.writeScripts) {
@@ -163,19 +239,39 @@ function mergePackageScripts(repoRoot, created, skipped) {
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
   const scripts = pkg.scripts ?? {};
   const additions = {
-    'code-map': pluginScriptCommand('scripts/code-map/generate-code-map.mjs'),
-    'code-indexer': pluginScriptCommand('scripts/module-map/generate.mjs'),
+    'map-code': pluginScriptCommand('scripts/map-code/generate.mjs'),
+    'map-architecture': pluginScriptCommand('scripts/module-map/generate-module-map.mjs', ['--arch']),
+    'find-code-patterns': pluginScriptCommand('scripts/code-map/generate-patterns.mjs'),
   };
-  const legacyLocalScripts = {
-    'code-map': 'scripts/code-map/generate-code-map.mjs',
-    'code-indexer': 'scripts/module-map/generate.mjs',
+  const staleLocalScripts = {
+    'code-map': ['scripts/code-map/generate-code-map.mjs'],
+    'plan-product': [
+      'scripts/module-map/generate.mjs',
+      'scripts/module-map/generate-module-map.mjs',
+    ],
+    'map-code': [
+      'scripts/module-map/generate.mjs',
+      'scripts/map-code/generate.mjs',
+    ],
+    'map-architecture': [
+      'scripts/module-map/generate.mjs',
+      'scripts/module-map/generate-module-map.mjs',
+    ],
+    'find-code-patterns': ['scripts/code-map/generate-patterns.mjs'],
   };
 
   let changed = false;
+  for (const [key, relPaths] of Object.entries(staleLocalScripts)) {
+    if (!(key in additions) && isStaleLocalScript(scripts[key], relPaths)) {
+      delete scripts[key];
+      changed = true;
+    }
+  }
+
   for (const [key, value] of Object.entries(additions)) {
     if (
       !scripts[key] ||
-      isLegacyLocalScript(scripts[key], legacyLocalScripts[key])
+      isStaleLocalScript(scripts[key], staleLocalScripts[key])
     ) {
       scripts[key] = value;
       changed = true;
@@ -195,20 +291,23 @@ function mergePackageScripts(repoRoot, created, skipped) {
 
 /**
  * Build a cross-platform npm script that resolves the current installed
- * code-indexer plugin root at runtime instead of using repo-local copied tooling.
+ * plan-product plugin root at runtime instead of using repo-local copied tooling.
  *
  * @param {string} scriptRelPath
+ * @param {string[]} [defaultArgs]
  * @returns {string}
  */
-function pluginScriptCommand(scriptRelPath) {
+function pluginScriptCommand(scriptRelPath, defaultArgs = []) {
   const script = scriptRelPath.replace(/\\/g, '/');
+  const args = defaultArgs.map((arg) => String(arg));
   const js = [
     "const { spawnSync } = require('node:child_process');",
     "const path = require('node:path');",
-    "const root = process.env.CODE_INDEXER_PLUGIN_ROOT || process.env.CLAUDE_PLUGIN_ROOT || process.env.CURSOR_PLUGIN_ROOT;",
-    "if (!root) { console.error('code-indexer plugin root not found. Set CODE_INDEXER_PLUGIN_ROOT, CLAUDE_PLUGIN_ROOT, or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
+    "const root = process.env.PLAN_PRODUCT_PLUGIN_ROOT || process.env.PLUGIN_ROOT || process.env.CLAUDE_PLUGIN_ROOT || process.env.CURSOR_PLUGIN_ROOT;",
+    "if (!root) { console.error('plan-product plugin root not found. Set PLAN_PRODUCT_PLUGIN_ROOT, PLUGIN_ROOT, CLAUDE_PLUGIN_ROOT, or CURSOR_PLUGIN_ROOT, or run the plugin script directly.'); process.exit(1); }",
     `const script = path.join(root, ${JSON.stringify(script)});`,
-    "const result = spawnSync(process.execPath, [script, ...process.argv.slice(1)], { stdio: 'inherit' });",
+    `const defaultArgs = ${JSON.stringify(args)};`,
+    "const result = spawnSync(process.execPath, [script, ...defaultArgs, ...process.argv.slice(1)], { stdio: 'inherit' });",
     "if (result.error) { console.error(result.error.message); process.exit(1); }",
     'process.exit(result.status ?? 1);',
   ].join('');
@@ -217,17 +316,21 @@ function pluginScriptCommand(scriptRelPath) {
 
 /**
  * @param {unknown} value
- * @param {string} scriptRelPath
+ * @param {string | string[]} scriptRelPath
  * @returns {boolean}
  */
-function isLegacyLocalScript(value, scriptRelPath) {
+function isStaleLocalScript(value, scriptRelPath) {
   if (typeof value !== 'string') {
     return false;
   }
   const normalized = value.trim().replace(/\\/g, '/');
-  return (
-    normalized === `node ${scriptRelPath}` ||
-    normalized === `node ./${scriptRelPath}`
+  const paths = Array.isArray(scriptRelPath) ? scriptRelPath : [scriptRelPath];
+  return paths.some(
+    (relPath) =>
+      normalized === `node ${relPath}` ||
+      normalized === `node ./${relPath}` ||
+      normalized.startsWith(`node ${relPath} `) ||
+      normalized.startsWith(`node ./${relPath} `)
   );
 }
 
@@ -237,7 +340,7 @@ const REGEN_HOOK_MATCHER = 'Write|Edit';
  * Adds the PostToolUse auto-regeneration hook to the project's
  * .claude/settings.json. Existing hooks are preserved; if a hook entry
  * already references regen-if-source-changed.mjs nothing is written.
- * Opt-out at runtime via "autoRegenerate": false in code-indexer.config.json.
+ * Opt-out at runtime via "autoRegenerate": false in plan-product.config.json.
  *
  * @param {string} repoRoot
  * @param {string[]} created

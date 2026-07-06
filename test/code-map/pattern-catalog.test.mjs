@@ -20,7 +20,7 @@ test.after(() => {
 });
 
 function tempProject() {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-pattern-catalog-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-pattern-catalog-'));
   tempDirs.push(dir);
   mkdirSync(dir, { recursive: true });
   return dir;
@@ -58,6 +58,58 @@ test('loadPatternCatalogs merges repo-defined catalogs without overriding ids', 
   });
 
   assert.ok(result.patterns.some((pattern) => pattern.id === 'project-special-handler'));
+});
+
+test('loadPatternCatalogs flattens canonical pattern families into language detectors', () => {
+  const dir = tempProject();
+  writeFileSync(
+    path.join(dir, 'family.patterns.json'),
+    `${JSON.stringify({
+      families: [
+        {
+          id: 'strategy',
+          name: 'Strategy',
+          kind: 'design-pattern',
+          intent: 'Select interchangeable behavior.',
+          tags: ['policy'],
+          detectors: [
+            {
+              id: 'named-strategy',
+              languages: ['JavaScript', 'TypeScript', 'Go'],
+              confidence: 'medium',
+              description: 'Named strategy signal.',
+              rule: { regex: 'Strategy' },
+            },
+          ],
+        },
+      ],
+    })}\n`,
+    'utf8'
+  );
+
+  const result = loadPatternCatalogs(dir, {
+    catalogs: ['family.patterns.json'],
+  });
+  const jsDetector = result.patterns.find(
+    (pattern) => pattern.id === 'strategy-named-strategy-javascript'
+  );
+  const tsDetector = result.patterns.find(
+    (pattern) => pattern.id === 'strategy-named-strategy-typescript'
+  );
+  const goDetector = result.patterns.find(
+    (pattern) => pattern.id === 'strategy-named-strategy-go'
+  );
+
+  assert.equal(jsDetector?.familyId, 'strategy');
+  assert.equal(jsDetector?.familyName, 'Strategy');
+  assert.equal(jsDetector?.kind, 'design-pattern');
+  assert.equal(jsDetector?.language, 'JavaScript');
+  assert.ok(Array.isArray(jsDetector?.rule.any));
+  assert.equal(tsDetector?.language, 'TypeScript');
+  assert.equal(goDetector?.language, 'Go');
+  assert.ok(
+    goDetector?.rule.any.some((rule) => rule.kind === 'type_identifier')
+  );
 });
 
 test('loadPatternCatalogs allows repo catalog to override a builtin pattern id (warn, not throw)', () => {

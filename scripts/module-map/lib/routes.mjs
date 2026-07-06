@@ -21,7 +21,7 @@ const HTTP_METHODS = new Set([
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {import('./config.mjs').PlanProductConfig} config
  * @param {import('./discover-modules.mjs').ModuleDef[]} modules
  * @param {{ files?: { path: string, symbols?: { name: string }[] }[], endpoints?: object[] } | { path: string, symbols?: { name: string }[] }[]} codeMapInput
  * @returns {HttpRoute[]}
@@ -33,7 +33,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
   const providedEndpoints = Array.isArray(codeMapInput)
     ? []
     : codeMapInput.endpoints ?? [];
-  // When the code-map carries no endpoints (e.g. code-indexer ran without a fresh
+  // When the code-map carries no endpoints (e.g. plan-product ran without a fresh
   // code-map pass), recover C#/FastAPI/MCP/Next.js endpoints by scanning the
   // code-map's own file list with the same endpoint extractor code-map uses.
   // This reuses the already-enumerated source files rather than re-walking the
@@ -71,7 +71,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
 
   const moduleIds = new Set(modules.map((m) => m.id));
 
-  const legacyRoutes = routeFiles
+  const fileRoutes = routeFiles
     .map((abs) => {
       const rel = path.relative(repoRoot, abs).replace(/\\/g, '/');
       const apiPath = filePathToApiRoute(
@@ -89,7 +89,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
     })
     .sort((a, b) => a.path.localeCompare(b.path));
 
-  return dedupeRoutes([...endpointRoutes, ...legacyRoutes]);
+  return dedupeRoutes([...endpointRoutes, ...fileRoutes]);
 }
 
 /**

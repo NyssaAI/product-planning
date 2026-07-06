@@ -1,7 +1,27 @@
 {
-  "name": "code-indexer",
-  "version": "1.0.0",
+  "name": "plan-product",
+  "version": "2.0.0",
   "type": "module",
+  "files": [
+    ".claude-plugin/",
+    ".codex-plugin/",
+    ".codex/INSTALL.md",
+    ".cursor-plugin/",
+    ".plan-product/config.json",
+    ".plan-product/patterns/",
+    ".plan-product/schema.json",
+    ".plan-product/templates/",
+    "commands/",
+    "scripts/",
+    "!scripts/**/*.test.mjs",
+    "skills/",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "gemini-extension.json",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "node --test \"test/module-map/**/*.test.mjs\" \"test/module-map-adapters/**/*.test.mjs\" \"test/module-map-endpoints.test.mjs\" \"test/code-map/**/*.test.mjs\" \"scripts/**/*.test.mjs\""
   },

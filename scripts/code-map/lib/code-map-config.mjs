@@ -59,9 +59,9 @@ export const SOURCE_EXTENSIONS = new Set([
  * @returns {CodeMapConfig}
  */
 export function loadCodeMapConfig(repoRoot) {
-  const configPath = path.join(repoRoot, 'code-indexer.config.json');
+  const configPath = path.join(repoRoot, 'plan-product.config.json');
   const defaults = {
-    output: 'docs/code-index/code-map.json',
+    output: 'docs/code-map/code-map.json',
     roots: DEFAULT_SCAN_ROOTS,
     languages: SUPPORTED_LANGUAGES,
   };

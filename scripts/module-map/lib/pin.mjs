@@ -1,6 +1,6 @@
 /**
  * Pin / eject support for module detection. A pin is an authoritative module
- * declaration stored in code-indexer.config.json under `modules.pinned[]`; the
+ * declaration stored in plan-product.config.json under `modules.pinned[]`; the
  * detection core treats pinned roots as fixed and excludes them from
  * re-derivation. `pinModule` "ejects" a currently-derived module into config
  * so the user can freeze and adjust it; `unpinModule` returns it to
@@ -13,7 +13,7 @@ import { createLogger } from './logger.mjs';
 
 const log = createLogger({ module: 'pin' });
 
-const configPath = (repoRoot) => path.join(repoRoot, 'code-indexer.config.json');
+const configPath = (repoRoot) => path.join(repoRoot, 'plan-product.config.json');
 
 /** @param {string} repoRoot */
 function readRaw(repoRoot) {

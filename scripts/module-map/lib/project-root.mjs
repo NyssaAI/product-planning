@@ -8,10 +8,10 @@ import path from 'node:path';
 export function findProjectRoot(startDir = process.cwd()) {
   let dir = path.resolve(startDir);
   for (;;) {
-    if (existsSync(path.join(dir, 'code-indexer.config.json'))) {
+    if (existsSync(path.join(dir, '.plan-product', 'config.json'))) {
       return dir;
     }
-    if (existsSync(path.join(dir, 'code-map.config.json'))) {
+    if (existsSync(path.join(dir, 'plan-product.config.json'))) {
       return dir;
     }
     if (existsSync(path.join(dir, '.git'))) {

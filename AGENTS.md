@@ -1,43 +1,65 @@
-# code-indexer — Project Notes
+# plan-product - Project Notes
 
-Same content as **CLAUDE.md** (Claude Code reads CLAUDE.md; Codex/Gemini read this file).
+Same content as `CLAUDE.md` (Claude Code reads `CLAUDE.md`; Codex/Gemini read this file).
 
-This is the **code-indexer plugin** source — the code-indexer / code-map generators (under `scripts/`), the `using-code-indexer` skill, the `/ci` command (`/code-indexer` alias), and the per-harness adapters. A private repo.
+This is the plan-product plugin source. It owns product, feature, use-case, and code-map planning skills plus the generator scripts under `scripts/`.
+
+## Capabilities
+
+- `plan-product` - create or update `docs/product.md`, `docs/features.md`, and `docs/tech-stack.md`.
+- `plan-feature` - create or update `docs/features/f-nxx/feature.md`.
+- `plan-use-case` - create or update use-case files beside a feature guide.
+- `map-code` - refresh symbol, endpoint, module, and module-doc context.
+- `map-architecture` - generate the system architecture handoff.
+- `find-code-patterns` - generate structural pattern reports.
+- `using-code-map` - load generated code-map context with progressive disclosure.
 
 ## Dependencies
 
-code-indexer ships one bundled plugin dependency: **`@ast-grep/cli`** for code-indexer/code-map (auto-installs into the plugin root on first use). Avoid adding further third-party dependencies unless adding support for a new harness (e.g., a new IDE or CLI tool); other external tools or services belong in their own plugin.
+The plugin ships one bundled runtime dependency: `@ast-grep/cli` for code-map generation. Avoid adding more third-party dependencies unless a new runtime adapter truly needs them.
 
-## Plugin repo layout
+## Required Structure
 
-This repository is the **code-indexer plugin** (code-indexer/code-map generators under `scripts/`, the `using-code-indexer` skill, the `/ci` command with `/code-indexer` alias, and harness adapters) — not a consumer application repo, but it carries `docs/product.md`, `docs/roadmap.md`, and `docs/tech-stack.md` because it dogfoods its own code-indexer generation. Do not scaffold consumer-repo `src/` trees or backlog folders here.
+Committed plan-product paths stay relative to the repo root. Installation-specific locations belong in environment variables or ignored local config, not in `.plan-product/config.json`.
 
-## Bundled content
+```text
+<repo>/
+|-- STRATEGY.md             Optional upstream strategy context.
+|-- CONCEPTS.md             Optional shared vocabulary.
+|-- AGENTS.md               Agent instructions and repo conventions.
+|
+|-- docs/
+|   |-- product.md          Product purpose, audience, problem, solution.
+|   |-- features.md         Feature inventory, status, phases, links.
+|   |-- tech-stack.md       Stack, services, tools, runtime assumptions.
+|   |-- features/           Feature guides and use cases.
+|   |-- code-map/           Generated code-map artifacts.
+|   |-- plans/              Compound Engineering implementation plans.
+|   `-- solutions/          Compound Engineering captured learnings.
+|
+|-- .plan-product/
+|   |-- config.json         plan-product path map; repo-relative.
+|   |-- schema.json         Config schema.
+|   `-- templates/          Starter plan-product artifacts.
+|-- scripts/                Plugin generators and support code.
+|-- skills/                 Codex skill entrypoints.
+|-- commands/               Command-capable runtime docs.
+`-- test/                   Tests.
+```
 
-**code-indexer** (the code/module-graph generator) is the plugin's product. Optional `@ast-grep/cli` in the plugin root supports its code-map generation.
+## Generated Context
 
-<!-- code-indexer:module-map:start -->
+The code-map implementation still uses stable internal script folders under `scripts/code-map/` and `scripts/module-map/`. The exposed skills and command docs use plan-product names.
+
+<!-- plan-product:module-map:start -->
 ## Module map (auto-updated — do not edit)
 
-Start at `docs/code-index/index.md` to pick the module set.
+Start at `docs/code-map/index.md` to pick the module set.
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
-| code-indexer | Code/module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-index/modules/code-indexer.md` |
-| code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-index/modules/code-map.md` |
-| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/code-index/modules/lib.md` |
-<!-- code-indexer:module-map generated 2026-06-29T14:09:31.280Z -->
-<!-- code-indexer:module-map:end -->
-
-<!-- code-index:module-map:start -->
-## Module map (auto-updated — do not edit)
-
-Start at `docs/code-index/index.md` to pick the module set.
-
-| Module | What it does | Owns | Module file |
-|--------|--------------|------|-------------|
-| module-map | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-index/modules/module-map.md` |
-| code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-index/modules/code-map.md` |
-| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/code-index/modules/lib.md` |
-<!-- code-index:module-map generated 2026-06-30T13:24:53.517Z -->
-<!-- code-index:module-map:end -->
+| module-map | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-map/modules/module-map.md` |
+| code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-map/modules/code-map.md` |
+| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/code-map/modules/lib.md` |
+<!-- plan-product:module-map generated 2026-07-06T12:33:31.650Z -->
+<!-- plan-product:module-map:end -->

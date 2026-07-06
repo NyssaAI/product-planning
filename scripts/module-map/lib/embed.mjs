@@ -5,8 +5,8 @@ import { summarizeDescription } from './summarize.mjs';
 
 const log = createLogger({ module: 'embed' });
 
-const START_MARKER = '<!-- code-index:module-map:start -->';
-const END_MARKER = '<!-- code-index:module-map:end -->';
+const START_MARKER = '<!-- plan-product:module-map:start -->';
+const END_MARKER = '<!-- plan-product:module-map:end -->';
 
 /**
  * @param {{ id: string, name: string, description?: string, capabilities?: string[], planningModule: string }[]} modules
@@ -28,7 +28,7 @@ export function renderModuleMapTable(modules) {
 }
 
 /**
- * Rewrites the bounded code-index:module-map section in one file. Content
+ * Rewrites the bounded plan-product:module-map section in one file. Content
  * outside the markers is never touched; if the markers are absent the
  * whole section is appended.
  *
@@ -48,10 +48,10 @@ function embedIntoFile(filePath, tableMarkdown, generated) {
     '## Module map (auto-updated — do not edit)',
     '',
     // Always-loaded coarse table: route through the index to pick the module set.
-    'Start at `docs/code-index/index.md` to pick the module set.',
+    'Start at `docs/code-map/index.md` to pick the module set.',
     '',
     tableMarkdown,
-    `<!-- code-index:module-map generated ${generated ?? new Date().toISOString()} -->`,
+    `<!-- plan-product:module-map generated ${generated ?? new Date().toISOString()} -->`,
     END_MARKER,
   ].join('\n');
 

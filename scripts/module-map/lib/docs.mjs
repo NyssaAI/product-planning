@@ -4,13 +4,13 @@ import { resolveDocPath } from './config.mjs';
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {import('./config.mjs').PlanProductConfig} config
  */
 export function loadProjectBrief(repoRoot, config) {
-  /** @type {{ product: string | null, roadmap: string | null, techStack: string | null, excerpts: Record<string, string> }} */
+  /** @type {{ product: string | null, features: string | null, techStack: string | null, excerpts: Record<string, string> }} */
   const result = {
     product: null,
-    roadmap: null,
+    features: null,
     techStack: null,
     excerpts: {},
   };
@@ -20,9 +20,10 @@ export function loadProjectBrief(repoRoot, config) {
     if (!resolved) {
       continue;
     }
-    result[key === 'techStack' ? 'techStack' : key] = resolved;
+    const normalizedKey = key === 'techStack' ? 'techStack' : key;
+    result[normalizedKey] = resolved;
     const text = readFileSync(path.join(repoRoot, resolved), 'utf8');
-    result.excerpts[key] = trimDocExcerpt(text, config.briefMaxCharsPerDoc);
+    result.excerpts[normalizedKey] = trimDocExcerpt(text, config.briefMaxCharsPerDoc);
   }
 
   return result;

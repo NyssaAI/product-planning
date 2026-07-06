@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  existsSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -15,7 +16,7 @@ import { bootstrapRepo } from '../../scripts/module-map/lib/bootstrap.mjs';
 const tempDirs = [];
 
 function tempRepo() {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-bootstrap-test-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-bootstrap-test-'));
   tempDirs.push(dir);
   writePackage(dir, { name: 'fixture', version: '0.0.0' });
   return dir;
@@ -35,35 +36,65 @@ test.after(() => {
   }
 });
 
-test('bootstrap package scripts run installed plugin tooling instead of repo-local vendored scripts', () => {
+test('bootstrap package scripts use plan-product command names', () => {
   const root = tempRepo();
 
   bootstrapRepo(root, { writeScripts: true });
 
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
-  assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
-  assert.doesNotMatch(pkg.scripts['code-indexer'], /node scripts\/module-map\//);
-  assert.match(
-    pkg.scripts['code-map'],
-    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
+  assert.equal(pkg.scripts['code-map'], undefined);
+  assert.equal(pkg.scripts['plan-product'], undefined);
+  assert.match(pkg.scripts['map-code'], /PLAN_PRODUCT_PLUGIN_ROOT/);
+  assert.match(pkg.scripts['map-code'], /scripts\/map-code\/generate\.mjs/);
+  assert.doesNotMatch(pkg.scripts['map-code'], /scripts\/module-map\/generate\.mjs/);
+  assert.match(pkg.scripts['map-architecture'], /--arch/);
+  assert.match(pkg.scripts['map-architecture'], /generate-module-map\.mjs/);
+  assert.match(pkg.scripts['find-code-patterns'], /generate-patterns\.mjs/);
+  for (const relPath of [
+    '.plan-product/config.json',
+    '.plan-product/schema.json',
+    '.plan-product/templates/product.md',
+    '.plan-product/templates/features.md',
+    '.plan-product/templates/tech-stack.md',
+    '.plan-product/templates/feature.md',
+    '.plan-product/templates/use-case.md',
+    '.plan-product/templates/pattern-library.json',
+    '.plan-product/templates/pattern-expectations.json',
+  ]) {
+    assert.equal(existsSync(path.join(root, relPath)), true, relPath);
+  }
+  assert.equal(
+    existsSync(path.join(root, '.plan-product/patterns/library.json')),
+    true
   );
-  assert.match(
-    pkg.scripts['code-indexer'],
-    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
+  assert.equal(
+    existsSync(path.join(root, '.plan-product/patterns/expectations.json')),
+    true
   );
-  assert.match(pkg.scripts['code-map'], /scripts\/code-map\/generate-code-map\.mjs/);
-  assert.match(pkg.scripts['code-indexer'], /scripts\/module-map\/generate\.mjs/);
+  assert.equal(
+    readFileSync(path.join(root, 'docs/product.md'), 'utf8').trimEnd(),
+    readFileSync('.plan-product/templates/product.md', 'utf8').trimEnd()
+  );
+  assert.equal(
+    readFileSync(path.join(root, 'docs/features.md'), 'utf8').trimEnd(),
+    readFileSync('.plan-product/templates/features.md', 'utf8').trimEnd()
+  );
+  assert.equal(
+    readFileSync(path.join(root, 'docs/tech-stack.md'), 'utf8').trimEnd(),
+    readFileSync('.plan-product/templates/tech-stack.md', 'utf8').trimEnd()
+  );
 });
 
-test('bootstrap replaces known stale local code-indexer package scripts', () => {
+test('bootstrap removes known stale local plan-product package scripts', () => {
   const root = tempRepo();
   writePackage(root, {
     name: 'fixture',
     version: '0.0.0',
     scripts: {
       'code-map': 'node scripts/code-map/generate-code-map.mjs',
-      'code-indexer': 'node scripts/module-map/generate.mjs',
+      'plan-product': 'node scripts/module-map/generate.mjs',
+      'map-architecture': 'node scripts/module-map/generate.mjs --arch',
       test: 'node --test',
     },
   });
@@ -72,35 +103,39 @@ test('bootstrap replaces known stale local code-indexer package scripts', () => 
 
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
-  assert.doesNotMatch(pkg.scripts['code-map'], /node scripts\/code-map\//);
-  assert.doesNotMatch(pkg.scripts['code-indexer'], /node scripts\/module-map\//);
-  assert.match(
-    pkg.scripts['code-map'],
-    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
-  );
-  assert.match(
-    pkg.scripts['code-indexer'],
-    /CODE_INDEXER_PLUGIN_ROOT|CLAUDE_PLUGIN_ROOT|CURSOR_PLUGIN_ROOT/
-  );
+  assert.equal(pkg.scripts['code-map'], undefined);
+  assert.equal(pkg.scripts['plan-product'], undefined);
+  assert.match(pkg.scripts['map-code'], /PLAN_PRODUCT_PLUGIN_ROOT/);
+  assert.match(pkg.scripts['map-architecture'], /PLAN_PRODUCT_PLUGIN_ROOT/);
+  assert.match(pkg.scripts['map-architecture'], /generate-module-map\.mjs/);
   assert.equal(pkg.scripts.test, 'node --test');
 });
 
-test('bootstrap package scripts resolve plugin scripts and forward arguments', () => {
+test('bootstrap does not create an empty project manifest when template is absent', () => {
   const root = tempRepo();
-  const pluginRoot = mkdtempSync(path.join(tmpdir(), 'code-indexer-plugin-root-'));
+
+  const result = bootstrapRepo(root, { withProjectManifest: true });
+
+  assert.equal(existsSync(path.join(root, 'jamaynor.project.json')), false);
+  assert.ok(result.skipped.includes('jamaynor.project.json (template missing)'));
+});
+
+test('map-architecture package script resolves plugin root and forwards arguments', () => {
+  const root = tempRepo();
+  const pluginRoot = mkdtempSync(path.join(tmpdir(), 'plan-product-plugin-root-'));
   tempDirs.push(pluginRoot);
 
   bootstrapRepo(root, { writeScripts: true });
 
   const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
-  const match = /^node -e (".*") --$/.exec(pkg.scripts['code-indexer']);
+  const match = /^node -e (".*") --$/.exec(pkg.scripts['map-architecture']);
   assert.notEqual(match, null);
 
   const calls = [];
   let exitCode = null;
   const fakeProcess = {
-    argv: ['node', '--doctor'],
-    env: { CODE_INDEXER_PLUGIN_ROOT: pluginRoot },
+    argv: ['node', '--json'],
+    env: { PLAN_PRODUCT_PLUGIN_ROOT: pluginRoot },
     execPath: 'node',
     exit(code) {
       exitCode = code;
@@ -130,7 +165,7 @@ test('bootstrap package scripts resolve plugin scripts and forward arguments', (
   assert.deepEqual(JSON.parse(JSON.stringify(calls)), [
     [
       'node',
-      [path.join(pluginRoot, 'scripts/module-map/generate.mjs'), '--doctor'],
+      [path.join(pluginRoot, 'scripts/module-map/generate-module-map.mjs'), '--arch', '--json'],
       { stdio: 'inherit' },
     ],
   ]);

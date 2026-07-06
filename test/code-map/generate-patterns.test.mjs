@@ -24,21 +24,23 @@ test.after(() => {
 });
 
 function tempProject() {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-generate-patterns-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-generate-patterns-'));
   tempDirs.push(dir);
   mkdirSync(path.join(dir, 'src'), { recursive: true });
-  mkdirSync(path.join(dir, 'docs/code-index'), { recursive: true });
+  mkdirSync(path.join(dir, 'docs/code-map'), { recursive: true });
   writeFileSync(
     path.join(dir, 'package.json'),
     '{"name":"fixture"}\n',
     'utf8'
   );
   writeFileSync(
-    path.join(dir, 'code-indexer.config.json'),
+    path.join(dir, 'plan-product.config.json'),
     `${JSON.stringify(
       {
         projectName: 'Fixture',
-        output: 'docs/code-index/code-map.json',
+        output: 'docs/code-map/code-map.json',
+        outputDir: 'docs/code-map',
+        codeMapOutput: 'docs/code-map/code-map.json',
         roots: ['src'],
         languages: ['JavaScript'],
         modules: {
@@ -52,7 +54,7 @@ function tempProject() {
     'utf8'
   );
   writeFileSync(
-    path.join(dir, 'docs/code-index/code-map.json'),
+    path.join(dir, 'docs/code-map/code-map.json'),
     `${JSON.stringify(
       {
         schemaVersion: '1.0',
@@ -65,7 +67,7 @@ function tempProject() {
             moduleId: 'src',
             moduleName: 'Source',
             moduleRoot: 'src',
-            planningModule: 'docs/code-index/modules/src.md',
+            planningModule: 'docs/code-map/modules/src.md',
           },
         ],
       },
@@ -75,7 +77,7 @@ function tempProject() {
     'utf8'
   );
   writeFileSync(
-    path.join(dir, 'docs/code-index/module-map.json'),
+    path.join(dir, 'docs/code-map/module-map.json'),
     `${JSON.stringify(
       {
         schemaVersion: '1.0',
@@ -86,11 +88,11 @@ function tempProject() {
             id: 'src',
             name: 'Source',
             root: 'src',
-            planningModule: 'docs/code-index/modules/src.md',
+            planningModule: 'docs/code-map/modules/src.md',
           },
         ],
         edges: [],
-        codeMap: 'docs/code-index/code-map.json',
+        codeMap: 'docs/code-map/code-map.json',
       },
       null,
       2
@@ -121,24 +123,27 @@ test('generate-patterns --json writes patterns artifacts', () => {
 
   assert.equal(payload.ok, true);
   assert.deepEqual(payload.wrote, [
-    'docs/code-index/patterns.json',
-    'docs/code-index/patterns.md',
+    'docs/code-map/patterns.json',
+    'docs/code-map/patterns.md',
   ]);
   assert.ok(payload.patterns >= 1);
   assert.ok(payload.matches >= 1);
   assert.equal(payload.sourceFiles, 1);
   assert.equal(payload.eligibleFiles, 1);
+  assert.equal(payload.eligibleLines, 1);
+  assert.equal(payload.patternLines, 1);
+  assert.equal(payload.patternLinePercent, 100);
   assert.equal(payload.excludedFiles, 0);
-  assert.equal(existsSync(path.join(dir, 'docs/code-index/patterns.json')), true);
+  assert.equal(existsSync(path.join(dir, 'docs/code-map/patterns.json')), true);
   assert.match(
-    readFileSync(path.join(dir, 'docs/code-index/patterns.md'), 'utf8'),
+    readFileSync(path.join(dir, 'docs/code-map/patterns.md'), 'utf8'),
     /Node CLI argument parser/
   );
 });
 
 test('generate-patterns --json fails parseably when code-map is missing', () => {
   const dir = tempProject();
-  rmSync(path.join(dir, 'docs/code-index/code-map.json'), { force: true });
+  rmSync(path.join(dir, 'docs/code-map/code-map.json'), { force: true });
   writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = [];\n', 'utf8');
 
   const result = run(dir);
@@ -152,7 +157,7 @@ test('generate-patterns --json fails parseably when code-map is missing', () => 
 
 test('generate-patterns --json fails parseably when module-map is missing', () => {
   const dir = tempProject();
-  rmSync(path.join(dir, 'docs/code-index/module-map.json'), { force: true });
+  rmSync(path.join(dir, 'docs/code-map/module-map.json'), { force: true });
   writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = [];\n', 'utf8');
 
   const result = run(dir);
@@ -173,11 +178,13 @@ test('generate-patterns --json fails parseably for invalid repo catalog', () => 
     'utf8'
   );
   writeFileSync(
-    path.join(dir, 'code-indexer.config.json'),
+    path.join(dir, 'plan-product.config.json'),
     `${JSON.stringify(
       {
         projectName: 'Fixture',
-        output: 'docs/code-index/code-map.json',
+        output: 'docs/code-map/code-map.json',
+        outputDir: 'docs/code-map',
+        codeMapOutput: 'docs/code-map/code-map.json',
         roots: ['src'],
         languages: ['JavaScript'],
         patterns: { catalogs: ['bad.patterns.json'] },
@@ -209,6 +216,41 @@ test('generate-patterns --json succeeds with zero matches', () => {
   assert.equal(payload.coveragePercent, 0);
 });
 
+test('generate-patterns --json uses code-map roots as source of truth', () => {
+  const dir = tempProject();
+  mkdirSync(path.join(dir, 'test'), { recursive: true });
+  writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = [];\n', 'utf8');
+  writeFileSync(
+    path.join(dir, 'test/cli.test.mjs'),
+    'const args = process.argv.slice(2);\n',
+    'utf8'
+  );
+  writeFileSync(
+    path.join(dir, 'plan-product.config.json'),
+    `${JSON.stringify(
+      {
+        projectName: 'Fixture',
+        output: 'docs/code-map/code-map.json',
+        outputDir: 'docs/code-map',
+        codeMapOutput: 'docs/code-map/code-map.json',
+        roots: ['test'],
+        languages: ['JavaScript'],
+      },
+      null,
+      2
+    )}\n`,
+    'utf8'
+  );
+
+  const result = run(dir);
+  assert.equal(result.status, 0, result.stderr);
+  const payload = JSON.parse(result.stdout);
+
+  assert.equal(payload.sourceFiles, 1);
+  assert.equal(payload.eligibleLines, 1);
+  assert.equal(payload.matches, 0);
+});
+
 test('generate-patterns --json loads repo-defined catalogs', () => {
   const dir = tempProject();
   writeFileSync(path.join(dir, 'src/cli.mjs'), 'specialHandler();\n', 'utf8');
@@ -233,11 +275,13 @@ test('generate-patterns --json loads repo-defined catalogs', () => {
     'utf8'
   );
   writeFileSync(
-    path.join(dir, 'code-indexer.config.json'),
+    path.join(dir, 'plan-product.config.json'),
     `${JSON.stringify(
       {
         projectName: 'Fixture',
-        output: 'docs/code-index/code-map.json',
+        output: 'docs/code-map/code-map.json',
+        outputDir: 'docs/code-map',
+        codeMapOutput: 'docs/code-map/code-map.json',
         roots: ['src'],
         languages: ['JavaScript'],
         patterns: { catalogs: ['project.patterns.json'] },
@@ -251,7 +295,7 @@ test('generate-patterns --json loads repo-defined catalogs', () => {
   const result = run(dir);
   assert.equal(result.status, 0, result.stderr);
   const report = JSON.parse(
-    readFileSync(path.join(dir, 'docs/code-index/patterns.json'), 'utf8')
+    readFileSync(path.join(dir, 'docs/code-map/patterns.json'), 'utf8')
   );
   const projectPattern = report.patterns.find(
     (pattern) => pattern.id === 'project-special-handler'
@@ -263,11 +307,13 @@ test('generate-patterns --json loads repo-defined catalogs', () => {
 test('generate-patterns --json reports no pattern-eligible files', () => {
   const dir = tempProject();
   writeFileSync(
-    path.join(dir, 'code-indexer.config.json'),
+    path.join(dir, 'plan-product.config.json'),
     `${JSON.stringify(
       {
         projectName: 'Fixture',
-        output: 'docs/code-index/code-map.json',
+        output: 'docs/code-map/code-map.json',
+        outputDir: 'docs/code-map',
+        codeMapOutput: 'docs/code-map/code-map.json',
         roots: ['src'],
         languages: ['JavaScript'],
       },
@@ -292,11 +338,13 @@ test('generate-patterns --json reports no pattern-eligible files', () => {
 test('generate-patterns --json reports unsupported files outside denominator', () => {
   const dir = tempProject();
   writeFileSync(
-    path.join(dir, 'code-indexer.config.json'),
+    path.join(dir, 'plan-product.config.json'),
     `${JSON.stringify(
       {
         projectName: 'Fixture',
-        output: 'docs/code-index/code-map.json',
+        output: 'docs/code-map/code-map.json',
+        outputDir: 'docs/code-map',
+        codeMapOutput: 'docs/code-map/code-map.json',
         roots: ['src'],
         languages: ['JavaScript'],
       },
@@ -312,7 +360,7 @@ test('generate-patterns --json reports unsupported files outside denominator', (
   assert.equal(result.status, 0, result.stderr);
   const payload = JSON.parse(result.stdout);
   const report = JSON.parse(
-    readFileSync(path.join(dir, 'docs/code-index/patterns.json'), 'utf8')
+    readFileSync(path.join(dir, 'docs/code-map/patterns.json'), 'utf8')
   );
 
   assert.equal(payload.sourceFiles, 2);
