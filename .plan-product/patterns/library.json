@@ -1,0 +1,367 @@
+{
+  "version": 1,
+  "families": [
+    {
+      "id": "strategy",
+      "name": "Strategy",
+      "kind": "design-pattern",
+      "intent": "Select interchangeable behavior behind a stable contract.",
+      "tags": ["business-rules", "policy", "pricing", "routing", "workflow"],
+      "qualitySignals": ["stable abstraction", "multiple implementations", "caller depends on abstraction", "selection logic is isolated"],
+      "detectors": [
+        {
+          "id": "named-strategy",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate interchangeable strategy, policy, rule, or selector behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Strategy|Policy|Rule|Selector)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "factory",
+      "name": "Factory",
+      "kind": "design-pattern",
+      "intent": "Centralize variant creation behind a named creation boundary.",
+      "tags": ["creation", "config", "bootstrap", "provider"],
+      "qualitySignals": ["construction is centralized", "callers avoid scattered variant branching", "creation rules are testable"],
+      "detectors": [
+        {
+          "id": "named-factory",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate factory or builder-style creation behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Factory|Builder|create[A-Z][A-Za-z0-9_]*|build[A-Z][A-Za-z0-9_]*|make[A-Z][A-Za-z0-9_]*)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "adapter",
+      "name": "Adapter",
+      "kind": "design-pattern",
+      "intent": "Translate an external or incompatible interface into a local contract.",
+      "tags": ["integration", "external-api", "sdk", "client", "boundary"],
+      "qualitySignals": ["external details stay at the boundary", "local code depends on local shapes", "mapping is explicit"],
+      "detectors": [
+        {
+          "id": "named-adapter",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate adapter, mapper, translator, or gateway behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Adapter|Mapper|Translator|Gateway|Client)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "facade",
+      "name": "Facade",
+      "kind": "design-pattern",
+      "intent": "Expose a smaller public API over a more complex subsystem.",
+      "tags": ["service", "api", "subsystem", "boundary"],
+      "qualitySignals": ["public surface is smaller than internals", "delegates to multiple collaborators", "hides subsystem sequencing"],
+      "detectors": [
+        {
+          "id": "named-facade",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate facade, gateway, coordinator, or orchestrator behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Facade|Gateway|Coordinator|Orchestrator)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "decorator",
+      "name": "Decorator",
+      "kind": "design-pattern",
+      "intent": "Wrap behavior with additional policy while preserving the underlying contract.",
+      "tags": ["logging", "caching", "retry", "validation", "auth", "wrapper"],
+      "qualitySignals": ["wrapper delegates to wrapped dependency", "cross-cutting policy is isolated", "callers still see the original contract"],
+      "detectors": [
+        {
+          "id": "named-decorator",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate decorator, wrapper, proxy, retry, cache, auth, or logging wrappers.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Decorator|Wrapper|Proxy|Retry|Cache|Cached|Auth|Logging)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "chain-of-responsibility",
+      "name": "Chain of Responsibility",
+      "kind": "design-pattern",
+      "intent": "Pass work through ordered handlers until one handles or forwards it.",
+      "tags": ["pipeline", "middleware", "handler", "workflow", "validation"],
+      "qualitySignals": ["steps are independently testable", "ordering is explicit", "next/fallthrough behavior is visible"],
+      "detectors": [
+        {
+          "id": "pipeline-handler",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate middleware, pipeline, handler chain, or next-step behavior.",
+          "rule": { "regex": "\\b(middleware|pipeline|next|handlerChain|Chain|Handler)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "command",
+      "name": "Command",
+      "kind": "design-pattern",
+      "intent": "Encapsulate an action as a discrete object or handler.",
+      "tags": ["command", "job", "task", "action", "handler", "cli"],
+      "qualitySignals": ["action is named and testable", "execution contract is consistent", "side effects are contained"],
+      "detectors": [
+        {
+          "id": "named-command",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate command, action, job, task, or execute/run/handle entry points.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Command|Action|Job|Task|Handler|execute|run|handle)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "observer-pubsub",
+      "name": "Observer / PubSub",
+      "kind": "design-pattern",
+      "intent": "Notify subscribers or listeners when state or events change.",
+      "tags": ["event", "listener", "subscription", "notification"],
+      "qualitySignals": ["subscription API is explicit", "publisher does not know concrete observers", "events carry stable payloads"],
+      "detectors": [
+        {
+          "id": "event-listener",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate event, listener, publish/subscribe, emit, or notification behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Event|Listener|Subscriber|Publisher|Notification|subscribe|publish|emit)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "repository",
+      "name": "Repository",
+      "kind": "architecture-pattern",
+      "intent": "Isolate persistence access behind a collection-like application boundary.",
+      "tags": ["data", "database", "persistence", "storage", "repository"],
+      "qualitySignals": ["data access is centralized", "domain/application code avoids raw database calls", "queries are named and testable"],
+      "detectors": [
+        {
+          "id": "named-repository",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate repository, store, DAO, persistence, or data access boundaries.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Repository|Repo|Store|DAO|DataAccess|Persistence)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "dependency-injection",
+      "name": "Dependency Injection",
+      "kind": "architecture-pattern",
+      "intent": "Pass dependencies explicitly instead of constructing or looking them up inside consumers.",
+      "tags": ["dependency", "provider", "container", "bootstrap", "composition-root"],
+      "qualitySignals": ["dependencies are explicit", "construction lives at the composition root", "consumers are testable with fakes"],
+      "detectors": [
+        {
+          "id": "injection-language",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate providers, containers, injected dependencies, or composition roots.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Provider|Container|Injector|Registry|CompositionRoot|DI|Dependency)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "service-layer",
+      "name": "Service Layer",
+      "kind": "architecture-pattern",
+      "intent": "Place application orchestration behind transport-neutral services.",
+      "tags": ["service", "application", "orchestration", "business-rules"],
+      "qualitySignals": ["transport handlers stay thin", "business flow is reusable", "services depend on ports or local contracts"],
+      "detectors": [
+        {
+          "id": "named-service",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate application service or orchestration layer behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Service|ApplicationService|UseCase|Interactor|Workflow)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "dto-mapper",
+      "name": "DTO Mapper",
+      "kind": "architecture-pattern",
+      "intent": "Translate external transport or persistence shapes into local application shapes.",
+      "tags": ["dto", "mapper", "boundary", "api", "persistence"],
+      "qualitySignals": ["external shapes do not leak inward", "mapping is explicit", "validation has a stable input model"],
+      "detectors": [
+        {
+          "id": "named-dto-mapper",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate DTOs, mappers, serializers, parsers, or normalizers.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(DTO|Dto|Mapper|Serializer|Parser|Normalizer|Presenter)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "configuration-boundary",
+      "name": "Configuration Boundary",
+      "kind": "architecture-pattern",
+      "intent": "Load and normalize configuration at a clear boundary.",
+      "tags": ["config", "settings", "environment", "bootstrap"],
+      "qualitySignals": ["config access is centralized", "callers receive typed settings", "defaults and validation are visible"],
+      "detectors": [
+        {
+          "id": "config-access",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Code reads environment or configuration values.",
+          "rule": { "regex": "\\b(process\\.env|os\\.environ|Environment\\.GetEnvironmentVariable|System\\.getenv|Getenv|config|settings)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "logging-observability-boundary",
+      "name": "Logging / Observability Boundary",
+      "kind": "architecture-pattern",
+      "intent": "Keep logging, metrics, tracing, and diagnostic policy visible and consistent.",
+      "tags": ["logging", "observability", "metrics", "tracing", "diagnostics"],
+      "qualitySignals": ["logs are structured", "metrics/traces use a shared boundary", "diagnostics avoid ad hoc prints"],
+      "detectors": [
+        {
+          "id": "observability-access",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Code emits logs, metrics, traces, spans, or diagnostic records.",
+          "rule": { "regex": "\\b(logger|log\\.|console\\.|metrics|meter|trace|tracer|span|diagnostic)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "validation-boundary",
+      "name": "Validation Boundary",
+      "kind": "architecture-pattern",
+      "intent": "Validate inputs at application or transport boundaries before core logic runs.",
+      "tags": ["validation", "schema", "input", "boundary"],
+      "qualitySignals": ["invalid input is rejected early", "validation rules are named", "domain code receives trusted shapes"],
+      "detectors": [
+        {
+          "id": "validation-language",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate validation, schema, guard, parser, or assertion behavior.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Validate|Validator|Schema|Guard|Assert|Parse|Parser)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "error-handling-policy",
+      "name": "Error Handling Policy",
+      "kind": "architecture-pattern",
+      "intent": "Normalize errors into consistent application or boundary-level results.",
+      "tags": ["error", "exception", "result", "boundary", "policy"],
+      "qualitySignals": ["errors are typed or classified", "transport mapping is consistent", "retries and fallbacks are explicit"],
+      "detectors": [
+        {
+          "id": "error-policy-language",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "medium",
+          "description": "Names indicate error classes, result wrappers, exception mapping, or failure policy.",
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(Error|Exception|Result|Failure|Fault|Retry|Fallback)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "large-conditional-dispatch",
+      "name": "Large Conditional Dispatch",
+      "kind": "smell",
+      "intent": "Find branching that may deserve Strategy, Factory, Command, or Chain extraction.",
+      "tags": ["branching", "dispatch", "strategy", "factory", "command"],
+      "qualitySignals": ["branch count is justified", "variants are named", "new variants do not require editing many branches"],
+      "detectors": [
+        {
+          "id": "conditional-dispatch-signal",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "intent-only",
+          "description": "Conditional dispatch keywords are present; inspect before treating this as a smell.",
+          "includeInHeadline": false,
+          "rule": { "regex": "\\b(if|else if|switch|case|match)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "god-class",
+      "name": "God Class",
+      "kind": "smell",
+      "intent": "Find broad responsibility containers that may concentrate unrelated behavior, state, or dependencies.",
+      "tags": ["responsibility", "cohesion", "solid", "single-responsibility", "maintainability"],
+      "qualitySignals": ["class or module owns unrelated responsibilities", "file is unusually large", "many collaborators or public methods", "name is broad rather than domain-specific"],
+      "detectors": [
+        {
+          "id": "broad-responsibility-name",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "intent-only",
+          "description": "Names indicate broad responsibility containers; inspect size, cohesion, dependencies, and public surface before treating this as a smell.",
+          "includeInHeadline": false,
+          "rule": { "regex": "\\b[A-Za-z0-9_]*(God|KitchenSink|Everything|Manager|Coordinator|Orchestrator|Processor|Helper|Helpers|Util|Utils|Service)[A-Za-z0-9_]*\\b" }
+        }
+      ]
+    },
+    {
+      "id": "direct-external-api-leak",
+      "name": "Direct External API Leak",
+      "kind": "smell",
+      "intent": "Find external SDK or HTTP calls that may belong behind Adapter or Facade boundaries.",
+      "tags": ["integration", "external-api", "adapter", "facade"],
+      "qualitySignals": ["external calls stay in integration modules", "callers depend on local contracts", "response mapping is explicit"],
+      "detectors": [
+        {
+          "id": "direct-http-or-sdk",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "intent-only",
+          "description": "Direct HTTP or SDK-like calls are present; inspect boundary ownership.",
+          "includeInHeadline": false,
+          "rule": { "regex": "\\b(fetch|axios|HttpClient|requests\\.|http\\.Client|SDK|ApiClient)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "direct-database-leak",
+      "name": "Direct Database Leak",
+      "kind": "smell",
+      "intent": "Find direct database calls that may belong behind Repository or data-access boundaries.",
+      "tags": ["data", "database", "repository", "persistence"],
+      "qualitySignals": ["raw queries stay in persistence modules", "business code depends on repositories", "transactions are explicit"],
+      "detectors": [
+        {
+          "id": "direct-db-call",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "intent-only",
+          "description": "Direct database or query calls are present; inspect data-boundary ownership.",
+          "includeInHeadline": false,
+          "rule": { "regex": "\\b(query|execute\\(|exec\\(|db\\.|database|sql|SELECT|INSERT|UPDATE|DELETE)\\b" }
+        }
+      ]
+    },
+    {
+      "id": "scattered-config-access",
+      "name": "Scattered Config Access",
+      "kind": "smell",
+      "intent": "Find direct config/env reads that may indicate configuration is not centralized.",
+      "tags": ["config", "environment", "settings"],
+      "qualitySignals": ["environment reads are centralized", "modules receive normalized settings", "tests can supply config explicitly"],
+      "detectors": [
+        {
+          "id": "direct-env-access",
+          "languages": ["JavaScript", "TypeScript", "CSharp", "Java", "Python", "Go"],
+          "confidence": "intent-only",
+          "description": "Direct environment/config reads are present; inspect whether this module owns configuration.",
+          "includeInHeadline": false,
+          "rule": { "regex": "\\b(process\\.env|os\\.environ|Environment\\.GetEnvironmentVariable|System\\.getenv|Getenv)\\b" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
-  "name": "code-indexer",
-  "displayName": "Code Indexer",
-  "description": "code-indexer: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, and Gemini",
-  "version": "1.0.0",
+  "name": "plan-product",
+  "displayName": "plan-product",
+  "description": "plan-product: plans products, features, and use cases, then generates code-map context for implementation planning.",
+  "version": "2.0.0",
   "author": {
     "name": "jamaynor"
   },
@@ -10,10 +10,12 @@
   "repository": "https://github.com/jamaynor/code-indexer",
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
-    "code-indexer",
+    "plan-product",
+    "planning",
+    "features",
+    "use-cases",
     "code-map",
-    "module-map",
-    "context",
+    "architecture",
     "skills"
   ],
   "skills": "./skills/",

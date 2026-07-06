@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { loadCodeIndexerConfig, validateRequiredDocs } from './config.mjs';
-import { buildCodeIndexerModel } from './build.mjs';
+import { loadPlanProductConfig, validateRequiredDocs } from './config.mjs';
+import { buildPlanProductModel } from './build.mjs';
 import { createLogger } from './logger.mjs';
 
 const log = createLogger({ module: 'doctor' });
@@ -39,7 +39,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
       id: 'code-map',
       status: 'fail',
       message: `${codeMapOutput} not found`,
-      hint: 'Run: npm run code-map or node <PLUGIN_ROOT>/scripts/code-map/generate-code-map.mjs',
+      hint: 'Run: npm run map-code or node <PLUGIN_ROOT>/scripts/map-code/generate.mjs',
     }];
   }
 
@@ -55,7 +55,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
         id: 'code-map',
         status: 'warn',
         message: 'CODE_MAP has zero files and zero endpoints',
-        hint: 'Verify code-map.config.json roots',
+        hint: 'Verify plan-product.config.json roots',
       }];
     }
 
@@ -75,7 +75,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {import('./config.mjs').PlanProductConfig} config
  * @returns {DoctorCheck[]}
  */
 function checkModuleMap(repoRoot, config) {
@@ -87,7 +87,7 @@ function checkModuleMap(repoRoot, config) {
       id: 'module-map',
       status: 'fail',
       message: 'module-map.json not found',
-      hint: 'Run: npm run code-indexer or node <PLUGIN_ROOT>/scripts/module-map/generate.mjs',
+      hint: 'Run: npm run map-code or node <PLUGIN_ROOT>/scripts/map-code/generate.mjs',
     }];
   }
 
@@ -111,7 +111,7 @@ function checkModuleMap(repoRoot, config) {
       id: 'module-discovery',
       status: 'warn',
       message: 'All modules use fallback discovery',
-      hint: 'Add code-indexer.config.json manual modules or improve stack detection',
+      hint: 'Add plan-product.config.json manual modules or improve stack detection',
     });
   }
 
@@ -135,7 +135,7 @@ function checkAgentEntrypoints(repoRoot) {
       id,
       status: existsSync(full) ? 'pass' : 'warn',
       message: existsSync(full) ? `${rel} present` : `${rel} missing`,
-      hint: existsSync(full) ? undefined : 'Run: node <PLUGIN_ROOT>/scripts/module-map/generate.mjs --init',
+      hint: existsSync(full) ? undefined : 'Run: node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --init',
     });
   }
 
@@ -171,7 +171,7 @@ function checkRuntimeReadiness(repoRoot = process.cwd()) {
     });
   }
 
-  for (const rel of ['.cursor/rules/code-indexer.mdc', 'skills', '.agents/skills']) {
+  for (const rel of ['.cursor/rules/code-map.mdc', 'skills', '.agents/skills']) {
     const full = path.join(repoRoot, rel);
     results.push({
       runtime: `project:${rel}`,
@@ -192,7 +192,7 @@ function checkRuntimeReadiness(repoRoot = process.cwd()) {
  */
 export function runDoctor(repoRoot, options = {}) {
   log.info('doctor start', { repoRoot, runtimes: options.runtimes === true });
-  const config = loadCodeIndexerConfig(repoRoot);
+  const config = loadPlanProductConfig(repoRoot);
   const { missing, resolved } = validateRequiredDocs(repoRoot, config);
 
   /** @type {DoctorCheck[]} */
@@ -211,7 +211,7 @@ export function runDoctor(repoRoot, options = {}) {
     checks.push({
       id: 'required-docs',
       status: 'pass',
-      message: `Docs ok: ${resolved.product}, ${resolved.roadmap}, ${resolved.techStack}`,
+      message: `Docs ok: ${resolved.product}, ${resolved.features}, ${resolved.techStack}`,
     });
   }
 
@@ -223,7 +223,7 @@ export function runDoctor(repoRoot, options = {}) {
     const codeMap = JSON.parse(
       readFileSync(path.join(repoRoot, config.codeMapOutput), 'utf8')
     );
-    const model = buildCodeIndexerModel(repoRoot, config, codeMap);
+    const model = buildPlanProductModel(repoRoot, config, codeMap);
     log.debug('doctor built model for validation', {
       moduleCount: model.modules.length,
       routeCount: model.stats.routeCount,
@@ -254,7 +254,7 @@ export function runDoctor(repoRoot, options = {}) {
  */
 export function formatDoctorReport(report) {
   const lines = [];
-  lines.push(`code-indexer doctor: ${report.ok ? 'PASS' : 'FAIL'}`);
+  lines.push(`plan-product doctor: ${report.ok ? 'PASS' : 'FAIL'}`);
   lines.push('');
 
   for (const check of report.checks) {

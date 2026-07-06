@@ -1,0 +1,46 @@
+---
+id: F-001
+phase: 0
+status: planned
+---
+
+# F-001 plan-product Path Map
+
+## Summary
+
+Define the committed, repo-relative path map for plan-product artifacts.
+
+## Use Case
+
+An agent can resolve plan-product files without relying on hardcoded local paths or installation-specific plugin cache locations.
+
+## Scope
+
+- Own `.plan-product/config.json`.
+- Keep plan-product artifact paths repo-relative.
+- Point to canonical product, feature, stack, schema, template, source, and test locations.
+
+## Out of Scope
+
+- Compound Engineering local config.
+- User-specific absolute paths.
+- Installed plugin cache paths.
+
+## Inputs
+
+- `.plan-product/config.json`
+- plan-product artifact layout
+
+## Outputs
+
+- Portable path contract for plan-product tools and skills.
+
+## Acceptance
+
+- `.plan-product/config.json` exists.
+- Config paths are repo-relative.
+- Config contains only plan-product-owned paths.
+
+## Dependencies
+
+- None.

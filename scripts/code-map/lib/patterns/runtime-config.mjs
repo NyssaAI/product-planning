@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { loadCodeMapConfig } from '../code-map-config.mjs';
-import { loadCodeIndexerConfig } from '../../../module-map/lib/config.mjs';
+import { loadPlanProductConfig } from '../../../module-map/lib/config.mjs';
 
 /**
  * @typedef {object} PatternRuntimeConfig
@@ -12,6 +12,9 @@ import { loadCodeIndexerConfig } from '../../../module-map/lib/config.mjs';
  * @property {string[]} roots
  * @property {string[]} languages
  * @property {string[]} catalogs
+ * @property {string | null} patternLibraryPath
+ * @property {string | null} patternExpectationsPath
+ * @property {Array<object>} expectations
  * @property {string[]} warnings
  */
 
@@ -20,22 +23,42 @@ import { loadCodeIndexerConfig } from '../../../module-map/lib/config.mjs';
  * @returns {PatternRuntimeConfig}
  */
 export function loadPatternRuntimeConfig(repoRoot) {
-  const indexer = loadCodeIndexerConfig(repoRoot);
+  const planProduct = loadPlanProductConfig(repoRoot);
   const codeMap = loadCodeMapConfig(repoRoot);
   const raw = readRawConfig(repoRoot);
+  const pathConfig = readPlanProductPathConfig(repoRoot);
+  const patternLibraryPath = planProductPatternPath(
+    pathConfig,
+    'patternLibrary',
+    'library',
+    '.plan-product/patterns/library.json'
+  );
+  const patternExpectationsPath = planProductPatternPath(
+    pathConfig,
+    'patternExpectations',
+    'expectations',
+    '.plan-product/patterns/expectations.json'
+  );
+  const planProductCatalogs = existsSync(path.join(repoRoot, patternLibraryPath))
+    ? [patternLibraryPath]
+    : [];
   const catalogs = Array.isArray(raw.patterns?.catalogs)
     ? raw.patterns.catalogs.filter((entry) => typeof entry === 'string')
     : [];
+  const expectations = loadExpectations(repoRoot, patternExpectationsPath);
 
   return {
-    projectName: indexer.projectName,
-    outputDir: normalizeRel(indexer.outputDir),
+    projectName: planProduct.projectName,
+    outputDir: normalizeRel(planProduct.outputDir),
     codeMapPath: normalizeRel(codeMap.output),
-    moduleMapPath: normalizeRel(path.posix.join(normalizeRel(indexer.outputDir), 'module-map.json')),
+    moduleMapPath: normalizeRel(path.posix.join(normalizeRel(planProduct.outputDir), 'module-map.json')),
     roots: [...codeMap.roots],
     languages: [...codeMap.languages],
-    catalogs,
-    warnings: moduleMapCodeMapWarning(repoRoot, indexer.outputDir, codeMap.output),
+    catalogs: [...planProductCatalogs, ...catalogs],
+    patternLibraryPath: planProductCatalogs.length > 0 ? patternLibraryPath : null,
+    patternExpectationsPath: expectations.length > 0 ? patternExpectationsPath : null,
+    expectations,
+    warnings: moduleMapCodeMapWarning(repoRoot, planProduct.outputDir, codeMap.output),
   };
 }
 
@@ -44,11 +67,58 @@ export function loadPatternRuntimeConfig(repoRoot) {
  * @returns {Record<string, any>}
  */
 function readRawConfig(repoRoot) {
-  const configPath = path.join(repoRoot, 'code-indexer.config.json');
+  const configPath = path.join(repoRoot, 'plan-product.config.json');
   if (!existsSync(configPath)) {
     return {};
   }
   return JSON.parse(readFileSync(configPath, 'utf8'));
+}
+
+/**
+ * @param {string} repoRoot
+ * @returns {Record<string, any> | null}
+ */
+function readPlanProductPathConfig(repoRoot) {
+  const configPath = path.join(repoRoot, '.plan-product', 'config.json');
+  if (!existsSync(configPath)) {
+    return null;
+  }
+  return JSON.parse(readFileSync(configPath, 'utf8'));
+}
+
+/**
+ * @param {Record<string, any> | null} config
+ * @param {string} pathKey
+ * @param {string} structureKey
+ * @param {string} fallback
+ * @returns {string}
+ */
+function planProductPatternPath(config, pathKey, structureKey, fallback) {
+  const paths = config?.paths ?? {};
+  const patterns = config?.structure?.patterns ?? {};
+  const value =
+    typeof paths[pathKey] === 'string'
+      ? paths[pathKey]
+      : typeof patterns[structureKey] === 'string'
+        ? patterns[structureKey]
+        : fallback;
+  return normalizeRel(value);
+}
+
+/**
+ * @param {string} repoRoot
+ * @param {string} relPath
+ * @returns {Array<object>}
+ */
+function loadExpectations(repoRoot, relPath) {
+  const fullPath = path.join(repoRoot, relPath);
+  if (!existsSync(fullPath)) {
+    return [];
+  }
+  const raw = JSON.parse(readFileSync(fullPath, 'utf8'));
+  return Array.isArray(raw?.expectations)
+    ? raw.expectations.filter((entry) => entry && typeof entry === 'object')
+    : [];
 }
 
 /**

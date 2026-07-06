@@ -7,7 +7,8 @@ import path from 'node:path';
  */
 export function findPluginRoot(startDir) {
   for (const key of [
-    'CODE_INDEXER_PLUGIN_ROOT',
+    'PLAN_PRODUCT_PLUGIN_ROOT',
+    'PLUGIN_ROOT',
     'CLAUDE_PLUGIN_ROOT',
     'CURSOR_PLUGIN_ROOT',
   ]) {

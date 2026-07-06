@@ -13,9 +13,9 @@ import { createLogger } from '../logger.mjs';
 const log = createLogger({ module: 'adapters' });
 
 // Adapter/code-map asymmetry: code-map ships ast-grep rules for Go and Java
-// (see scripts/code-map/sgconfig.yml + rules/), but code-indexer has NO stack-graph
+// (see scripts/code-map/sgconfig.yml + rules/), but plan-product has NO stack-graph
 // adapter for them — only csharp/python/typescript below. For a Go/Java repo,
-// code-map still extracts symbols/endpoints, but code-indexer cannot build the
+// code-map still extracts symbols/endpoints, but plan-product cannot build the
 // import/reference FileGraph used for module dependsOn/usedBy edges. Writing
 // those adapters is out of scope here; selectAdapter warns instead of silently
 // returning null so the gap is observable.
@@ -39,7 +39,7 @@ export function selectAdapter(repoRoot, forcedId) {
     const forced = ADAPTERS.find((a) => a.id === forcedId) ?? null;
     if (!forced) {
       log.warn(
-        `no code-indexer stack-graph adapter for ${forcedId}; code-map symbols only`,
+        `no plan-product stack-graph adapter for ${forcedId}; code-map symbols only`,
         { language: forcedId }
       );
     }

@@ -17,11 +17,16 @@ const MAX_SCAN_ARG_LENGTH = 24000;
  * @typedef {object} PatternMatch
  * @property {string} patternId
  * @property {string} patternName
+ * @property {string | undefined} familyId
+ * @property {string | undefined} familyName
+ * @property {string | undefined} kind
  * @property {string} confidence
  * @property {boolean} includeInHeadline
  * @property {string} language
  * @property {string} file
  * @property {number} line
+ * @property {number} endLine
+ * @property {number} lineCount
  */
 
 /**
@@ -117,7 +122,7 @@ export function runPatternScan(repoRoot, patterns, eligibleFiles) {
       if (result.status !== 0) {
         if (result.stdout?.trim()) {
           process.stderr.write(
-            `code-indexer: warning: ast-grep exited ${result.status}${result.stderr?.trim() ? `: ${result.stderr.trim()}` : ''}\n`
+            `plan-product: warning: ast-grep exited ${result.status}${result.stderr?.trim() ? `: ${result.stderr.trim()}` : ''}\n`
           );
         } else {
           throw scanError(
@@ -154,7 +159,7 @@ export function runPatternScan(repoRoot, patterns, eligibleFiles) {
  * @returns {PatternMatch | null}
  */
 function normalizeMatch(repoRoot, match, patternsById) {
-  const metadata = /** @type {{ patternId?: string, patternName?: string, confidence?: string, includeInHeadline?: string }} */ (
+  const metadata = /** @type {{ patternId?: string, patternName?: string, familyId?: string, familyName?: string, patternKind?: string, confidence?: string, includeInHeadline?: string }} */ (
     match.metadata ?? {}
   );
   const patternId = metadata.patternId;
@@ -166,10 +171,15 @@ function normalizeMatch(repoRoot, match, patternsById) {
     return null;
   }
   const file = normalizeMatchFile(repoRoot, String(match.file ?? ''));
-  const range = /** @type {{ start?: { line?: number } }} */ (match.range);
+  const range = /** @type {{ start?: { line?: number }, end?: { line?: number } }} */ (match.range);
+  const line = (range?.start?.line ?? 0) + 1;
+  const endLine = Math.max(line, (range?.end?.line ?? range?.start?.line ?? 0) + 1);
   return {
     patternId,
     patternName: metadata.patternName ?? pattern.name,
+    familyId: metadata.familyId || pattern.familyId,
+    familyName: metadata.familyName || pattern.familyName,
+    kind: metadata.patternKind || pattern.kind,
     confidence: metadata.confidence ?? pattern.confidence,
     includeInHeadline:
       metadata.includeInHeadline === undefined
@@ -177,7 +187,9 @@ function normalizeMatch(repoRoot, match, patternsById) {
         : metadata.includeInHeadline !== 'false',
     language: pattern.language,
     file,
-    line: (range?.start?.line ?? 0) + 1,
+    line,
+    endLine,
+    lineCount: endLine - line + 1,
   };
 }
 

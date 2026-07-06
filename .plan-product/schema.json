@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plan-product.local/schema/config.schema.json",
+  "title": "plan-product Config",
+  "type": "object",
+  "required": ["version", "paths", "structure"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "paths": {
+      "type": "object",
+      "required": [
+        "repoRoot",
+        "product",
+        "features",
+        "techStack",
+        "featureDocs",
+        "codeMap"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "repoRoot": { "type": "string" },
+        "product": { "type": "string" },
+        "features": { "type": "string" },
+        "techStack": { "type": "string" },
+        "featureDocs": { "type": "string" },
+        "codeMap": { "type": "string" },
+        "configSchema": { "type": "string" },
+        "templates": { "type": "string" },
+        "productTemplate": { "type": "string" },
+        "featuresTemplate": { "type": "string" },
+        "techStackTemplate": { "type": "string" },
+        "featureTemplate": { "type": "string" },
+        "useCaseTemplate": { "type": "string" },
+        "patternLibrary": { "type": "string" },
+        "patternExpectations": { "type": "string" },
+        "patternLibraryTemplate": { "type": "string" },
+        "patternExpectationsTemplate": { "type": "string" },
+        "usageEvents": { "type": "string" },
+        "effectivenessReport": { "type": "string" },
+        "source": { "type": "string" },
+        "tests": { "type": "string" }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "required": ["features", "codeMap"],
+      "additionalProperties": false,
+      "properties": {
+        "features": {
+          "type": "object",
+          "required": [
+            "inventory",
+            "root",
+            "idPattern",
+            "folderPattern",
+            "featureFile",
+            "featurePathPattern",
+            "useCaseIdPattern",
+            "useCaseFilePattern",
+            "useCasePathPattern"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "inventory": { "type": "string" },
+            "root": { "type": "string" },
+            "idPattern": { "type": "string" },
+            "folderPattern": { "type": "string" },
+            "featureFile": { "type": "string" },
+            "featurePathPattern": { "type": "string" },
+            "useCaseIdPattern": { "type": "string" },
+            "useCaseFilePattern": { "type": "string" },
+            "useCasePathPattern": { "type": "string" }
+          }
+        },
+        "codeMap": {
+          "type": "object",
+          "required": ["root"],
+          "additionalProperties": false,
+          "properties": {
+            "root": { "type": "string" }
+          }
+        },
+        "patterns": {
+          "type": "object",
+          "required": ["root", "library", "expectations"],
+          "additionalProperties": false,
+          "properties": {
+            "root": { "type": "string" },
+            "library": { "type": "string" },
+            "expectations": { "type": "string" },
+            "libraryTemplate": { "type": "string" },
+            "expectationsTemplate": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

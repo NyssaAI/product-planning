@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { annotateCodeMapWithModules } from '../../scripts/code-map/lib/module-linker.mjs';
 
-test('annotateCodeMapWithModules links files and symbols to their code-indexer modules', () => {
+test('annotateCodeMapWithModules links files and symbols to their plan-product modules', () => {
   const codeMap = {
     files: [
       {
@@ -30,7 +30,7 @@ test('annotateCodeMapWithModules links files and symbols to their code-indexer m
   ];
 
   const annotated = annotateCodeMapWithModules(codeMap, modules, {
-    outputDir: 'docs/code-index',
+    outputDir: 'docs/code-map',
   });
 
   const ordersFile = annotated.files.find(
@@ -41,7 +41,7 @@ test('annotateCodeMapWithModules links files and symbols to their code-indexer m
   assert.equal(ordersFile.moduleRoot, 'src/orders');
   assert.equal(
     ordersFile.planningModule,
-    'docs/code-index/modules/orders.md'
+    'docs/code-map/modules/orders.md'
   );
   assert.equal(ordersFile.symbols[0].moduleId, 'orders');
 
@@ -50,7 +50,7 @@ test('annotateCodeMapWithModules links files and symbols to their code-indexer m
       id: 'orders',
       name: 'Orders',
       root: 'src/orders',
-      planningModule: 'docs/code-index/modules/orders.md',
+      planningModule: 'docs/code-map/modules/orders.md',
       fileCount: 1,
       symbolCount: 1,
       endpointCount: 1,
@@ -59,7 +59,7 @@ test('annotateCodeMapWithModules links files and symbols to their code-indexer m
       id: 'users',
       name: 'Users',
       root: 'src/users',
-      planningModule: 'docs/code-index/modules/users.md',
+      planningModule: 'docs/code-map/modules/users.md',
       fileCount: 1,
       symbolCount: 1,
       endpointCount: 0,
@@ -74,17 +74,17 @@ test('annotateCodeMapWithModules links files and symbols to their code-indexer m
   assert.equal(createOrder.moduleId, 'orders');
   assert.equal(
     createOrder.planningModule,
-    'docs/code-index/modules/orders.md'
+    'docs/code-map/modules/orders.md'
   );
 
   assert.equal(annotated.endpoints[0].moduleId, 'orders');
   assert.equal(
     annotated.endpoints[0].planningModule,
-    'docs/code-index/modules/orders.md'
+    'docs/code-map/modules/orders.md'
   );
 });
 
-test('annotateCodeMapWithModules honors a legacy/project-configured output dir', () => {
+test('annotateCodeMapWithModules honors a project-configured output dir', () => {
   const codeMap = {
     files: [
       {
@@ -105,7 +105,7 @@ test('annotateCodeMapWithModules honors a legacy/project-configured output dir',
   const modules = [{ id: 'orders', name: 'Orders', root: 'app/api/orders' }];
 
   // A project can point generated output at a custom dir instead of the
-  // default docs/code-index tree; planningModule paths must follow it.
+  // default docs/code-map tree; planningModule paths must follow it.
   const annotated = annotateCodeMapWithModules(codeMap, modules, {
     outputDir: 'build/index-out',
   });
@@ -140,7 +140,7 @@ test('annotateCodeMapWithModules leaves unowned files unlinked but indexed', () 
   const modules = [{ id: 'orders', name: 'Orders', root: 'src/orders' }];
 
   const annotated = annotateCodeMapWithModules(codeMap, modules, {
-    outputDir: 'docs/code-index',
+    outputDir: 'docs/code-map',
   });
 
   const file = annotated.files[0];

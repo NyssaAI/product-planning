@@ -34,8 +34,7 @@ const CONFIG_FILE_CANDIDATES = [
   'Cargo.toml',
   'appsettings.json',
   '.env.example',
-  'code-indexer.config.json',
-  'code-map.config.json',
+  'plan-product.config.json',
 ];
 
 /**

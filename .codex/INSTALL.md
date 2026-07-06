@@ -2,9 +2,17 @@
 
 Native Codex plugin installation, usage, updating, and troubleshooting are in the main README:
 
-**[README.md - Codex section](../README.md#codex)**
+**[README.md - Codex usage](../README.md#codex-usage)**
 
-The native plugin packages the `/ci` command, `/code-indexer` alias, `/ci arch` workflow, `/ci patterns` workflow, skills, and generator scripts together.
+The native plugin packages Codex skills for plan-product workflows plus the code-map generator scripts. Codex does not load plugin `commands/` as bare slash commands; use these skills in Codex:
+
+- `plan-product:plan-product`
+- `plan-product:plan-feature`
+- `plan-product:plan-use-case`
+- `plan-product:map-code`
+- `plan-product:map-architecture`
+- `plan-product:find-code-patterns`
+- `plan-product:using-code-map`
 
 Raw URL for agents:
 

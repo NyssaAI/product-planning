@@ -5,16 +5,20 @@ import path from 'node:path';
 export const DEFAULT_DOC_CANDIDATES = {
   product: [
     'docs/product.md',
-    'PRODUCT.md',
     'product.md',
+    'PRODUCT.md',
     'doc/product.md',
   ],
-  roadmap: ['docs/roadmap.md', 'ROADMAP.md', 'roadmap.md'],
+  features: [
+    'docs/features.md',
+    'features.md',
+    'FEATURES.md',
+  ],
   techStack: [
     'docs/tech-stack.md',
+    'tech-stack.md',
     'docs/techstack.md',
     'TECH-STACK.md',
-    'tech-stack.md',
   ],
 };
 

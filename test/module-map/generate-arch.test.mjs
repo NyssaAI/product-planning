@@ -12,7 +12,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const repoRoot = path.resolve('.');
-const script = path.join(repoRoot, 'scripts/module-map/generate.mjs');
+const script = path.join(repoRoot, 'scripts/module-map/generate-module-map.mjs');
 /** @type {string[]} */
 const tempDirs = [];
 
@@ -22,11 +22,11 @@ test.after(() => {
   }
 });
 
-function tempProject(outputDir = 'docs/code-index') {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-generate-arch-'));
+function tempProject(outputDir = 'docs/code-map') {
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-generate-arch-'));
   tempDirs.push(dir);
   writeFileSync(
-    path.join(dir, 'code-indexer.config.json'),
+    path.join(dir, 'plan-product.config.json'),
     `${JSON.stringify(
       {
         projectName: 'Fixture',
@@ -41,7 +41,7 @@ function tempProject(outputDir = 'docs/code-index') {
   return dir;
 }
 
-function writeModuleMap(dir, outputDir = 'docs/code-index') {
+function writeModuleMap(dir, outputDir = 'docs/code-map') {
   writeFileSync(
     path.join(dir, outputDir, 'module-map.json'),
     `${JSON.stringify(
@@ -72,7 +72,7 @@ function writeModuleMap(dir, outputDir = 'docs/code-index') {
           },
         ],
         edges: [{ from: 'api', to: 'lib' }],
-        codeMap: 'docs/code-index/code-map.json',
+        codeMap: 'docs/code-map/code-map.json',
         stats: { moduleCount: 2, routeCount: 0 },
       },
       null,
@@ -98,16 +98,25 @@ test('--arch --json writes system-architecture.md from module-map.json', () => {
   const payload = JSON.parse(result.stdout);
 
   assert.equal(payload.ok, true);
-  assert.deepEqual(payload.wrote, ['docs/code-index/system-architecture.md']);
+  assert.deepEqual(payload.wrote, ['docs/code-map/system-architecture.md']);
   assert.equal(payload.modules, 2);
   assert.equal(payload.edges, 1);
 
   const arch = readFileSync(
-    path.join(dir, 'docs/code-index/system-architecture.md'),
+    path.join(dir, 'docs/code-map/system-architecture.md'),
     'utf8'
   );
   assert.match(arch, /# Fixture System Architecture/);
-  assert.match(arch, /m_api --> m_lib/);
+  assert.match(arch, /## Component Tree/);
+  assert.match(arch, /\|-- Lib \(lib\)/);
+  assert.match(arch, /\|   \|-- depends on: -/);
+  assert.match(arch, /`-- API \(api\)/);
+  assert.match(arch, /    \|-- depends on: lib/);
+  assert.ok(
+    arch.indexOf('|-- Lib (lib)') < arch.indexOf('`-- API (api)'),
+    'arch output lists zero-dependency modules before dependent modules'
+  );
+  assert.doesNotMatch(arch, /```mermaid/);
 });
 
 test('--arch renders configured module-map path when outputDir is custom', () => {
@@ -133,13 +142,13 @@ test('--arch preserves existing agent-authored overview region', () => {
   const dir = tempProject();
   writeModuleMap(dir);
   writeFileSync(
-    path.join(dir, 'docs/code-index/system-architecture.md'),
+    path.join(dir, 'docs/code-map/system-architecture.md'),
     [
       '# Fixture System Architecture',
       '',
-      '<!-- code-index:system-overview:start -->',
+      '<!-- plan-product:system-overview:start -->',
       'Agents should start with the API boundary.',
-      '<!-- code-index:system-overview:end -->',
+      '<!-- plan-product:system-overview:end -->',
       '',
     ].join('\n'),
     'utf8'
@@ -149,7 +158,7 @@ test('--arch preserves existing agent-authored overview region', () => {
   assert.equal(result.status, 0, result.stderr);
 
   const arch = readFileSync(
-    path.join(dir, 'docs/code-index/system-architecture.md'),
+    path.join(dir, 'docs/code-map/system-architecture.md'),
     'utf8'
   );
   assert.match(arch, /Agents should start with the API boundary\./);

@@ -21,7 +21,7 @@ const LANGUAGE_GLOBS = {
  * @returns {{ dir: string, configPath: string }}
  */
 export function writeTempAstGrepConfig(patterns) {
-  const dir = mkdtempSync(path.join(tmpdir(), 'code-indexer-patterns-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-patterns-'));
   try {
     const rulesDir = path.join(dir, 'rules');
     mkdirSync(rulesDir, { recursive: true });
@@ -75,9 +75,37 @@ function renderRule(pattern) {
       patternName: pattern.name,
       confidence: pattern.confidence,
       includeInHeadline: String(pattern.includeInHeadline),
+      familyId: pattern.familyId ?? '',
+      familyName: pattern.familyName ?? '',
+      patternKind: pattern.kind ?? '',
     },
-    rule: pattern.rule,
+    rule: astGrepRule(pattern.rule),
   });
+}
+
+/**
+ * ast-grep requires a concrete node kind. Catalog regex detectors are intended
+ * as broad name-based evidence, so scan identifiers when they do not provide a
+ * structural kind or pattern of their own.
+ *
+ * @param {Record<string, unknown>} rule
+ * @returns {Record<string, unknown>}
+ */
+function astGrepRule(rule) {
+  if (
+    rule &&
+    typeof rule === 'object' &&
+    typeof rule.regex === 'string' &&
+    !rule.kind &&
+    !rule.pattern &&
+    !rule.all &&
+    !rule.any &&
+    !rule.inside &&
+    !rule.has
+  ) {
+    return { kind: 'identifier', regex: rule.regex };
+  }
+  return rule;
 }
 
 /**

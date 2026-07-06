@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Generate docs/code-index/code-map.json from ast-grep structural scan rules.
+ * Generate docs/code-map/code-map.json from ast-grep structural scan rules.
  *
- * Per-repo settings: code-map.config.json at the project root (discovered from cwd).
+ * Per-repo settings: plan-product.config.json at the project root (discovered from cwd).
  */
 
 import { spawnSync } from 'node:child_process';
@@ -21,7 +21,7 @@ import {
   SOURCE_EXTENSIONS,
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
-import { loadCodeIndexerConfig } from '../module-map/lib/config.mjs';
+import { loadPlanProductConfig } from '../module-map/lib/config.mjs';
 import { discoverModules } from '../module-map/lib/discover-modules.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
@@ -29,6 +29,7 @@ import { extractDocComment } from './lib/comment-extractor.mjs';
 import { extractEndpoints } from './lib/endpoint-extractor.mjs';
 import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
 import { sourceFilesInRoots } from './lib/source-files.mjs';
+import { recordUsageEvent } from '../lib/usage.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
@@ -49,14 +50,17 @@ const HTTP_METHODS = new Set([
  */
 
 /**
- * Project root: directory with code-map.config.json, else nearest .git, else cwd.
+ * Project root: directory with plan-product.config.json, else nearest .git, else cwd.
  * @param {string} [startDir]
  * @returns {string}
  */
 function findProjectRoot(startDir = process.cwd()) {
   let dir = path.resolve(startDir);
   for (;;) {
-    if (existsSync(path.join(dir, 'code-map.config.json'))) {
+    if (
+      existsSync(path.join(dir, 'plan-product.config.json')) ||
+      existsSync(path.join(dir, '.plan-product', 'config.json'))
+    ) {
       return dir;
     }
     if (existsSync(path.join(dir, '.git'))) {
@@ -119,11 +123,11 @@ function printHelp(config) {
        node src/bin/code-map.js [options]
 
 Generate ${config.output} (JSON) from ast-grep rules.
-Uses @ast-grep/cli bundled with the code-indexer plugin (no project-repo install).
+Uses @ast-grep/cli bundled with the plan-product plugin (no project-repo install).
 
 Languages: ${SUPPORTED_LANGUAGES.join(', ')}
 Project root: ${REPO_ROOT}
-Scan roots (code-map.config.json): ${config.roots.join(', ')}
+Scan roots (plan-product.config.json): ${config.roots.join(', ')}
 
 Options:
   --include-comments     Embed file-level header comments (default: off)
@@ -344,20 +348,20 @@ function buildCodeMapDocument(symbols, options) {
  */
 function loadModuleContext() {
   try {
-    const config = loadCodeIndexerConfig(REPO_ROOT);
+    const config = loadPlanProductConfig(REPO_ROOT);
     return {
       outputDir: config.outputDir,
       modules: discoverModules(REPO_ROOT, config),
     };
   } catch {
     return {
-      outputDir: 'docs/code-index',
+      outputDir: 'docs/code-map',
       modules: [],
     };
   }
 }
 
-function main() {
+function runCodeMap() {
   const options = parseOptions();
   const result = runAstGrepScan(options.scanRoots);
   if (result.error) {
@@ -384,6 +388,45 @@ function main() {
   process.stdout.write(
     `Wrote ${relOut} (${document.symbolCount} symbols in ${document.fileCount} files${options.includeComments ? ', with comments' : ''})\n`
   );
+  return {
+    output: relOut.replace(/\\/g, '/'),
+    document,
+    includeComments: options.includeComments,
+  };
+}
+
+function main() {
+  const started = Date.now();
+  try {
+    const result = runCodeMap();
+    recordUsageEvent(REPO_ROOT, {
+      command: 'generate-code-map',
+      status: 'ok',
+      durationMs: Date.now() - started,
+      summary: `${result.document.symbolCount} symbols in ${result.document.fileCount} files -> ${result.output}`,
+      outputs: [result.output],
+      metrics: {
+        files: result.document.fileCount,
+        symbols: result.document.symbolCount,
+        endpoints: result.document.endpointCount,
+        includeComments: result.includeComments,
+      },
+      warnings: [],
+      errors: [],
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    recordUsageEvent(REPO_ROOT, {
+      command: 'generate-code-map',
+      status: 'error',
+      durationMs: Date.now() - started,
+      summary: `code-map generation failed - ${message}`,
+      outputs: [],
+      warnings: [],
+      errors: [message],
+    });
+    throw err;
+  }
 }
 
 main();

@@ -8,3 +8,4 @@ obj/
 inspo
 triage/
 .regen.log
+.plan-product/usage/*.jsonl

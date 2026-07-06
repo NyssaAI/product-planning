@@ -16,16 +16,16 @@ import {
  * @property {string[]} [capabilities] Capability bullets — override the inferred ones
  * @property {string[]} [doesNotOwn] "{capability} → {module} module" entries — override the inferred ones
  * @property {string[]} [flows]
- * @property {boolean} [preserveModule] When true, code-indexer does not overwrite docs/code-index/modules/<id>.md
+ * @property {boolean} [preserveModule] When true, code-map generation does not overwrite docs/code-map/modules/<id>.md
  * @property {boolean} [preserveScope] Deprecated alias for preserveModule (read as fallback)
  */
 
 /**
- * @typedef {object} CodeIndexerConfig
+ * @typedef {object} PlanProductConfig
  * @property {string} projectName
  * @property {string} outputDir
  * @property {string} codeMapOutput
- * @property {{ product: string[], roadmap: string[], techStack: string[] }} docs
+ * @property {{ product: string[], features: string[], techStack: string[] }} docs
  * @property {number} briefMaxCharsPerDoc
  * @property {object} modules
  * @property {string | null} nav
@@ -34,19 +34,25 @@ import {
  * @property {boolean} configFilePresent
  */
 
-const DOC_KEYS = ['product', 'roadmap', 'techStack'];
+const DOC_KEYS = ['product', 'features', 'techStack'];
 
 /**
  * @param {string} repoRoot
  * @param {{ allowMissingConfig?: boolean }} [opts]
- * @returns {CodeIndexerConfig}
+ * @returns {PlanProductConfig}
  */
-export function loadCodeIndexerConfig(repoRoot, opts = {}) {
-  const configPath = path.join(repoRoot, 'code-indexer.config.json');
+export function loadPlanProductConfig(repoRoot, opts = {}) {
+  const configPath = path.join(repoRoot, 'plan-product.config.json');
   const configFilePresent = existsSync(configPath);
   const raw = configFilePresent
     ? JSON.parse(readFileSync(configPath, 'utf8'))
     : {};
+  const planProductPathConfig = readPlanProductPathConfig(repoRoot);
+  const planProductPaths = planProductPathConfig?.paths ?? {};
+  const defaultOutputDir =
+    typeof planProductPaths.codeMap === 'string'
+      ? planProductPaths.codeMap
+      : 'docs/code-map';
 
   /** @type {Record<string, string[]>} */
   const docs = {};
@@ -56,6 +62,8 @@ export function loadCodeIndexerConfig(repoRoot, opts = {}) {
       docs[key] = [val];
     } else if (Array.isArray(val)) {
       docs[key] = val;
+    } else if (typeof planProductDocPath(planProductPaths, key) === 'string') {
+      docs[key] = [planProductDocPath(planProductPaths, key)];
     } else {
       docs[key] = [...DEFAULT_DOC_CANDIDATES[key]];
     }
@@ -70,11 +78,13 @@ export function loadCodeIndexerConfig(repoRoot, opts = {}) {
         ? raw.projectName
         : readProjectName(repoRoot),
     outputDir:
-      typeof raw.outputDir === 'string' ? raw.outputDir : 'docs/code-index',
+      typeof raw.outputDir === 'string' ? raw.outputDir : defaultOutputDir,
     codeMapOutput:
       typeof raw.codeMapOutput === 'string'
         ? raw.codeMapOutput
-        : 'docs/code-index/code-map.json',
+        : typeof raw.output === 'string'
+          ? raw.output
+          : path.posix.join(defaultOutputDir.replace(/\\/g, '/').replace(/\/$/, ''), 'code-map.json'),
     docs,
     briefMaxCharsPerDoc:
       typeof raw.briefMaxCharsPerDoc === 'number'
@@ -121,7 +131,7 @@ export function loadCodeIndexerConfig(repoRoot, opts = {}) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {import('./config.mjs').PlanProductConfig} config
  * @returns {{ missing: string[], resolved: Record<string, string | null> }}
  */
 export function validateRequiredDocs(repoRoot, config) {
@@ -161,17 +171,19 @@ export function resolveDocPath(repoRoot, candidates) {
  */
 export function writeStarterConfigs(repoRoot) {
   const roots = detectCodeMapRoots(repoRoot);
-  const configPath = path.join(repoRoot, 'code-indexer.config.json');
+  const configPath = path.join(repoRoot, 'plan-product.config.json');
   if (!existsSync(configPath)) {
     writeFileSync(
       configPath,
       `${JSON.stringify(
         {
-          output: 'docs/code-index/code-map.json',
+          output: 'docs/code-map/code-map.json',
+          outputDir: 'docs/code-map',
+          codeMapOutput: 'docs/code-map/code-map.json',
           roots,
           docs: {
             product: ['docs/product.md'],
-            roadmap: ['docs/roadmap.md'],
+            features: ['docs/features.md'],
             techStack: ['docs/tech-stack.md'],
           },
           modules: { discover: 'auto' },
@@ -184,4 +196,35 @@ export function writeStarterConfigs(repoRoot) {
   }
 
   return { roots, configPath };
+}
+
+/**
+ * @param {string} repoRoot
+ * @returns {Record<string, any> | null}
+ */
+function readPlanProductPathConfig(repoRoot) {
+  const configPath = path.join(repoRoot, '.plan-product', 'config.json');
+  if (!existsSync(configPath)) {
+    return null;
+  }
+  try {
+    return JSON.parse(readFileSync(configPath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * @param {Record<string, any>} paths
+ * @param {string} key
+ * @returns {string | undefined}
+ */
+function planProductDocPath(paths, key) {
+  if (key === 'techStack') {
+    return typeof paths.techStack === 'string' ? paths.techStack : undefined;
+  }
+  if (key === 'features') {
+    return typeof paths.features === 'string' ? paths.features : undefined;
+  }
+  return typeof paths[key] === 'string' ? paths[key] : undefined;
 }

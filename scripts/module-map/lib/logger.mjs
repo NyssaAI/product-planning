@@ -1,6 +1,6 @@
 /**
- * Portable structured logger for code-indexer generators (no third-party deps).
- * Set LOG_LEVEL=debug or DEBUG_CODE_INDEXER=1 for full trace output.
+ * Portable structured logger for plan-product generators (no third-party deps).
+ * Set LOG_LEVEL=debug or DEBUG_PLAN_PRODUCT=1 for full trace output.
  */
 
 const LEVEL_RANK = /** @type {const} */ ({
@@ -18,7 +18,7 @@ function resolveLogLevel() {
   if (raw === 'debug' || raw === 'info' || raw === 'warn' || raw === 'error') {
     return raw;
   }
-  if (process.env.DEBUG_CODE_INDEXER === '1' || process.env.DEBUG_CODE_INDEXER === 'true') {
+  if (process.env.DEBUG_PLAN_PRODUCT === '1' || process.env.DEBUG_PLAN_PRODUCT === 'true') {
     return 'debug';
   }
   return 'info';
@@ -43,7 +43,7 @@ function emit(level, message, fields = {}) {
   const entry = {
     timestamp: new Date().toISOString(),
     level,
-    service: 'code-indexer',
+    service: 'plan-product',
     message,
     ...fields,
   };

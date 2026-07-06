@@ -20,7 +20,7 @@ const log = createLogger({ module: 'stack-profiles' });
  * @typedef {object} StackProfile
  * @property {string} id
  * @property {number} priority
- * @property {(repoRoot: string, config: import('../config.mjs').CodeIndexerConfig) => ModuleDef[]} detect
+ * @property {(repoRoot: string, config: import('../config.mjs').PlanProductConfig) => ModuleDef[]} detect
  */
 
 /**
@@ -56,7 +56,7 @@ function listFilesRecursive(dir, limit = 2000) {
  * @param {string} relRoot
  * @param {string} id
  * @param {string} name
- * @param {import('../config.mjs').CodeIndexerConfig} config
+ * @param {import('../config.mjs').PlanProductConfig} config
  * @param {'dotnet' | 'python' | 'go' | 'rust' | 'src-child'} source
  * @returns {ModuleDef}
  */
@@ -239,7 +239,7 @@ const PROFILES = [dotnetProfile, pythonProfile, goProfile, rustProfile].sort(
 
 /**
  * @param {string} repoRoot
- * @param {import('../config.mjs').CodeIndexerConfig} config
+ * @param {import('../config.mjs').PlanProductConfig} config
  * @returns {ModuleDef[]}
  */
 export function detectStackModules(repoRoot, config) {

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pythonAdapter from '../../scripts/module-map/lib/adapters/python.mjs';
-import { buildCodeIndexerModel } from '../../scripts/module-map/lib/build.mjs';
+import { buildPlanProductModel } from '../../scripts/module-map/lib/build.mjs';
 import { selectAdapter } from '../../scripts/module-map/lib/adapters/index.mjs';
 import { deriveModules } from '../../scripts/module-map/lib/detection/derive-modules.mjs';
 
@@ -27,14 +27,14 @@ function edgeKey(edge) {
   return `${edge.from}->${edge.to}`;
 }
 
-function codeIndexerConfig() {
+function planProductConfig() {
   return {
     projectName: 'python-fixture',
-    outputDir: 'docs/code-index',
-    codeMapOutput: 'docs/code-index/code-map.json',
+    outputDir: 'docs/code-map',
+    codeMapOutput: 'docs/code-map/code-map.json',
     docs: {
       product: ['docs/product.md'],
-      roadmap: ['docs/roadmap.md'],
+      features: ['docs/features.md'],
       techStack: ['docs/tech-stack.md'],
     },
     briefMaxCharsPerDoc: 1200,
@@ -129,9 +129,9 @@ test('python adapter graph feeds deriveModules with feature-level modules', () =
   );
 });
 
-test('code-indexer model preserves Python adapter dependencies in module graph', () => {
+test('plan-product model preserves Python adapter dependencies in module graph', () => {
   const graph = pythonAdapter.extract(fixtureRoot, fixtureFiles);
-  const model = buildCodeIndexerModel(fixtureRoot, codeIndexerConfig(), graph.files);
+  const model = buildPlanProductModel(fixtureRoot, planProductConfig(), graph.files);
   const moduleEdges = new Set(
     model.moduleGraph.edges.map((edge) => `${edge.from}->${edge.to}`)
   );

@@ -32,19 +32,19 @@ function ensurePluginAstGrep(pluginRoot) {
   const pkgPath = path.join(pluginRoot, 'package.json');
   if (!existsSync(pkgPath)) {
     throw new Error(
-      `code-indexer plugin package.json not found at ${pluginRoot}`
+      `plan-product plugin package.json not found at ${pluginRoot}`
     );
   }
 
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
   if (!pkg.dependencies?.['@ast-grep/cli']) {
     throw new Error(
-      'code-indexer plugin package.json must list @ast-grep/cli under dependencies'
+      'plan-product plugin package.json must list @ast-grep/cli under dependencies'
     );
   }
 
   process.stderr.write(
-    `code-indexer: installing @ast-grep/cli into plugin (one-time, ${pluginRoot})…\n`
+    `plan-product: installing @ast-grep/cli into plugin (one-time, ${pluginRoot})…\n`
   );
 
   const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
@@ -61,13 +61,13 @@ function ensurePluginAstGrep(pluginRoot) {
 
   if (result.status !== 0) {
     throw new Error(
-      `Failed to install @ast-grep/cli in code-indexer plugin (exit ${result.status ?? 'unknown'}). Ensure Node.js and npm are available.`
+      `Failed to install @ast-grep/cli in plan-product plugin (exit ${result.status ?? 'unknown'}). Ensure Node.js and npm are available.`
     );
   }
 }
 
 /**
- * Resolve ast-grep binary shipped with the code-indexer plugin.
+ * Resolve ast-grep binary shipped with the plan-product plugin.
  * @param {{ toolkitDir: string, projectRoot?: string }} options
  * @returns {string}
  */
@@ -109,7 +109,7 @@ export function resolveAstGrepBinary(options) {
   }
 
   throw new Error(
-    '@ast-grep/cli not found. The code-indexer plugin should install it automatically on first use. ' +
-      'If this persists, run `npm install` in the code-indexer plugin directory (CODE_INDEXER_PLUGIN_ROOT / CLAUDE_PLUGIN_ROOT / CURSOR_PLUGIN_ROOT).'
+    '@ast-grep/cli not found. The plan-product plugin should install it automatically on first use. ' +
+      'If this persists, run `npm install` in the plan-product plugin directory (PLAN_PRODUCT_PLUGIN_ROOT / CLAUDE_PLUGIN_ROOT / CURSOR_PLUGIN_ROOT).'
   );
 }

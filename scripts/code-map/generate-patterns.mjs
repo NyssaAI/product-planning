@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Generate docs/code-index/patterns.json and patterns.md from structural
- * ast-grep pattern catalogs.
+ * Generate docs/code-map/patterns.json and patterns.md from structural
+ * ast-grep pattern catalogs and module-rooted practice signals.
  */
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { findProjectRoot } from '../module-map/lib/project-root.mjs';
 import { sourceFilesInRoots } from './lib/source-files.mjs';
@@ -19,12 +19,14 @@ import {
   loadJsonArtifact,
 } from './lib/patterns/model.mjs';
 import { renderPatternsMarkdown } from './lib/patterns/render.mjs';
+import { recordUsageEvent } from '../lib/usage.mjs';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
 const helpMode = args.includes('--help') || args.includes('-h');
 const outputDirOverride = flagValue(args, '--output-dir');
 const REPO_ROOT = findProjectRoot();
+const started = Date.now();
 
 /**
  * @param {string[]} argv
@@ -41,11 +43,11 @@ function flagValue(argv, flag) {
 }
 
 function printHelp() {
-  process.stdout.write(`Usage: code-indexer patterns [options]
+  process.stdout.write(`Usage: find-code-patterns [options]
        node scripts/code-map/generate-patterns.mjs [options]
 
-Generate docs/code-index/patterns.json and patterns.md from bundled and
-repo-defined structural pattern catalogs.
+Generate docs/code-map/patterns.json and patterns.md from bundled and
+repo-defined structural pattern catalogs, rooted in application modules.
 
 Options:
   --json                 Emit parseable JSON result
@@ -80,7 +82,10 @@ function runPatterns() {
   const patterns = catalogResult.patterns.filter((pattern) =>
     runtime.languages.includes(pattern.language)
   );
-  const sourceFiles = sourceFilesInRoots(REPO_ROOT, runtime.roots);
+  const sourceRoots = Array.isArray(codeMap.roots) && codeMap.roots.length > 0
+    ? codeMap.roots
+    : runtime.roots;
+  const sourceFiles = sourceFilesInRoots(REPO_ROOT, sourceRoots);
   if (sourceFiles.length === 0) {
     throw resultError(
       'NO_SOURCE_FILES: configured roots contain no source files',
@@ -105,10 +110,12 @@ function runPatterns() {
   }
 
   const matches = runPatternScan(REPO_ROOT, patterns, eligibleFiles);
+  const sourceLineCounts = countSourceLines(REPO_ROOT, eligibleFiles);
   const report = buildPatternReport({
     runtime: {
       ...runtime,
       outputDir,
+      roots: sourceRoots,
     },
     codeMap,
     moduleMap,
@@ -116,6 +123,7 @@ function runPatterns() {
     matches,
     sourceFiles,
     eligibleFiles,
+    sourceLineCounts,
     excludedFiles,
   });
 
@@ -143,18 +151,53 @@ function runPatterns() {
     matches: report.summary.occurrences,
     sourceFiles: report.source.sourceFiles,
     eligibleFiles: report.source.eligibleFiles,
+    eligibleLines: report.source.eligibleLines,
+    patternLibrary: report.source.patternLibrary,
+    patternExpectations: report.source.patternExpectations,
     excludedFiles: report.source.excludedFiles.reduce(
       (sum, entry) => sum + entry.count,
       0
     ),
     coveragePercent: report.summary.coveragePercent,
+    patternLines: report.summary.patternLines,
+    patternLinePercent: report.summary.patternLinePercent,
+    modulesWithPatternEvidence: report.summary.modulesWithPatternEvidence,
+    modulesWithoutPatternEvidence: report.summary.modulesWithoutPatternEvidence,
     warnings,
     errors: [],
-    summary: `${report.summary.patternsEvaluated} patterns, ${report.summary.occurrences} matches across ${report.source.eligibleFiles} eligible files -> ${toRelative(REPO_ROOT, mdPath)}`,
+    summary: `${report.summary.patternsEvaluated} patterns, ${report.summary.occurrences} matches across ${report.source.eligibleFiles} eligible files and ${report.modules.length} modules -> ${toRelative(REPO_ROOT, mdPath)}`,
   };
   } catch (err) {
     return failureResult(err, warnings);
   }
+}
+
+/**
+ * @param {string} repoRoot
+ * @param {string[]} files
+ * @returns {Record<string, number>}
+ */
+function countSourceLines(repoRoot, files) {
+  const counts = {};
+  for (const file of files) {
+    const fullPath = path.join(repoRoot, file);
+    try {
+      const text = readFileSync(fullPath, 'utf8');
+      counts[file] = countPhysicalLines(text);
+    } catch {
+      counts[file] = 0;
+    }
+  }
+  return counts;
+}
+
+/**
+ * @param {string} text
+ * @returns {number}
+ */
+function countPhysicalLines(text) {
+  const trimmed = text.replace(/\r?\n$/, '');
+  return trimmed === '' ? 0 : trimmed.split(/\r?\n/).length;
 }
 
 /**
@@ -189,10 +232,29 @@ function failureResult(err, warnings = []) {
  * @param {object} result
  */
 function report(result) {
+  recordUsageEvent(REPO_ROOT, {
+    command: 'find-code-patterns',
+    status: result.ok ? 'ok' : 'error',
+    durationMs: Date.now() - started,
+    summary: result.summary,
+    outputs: result.wrote ?? [],
+    metrics: {
+      patterns: result.patterns,
+      matches: result.matches,
+      sourceFiles: result.sourceFiles,
+      eligibleFiles: result.eligibleFiles,
+      coveragePercent: result.coveragePercent,
+      patternLinePercent: result.patternLinePercent,
+      modulesWithPatternEvidence: result.modulesWithPatternEvidence,
+      modulesWithoutPatternEvidence: result.modulesWithoutPatternEvidence,
+    },
+    warnings: result.warnings ?? [],
+    errors: result.errors ?? [],
+  });
   if (jsonMode) {
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
   } else {
-    process.stdout.write(`code-indexer patterns: ${result.summary}\n`);
+    process.stdout.write(`find-code-patterns: ${result.summary}\n`);
     for (const warning of result.warnings ?? []) {
       process.stderr.write(`  warning: ${warning}\n`);
     }

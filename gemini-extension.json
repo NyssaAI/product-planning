@@ -1,6 +1,6 @@
 {
-  "name": "code-indexer",
-  "description": "code-indexer: generates a code map, module graph, and per-module architecture context for AI agents across Claude Code, Cursor, Codex, and Gemini",
-  "version": "7.0.0",
+  "name": "plan-product",
+  "description": "plan-product: plans products, features, and use cases, then generates code-map context for implementation planning.",
+  "version": "2.0.0",
   "contextFileName": "GEMINI.md"
 }

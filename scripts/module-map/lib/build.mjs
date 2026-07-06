@@ -33,20 +33,20 @@ function detectSharedRoot(repoRoot) {
 
 /**
  * @param {string} repoRoot
- * @param {import('./config.mjs').CodeIndexerConfig} config
+ * @param {import('./config.mjs').PlanProductConfig} config
  * @param {{ path: string, symbols?: { name: string, kind: string, line: number }[] }[] | { files?: { path: string, symbols?: { name: string, kind: string, line: number }[] }[], endpoints?: object[] }} codeMapInput
  */
-export function buildCodeIndexerModel(repoRoot, config, codeMapInput) {
+export function buildPlanProductModel(repoRoot, config, codeMapInput) {
   const codeMap = normalizeCodeMap(codeMapInput);
   const codeMapFiles = codeMap.files;
-  log.info('buildCodeIndexerModel start', { repoRoot, codeMapFileCount: codeMapFiles.length });
+  log.info('buildPlanProductModel start', { repoRoot, codeMapFileCount: codeMapFiles.length });
   const brief = loadProjectBrief(repoRoot, config);
   // Extract the adapter stack graph once; module discovery and module-edge
   // derivation both consume it, so this avoids re-walking and re-parsing the
   // whole repo a second time.
   const stack = extractStackGraph(repoRoot, config);
   const modules = discoverModules(repoRoot, config, stack);
-  log.debug('buildCodeIndexerModel discovered modules', {
+  log.debug('buildPlanProductModel discovered modules', {
     count: modules.length,
     ids: modules.map((m) => m.id),
   });
@@ -172,7 +172,7 @@ export function buildCodeIndexerModel(repoRoot, config, codeMapInput) {
     };
   });
 
-  log.info('buildCodeIndexerModel complete', {
+  log.info('buildPlanProductModel complete', {
     moduleCount: enrichedModules.length,
     routeCount: routes.length,
   });
@@ -184,7 +184,7 @@ export function buildCodeIndexerModel(repoRoot, config, codeMapInput) {
       name: config.projectName,
       docs: {
         product: brief.product,
-        roadmap: brief.roadmap,
+        features: brief.features,
         techStack: brief.techStack,
       },
     },
@@ -203,7 +203,7 @@ export function buildCodeIndexerModel(repoRoot, config, codeMapInput) {
         {
           level: 2,
           name: 'product-docs',
-          inject: 'docs/product.md, docs/roadmap.md, and/or docs/tech-stack.md',
+          inject: 'docs/product.md, docs/features.md, and/or docs/tech-stack.md',
           when: 'Product intent or stack constraints matter',
         },
         {
