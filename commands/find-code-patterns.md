@@ -7,7 +7,7 @@ argument-hint: "[target repo path]"
 
 Generate or refresh module-rooted code pattern artifacts from the current code map and module graph.
 
-**Agent workflow:** Apply `using-code-map` staleness rules. If generated context is missing or stale, run `map-code` first. Read the generated `patterns.md` and summarize pattern usage by module, including each module's `patternLinePercent`, expected patterns not detected, and files without headline pattern evidence.
+**Agent workflow:** Load the `find-code-patterns` skill and follow its workflow — it owns the `${PLUGIN_ROOT}` substitution guidance and applies `using-code-map` staleness rules. If generated context is missing or stale, run `map-code` first. Read the generated `patterns.md` and summarize pattern usage by module, including each module's `patternLinePercent`, expected patterns not detected, and files without headline pattern evidence.
 
 ## Configuration
 

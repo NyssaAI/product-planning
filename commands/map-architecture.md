@@ -7,7 +7,7 @@ argument-hint: "[target repo path]"
 
 Generate or refresh the system architecture handoff from the persisted module graph.
 
-**Agent workflow:** Apply `using-code-map` staleness rules. If generated context is missing or stale, run `map-code` first.
+**Agent workflow:** Load the `map-architecture` skill and follow its workflow — it owns the `${PLUGIN_ROOT}` substitution guidance and applies `using-code-map` staleness rules. If generated context is missing or stale, run `map-code` first.
 
 ## Run
 

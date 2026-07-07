@@ -7,7 +7,7 @@ argument-hint: "[target repo path]"
 
 Generate or refresh the target repo's code-map context: symbol index, endpoint index, module graph, and module docs.
 
-**Agent workflow:** Invoke `using-code-map` first for progressive disclosure and staleness rules.
+**Agent workflow:** Load the `map-code` skill and follow its workflow — it owns the `${PLUGIN_ROOT}` substitution guidance and the two-config distinction, and it invokes `using-code-map` first for progressive disclosure and staleness rules.
 
 ## Prerequisites
 
