@@ -10,7 +10,6 @@
 
 ## Does not own
 
-- code-map concerns → code-map module
 - lib concerns → lib module
 
 ## Public API
@@ -43,7 +42,7 @@
 | | Path |
 |--|------|
 | Root | `scripts/module-map/` |
-| Depends on modules | code-map, lib |
+| Depends on modules | lib |
 | Used by | code-map |
 | Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/code-map/, scripts/lib/ |
 

@@ -1,6 +1,6 @@
 # plan-product Code Map
 
-Generated: 2026-07-06T12:33:31.650Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
+Generated: 2026-07-07T13:41:17.783Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
 
 ## Progressive disclosure (for planning agents)
 
@@ -19,7 +19,7 @@ Generated: 2026-07-06T12:33:31.650Z. Regenerate with `node <PLUGIN_ROOT>/scripts
 |--------|--------------|------|-------------|
 | module-map (`module-map`) | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | [modules/module-map.md](./modules/module-map.md) |
 | code-map (`code-map`) | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | [modules/code-map.md](./modules/code-map.md) |
-| lib (`lib`) | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | [modules/lib.md](./modules/lib.md) |
+| lib (`lib`) | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and<br>endpoint extraction. | Feature code and services under `scripts/lib/` | [modules/lib.md](./modules/lib.md) |
 
 ## Code organization (Node/TypeScript)
 

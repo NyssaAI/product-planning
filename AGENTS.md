@@ -60,6 +60,6 @@ Start at `docs/code-map/index.md` to pick the module set.
 |--------|--------------|------|-------------|
 | module-map | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-map/modules/module-map.md` |
 | code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-map/modules/code-map.md` |
-| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing. | Feature code and services under `scripts/lib/` | `docs/code-map/modules/lib.md` |
-<!-- plan-product:module-map generated 2026-07-06T12:33:31.650Z -->
+| lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and<br>endpoint extraction. | Feature code and services under `scripts/lib/` | `docs/code-map/modules/lib.md` |
+<!-- plan-product:module-map generated 2026-07-07T13:41:17.783Z -->
 <!-- plan-product:module-map:end -->

@@ -23,7 +23,7 @@
         "id": "lib",
         "root": "scripts/lib",
         "name": "lib",
-        "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing."
+        "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and endpoint extraction."
       }
     ]
   },

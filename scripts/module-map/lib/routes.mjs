@@ -3,7 +3,7 @@ import path from 'node:path';
 import {
   extractEndpoints,
   nextRouteSegment,
-} from '../../code-map/lib/endpoint-extractor.mjs';
+} from '../../lib/endpoint-extractor.mjs';
 
 const HTTP_METHODS = new Set([
   'GET',

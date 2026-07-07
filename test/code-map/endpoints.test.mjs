@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { extractEndpoints } from '../../scripts/code-map/lib/endpoint-extractor.mjs';
+import { extractEndpoints } from '../../scripts/lib/endpoint-extractor.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];

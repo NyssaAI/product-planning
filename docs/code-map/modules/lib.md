@@ -2,7 +2,7 @@
 
 **Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
 
-**What this module does:** Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing.
+**What this module does:** Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and endpoint extraction.
 
 ## Capabilities (owns)
 
@@ -12,6 +12,8 @@
 
 | Symbol | Summary |
 |--------|---------|
+| `extractEndpoints` |  |
+| `nextRouteSegment` |  |
 | `findPluginRoot` |  |
 | `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the plan-product plugin. |
 | `parseScanJson` |  |
@@ -46,6 +48,7 @@
 
 ## Key symbols (sample)
 
+- `scripts/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/lib/plugin-root.mjs`: findPluginRoot
 - `scripts/lib/resolve-ast-grep.mjs`: resolveAstGrepBinary
 - `scripts/lib/sg-result.mjs`: parseScanJson, symbolNameFromMatch

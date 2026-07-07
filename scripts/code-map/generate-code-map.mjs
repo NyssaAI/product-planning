@@ -26,7 +26,7 @@ import { discoverModules } from '../module-map/lib/discover-modules.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
-import { extractEndpoints } from './lib/endpoint-extractor.mjs';
+import { extractEndpoints } from '../lib/endpoint-extractor.mjs';
 import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
 import { sourceFilesInRoots } from './lib/source-files.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';

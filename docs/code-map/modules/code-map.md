@@ -19,8 +19,6 @@
 |--------|---------|
 | `loadCodeMapConfig` |  |
 | `extractDocComment` | Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `"""`) and extracts |
-| `extractEndpoints` |  |
-| `nextRouteSegment` |  |
 | `extractFileHeaderComment` |  |
 | `annotateCodeMapWithModules` | Add module ownership to a code-map document and expose a flat symbol index. |
 | `loadPatternCatalogs` |  |
@@ -37,6 +35,7 @@
 | `languageForFile` |  |
 | `isKnownSourceFile` |  |
 | `SOURCE_EXTENSIONS` | Extensions that drive file detection. |
+| `SOURCE_SCAN_SKIP_DIRS` | Shared base infra/test-output dirs (includes fixtures/__fixtures__ so scans no longer leak fixture endpoints) plus Pytho |
 
 ## Boundaries
 
@@ -44,7 +43,6 @@
 |--|------|
 | Root | `scripts/code-map/` |
 | Depends on modules | lib, module-map |
-| Used by | module-map |
 | Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/module-map/, scripts/lib/ |
 
 ## Flows
@@ -65,7 +63,6 @@
 
 - `scripts/code-map/lib/code-map-config.mjs`: SUPPORTED_LANGUAGES, SOURCE_EXTENSIONS, loadCodeMapConfig
 - `scripts/code-map/lib/comment-extractor.mjs`: extractDocComment
-- `scripts/code-map/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/code-map/lib/file-header-comment.mjs`: extractFileHeaderComment
 - `scripts/code-map/lib/module-linker.mjs`: annotateCodeMapWithModules
 - `scripts/code-map/lib/patterns/catalog.mjs`: loadPatternCatalogs
@@ -73,6 +70,7 @@
 - `scripts/code-map/lib/patterns/render.mjs`: renderPatternsMarkdown
 - `scripts/code-map/lib/patterns/runtime-config.mjs`: loadPatternRuntimeConfig
 - `scripts/code-map/lib/patterns/scanner.mjs`: partitionPatternEligibleFiles, runPatternScan
+- `scripts/code-map/lib/patterns/temp-rules.mjs`: writeTempAstGrepConfig, cleanupTempAstGrepConfig
 
 ## After planning
 

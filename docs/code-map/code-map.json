@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-07-06T12:33:30.714Z",
+  "generated": "2026-07-07T13:41:17.351Z",
   "roots": [
     "scripts",
     "skills"
@@ -64,35 +64,6 @@
           "line": 49,
           "signature": "export function extractDocComment(filePath, lineNumber)",
           "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
-        }
-      ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "path": "scripts/code-map/lib/endpoint-extractor.mjs",
-      "symbols": [
-        {
-          "name": "extractEndpoints",
-          "kind": "function",
-          "line": 56,
-          "signature": "export function extractEndpoints(repoRoot, files)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
-        },
-        {
-          "name": "nextRouteSegment",
-          "kind": "function",
-          "line": 187,
-          "signature": "export function nextRouteSegment(seg)",
           "moduleId": "code-map",
           "moduleName": "code-map",
           "moduleRoot": "scripts/code-map",
@@ -356,6 +327,35 @@
       "moduleName": "code-map",
       "moduleRoot": "scripts/code-map",
       "planningModule": "docs/code-map/modules/code-map.md"
+    },
+    {
+      "path": "scripts/lib/endpoint-extractor.mjs",
+      "symbols": [
+        {
+          "name": "extractEndpoints",
+          "kind": "function",
+          "line": 56,
+          "signature": "export function extractEndpoints(repoRoot, files)",
+          "moduleId": "lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/code-map/modules/lib.md"
+        },
+        {
+          "name": "nextRouteSegment",
+          "kind": "function",
+          "line": 187,
+          "signature": "export function nextRouteSegment(seg)",
+          "moduleId": "lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/code-map/modules/lib.md"
+        }
+      ],
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
     },
     {
       "path": "scripts/lib/plugin-root.mjs",
@@ -1397,8 +1397,8 @@
       "name": "code-map",
       "root": "scripts/code-map",
       "planningModule": "docs/code-map/modules/code-map.md",
-      "fileCount": 13,
-      "symbolCount": 22,
+      "fileCount": 12,
+      "symbolCount": 20,
       "endpointCount": 0
     },
     {
@@ -1406,8 +1406,8 @@
       "name": "lib",
       "root": "scripts/lib",
       "planningModule": "docs/code-map/modules/lib.md",
-      "fileCount": 5,
-      "symbolCount": 11,
+      "fileCount": 6,
+      "symbolCount": 13,
       "endpointCount": 0
     }
   ],
@@ -1451,28 +1451,6 @@
       "line": 49,
       "signature": "export function extractDocComment(filePath, lineNumber)",
       "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/endpoint-extractor.mjs",
-      "name": "extractEndpoints",
-      "kind": "function",
-      "line": 56,
-      "signature": "export function extractEndpoints(repoRoot, files)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/endpoint-extractor.mjs",
-      "name": "nextRouteSegment",
-      "kind": "function",
-      "line": 187,
-      "signature": "export function nextRouteSegment(seg)",
       "moduleId": "code-map",
       "moduleName": "code-map",
       "moduleRoot": "scripts/code-map",
@@ -1656,6 +1634,28 @@
       "moduleName": "code-map",
       "moduleRoot": "scripts/code-map",
       "planningModule": "docs/code-map/modules/code-map.md"
+    },
+    {
+      "file": "scripts/lib/endpoint-extractor.mjs",
+      "name": "extractEndpoints",
+      "kind": "function",
+      "line": 56,
+      "signature": "export function extractEndpoints(repoRoot, files)",
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
+    },
+    {
+      "file": "scripts/lib/endpoint-extractor.mjs",
+      "name": "nextRouteSegment",
+      "kind": "function",
+      "line": 187,
+      "signature": "export function nextRouteSegment(seg)",
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
     },
     {
       "file": "scripts/lib/plugin-root.mjs",

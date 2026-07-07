@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-07-06T12:33:31.650Z",
+  "generated": "2026-07-07T13:41:17.783Z",
   "project": {
     "name": "plan-product",
     "docs": {
@@ -43,7 +43,6 @@
       "root": "scripts/module-map",
       "source": "manual",
       "dependsOn": [
-        "code-map",
         "lib"
       ],
       "usedBy": [
@@ -66,11 +65,9 @@
         "lib",
         "module-map"
       ],
-      "usedBy": [
-        "module-map"
-      ],
+      "usedBy": [],
       "routeCount": 0,
-      "symbolCount": 22,
+      "symbolCount": 20,
       "planningModule": "docs/code-map/modules/code-map.md",
       "description": "ast-grep-based symbol and endpoint indexer that feeds the module graph.",
       "capabilities": [
@@ -88,9 +85,9 @@
         "module-map"
       ],
       "routeCount": 0,
-      "symbolCount": 11,
+      "symbolCount": 13,
       "planningModule": "docs/code-map/modules/lib.md",
-      "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing.",
+      "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and endpoint extraction.",
       "capabilities": [
         "Feature code and services under `scripts/lib/`"
       ]
@@ -104,10 +101,6 @@
     {
       "from": "code-map",
       "to": "module-map"
-    },
-    {
-      "from": "module-map",
-      "to": "code-map"
     },
     {
       "from": "module-map",
