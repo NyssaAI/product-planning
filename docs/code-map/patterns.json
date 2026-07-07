@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.1",
-  "generated": "2026-07-06T12:35:53.844Z",
+  "generated": "2026-07-07T21:34:24.829Z",
   "project": {
     "name": "plan-product"
   },
@@ -9,7 +9,7 @@
     "moduleMap": "docs/code-map/module-map.json",
     "sourceFiles": 57,
     "eligibleFiles": 57,
-    "eligibleLines": 12567,
+    "eligibleLines": 12629,
     "excludedFiles": [],
     "languages": [
       "JavaScript",
@@ -32,8 +32,8 @@
     "occurrences": 2779,
     "coveredFiles": 47,
     "coveragePercent": 82.46,
-    "patternLines": 5564,
-    "patternLinePercent": 44.27,
+    "patternLines": 5566,
+    "patternLinePercent": 44.07,
     "coverageByConfidence": {
       "high": {
         "files": 19,
@@ -63,15 +63,15 @@
       "name": "code-map",
       "root": "scripts/code-map",
       "planningModule": "docs/code-map/modules/code-map.md",
-      "eligibleFiles": 15,
-      "eligibleLines": 3965,
-      "coveredFiles": 12,
-      "coveragePercent": 80,
-      "patternLines": 1418,
-      "patternLinePercent": 35.76,
+      "eligibleFiles": 14,
+      "eligibleLines": 3584,
+      "coveredFiles": 11,
+      "coveragePercent": 78.57,
+      "patternLines": 1346,
+      "patternLinePercent": 37.56,
       "signal": "broad-pattern-evidence",
       "languages": {
-        "JavaScript": 15
+        "JavaScript": 14
       },
       "detectedPatternTypes": 17,
       "applicablePatternTypes": 2,
@@ -95,10 +95,10 @@
             "factory",
             "command"
           ],
-          "fileCount": 15,
-          "occurrenceCount": 338,
-          "lineCount": 2160,
-          "linePercent": 54.48,
+          "fileCount": 14,
+          "occurrenceCount": 235,
+          "lineCount": 1930,
+          "linePercent": 53.85,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -140,7 +140,7 @@
           "fileCount": 2,
           "occurrenceCount": 126,
           "lineCount": 156,
-          "linePercent": 3.93,
+          "linePercent": 4.35,
           "examples": [
             {
               "file": "scripts/code-map/lib/file-header-comment.mjs",
@@ -188,10 +188,10 @@
             "handler",
             "cli"
           ],
-          "fileCount": 5,
-          "occurrenceCount": 88,
-          "lineCount": 446,
-          "linePercent": 11.25,
+          "fileCount": 4,
+          "occurrenceCount": 82,
+          "lineCount": 374,
+          "linePercent": 10.44,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -241,7 +241,7 @@
           "fileCount": 5,
           "occurrenceCount": 78,
           "lineCount": 536,
-          "linePercent": 13.52,
+          "linePercent": 14.96,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -290,7 +290,7 @@
           "fileCount": 6,
           "occurrenceCount": 67,
           "lineCount": 395,
-          "linePercent": 9.96,
+          "linePercent": 11.02,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -340,7 +340,7 @@
           "fileCount": 5,
           "occurrenceCount": 33,
           "lineCount": 246,
-          "linePercent": 6.2,
+          "linePercent": 6.86,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -389,7 +389,7 @@
           "fileCount": 3,
           "occurrenceCount": 23,
           "lineCount": 426,
-          "linePercent": 10.74,
+          "linePercent": 11.89,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -439,7 +439,7 @@
           "fileCount": 2,
           "occurrenceCount": 20,
           "lineCount": 139,
-          "linePercent": 3.51,
+          "linePercent": 3.88,
           "examples": [
             {
               "file": "scripts/code-map/lib/patterns/catalog.mjs",
@@ -489,7 +489,7 @@
           "fileCount": 3,
           "occurrenceCount": 14,
           "lineCount": 222,
-          "linePercent": 5.6,
+          "linePercent": 6.19,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -538,7 +538,7 @@
           "fileCount": 3,
           "occurrenceCount": 12,
           "lineCount": 138,
-          "linePercent": 3.48,
+          "linePercent": 3.85,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -588,7 +588,7 @@
           "fileCount": 1,
           "occurrenceCount": 7,
           "lineCount": 8,
-          "linePercent": 0.2,
+          "linePercent": 0.22,
           "examples": [
             {
               "file": "scripts/code-map/generate-patterns.mjs",
@@ -630,7 +630,7 @@
           "fileCount": 4,
           "occurrenceCount": 7,
           "lineCount": 7,
-          "linePercent": 0.18,
+          "linePercent": 0.2,
           "examples": [
             {
               "file": "scripts/code-map/lib/code-map-config.mjs",
@@ -680,7 +680,7 @@
           "fileCount": 2,
           "occurrenceCount": 6,
           "lineCount": 68,
-          "linePercent": 1.72,
+          "linePercent": 1.9,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -722,7 +722,7 @@
           "fileCount": 3,
           "occurrenceCount": 5,
           "lineCount": 13,
-          "linePercent": 0.33,
+          "linePercent": 0.36,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -770,7 +770,7 @@
           "fileCount": 1,
           "occurrenceCount": 5,
           "lineCount": 35,
-          "linePercent": 0.88,
+          "linePercent": 0.98,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -812,7 +812,7 @@
           "fileCount": 2,
           "occurrenceCount": 2,
           "lineCount": 33,
-          "linePercent": 0.83,
+          "linePercent": 0.92,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -839,7 +839,7 @@
           "fileCount": 2,
           "occurrenceCount": 2,
           "lineCount": 2,
-          "linePercent": 0.05,
+          "linePercent": 0.06,
           "examples": [
             {
               "file": "scripts/code-map/generate-code-map.mjs",
@@ -901,20 +901,70 @@
       "name": "lib",
       "root": "scripts/lib",
       "planningModule": "docs/code-map/modules/lib.md",
-      "eligibleFiles": 5,
-      "eligibleLines": 683,
-      "coveredFiles": 4,
-      "coveragePercent": 80,
-      "patternLines": 408,
-      "patternLinePercent": 59.74,
+      "eligibleFiles": 6,
+      "eligibleLines": 1064,
+      "coveredFiles": 5,
+      "coveragePercent": 83.33,
+      "patternLines": 480,
+      "patternLinePercent": 45.11,
       "signal": "broad-pattern-evidence",
       "languages": {
-        "JavaScript": 5
+        "JavaScript": 6
       },
       "detectedPatternTypes": 14,
-      "applicablePatternTypes": 2,
+      "applicablePatternTypes": 3,
       "undetectedPatternTypes": 2,
       "patternsUsed": [
+        {
+          "id": "large-conditional-dispatch-conditional-dispatch-signal-javascript",
+          "name": "Large Conditional Dispatch",
+          "familyId": "large-conditional-dispatch",
+          "familyName": "Large Conditional Dispatch",
+          "kind": "smell",
+          "language": "JavaScript",
+          "confidence": "intent-only",
+          "includeInHeadline": false,
+          "tags": [
+            "large-conditional-dispatch",
+            "smell",
+            "branching",
+            "dispatch",
+            "strategy",
+            "factory",
+            "command"
+          ],
+          "fileCount": 5,
+          "occurrenceCount": 124,
+          "lineCount": 653,
+          "linePercent": 61.37,
+          "examples": [
+            {
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 56,
+              "endLine": 70
+            },
+            {
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 77,
+              "endLine": 92
+            },
+            {
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 99,
+              "endLine": 129
+            },
+            {
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 103,
+              "endLine": 103
+            },
+            {
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 104,
+              "endLine": 113
+            }
+          ]
+        },
         {
           "id": "configuration-boundary-config-access-javascript",
           "name": "Configuration Boundary",
@@ -935,7 +985,7 @@
           "fileCount": 3,
           "occurrenceCount": 65,
           "lineCount": 230,
-          "linePercent": 33.67,
+          "linePercent": 21.62,
           "examples": [
             {
               "file": "scripts/lib/plugin-root.mjs",
@@ -985,7 +1035,7 @@
           "fileCount": 1,
           "occurrenceCount": 45,
           "lineCount": 228,
-          "linePercent": 33.38,
+          "linePercent": 21.43,
           "examples": [
             {
               "file": "scripts/lib/usage.mjs",
@@ -1033,35 +1083,35 @@
             "handler",
             "cli"
           ],
-          "fileCount": 2,
-          "occurrenceCount": 30,
-          "lineCount": 173,
-          "linePercent": 25.33,
+          "fileCount": 3,
+          "occurrenceCount": 36,
+          "lineCount": 245,
+          "linePercent": 23.03,
           "examples": [
             {
-              "file": "scripts/lib/resolve-ast-grep.mjs",
-              "line": 74,
-              "endLine": 115
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 99,
+              "endLine": 129
             },
             {
-              "file": "scripts/lib/usage.mjs",
-              "line": 206,
-              "endLine": 277
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 104,
+              "endLine": 113
             },
             {
-              "file": "scripts/lib/usage.mjs",
-              "line": 220,
-              "endLine": 220
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 110,
+              "endLine": 110
             },
             {
-              "file": "scripts/lib/usage.mjs",
-              "line": 220,
-              "endLine": 220
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 259,
+              "endLine": 299
             },
             {
-              "file": "scripts/lib/usage.mjs",
-              "line": 220,
-              "endLine": 220
+              "file": "scripts/lib/endpoint-extractor.mjs",
+              "line": 264,
+              "endLine": 273
             }
           ]
         },
@@ -1078,7 +1128,7 @@
           "fileCount": 1,
           "occurrenceCount": 27,
           "lineCount": 35,
-          "linePercent": 5.12,
+          "linePercent": 3.29,
           "examples": [
             {
               "file": "scripts/lib/usage.mjs",
@@ -1108,56 +1158,6 @@
           ]
         },
         {
-          "id": "large-conditional-dispatch-conditional-dispatch-signal-javascript",
-          "name": "Large Conditional Dispatch",
-          "familyId": "large-conditional-dispatch",
-          "familyName": "Large Conditional Dispatch",
-          "kind": "smell",
-          "language": "JavaScript",
-          "confidence": "intent-only",
-          "includeInHeadline": false,
-          "tags": [
-            "large-conditional-dispatch",
-            "smell",
-            "branching",
-            "dispatch",
-            "strategy",
-            "factory",
-            "command"
-          ],
-          "fileCount": 4,
-          "occurrenceCount": 21,
-          "lineCount": 423,
-          "linePercent": 61.93,
-          "examples": [
-            {
-              "file": "scripts/lib/plugin-root.mjs",
-              "line": 8,
-              "endLine": 47
-            },
-            {
-              "file": "scripts/lib/resolve-ast-grep.mjs",
-              "line": 31,
-              "endLine": 67
-            },
-            {
-              "file": "scripts/lib/resolve-ast-grep.mjs",
-              "line": 74,
-              "endLine": 115
-            },
-            {
-              "file": "scripts/lib/sg-result.mjs",
-              "line": 24,
-              "endLine": 31
-            },
-            {
-              "file": "scripts/lib/sg-result.mjs",
-              "line": 37,
-              "endLine": 42
-            }
-          ]
-        },
-        {
           "id": "observer-pubsub-event-listener-javascript",
           "name": "Observer / PubSub",
           "familyId": "observer-pubsub",
@@ -1177,7 +1177,7 @@
           "fileCount": 1,
           "occurrenceCount": 13,
           "lineCount": 105,
-          "linePercent": 15.37,
+          "linePercent": 9.87,
           "examples": [
             {
               "file": "scripts/lib/usage.mjs",
@@ -1227,7 +1227,7 @@
           "fileCount": 2,
           "occurrenceCount": 12,
           "lineCount": 182,
-          "linePercent": 26.65,
+          "linePercent": 17.11,
           "examples": [
             {
               "file": "scripts/lib/resolve-ast-grep.mjs",
@@ -1275,7 +1275,7 @@
           "fileCount": 3,
           "occurrenceCount": 11,
           "lineCount": 114,
-          "linePercent": 16.69,
+          "linePercent": 10.71,
           "examples": [
             {
               "file": "scripts/lib/plugin-root.mjs",
@@ -1324,7 +1324,7 @@
           "fileCount": 1,
           "occurrenceCount": 5,
           "lineCount": 66,
-          "linePercent": 9.66,
+          "linePercent": 6.2,
           "examples": [
             {
               "file": "scripts/lib/usage.mjs",
@@ -1366,7 +1366,7 @@
           "fileCount": 2,
           "occurrenceCount": 2,
           "lineCount": 2,
-          "linePercent": 0.29,
+          "linePercent": 0.19,
           "examples": [
             {
               "file": "scripts/lib/resolve-ast-grep.mjs",
@@ -1401,7 +1401,7 @@
           "fileCount": 1,
           "occurrenceCount": 2,
           "lineCount": 72,
-          "linePercent": 10.54,
+          "linePercent": 6.77,
           "examples": [
             {
               "file": "scripts/lib/usage.mjs",
@@ -1428,7 +1428,7 @@
           "fileCount": 1,
           "occurrenceCount": 1,
           "lineCount": 10,
-          "linePercent": 1.46,
+          "linePercent": 0.94,
           "examples": [
             {
               "file": "scripts/lib/resolve-ast-grep.mjs",
@@ -1458,7 +1458,7 @@
           "fileCount": 1,
           "occurrenceCount": 1,
           "lineCount": 1,
-          "linePercent": 0.15,
+          "linePercent": 0.09,
           "examples": [
             {
               "file": "scripts/lib/skip-dirs.mjs",
@@ -1480,7 +1480,7 @@
           "fileCount": 1,
           "occurrenceCount": 1,
           "lineCount": 1,
-          "linePercent": 0.15,
+          "linePercent": 0.09,
           "examples": [
             {
               "file": "scripts/lib/usage.mjs",
@@ -1536,11 +1536,11 @@
       "root": "scripts/module-map",
       "planningModule": "docs/code-map/modules/module-map.md",
       "eligibleFiles": 36,
-      "eligibleLines": 7803,
+      "eligibleLines": 7865,
       "coveredFiles": 30,
       "coveragePercent": 83.33,
-      "patternLines": 3682,
-      "patternLinePercent": 47.19,
+      "patternLines": 3684,
+      "patternLinePercent": 46.84,
       "signal": "broad-pattern-evidence",
       "languages": {
         "JavaScript": 36
@@ -1569,7 +1569,7 @@
           "fileCount": 19,
           "occurrenceCount": 434,
           "lineCount": 1773,
-          "linePercent": 22.72,
+          "linePercent": 22.54,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -1617,9 +1617,9 @@
             "command"
           ],
           "fileCount": 33,
-          "occurrenceCount": 298,
-          "lineCount": 4707,
-          "linePercent": 60.32,
+          "occurrenceCount": 299,
+          "lineCount": 4736,
+          "linePercent": 60.22,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -1668,8 +1668,8 @@
           ],
           "fileCount": 16,
           "occurrenceCount": 242,
-          "lineCount": 2164,
-          "linePercent": 27.73,
+          "lineCount": 2166,
+          "linePercent": 27.54,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -1711,7 +1711,7 @@
           "fileCount": 6,
           "occurrenceCount": 165,
           "lineCount": 191,
-          "linePercent": 2.45,
+          "linePercent": 2.43,
           "examples": [
             {
               "file": "scripts/module-map/lib/architecture.mjs",
@@ -1760,9 +1760,9 @@
             "cli"
           ],
           "fileCount": 12,
-          "occurrenceCount": 132,
-          "lineCount": 1201,
-          "linePercent": 15.39,
+          "occurrenceCount": 131,
+          "lineCount": 1203,
+          "linePercent": 15.3,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -1811,7 +1811,7 @@
           "fileCount": 18,
           "occurrenceCount": 117,
           "lineCount": 839,
-          "linePercent": 10.75,
+          "linePercent": 10.67,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -1861,7 +1861,7 @@
           "fileCount": 10,
           "occurrenceCount": 101,
           "lineCount": 748,
-          "linePercent": 9.59,
+          "linePercent": 9.51,
           "examples": [
             {
               "file": "scripts/module-map/lib/adapters/csharp.mjs",
@@ -1911,7 +1911,7 @@
           "fileCount": 7,
           "occurrenceCount": 39,
           "lineCount": 342,
-          "linePercent": 4.38,
+          "linePercent": 4.35,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -1961,7 +1961,7 @@
           "fileCount": 7,
           "occurrenceCount": 35,
           "lineCount": 341,
-          "linePercent": 4.37,
+          "linePercent": 4.34,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -2011,7 +2011,7 @@
           "fileCount": 1,
           "occurrenceCount": 21,
           "lineCount": 78,
-          "linePercent": 1,
+          "linePercent": 0.99,
           "examples": [
             {
               "file": "scripts/module-map/lib/adapters/typescript.mjs",
@@ -2061,7 +2061,7 @@
           "fileCount": 4,
           "occurrenceCount": 19,
           "lineCount": 70,
-          "linePercent": 0.9,
+          "linePercent": 0.89,
           "examples": [
             {
               "file": "scripts/module-map/lib/adapters/csharp.mjs",
@@ -2110,7 +2110,7 @@
           "fileCount": 3,
           "occurrenceCount": 18,
           "lineCount": 163,
-          "linePercent": 2.09,
+          "linePercent": 2.07,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -2158,7 +2158,7 @@
           "fileCount": 3,
           "occurrenceCount": 17,
           "lineCount": 42,
-          "linePercent": 0.54,
+          "linePercent": 0.53,
           "examples": [
             {
               "file": "scripts/module-map/lib/bootstrap.mjs",
@@ -2242,7 +2242,7 @@
           "fileCount": 6,
           "occurrenceCount": 13,
           "lineCount": 85,
-          "linePercent": 1.09,
+          "linePercent": 1.08,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -2341,7 +2341,7 @@
           "fileCount": 2,
           "occurrenceCount": 4,
           "lineCount": 97,
-          "linePercent": 1.24,
+          "linePercent": 1.23,
           "examples": [
             {
               "file": "scripts/module-map/generate-module-map.mjs",
@@ -2414,7 +2414,7 @@
           "fileCount": 1,
           "occurrenceCount": 1,
           "lineCount": 9,
-          "linePercent": 0.12,
+          "linePercent": 0.11,
           "examples": [
             {
               "file": "scripts/module-map/regen-if-source-changed.mjs",
@@ -2790,7 +2790,7 @@
       "includeInHeadline": false,
       "description": "Conditional dispatch keywords are present; inspect before treating this as a smell.",
       "source": ".plan-product/patterns/library.json",
-      "occurrenceCount": 658,
+      "occurrenceCount": 659,
       "fileCount": 53,
       "coveragePercent": 92.98,
       "applicableModuleCount": 0,
@@ -2798,31 +2798,31 @@
       "undetectedModuleCount": 0,
       "modules": [
         {
-          "id": "code-map",
-          "name": "code-map",
-          "root": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md",
-          "fileCount": 15,
-          "occurrenceCount": 338,
-          "coveragePercent": 100
-        },
-        {
           "id": "module-map",
           "name": "module-map",
           "root": "scripts/module-map",
           "planningModule": "docs/code-map/modules/module-map.md",
           "fileCount": 33,
-          "occurrenceCount": 298,
+          "occurrenceCount": 299,
           "coveragePercent": 91.67
+        },
+        {
+          "id": "code-map",
+          "name": "code-map",
+          "root": "scripts/code-map",
+          "planningModule": "docs/code-map/modules/code-map.md",
+          "fileCount": 14,
+          "occurrenceCount": 235,
+          "coveragePercent": 100
         },
         {
           "id": "lib",
           "name": "lib",
           "root": "scripts/lib",
           "planningModule": "docs/code-map/modules/lib.md",
-          "fileCount": 4,
-          "occurrenceCount": 21,
-          "coveragePercent": 80
+          "fileCount": 5,
+          "occurrenceCount": 124,
+          "coveragePercent": 83.33
         },
         {
           "id": "unowned",
@@ -2896,7 +2896,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 6,
           "occurrenceCount": 67,
-          "coveragePercent": 40
+          "coveragePercent": 42.86
         },
         {
           "id": "lib",
@@ -2905,7 +2905,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 3,
           "occurrenceCount": 65,
-          "coveragePercent": 60
+          "coveragePercent": 50
         }
       ],
       "undetectedModules": [],
@@ -2944,7 +2944,7 @@
       "confidence": "medium",
       "includeInHeadline": true,
       "description": "Markdown output is assembled by pushing strings into a lines array.",
-      "source": "scripts/code-map/patterns/javascript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/javascript.json",
       "occurrenceCount": 318,
       "fileCount": 9,
       "coveragePercent": 15.79,
@@ -2968,7 +2968,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 2,
           "occurrenceCount": 126,
-          "coveragePercent": 13.33
+          "coveragePercent": 14.29
         },
         {
           "id": "lib",
@@ -2977,7 +2977,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 27,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         }
       ],
       "undetectedModules": [],
@@ -3020,10 +3020,10 @@
       "includeInHeadline": true,
       "description": "Names indicate command, action, job, task, or execute/run/handle entry points.",
       "source": ".plan-product/patterns/library.json",
-      "occurrenceCount": 259,
+      "occurrenceCount": 258,
       "fileCount": 20,
       "coveragePercent": 35.09,
-      "applicableModuleCount": 0,
+      "applicableModuleCount": 1,
       "detectedModuleCount": 4,
       "undetectedModuleCount": 0,
       "modules": [
@@ -3033,7 +3033,7 @@
           "root": "scripts/module-map",
           "planningModule": "docs/code-map/modules/module-map.md",
           "fileCount": 12,
-          "occurrenceCount": 132,
+          "occurrenceCount": 131,
           "coveragePercent": 33.33
         },
         {
@@ -3041,18 +3041,18 @@
           "name": "code-map",
           "root": "scripts/code-map",
           "planningModule": "docs/code-map/modules/code-map.md",
-          "fileCount": 5,
-          "occurrenceCount": 88,
-          "coveragePercent": 33.33
+          "fileCount": 4,
+          "occurrenceCount": 82,
+          "coveragePercent": 28.57
         },
         {
           "id": "lib",
           "name": "lib",
           "root": "scripts/lib",
           "planningModule": "docs/code-map/modules/lib.md",
-          "fileCount": 2,
-          "occurrenceCount": 30,
-          "coveragePercent": 40
+          "fileCount": 3,
+          "occurrenceCount": 36,
+          "coveragePercent": 50
         },
         {
           "id": "unowned",
@@ -3126,7 +3126,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 2,
           "occurrenceCount": 6,
-          "coveragePercent": 13.33
+          "coveragePercent": 14.29
         },
         {
           "id": "unowned",
@@ -3143,7 +3143,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 2,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         }
       ],
       "undetectedModules": [],
@@ -3209,7 +3209,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 3,
           "occurrenceCount": 23,
-          "coveragePercent": 20
+          "coveragePercent": 21.43
         },
         {
           "id": "lib",
@@ -3218,7 +3218,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 5,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         }
       ],
       "undetectedModules": [],
@@ -3284,7 +3284,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 5,
           "occurrenceCount": 33,
-          "coveragePercent": 33.33
+          "coveragePercent": 35.71
         },
         {
           "id": "lib",
@@ -3293,7 +3293,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 1,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         }
       ],
       "undetectedModules": [],
@@ -3350,7 +3350,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 5,
           "occurrenceCount": 78,
-          "coveragePercent": 33.33
+          "coveragePercent": 35.71
         },
         {
           "id": "module-map",
@@ -3368,7 +3368,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 2,
           "occurrenceCount": 12,
-          "coveragePercent": 40
+          "coveragePercent": 33.33
         },
         {
           "id": "unowned",
@@ -3433,7 +3433,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 45,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         },
         {
           "id": "module-map",
@@ -3451,7 +3451,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 3,
           "occurrenceCount": 14,
-          "coveragePercent": 20
+          "coveragePercent": 21.43
         }
       ],
       "undetectedModules": [],
@@ -3517,7 +3517,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 13,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         },
         {
           "id": "code-map",
@@ -3526,7 +3526,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 3,
           "occurrenceCount": 12,
-          "coveragePercent": 20
+          "coveragePercent": 21.43
         },
         {
           "id": "unowned",
@@ -3600,7 +3600,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 2,
           "occurrenceCount": 20,
-          "coveragePercent": 13.33
+          "coveragePercent": 14.29
         }
       ],
       "undetectedModules": [],
@@ -3666,7 +3666,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 3,
           "occurrenceCount": 11,
-          "coveragePercent": 60
+          "coveragePercent": 50
         },
         {
           "id": "code-map",
@@ -3675,7 +3675,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 1,
           "occurrenceCount": 5,
-          "coveragePercent": 6.67
+          "coveragePercent": 7.14
         }
       ],
       "undetectedModules": [],
@@ -3714,7 +3714,7 @@
       "confidence": "high",
       "includeInHeadline": true,
       "description": "Runtime configuration is loaded by parsing JSON read from disk.",
-      "source": "scripts/code-map/patterns/javascript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/javascript.json",
       "occurrenceCount": 24,
       "fileCount": 16,
       "coveragePercent": 28.07,
@@ -3738,7 +3738,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 4,
           "occurrenceCount": 7,
-          "coveragePercent": 26.67
+          "coveragePercent": 28.57
         },
         {
           "id": "lib",
@@ -3747,7 +3747,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 2,
           "occurrenceCount": 2,
-          "coveragePercent": 40
+          "coveragePercent": 33.33
         }
       ],
       "undetectedModules": [],
@@ -3843,7 +3843,7 @@
       "confidence": "medium",
       "includeInHeadline": true,
       "description": "Code writes generated artifacts with writeFileSync.",
-      "source": "scripts/code-map/patterns/javascript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/javascript.json",
       "occurrenceCount": 19,
       "fileCount": 10,
       "coveragePercent": 17.54,
@@ -3867,7 +3867,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 3,
           "occurrenceCount": 5,
-          "coveragePercent": 20
+          "coveragePercent": 21.43
         },
         {
           "id": "lib",
@@ -3876,7 +3876,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 1,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         }
       ],
       "undetectedModules": [],
@@ -3942,7 +3942,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 1,
           "occurrenceCount": 7,
-          "coveragePercent": 6.67
+          "coveragePercent": 7.14
         }
       ],
       "undetectedModules": [],
@@ -3981,7 +3981,7 @@
       "confidence": "medium",
       "includeInHeadline": true,
       "description": "Code shells out through spawnSync for local tooling integration.",
-      "source": "scripts/code-map/patterns/javascript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/javascript.json",
       "occurrenceCount": 6,
       "fileCount": 6,
       "coveragePercent": 10.53,
@@ -3996,7 +3996,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 2,
           "occurrenceCount": 2,
-          "coveragePercent": 13.33
+          "coveragePercent": 14.29
         },
         {
           "id": "module-map",
@@ -4014,7 +4014,7 @@
           "planningModule": "docs/code-map/modules/lib.md",
           "fileCount": 1,
           "occurrenceCount": 1,
-          "coveragePercent": 20
+          "coveragePercent": 16.67
         },
         {
           "id": "unowned",
@@ -4061,7 +4061,7 @@
       "confidence": "high",
       "includeInHeadline": true,
       "description": "A Node CLI entry point reads command-line arguments from process.argv.",
-      "source": "scripts/code-map/patterns/javascript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/javascript.json",
       "occurrenceCount": 4,
       "fileCount": 4,
       "coveragePercent": 7.02,
@@ -4076,7 +4076,7 @@
           "planningModule": "docs/code-map/modules/code-map.md",
           "fileCount": 2,
           "occurrenceCount": 2,
-          "coveragePercent": 13.33
+          "coveragePercent": 14.29
         },
         {
           "id": "module-map",
@@ -4636,7 +4636,7 @@
       "confidence": "high",
       "includeInHeadline": true,
       "description": "A C# method carries an HTTP route attribute.",
-      "source": "scripts/code-map/patterns/csharp.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/csharp.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -4654,7 +4654,7 @@
       "confidence": "intent-only",
       "includeInHeadline": false,
       "description": "A public method is visible as surface-area evidence but does not prove a higher-level pattern.",
-      "source": "scripts/code-map/patterns/csharp.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/csharp.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -5445,14 +5445,14 @@
           "name": "code-map",
           "root": "scripts/code-map",
           "planningModule": "docs/code-map/modules/code-map.md",
-          "eligibleFiles": 15
+          "eligibleFiles": 14
         },
         {
           "id": "lib",
           "name": "lib",
           "root": "scripts/lib",
           "planningModule": "docs/code-map/modules/lib.md",
-          "eligibleFiles": 5
+          "eligibleFiles": 6
         },
         {
           "id": "module-map",
@@ -5618,7 +5618,7 @@
       "confidence": "medium",
       "includeInHeadline": true,
       "description": "A Cobra command struct defines a Run or RunE handler.",
-      "source": "scripts/code-map/patterns/go.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/go.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -5762,7 +5762,7 @@
       "confidence": "high",
       "includeInHeadline": true,
       "description": "A Java method carries a common HTTP route annotation.",
-      "source": "scripts/code-map/patterns/java.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/java.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -6095,7 +6095,7 @@
       "confidence": "medium",
       "includeInHeadline": true,
       "description": "A Python function is decorated as a Click command.",
-      "source": "scripts/code-map/patterns/python.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/python.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -6113,7 +6113,7 @@
       "confidence": "high",
       "includeInHeadline": true,
       "description": "A Python function is decorated as an HTTP route handler.",
-      "source": "scripts/code-map/patterns/python.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/python.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -6421,14 +6421,14 @@
           "name": "code-map",
           "root": "scripts/code-map",
           "planningModule": "docs/code-map/modules/code-map.md",
-          "eligibleFiles": 15
+          "eligibleFiles": 14
         },
         {
           "id": "lib",
           "name": "lib",
           "root": "scripts/lib",
           "planningModule": "docs/code-map/modules/lib.md",
-          "eligibleFiles": 5
+          "eligibleFiles": 6
         },
         {
           "id": "module-map",
@@ -6594,7 +6594,7 @@
       "confidence": "medium",
       "includeInHeadline": true,
       "description": "Code dynamically imports a module at runtime.",
-      "source": "scripts/code-map/patterns/typescript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/typescript.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
@@ -6612,7 +6612,7 @@
       "confidence": "high",
       "includeInHeadline": true,
       "description": "A method is decorated as a NestJS HTTP route handler.",
-      "source": "scripts/code-map/patterns/typescript.json",
+      "source": "C:/Users/jmayn/.codex/plugins/cache/jamaynor/plan-product/2.0.0/scripts/code-map/patterns/typescript.json",
       "occurrenceCount": 0,
       "fileCount": 0,
       "coveragePercent": 0,
