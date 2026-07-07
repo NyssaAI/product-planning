@@ -191,7 +191,9 @@ function inferFlows(repoRoot, allModules, mod) {
   const flows = [];
 
   if (mod.httpRoutes?.length) {
-    flows.push(`HTTP API handlers under \`${mod.root}/\` (${mod.httpRoutes.length} routes)`);
+    flows.push(
+      `Serves ${mod.httpRoutes.length} HTTP route${mod.httpRoutes.length === 1 ? '' : 's'}`
+    );
   }
   const mcpCount = mcpEndpointCount(mod);
   if (mcpCount > 0) {
@@ -270,7 +272,7 @@ function inferCapabilities(repoRoot, mod, enrichment) {
       `Serves ${routes.length} HTTP ${methodText}route${routes.length === 1 ? '' : 's'} including ${samplePaths}.`
     );
     capabilities.push(
-      `HTTP endpoints under \`${mod.root}/\` (${routes.length} routes)`
+      `Serves ${routes.length} HTTP route${routes.length === 1 ? '' : 's'}`
     );
   }
 

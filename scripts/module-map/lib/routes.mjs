@@ -84,7 +84,7 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
         path: apiPath,
         methods: methodsByFile.get(rel) ?? [],
         file: rel,
-        moduleId: moduleIdFromApiPath(apiPath, moduleIds),
+        moduleId: attributeRoute(rel, apiPath, modules, moduleIds),
       };
     })
     .sort((a, b) => a.path.localeCompare(b.path));
@@ -114,7 +114,7 @@ function discoverEndpointRoutes(modules, endpoints) {
       name: item.name,
       file: item.file,
       line: item.line,
-      moduleId: moduleIdFromFile(item.file, modules, moduleIds),
+      moduleId: attributeRoute(item.file, item.path, modules, moduleIds),
     });
   }
 
@@ -155,27 +155,99 @@ function dedupeRoutes(routes) {
 }
 
 /**
+ * Attribute one route/endpoint to a module.
+ *
+ * Priority:
+ *  1. Path ownership — the file lives inside a module's own root, so the route
+ *     is defined in that module's tree (unchanged legacy behavior).
+ *  2. API-path segment — a thin route handler in a shared app/api tree (e.g.
+ *     Next.js `src/app/api/<feature>/**`) is attributed to the feature module
+ *     its URL segment names, by module id or package-name leaf, with
+ *     singular/plural tolerance (`/api/updates` -> `update`).
+ *  3. `platform` — a genuinely shared app/host route with no feature owner.
+ *
+ * Steps 2-3 only run when no module root contains the file, so an endpoint
+ * defined inside a module keeps its path-based owner. The URL segment is used
+ * rather than the handler's imports on purpose: a shared route (e.g.
+ * `/api/health`) often imports a feature to inspect it, which would falsely
+ * pull the route into that feature. The segment names the route's owner; a
+ * missed attribution (left in `platform`) is safer than a false one.
+ *
  * @param {string} file
+ * @param {string | undefined} apiPath
  * @param {import('./discover-modules.mjs').ModuleDef[]} modules
  * @param {Set<string>} moduleIds
  * @returns {string}
  */
-function moduleIdFromFile(file, modules, moduleIds) {
-  const normalized = file.replace(/\\/g, '/');
-  const owner = modules
-    .filter((mod) => {
-      const root = mod.root.replace(/\\/g, '/').replace(/\/$/, '');
-      if (root === '.' || root === '') {
-        return true;
-      }
-      return normalized === root || normalized.startsWith(`${root}/`);
-    })
-    .sort((a, b) => b.root.length - a.root.length)[0];
+function attributeRoute(file, apiPath, modules, moduleIds) {
+  const normalized = String(file ?? '').replace(/\\/g, '/');
+  const owner = longestRootOwner(normalized, modules);
   if (owner) {
     return owner.id;
   }
-  const fromPath = moduleIdFromApiPath(normalized, moduleIds);
-  return moduleIds.has(fromPath) ? fromPath : 'platform';
+  const viaSegment = moduleFromApiSegment(apiPath, modules, moduleIds);
+  if (viaSegment) {
+    return viaSegment;
+  }
+  return 'platform';
+}
+
+/**
+ * The module whose root is the longest prefix containing `file`, or null.
+ *
+ * @param {string} file forward-slashed path
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @returns {import('./discover-modules.mjs').ModuleDef | null}
+ */
+function longestRootOwner(file, modules) {
+  return (
+    modules
+      .filter((mod) => {
+        const root = mod.root.replace(/\\/g, '/').replace(/\/$/, '');
+        if (root === '.' || root === '') {
+          return true;
+        }
+        return file === root || file.startsWith(`${root}/`);
+      })
+      .sort((a, b) => b.root.length - a.root.length)[0] ?? null
+  );
+}
+
+/**
+ * Map an API path's feature segment (`/api/<feature>` or `/<feature>`) to a
+ * module by id or package-name leaf, tolerating a plural URL segment for a
+ * singular module (`/api/updates` -> `update`).
+ *
+ * @param {string | undefined} apiPath
+ * @param {import('./discover-modules.mjs').ModuleDef[]} modules
+ * @param {Set<string>} moduleIds
+ * @returns {string | null}
+ */
+function moduleFromApiSegment(apiPath, modules, moduleIds) {
+  if (!apiPath) {
+    return null;
+  }
+  const segs = String(apiPath).split('/').filter(Boolean);
+  const seg = segs[0] === 'api' ? segs[1] : segs[0];
+  if (!seg) {
+    return null;
+  }
+  const candidates = [seg];
+  if (seg.length > 1 && seg.endsWith('s')) {
+    candidates.push(seg.slice(0, -1));
+  }
+  for (const candidate of candidates) {
+    if (moduleIds.has(candidate)) {
+      return candidate;
+    }
+    for (const mod of modules) {
+      const leaf = String(mod.name ?? '').split('/').pop();
+      if (leaf && leaf === candidate) {
+        return mod.id;
+      }
+    }
+  }
+  return null;
 }
 
 /**
@@ -220,16 +292,4 @@ function filePathToApiRoute(relPath, routeFileName, pathPrefix) {
     .filter((seg) => !seg.startsWith('@'))
     .map(nextRouteSegment);
   return `/${segments.join('/')}`.replace(/\/+$/, '') || '/';
-}
-
-/**
- * @param {string} apiPath
- * @param {Set<string>} moduleIds
- */
-function moduleIdFromApiPath(apiPath, moduleIds) {
-  const segment = apiPath.split('/').filter(Boolean)[1];
-  if (segment && moduleIds.has(segment)) {
-    return segment;
-  }
-  return 'platform';
 }

@@ -141,3 +141,97 @@ test('plan-product uses code-map endpoints even when route-file scanning is disa
     true
   );
 });
+
+test('routes in a shared app/api tree attribute to their feature module by URL segment, not the platform catch-all', () => {
+  const root = repo();
+  const config = {
+    projectName: 'attribution-fixture',
+    outputDir: 'docs/code-map',
+    codeMapOutput: 'docs/code-map/code-map.json',
+    docs: {
+      product: ['docs/product.md'],
+      features: ['docs/features.md'],
+      techStack: ['docs/tech-stack.md'],
+    },
+    briefMaxCharsPerDoc: 1200,
+    modules: {
+      discover: 'manual',
+      manual: [
+        { id: 'core', name: '@nyssa-wc/core', root: 'src/core' },
+        { id: 'skills', name: '@nyssa-wc/skills', root: 'src/tools/skills' },
+        { id: 'update', name: '@nyssa-wc/update', root: 'src/tools/update' },
+      ],
+      pinned: [],
+      globs: [],
+      flows: {},
+    },
+    nav: null,
+    apiRoutes: {
+      enabled: false,
+      root: 'src/app/api',
+      routeFile: 'route.js',
+      pathPrefix: 'src/app',
+    },
+    conventions: [],
+    configFilePresent: false,
+  };
+  // Thin Next.js-style route handlers living in a shared src/app/api tree,
+  // outside every feature module's own root.
+  const codeMap = {
+    files: [],
+    endpoints: [
+      {
+        kind: 'http',
+        method: 'GET',
+        path: '/api/skills/catalog',
+        file: 'src/app/api/skills/catalog/route.js',
+        line: 2,
+        framework: 'nextjs-app-router',
+        confidence: 'high',
+      },
+      {
+        kind: 'http',
+        method: 'POST',
+        path: '/api/updates',
+        file: 'src/app/api/updates/route.js',
+        line: 3,
+        framework: 'nextjs-app-router',
+        confidence: 'high',
+      },
+      {
+        kind: 'http',
+        method: 'GET',
+        path: '/api/org',
+        file: 'src/app/api/org/route.js',
+        line: 2,
+        framework: 'nextjs-app-router',
+        confidence: 'high',
+      },
+    ],
+  };
+
+  const model = buildPlanProductModel(root, config, codeMap);
+  const routeOwner = (routePath) => {
+    for (const mod of model.modules) {
+      if ((mod.httpRoutes ?? []).some((r) => r.path === routePath)) {
+        return mod.id;
+      }
+    }
+    return null;
+  };
+
+  // Exact segment match: /api/skills -> skills module.
+  assert.equal(routeOwner('/api/skills/catalog'), 'skills');
+  // Plural URL segment tolerated for a singular module: /api/updates -> update.
+  assert.equal(routeOwner('/api/updates'), 'update');
+  // No matching feature module for the segment -> platform (a shared/host route).
+  assert.equal(routeOwner('/api/org'), 'platform');
+
+  // Nothing that belongs to a feature module leaked into platform.
+  const platform = model.modules.find((m) => m.id === 'platform');
+  assert.ok(platform, 'platform module should exist for the shared /api/org route');
+  assert.equal(
+    (platform.httpRoutes ?? []).every((r) => r.path === '/api/org'),
+    true
+  );
+});
