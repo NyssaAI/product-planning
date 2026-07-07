@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-07-07T13:41:17.351Z",
+  "generated": "2026-07-07T21:34:11.528Z",
   "roots": [
     "scripts",
     "skills"
@@ -1128,7 +1128,7 @@
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 349,
+          "line": 351,
           "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -2283,7 +2283,7 @@
       "file": "scripts/module-map/lib/module-enrichment.mjs",
       "name": "enrichModule",
       "kind": "function",
-      "line": 349,
+      "line": 351,
       "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
       "moduleId": "module-map",
       "moduleName": "module-map",

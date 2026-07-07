@@ -1,6 +1,6 @@
 # plan-product Code Patterns
 
-Generated: 2026-07-06T12:35:53.844Z. Regenerate with `find-code-patterns`.
+Generated: 2026-07-07T21:34:24.829Z. Regenerate with `find-code-patterns`.
 
 ## Use This When
 
@@ -16,15 +16,15 @@ Headline coverage counts unique pattern-eligible files matched by `high` or `med
 |--------|-------|
 | Source files | 57 |
 | Pattern-eligible files | 57 |
-| Pattern-eligible source lines | 12567 |
+| Pattern-eligible source lines | 12629 |
 | Excluded files | 0 |
 | Patterns evaluated | 139 |
 | Patterns matched | 20 |
 | Occurrences | 2779 |
 | Covered files | 47 |
 | Headline coverage | 82.46% |
-| Pattern lines | 5564 |
-| Pattern line coverage | 44.27% |
+| Pattern lines | 5566 |
+| Pattern line coverage | 44.07% |
 | Modules with pattern evidence | 4 |
 | Modules without pattern evidence | 0 |
 
@@ -61,10 +61,10 @@ No detected source files were excluded from the pattern-eligible denominator.
 
 | Pattern | Family | Confidence | Language | Files | Occurrences | Coverage | Headline |
 |---------|--------|------------|----------|-------|-------------|----------|----------|
-| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | `JavaScript` | 53 | 658 | 92.98% | no |
+| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | `JavaScript` | 53 | 659 | 92.98% | no |
 | Configuration Boundary | Configuration Boundary | `medium` | `JavaScript` | 28 | 566 | 49.12% | yes |
 | Markdown lines renderer | - | `medium` | `JavaScript` | 9 | 318 | 15.79% | yes |
-| Command | Command | `medium` | `JavaScript` | 20 | 259 | 35.09% | yes |
+| Command | Command | `medium` | `JavaScript` | 20 | 258 | 35.09% | yes |
 | Logging / Observability Boundary | Logging / Observability Boundary | `medium` | `JavaScript` | 20 | 253 | 35.09% | yes |
 | Factory | Factory | `medium` | `JavaScript` | 22 | 145 | 38.60% | yes |
 | Dependency Injection | Dependency Injection | `medium` | `JavaScript` | 16 | 135 | 28.07% | yes |
@@ -205,38 +205,38 @@ No detected source files were excluded from the pattern-eligible denominator.
 
 | Module | Signal | Eligible files | Covered files | File coverage | Eligible lines | Pattern lines | Pattern line % | Used | Expected not detected | Uncovered examples | Module file |
 |--------|--------|----------------|---------------|---------------|----------------|---------------|----------------|------|-----------------------|--------------------|-------------|
-| code-map | `broad-pattern-evidence` | 15 | 12 | 80.00% | 3965 | 1418 | 35.76% | Large Conditional Dispatch, Markdown lines renderer, Command, Error Handling Policy, +13 more | Facade, Service Layer | `scripts/code-map/lib/comment-extractor.mjs`, `scripts/code-map/lib/module-linker.mjs`, `scripts/code-map/lib/signature-extractor.mjs` | `docs/code-map/modules/code-map.md` |
-| lib | `broad-pattern-evidence` | 5 | 4 | 80.00% | 683 | 408 | 59.74% | Configuration Boundary, Repository, Command, Markdown lines renderer, +10 more | Facade, Service Layer | `scripts/lib/sg-result.mjs` | `docs/code-map/modules/lib.md` |
-| module-map | `broad-pattern-evidence` | 36 | 30 | 83.33% | 7803 | 3682 | 47.19% | Configuration Boundary, Large Conditional Dispatch, Logging / Observability Boundary, Markdown lines renderer, +16 more | Facade, Service Layer | `scripts/module-map/lib/detection/metrics.mjs`, `scripts/module-map/lib/detection/metrics.test.mjs`, `scripts/module-map/lib/detection/partitions.mjs`, +3 more | `docs/code-map/modules/module-map.md` |
+| code-map | `broad-pattern-evidence` | 14 | 11 | 78.57% | 3584 | 1346 | 37.56% | Large Conditional Dispatch, Markdown lines renderer, Command, Error Handling Policy, +13 more | Facade, Service Layer | `scripts/code-map/lib/comment-extractor.mjs`, `scripts/code-map/lib/module-linker.mjs`, `scripts/code-map/lib/signature-extractor.mjs` | `docs/code-map/modules/code-map.md` |
+| lib | `broad-pattern-evidence` | 6 | 5 | 83.33% | 1064 | 480 | 45.11% | Large Conditional Dispatch, Configuration Boundary, Repository, Command, +10 more | Facade, Service Layer | `scripts/lib/sg-result.mjs` | `docs/code-map/modules/lib.md` |
+| module-map | `broad-pattern-evidence` | 36 | 30 | 83.33% | 7865 | 3684 | 46.84% | Configuration Boundary, Large Conditional Dispatch, Logging / Observability Boundary, Markdown lines renderer, +16 more | Facade, Service Layer | `scripts/module-map/lib/detection/metrics.mjs`, `scripts/module-map/lib/detection/metrics.test.mjs`, `scripts/module-map/lib/detection/partitions.mjs`, +3 more | `docs/code-map/modules/module-map.md` |
 | Unowned | `broad-pattern-evidence` | 1 | 1 | 100.00% | 116 | 56 | 48.28% | Command, Observer / PubSub, Error Handling Policy, Logging / Observability Boundary, +3 more | - | - | - |
 
 ## Module Details
 
 ### code-map
 
-Root: `scripts/code-map`. Signal: `broad-pattern-evidence`. Pattern line coverage: 35.76% (1418/3965 lines).
+Root: `scripts/code-map`. Signal: `broad-pattern-evidence`. Pattern line coverage: 37.56% (1346/3584 lines).
 
 Detected patterns:
 
 | Pattern | Family | Confidence | Files | Occurrences | Lines | Line % | Examples |
 |---------|--------|------------|-------|-------------|-------|--------|----------|
-| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | 15 | 338 | 2160 | 54.48% | `scripts/code-map/generate-code-map.mjs:57`, `scripts/code-map/generate-code-map.mjs:82`, `scripts/code-map/generate-code-map.mjs:146` |
-| Markdown lines renderer | - | `medium` | 2 | 126 | 156 | 3.93% | `scripts/code-map/lib/file-header-comment.mjs:103`, `scripts/code-map/lib/patterns/render.mjs:7`, `scripts/code-map/lib/patterns/render.mjs:8` |
-| Command | Command | `medium` | 5 | 88 | 446 | 11.25% | `scripts/code-map/generate-code-map.mjs:146`, `scripts/code-map/generate-code-map.mjs:146`, `scripts/code-map/generate-code-map.mjs:364` |
-| Error Handling Policy | Error Handling Policy | `medium` | 5 | 78 | 536 | 13.52% | `scripts/code-map/generate-code-map.mjs:82`, `scripts/code-map/generate-code-map.mjs:106`, `scripts/code-map/generate-code-map.mjs:146` |
-| Configuration Boundary | Configuration Boundary | `medium` | 6 | 67 | 395 | 9.96% | `scripts/code-map/generate-code-map.mjs:57`, `scripts/code-map/generate-code-map.mjs:61`, `scripts/code-map/generate-code-map.mjs:61` |
-| Dependency Injection | Dependency Injection | `medium` | 5 | 33 | 246 | 6.20% | `scripts/code-map/generate-code-map.mjs:35`, `scripts/code-map/generate-code-map.mjs:36`, `scripts/code-map/generate-code-map.mjs:36` |
-| Factory | Factory | `medium` | 3 | 23 | 426 | 10.74% | `scripts/code-map/generate-code-map.mjs:272`, `scripts/code-map/generate-code-map.mjs:272`, `scripts/code-map/generate-code-map.mjs:364` |
-| Strategy | Strategy | `medium` | 2 | 20 | 139 | 3.51% | `scripts/code-map/lib/patterns/catalog.mjs:290`, `scripts/code-map/lib/patterns/catalog.mjs:323`, `scripts/code-map/lib/patterns/catalog.mjs:323` |
-| Repository | Repository | `medium` | 3 | 14 | 222 | 5.60% | `scripts/code-map/generate-code-map.mjs:200`, `scripts/code-map/generate-code-map.mjs:200`, `scripts/code-map/generate-code-map.mjs:209` |
-| Observer / PubSub | Observer / PubSub | `medium` | 3 | 12 | 138 | 3.48% | `scripts/code-map/generate-code-map.mjs:32`, `scripts/code-map/generate-code-map.mjs:398`, `scripts/code-map/generate-code-map.mjs:402` |
-| Chain of Responsibility | Chain of Responsibility | `medium` | 1 | 7 | 8 | 0.20% | `scripts/code-map/generate-patterns.mjs:36`, `scripts/code-map/generate-patterns.mjs:41`, `scripts/code-map/generate-patterns.mjs:42` |
-| JSON config loader | - | `high` | 4 | 7 | 7 | 0.18% | `scripts/code-map/lib/code-map-config.mjs:76`, `scripts/code-map/lib/patterns/catalog.mjs:112`, `scripts/code-map/lib/patterns/model.mjs:31` |
-| Logging / Observability Boundary | Logging / Observability Boundary | `medium` | 2 | 6 | 68 | 1.72% | `scripts/code-map/generate-code-map.mjs:398`, `scripts/code-map/generate-code-map.mjs:402`, `scripts/code-map/generate-code-map.mjs:408` |
-| Generated file writer | - | `medium` | 3 | 5 | 13 | 0.33% | `scripts/code-map/generate-code-map.mjs:381`, `scripts/code-map/generate-patterns.mjs:142`, `scripts/code-map/generate-patterns.mjs:144` |
-| Scattered Config Access | Scattered Config Access | `intent-only` | 1 | 5 | 35 | 0.88% | `scripts/code-map/generate-code-map.mjs:82`, `scripts/code-map/generate-code-map.mjs:86`, `scripts/code-map/generate-code-map.mjs:86` |
-| Child process runner | - | `medium` | 2 | 2 | 33 | 0.83% | `scripts/code-map/generate-code-map.mjs:157`, `scripts/code-map/lib/patterns/scanner.mjs:102` |
-| Node CLI argument parser | - | `high` | 2 | 2 | 2 | 0.05% | `scripts/code-map/generate-code-map.mjs:84`, `scripts/code-map/generate-patterns.mjs:24` |
+| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | 14 | 235 | 1930 | 53.85% | `scripts/code-map/generate-code-map.mjs:57`, `scripts/code-map/generate-code-map.mjs:82`, `scripts/code-map/generate-code-map.mjs:146` |
+| Markdown lines renderer | - | `medium` | 2 | 126 | 156 | 4.35% | `scripts/code-map/lib/file-header-comment.mjs:103`, `scripts/code-map/lib/patterns/render.mjs:7`, `scripts/code-map/lib/patterns/render.mjs:8` |
+| Command | Command | `medium` | 4 | 82 | 374 | 10.44% | `scripts/code-map/generate-code-map.mjs:146`, `scripts/code-map/generate-code-map.mjs:146`, `scripts/code-map/generate-code-map.mjs:364` |
+| Error Handling Policy | Error Handling Policy | `medium` | 5 | 78 | 536 | 14.96% | `scripts/code-map/generate-code-map.mjs:82`, `scripts/code-map/generate-code-map.mjs:106`, `scripts/code-map/generate-code-map.mjs:146` |
+| Configuration Boundary | Configuration Boundary | `medium` | 6 | 67 | 395 | 11.02% | `scripts/code-map/generate-code-map.mjs:57`, `scripts/code-map/generate-code-map.mjs:61`, `scripts/code-map/generate-code-map.mjs:61` |
+| Dependency Injection | Dependency Injection | `medium` | 5 | 33 | 246 | 6.86% | `scripts/code-map/generate-code-map.mjs:35`, `scripts/code-map/generate-code-map.mjs:36`, `scripts/code-map/generate-code-map.mjs:36` |
+| Factory | Factory | `medium` | 3 | 23 | 426 | 11.89% | `scripts/code-map/generate-code-map.mjs:272`, `scripts/code-map/generate-code-map.mjs:272`, `scripts/code-map/generate-code-map.mjs:364` |
+| Strategy | Strategy | `medium` | 2 | 20 | 139 | 3.88% | `scripts/code-map/lib/patterns/catalog.mjs:290`, `scripts/code-map/lib/patterns/catalog.mjs:323`, `scripts/code-map/lib/patterns/catalog.mjs:323` |
+| Repository | Repository | `medium` | 3 | 14 | 222 | 6.19% | `scripts/code-map/generate-code-map.mjs:200`, `scripts/code-map/generate-code-map.mjs:200`, `scripts/code-map/generate-code-map.mjs:209` |
+| Observer / PubSub | Observer / PubSub | `medium` | 3 | 12 | 138 | 3.85% | `scripts/code-map/generate-code-map.mjs:32`, `scripts/code-map/generate-code-map.mjs:398`, `scripts/code-map/generate-code-map.mjs:402` |
+| Chain of Responsibility | Chain of Responsibility | `medium` | 1 | 7 | 8 | 0.22% | `scripts/code-map/generate-patterns.mjs:36`, `scripts/code-map/generate-patterns.mjs:41`, `scripts/code-map/generate-patterns.mjs:42` |
+| JSON config loader | - | `high` | 4 | 7 | 7 | 0.20% | `scripts/code-map/lib/code-map-config.mjs:76`, `scripts/code-map/lib/patterns/catalog.mjs:112`, `scripts/code-map/lib/patterns/model.mjs:31` |
+| Logging / Observability Boundary | Logging / Observability Boundary | `medium` | 2 | 6 | 68 | 1.90% | `scripts/code-map/generate-code-map.mjs:398`, `scripts/code-map/generate-code-map.mjs:402`, `scripts/code-map/generate-code-map.mjs:408` |
+| Generated file writer | - | `medium` | 3 | 5 | 13 | 0.36% | `scripts/code-map/generate-code-map.mjs:381`, `scripts/code-map/generate-patterns.mjs:142`, `scripts/code-map/generate-patterns.mjs:144` |
+| Scattered Config Access | Scattered Config Access | `intent-only` | 1 | 5 | 35 | 0.98% | `scripts/code-map/generate-code-map.mjs:82`, `scripts/code-map/generate-code-map.mjs:86`, `scripts/code-map/generate-code-map.mjs:86` |
+| Child process runner | - | `medium` | 2 | 2 | 33 | 0.92% | `scripts/code-map/generate-code-map.mjs:157`, `scripts/code-map/lib/patterns/scanner.mjs:102` |
+| Node CLI argument parser | - | `high` | 2 | 2 | 2 | 0.06% | `scripts/code-map/generate-code-map.mjs:84`, `scripts/code-map/generate-patterns.mjs:24` |
 
 Expected headline patterns not detected:
 
@@ -253,26 +253,26 @@ Files without headline pattern evidence:
 
 ### lib
 
-Root: `scripts/lib`. Signal: `broad-pattern-evidence`. Pattern line coverage: 59.74% (408/683 lines).
+Root: `scripts/lib`. Signal: `broad-pattern-evidence`. Pattern line coverage: 45.11% (480/1064 lines).
 
 Detected patterns:
 
 | Pattern | Family | Confidence | Files | Occurrences | Lines | Line % | Examples |
 |---------|--------|------------|-------|-------------|-------|--------|----------|
-| Configuration Boundary | Configuration Boundary | `medium` | 3 | 65 | 230 | 33.67% | `scripts/lib/plugin-root.mjs:8`, `scripts/lib/plugin-root.mjs:15`, `scripts/lib/plugin-root.mjs:15` |
-| Repository | Repository | `medium` | 1 | 45 | 228 | 33.38% | `scripts/lib/usage.mjs:25`, `scripts/lib/usage.mjs:48`, `scripts/lib/usage.mjs:48` |
-| Command | Command | `medium` | 2 | 30 | 173 | 25.33% | `scripts/lib/resolve-ast-grep.mjs:74`, `scripts/lib/usage.mjs:206`, `scripts/lib/usage.mjs:220` |
-| Markdown lines renderer | - | `medium` | 1 | 27 | 35 | 5.12% | `scripts/lib/usage.mjs:221`, `scripts/lib/usage.mjs:223`, `scripts/lib/usage.mjs:224` |
-| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | 4 | 21 | 423 | 61.93% | `scripts/lib/plugin-root.mjs:8`, `scripts/lib/resolve-ast-grep.mjs:31`, `scripts/lib/resolve-ast-grep.mjs:74` |
-| Observer / PubSub | Observer / PubSub | `medium` | 1 | 13 | 105 | 15.37% | `scripts/lib/usage.mjs:25`, `scripts/lib/usage.mjs:41`, `scripts/lib/usage.mjs:44` |
-| Error Handling Policy | Error Handling Policy | `medium` | 2 | 12 | 182 | 26.65% | `scripts/lib/resolve-ast-grep.mjs:31`, `scripts/lib/resolve-ast-grep.mjs:34`, `scripts/lib/resolve-ast-grep.mjs:41` |
-| Scattered Config Access | Scattered Config Access | `intent-only` | 3 | 11 | 114 | 16.69% | `scripts/lib/plugin-root.mjs:8`, `scripts/lib/plugin-root.mjs:15`, `scripts/lib/plugin-root.mjs:15` |
-| Factory | Factory | `medium` | 1 | 5 | 66 | 9.66% | `scripts/lib/usage.mjs:129`, `scripts/lib/usage.mjs:132`, `scripts/lib/usage.mjs:132` |
-| JSON config loader | - | `high` | 2 | 2 | 2 | 0.29% | `scripts/lib/resolve-ast-grep.mjs:39`, `scripts/lib/usage.mjs:396` |
-| Logging / Observability Boundary | Logging / Observability Boundary | `medium` | 1 | 2 | 72 | 10.54% | `scripts/lib/usage.mjs:206`, `scripts/lib/usage.mjs:273` |
-| Child process runner | - | `medium` | 1 | 1 | 10 | 1.46% | `scripts/lib/resolve-ast-grep.mjs:51` |
-| Dependency Injection | Dependency Injection | `medium` | 1 | 1 | 1 | 0.15% | `scripts/lib/skip-dirs.mjs:16` |
-| Generated file writer | - | `medium` | 1 | 1 | 1 | 0.15% | `scripts/lib/usage.mjs:142` |
+| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | 5 | 124 | 653 | 61.37% | `scripts/lib/endpoint-extractor.mjs:56`, `scripts/lib/endpoint-extractor.mjs:77`, `scripts/lib/endpoint-extractor.mjs:99` |
+| Configuration Boundary | Configuration Boundary | `medium` | 3 | 65 | 230 | 21.62% | `scripts/lib/plugin-root.mjs:8`, `scripts/lib/plugin-root.mjs:15`, `scripts/lib/plugin-root.mjs:15` |
+| Repository | Repository | `medium` | 1 | 45 | 228 | 21.43% | `scripts/lib/usage.mjs:25`, `scripts/lib/usage.mjs:48`, `scripts/lib/usage.mjs:48` |
+| Command | Command | `medium` | 3 | 36 | 245 | 23.03% | `scripts/lib/endpoint-extractor.mjs:99`, `scripts/lib/endpoint-extractor.mjs:104`, `scripts/lib/endpoint-extractor.mjs:110` |
+| Markdown lines renderer | - | `medium` | 1 | 27 | 35 | 3.29% | `scripts/lib/usage.mjs:221`, `scripts/lib/usage.mjs:223`, `scripts/lib/usage.mjs:224` |
+| Observer / PubSub | Observer / PubSub | `medium` | 1 | 13 | 105 | 9.87% | `scripts/lib/usage.mjs:25`, `scripts/lib/usage.mjs:41`, `scripts/lib/usage.mjs:44` |
+| Error Handling Policy | Error Handling Policy | `medium` | 2 | 12 | 182 | 17.11% | `scripts/lib/resolve-ast-grep.mjs:31`, `scripts/lib/resolve-ast-grep.mjs:34`, `scripts/lib/resolve-ast-grep.mjs:41` |
+| Scattered Config Access | Scattered Config Access | `intent-only` | 3 | 11 | 114 | 10.71% | `scripts/lib/plugin-root.mjs:8`, `scripts/lib/plugin-root.mjs:15`, `scripts/lib/plugin-root.mjs:15` |
+| Factory | Factory | `medium` | 1 | 5 | 66 | 6.20% | `scripts/lib/usage.mjs:129`, `scripts/lib/usage.mjs:132`, `scripts/lib/usage.mjs:132` |
+| JSON config loader | - | `high` | 2 | 2 | 2 | 0.19% | `scripts/lib/resolve-ast-grep.mjs:39`, `scripts/lib/usage.mjs:396` |
+| Logging / Observability Boundary | Logging / Observability Boundary | `medium` | 1 | 2 | 72 | 6.77% | `scripts/lib/usage.mjs:206`, `scripts/lib/usage.mjs:273` |
+| Child process runner | - | `medium` | 1 | 1 | 10 | 0.94% | `scripts/lib/resolve-ast-grep.mjs:51` |
+| Dependency Injection | Dependency Injection | `medium` | 1 | 1 | 1 | 0.09% | `scripts/lib/skip-dirs.mjs:16` |
+| Generated file writer | - | `medium` | 1 | 1 | 1 | 0.09% | `scripts/lib/usage.mjs:142` |
 
 Expected headline patterns not detected:
 
@@ -287,31 +287,31 @@ Files without headline pattern evidence:
 
 ### module-map
 
-Root: `scripts/module-map`. Signal: `broad-pattern-evidence`. Pattern line coverage: 47.19% (3682/7803 lines).
+Root: `scripts/module-map`. Signal: `broad-pattern-evidence`. Pattern line coverage: 46.84% (3684/7865 lines).
 
 Detected patterns:
 
 | Pattern | Family | Confidence | Files | Occurrences | Lines | Line % | Examples |
 |---------|--------|------------|-------|-------------|-------|--------|----------|
-| Configuration Boundary | Configuration Boundary | `medium` | 19 | 434 | 1773 | 22.72% | `scripts/module-map/generate-module-map.mjs:177`, `scripts/module-map/generate-module-map.mjs:178`, `scripts/module-map/generate-module-map.mjs:212` |
-| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | 33 | 298 | 4707 | 60.32% | `scripts/module-map/generate-module-map.mjs:72`, `scripts/module-map/generate-module-map.mjs:85`, `scripts/module-map/generate-module-map.mjs:123` |
-| Logging / Observability Boundary | Logging / Observability Boundary | `medium` | 16 | 242 | 2164 | 27.73% | `scripts/module-map/generate-module-map.mjs:85`, `scripts/module-map/generate-module-map.mjs:88`, `scripts/module-map/generate-module-map.mjs:88` |
-| Markdown lines renderer | - | `medium` | 6 | 165 | 191 | 2.45% | `scripts/module-map/lib/architecture.mjs:124`, `scripts/module-map/lib/architecture.mjs:125`, `scripts/module-map/lib/architecture.mjs:126` |
-| Command | Command | `medium` | 12 | 132 | 1201 | 15.39% | `scripts/module-map/generate-module-map.mjs:30`, `scripts/module-map/generate-module-map.mjs:31`, `scripts/module-map/generate-module-map.mjs:57` |
-| Factory | Factory | `medium` | 18 | 117 | 839 | 10.75% | `scripts/module-map/generate-module-map.mjs:24`, `scripts/module-map/generate-module-map.mjs:33`, `scripts/module-map/generate-module-map.mjs:47` |
-| Dependency Injection | Dependency Injection | `medium` | 10 | 101 | 748 | 9.59% | `scripts/module-map/lib/adapters/csharp.mjs:22`, `scripts/module-map/lib/adapters/csharp.mjs:27`, `scripts/module-map/lib/adapters/csharp.mjs:51` |
-| Repository | Repository | `medium` | 7 | 39 | 342 | 4.38% | `scripts/module-map/generate-module-map.mjs:25`, `scripts/module-map/generate-module-map.mjs:30`, `scripts/module-map/generate-module-map.mjs:31` |
-| Error Handling Policy | Error Handling Policy | `medium` | 7 | 35 | 341 | 4.37% | `scripts/module-map/generate-module-map.mjs:85`, `scripts/module-map/generate-module-map.mjs:95`, `scripts/module-map/generate-module-map.mjs:375` |
-| Strategy | Strategy | `medium` | 1 | 21 | 78 | 1.00% | `scripts/module-map/lib/adapters/typescript.mjs:361`, `scripts/module-map/lib/adapters/typescript.mjs:364`, `scripts/module-map/lib/adapters/typescript.mjs:370` |
-| Adapter | Adapter | `medium` | 4 | 19 | 70 | 0.90% | `scripts/module-map/lib/adapters/csharp.mjs:54`, `scripts/module-map/lib/adapters/csharp.mjs:73`, `scripts/module-map/lib/adapters/index.mjs:8` |
-| Observer / PubSub | Observer / PubSub | `medium` | 3 | 18 | 163 | 2.09% | `scripts/module-map/generate-module-map.mjs:43`, `scripts/module-map/generate-module-map.mjs:123`, `scripts/module-map/generate-module-map.mjs:127` |
-| Scattered Config Access | Scattered Config Access | `intent-only` | 3 | 17 | 42 | 0.54% | `scripts/module-map/lib/bootstrap.mjs:300`, `scripts/module-map/lib/bootstrap.mjs:303`, `scripts/module-map/lib/bootstrap.mjs:303` |
+| Configuration Boundary | Configuration Boundary | `medium` | 19 | 434 | 1773 | 22.54% | `scripts/module-map/generate-module-map.mjs:177`, `scripts/module-map/generate-module-map.mjs:178`, `scripts/module-map/generate-module-map.mjs:212` |
+| Large Conditional Dispatch | Large Conditional Dispatch | `intent-only` | 33 | 299 | 4736 | 60.22% | `scripts/module-map/generate-module-map.mjs:72`, `scripts/module-map/generate-module-map.mjs:85`, `scripts/module-map/generate-module-map.mjs:123` |
+| Logging / Observability Boundary | Logging / Observability Boundary | `medium` | 16 | 242 | 2166 | 27.54% | `scripts/module-map/generate-module-map.mjs:85`, `scripts/module-map/generate-module-map.mjs:88`, `scripts/module-map/generate-module-map.mjs:88` |
+| Markdown lines renderer | - | `medium` | 6 | 165 | 191 | 2.43% | `scripts/module-map/lib/architecture.mjs:124`, `scripts/module-map/lib/architecture.mjs:125`, `scripts/module-map/lib/architecture.mjs:126` |
+| Command | Command | `medium` | 12 | 131 | 1203 | 15.30% | `scripts/module-map/generate-module-map.mjs:30`, `scripts/module-map/generate-module-map.mjs:31`, `scripts/module-map/generate-module-map.mjs:57` |
+| Factory | Factory | `medium` | 18 | 117 | 839 | 10.67% | `scripts/module-map/generate-module-map.mjs:24`, `scripts/module-map/generate-module-map.mjs:33`, `scripts/module-map/generate-module-map.mjs:47` |
+| Dependency Injection | Dependency Injection | `medium` | 10 | 101 | 748 | 9.51% | `scripts/module-map/lib/adapters/csharp.mjs:22`, `scripts/module-map/lib/adapters/csharp.mjs:27`, `scripts/module-map/lib/adapters/csharp.mjs:51` |
+| Repository | Repository | `medium` | 7 | 39 | 342 | 4.35% | `scripts/module-map/generate-module-map.mjs:25`, `scripts/module-map/generate-module-map.mjs:30`, `scripts/module-map/generate-module-map.mjs:31` |
+| Error Handling Policy | Error Handling Policy | `medium` | 7 | 35 | 341 | 4.34% | `scripts/module-map/generate-module-map.mjs:85`, `scripts/module-map/generate-module-map.mjs:95`, `scripts/module-map/generate-module-map.mjs:375` |
+| Strategy | Strategy | `medium` | 1 | 21 | 78 | 0.99% | `scripts/module-map/lib/adapters/typescript.mjs:361`, `scripts/module-map/lib/adapters/typescript.mjs:364`, `scripts/module-map/lib/adapters/typescript.mjs:370` |
+| Adapter | Adapter | `medium` | 4 | 19 | 70 | 0.89% | `scripts/module-map/lib/adapters/csharp.mjs:54`, `scripts/module-map/lib/adapters/csharp.mjs:73`, `scripts/module-map/lib/adapters/index.mjs:8` |
+| Observer / PubSub | Observer / PubSub | `medium` | 3 | 18 | 163 | 2.07% | `scripts/module-map/generate-module-map.mjs:43`, `scripts/module-map/generate-module-map.mjs:123`, `scripts/module-map/generate-module-map.mjs:127` |
+| Scattered Config Access | Scattered Config Access | `intent-only` | 3 | 17 | 42 | 0.53% | `scripts/module-map/lib/bootstrap.mjs:300`, `scripts/module-map/lib/bootstrap.mjs:303`, `scripts/module-map/lib/bootstrap.mjs:303` |
 | JSON config loader | - | `high` | 10 | 15 | 17 | 0.22% | `scripts/module-map/generate-module-map.mjs:93`, `scripts/module-map/lib/adapters/typescript.mjs:559`, `scripts/module-map/lib/architecture.mjs:47` |
-| Generated file writer | - | `medium` | 6 | 13 | 85 | 1.09% | `scripts/module-map/generate-module-map.mjs:259`, `scripts/module-map/generate-module-map.mjs:265`, `scripts/module-map/generate-module-map.mjs:311` |
+| Generated file writer | - | `medium` | 6 | 13 | 85 | 1.08% | `scripts/module-map/generate-module-map.mjs:259`, `scripts/module-map/generate-module-map.mjs:265`, `scripts/module-map/generate-module-map.mjs:311` |
 | Chain of Responsibility | Chain of Responsibility | `medium` | 2 | 10 | 58 | 0.74% | `scripts/module-map/generate-module-map.mjs:72`, `scripts/module-map/generate-module-map.mjs:77`, `scripts/module-map/generate-module-map.mjs:78` |
-| Validation Boundary | Validation Boundary | `medium` | 2 | 4 | 97 | 1.24% | `scripts/module-map/generate-module-map.mjs:177`, `scripts/module-map/generate-module-map.mjs:178`, `scripts/module-map/lib/render.mjs:8` |
+| Validation Boundary | Validation Boundary | `medium` | 2 | 4 | 97 | 1.23% | `scripts/module-map/generate-module-map.mjs:177`, `scripts/module-map/generate-module-map.mjs:178`, `scripts/module-map/lib/render.mjs:8` |
 | Child process runner | - | `medium` | 2 | 2 | 10 | 0.13% | `scripts/module-map/lib/adapters/sg-scan.mjs:43`, `scripts/module-map/regen-if-source-changed.mjs:97` |
-| Decorator | Decorator | `medium` | 1 | 1 | 9 | 0.12% | `scripts/module-map/regen-if-source-changed.mjs:41` |
+| Decorator | Decorator | `medium` | 1 | 1 | 9 | 0.11% | `scripts/module-map/regen-if-source-changed.mjs:41` |
 | Node CLI argument parser | - | `high` | 1 | 1 | 1 | 0.01% | `scripts/module-map/generate-module-map.mjs:49` |
 
 Expected headline patterns not detected:
@@ -356,9 +356,9 @@ Confidence: `intent-only`. Headline coverage: excluded.
 
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
-| code-map | 15 | 338 | 100.00% |
-| module-map | 33 | 298 | 91.67% |
-| lib | 4 | 21 | 80.00% |
+| module-map | 33 | 299 | 91.67% |
+| code-map | 14 | 235 | 100.00% |
+| lib | 5 | 124 | 83.33% |
 | Unowned | 1 | 1 | 100.00% |
 
 Examples:
@@ -378,8 +378,8 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 19 | 434 | 52.78% |
-| code-map | 6 | 67 | 40.00% |
-| lib | 3 | 65 | 60.00% |
+| code-map | 6 | 67 | 42.86% |
+| lib | 3 | 65 | 50.00% |
 
 Examples:
 
@@ -398,8 +398,8 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 6 | 165 | 16.67% |
-| code-map | 2 | 126 | 13.33% |
-| lib | 1 | 27 | 20.00% |
+| code-map | 2 | 126 | 14.29% |
+| lib | 1 | 27 | 16.67% |
 
 Examples:
 
@@ -417,9 +417,9 @@ Confidence: `medium`. Headline coverage: included.
 
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
-| module-map | 12 | 132 | 33.33% |
-| code-map | 5 | 88 | 33.33% |
-| lib | 2 | 30 | 40.00% |
+| module-map | 12 | 131 | 33.33% |
+| code-map | 4 | 82 | 28.57% |
+| lib | 3 | 36 | 50.00% |
 | Unowned | 1 | 9 | 100.00% |
 
 Examples:
@@ -439,9 +439,9 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 16 | 242 | 44.44% |
-| code-map | 2 | 6 | 13.33% |
+| code-map | 2 | 6 | 14.29% |
 | Unowned | 1 | 3 | 100.00% |
-| lib | 1 | 2 | 20.00% |
+| lib | 1 | 2 | 16.67% |
 
 Examples:
 
@@ -460,8 +460,8 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 18 | 117 | 50.00% |
-| code-map | 3 | 23 | 20.00% |
-| lib | 1 | 5 | 20.00% |
+| code-map | 3 | 23 | 21.43% |
+| lib | 1 | 5 | 16.67% |
 
 Examples:
 
@@ -480,8 +480,8 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 10 | 101 | 27.78% |
-| code-map | 5 | 33 | 33.33% |
-| lib | 1 | 1 | 20.00% |
+| code-map | 5 | 33 | 35.71% |
+| lib | 1 | 1 | 16.67% |
 
 Examples:
 
@@ -499,9 +499,9 @@ Confidence: `medium`. Headline coverage: included.
 
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
-| code-map | 5 | 78 | 33.33% |
+| code-map | 5 | 78 | 35.71% |
 | module-map | 7 | 35 | 19.44% |
-| lib | 2 | 12 | 40.00% |
+| lib | 2 | 12 | 33.33% |
 | Unowned | 1 | 5 | 100.00% |
 
 Examples:
@@ -520,9 +520,9 @@ Confidence: `medium`. Headline coverage: included.
 
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
-| lib | 1 | 45 | 20.00% |
+| lib | 1 | 45 | 16.67% |
 | module-map | 7 | 39 | 19.44% |
-| code-map | 3 | 14 | 20.00% |
+| code-map | 3 | 14 | 21.43% |
 
 Examples:
 
@@ -541,8 +541,8 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 3 | 18 | 8.33% |
-| lib | 1 | 13 | 20.00% |
-| code-map | 3 | 12 | 20.00% |
+| lib | 1 | 13 | 16.67% |
+| code-map | 3 | 12 | 21.43% |
 | Unowned | 1 | 6 | 100.00% |
 
 Examples:
@@ -562,7 +562,7 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 1 | 21 | 2.78% |
-| code-map | 2 | 20 | 13.33% |
+| code-map | 2 | 20 | 14.29% |
 
 Examples:
 
@@ -581,8 +581,8 @@ Confidence: `intent-only`. Headline coverage: excluded.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 3 | 17 | 8.33% |
-| lib | 3 | 11 | 60.00% |
-| code-map | 1 | 5 | 6.67% |
+| lib | 3 | 11 | 50.00% |
+| code-map | 1 | 5 | 7.14% |
 
 Examples:
 
@@ -601,8 +601,8 @@ Confidence: `high`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 10 | 15 | 27.78% |
-| code-map | 4 | 7 | 26.67% |
-| lib | 2 | 2 | 40.00% |
+| code-map | 4 | 7 | 28.57% |
+| lib | 2 | 2 | 33.33% |
 
 Examples:
 
@@ -639,8 +639,8 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 6 | 13 | 16.67% |
-| code-map | 3 | 5 | 20.00% |
-| lib | 1 | 1 | 20.00% |
+| code-map | 3 | 5 | 21.43% |
+| lib | 1 | 1 | 16.67% |
 
 Examples:
 
@@ -659,7 +659,7 @@ Confidence: `medium`. Headline coverage: included.
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
 | module-map | 2 | 10 | 5.56% |
-| code-map | 1 | 7 | 6.67% |
+| code-map | 1 | 7 | 7.14% |
 
 Examples:
 
@@ -677,9 +677,9 @@ Confidence: `medium`. Headline coverage: included.
 
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
-| code-map | 2 | 2 | 13.33% |
+| code-map | 2 | 2 | 14.29% |
 | module-map | 2 | 2 | 5.56% |
-| lib | 1 | 1 | 20.00% |
+| lib | 1 | 1 | 16.67% |
 | Unowned | 1 | 1 | 100.00% |
 
 Examples:
@@ -698,7 +698,7 @@ Confidence: `high`. Headline coverage: included.
 
 | Module | Files | Occurrences | Coverage |
 |--------|-------|-------------|----------|
-| code-map | 2 | 2 | 13.33% |
+| code-map | 2 | 2 | 14.29% |
 | module-map | 1 | 1 | 2.78% |
 | Unowned | 1 | 1 | 100.00% |
 
@@ -745,4 +745,4 @@ Examples:
 Pattern matches are structural evidence, not proof of author intent. Pattern absence is a review signal, not a defect by itself. Inspect the cited examples and module responsibilities before changing code.
 `intent-only` signals are reported separately and excluded from headline coverage.
 
-<!-- plan-product:patterns generated 2026-07-06T12:35:53.844Z -->
+<!-- plan-product:patterns generated 2026-07-07T21:34:24.829Z -->
