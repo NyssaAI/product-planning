@@ -1,4 +1,11 @@
+---
+description: Interview the user and create or update one plan-product feature guide, then check for duplicate or contradictory ownership.
+argument-hint: "[feature id or name, e.g. F-101]"
+---
+
 # plan-feature - define a feature
+
+Load the `plan-feature` skill and follow its workflow. The skill owns the boundary-confirmation step, the `[inferred]` marking, the cross-feature uniqueness and contradiction pass, and the legacy-section migration; this command file is only the entry point.
 
 Interview the user and create or update one plan-product feature guide. Confirm the feature boundary before writing, then check for duplicate or contradictory ownership across existing feature guides.
 

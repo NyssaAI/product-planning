@@ -1,7 +1,7 @@
 ---
 id: F-001
 phase: 0
-status: planned
+status: complete
 ---
 
 # F-001 plan-product Path Map
@@ -10,9 +10,13 @@ status: planned
 
 Define the committed, repo-relative path map for plan-product artifacts.
 
-## Use Case
+## User Need
 
 An agent can resolve plan-product files without relying on hardcoded local paths or installation-specific plugin cache locations.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

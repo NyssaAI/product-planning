@@ -1,7 +1,7 @@
 ---
 id: F-103
 phase: 1
-status: planned
+status: complete
 ---
 
 # F-103 Feature Phase Organization
@@ -10,9 +10,13 @@ status: planned
 
 Organize features into phases that communicate build order and dependency chains.
 
-## Use Case
+## User Need
 
 An agent can prioritize work by phase instead of treating the feature inventory as an unordered list.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

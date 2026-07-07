@@ -1,7 +1,7 @@
 ---
 id: F-202
 phase: 2
-status: planned
+status: complete
 ---
 
 # F-202 Code Map Planning Handoff
@@ -10,9 +10,13 @@ status: planned
 
 Define how planning workflows use plan-product feature guides together with code-map artifacts.
 
-## Use Case
+## User Need
 
 Before implementation, an agent can load the relevant feature guide and code-map context for the affected source area.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

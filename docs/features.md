@@ -2,11 +2,11 @@
 
 | Delivery Phase | Complete / Total | % Complete |
 |----------------|------------------|------------|
-| Phase 0 - Planning Foundation | 0 / 3 | 0% |
-| Phase 1 - Feature Guide Workflow | 0 / 3 | 0% |
-| Phase 2 - Code Map Workflow | 0 / 2 | 0% |
+| Phase 0 - Planning Foundation | 3 / 3 | 100% |
+| Phase 1 - Feature Guide Workflow | 3 / 3 | 100% |
+| Phase 2 - Code Map Workflow | 2 / 2 | 100% |
 | Existing Code-Map Capabilities | 15 / 15 | 100% |
-| **Overall** | 15 / 23 | 65% |
+| **Overall** | 23 / 23 | 100% |
 
 ---
 
@@ -25,16 +25,16 @@ This document lists plan-product features in intended build order and retains th
 
 ## Feature Checklist Summary
 
-* [ ] F-001: plan-product path map
-* [ ] F-002: Docs product docs
-* [ ] F-003: Templates and schema
+* [x] F-001: plan-product path map
+* [x] F-002: Docs product docs
+* [x] F-003: Templates and schema
 ---
-* [ ] F-101: Feature inventory
-* [ ] F-102: Feature detail docs
-* [ ] F-103: Feature phase organization
+* [x] F-101: Feature inventory
+* [x] F-102: Feature detail docs
+* [x] F-103: Feature phase organization
 ---
-* [ ] F-201: Product code map
-* [ ] F-202: Code map planning handoff
+* [x] F-201: Product code map
+* [x] F-202: Code map planning handoff
 
 ## Feature Inventory
 
@@ -62,7 +62,7 @@ Starter templates and JSON schema for repeatable, validated plan-product artifac
 
 **F-102: Feature detail docs**  
 Per-feature files under `docs/features/` capture scope, inputs, outputs, and acceptance criteria.  
-[Feature Guide: Feature Detail Docs](features/f-102/feature.md)
+[Feature Guide: Feature Detail Docs](features/f-102/feature.md) · [UC-001: Author a feature guide](features/f-102/uc-001-author-feature-guide.md)
 
 **F-103: Feature phase organization**  
 Features are grouped into phases so agents can reason about build order and dependency chains.  

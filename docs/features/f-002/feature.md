@@ -1,7 +1,7 @@
 ---
 id: F-002
 phase: 0
-status: planned
+status: complete
 ---
 
 # F-002 Docs Product Docs
@@ -10,9 +10,13 @@ status: planned
 
 Make docs-based product files the canonical plan-product entry points.
 
-## Use Case
+## User Need
 
 An agent can load product context from predictable docs files before planning implementation work.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

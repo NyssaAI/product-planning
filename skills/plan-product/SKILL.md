@@ -11,14 +11,14 @@ Do not duplicate product, feature, use-case, or tech-stack formats in this skill
 
 ## Operating Rules
 
-- Read `.plan-product/config.json` first. If it is missing, bootstrap it from the current plan-product config source in the repo or plugin when available; otherwise create a minimal config with the required plan-product path keys, then re-read it.
+- Read `.plan-product/config.json` first. If it is missing, bootstrap the repo by running `node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --init` from the target project root — this writes a schema-valid `.plan-product/config.json` and copies the bundled templates into place — then re-read the config. Resolve `${PLUGIN_ROOT}` from `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed plugin directory containing this skill. Only if `--init` cannot be run, hand-write a minimal config with the required plan-product path keys from `.plan-product/schema.json`, then re-read it.
 - Resolve every output path from config before interviewing. Do not hardcode `docs/product.md`, `docs/features.md`, `docs/tech-stack.md`, or `docs/features/f-nxx/feature.md` except as examples in user-facing text.
 - Verify the configured templates exist before writing:
   - Product doc: `paths.productTemplate`
   - Feature inventory: `paths.featuresTemplate`
   - Tech stack: `paths.techStackTemplate`
   - Feature guide stubs: `paths.featureTemplate`
-- If a required template is missing, stop before writing and report the missing configured path. Do not silently invent a replacement template unless the repo is being bootstrapped and the bundled plan-product template source is available to copy from.
+- If a required template is missing, run `node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --init` to copy the bundled templates into `.plan-product/templates/`, then re-check. Only if that cannot restore the template should you stop before writing and report the missing configured path. Do not silently invent a replacement template.
 - Ask one blocking question at a time. In Codex, present numbered choices in chat and wait for the user answer. If a runtime provides an AskUserQuestion tool, use that tool.
 - Run a standard-depth product discovery interview by default. Keep it lighter than `plan-feature` or `plan-use-case`, but gather enough context to make the first-pass docs useful for future planning work.
 - If the user says "skip", "unknown", or gives a very brief answer, write `To be defined.` only into empty target sections. Never replace existing non-empty content with `To be defined.`.

@@ -1,3 +1,8 @@
+---
+description: Generate or refresh module-rooted code pattern artifacts from the current code map and module graph.
+argument-hint: "[target repo path]"
+---
+
 # find-code-patterns - review module-rooted code patterns
 
 Generate or refresh module-rooted code pattern artifacts from the current code map and module graph.

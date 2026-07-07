@@ -1,7 +1,7 @@
 ---
 id: F-003
 phase: 0
-status: planned
+status: complete
 ---
 
 # F-003 Templates and Schema
@@ -10,9 +10,13 @@ status: planned
 
 Provide reusable templates and a config schema for consistent plan-product artifacts.
 
-## Use Case
+## User Need
 
 New repos or new features can start from predictable file shapes instead of ad hoc markdown.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

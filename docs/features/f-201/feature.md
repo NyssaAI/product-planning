@@ -1,7 +1,7 @@
 ---
 id: F-201
 phase: 2
-status: planned
+status: complete
 ---
 
 # F-201 Product Code Map
@@ -10,9 +10,13 @@ status: planned
 
 Create a plan-product-owned code-map location for planning-oriented code context.
 
-## Use Case
+## User Need
 
 Product planning can reference code context without mixing plan-product artifacts with existing generated module-index artifacts.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

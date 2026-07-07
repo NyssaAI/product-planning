@@ -17,5 +17,5 @@ The native plugin packages Codex skills for plan-product workflows plus the code
 Raw URL for agents:
 
 ```text
-https://raw.githubusercontent.com/jamaynor/code-indexer/refs/heads/main/README.md
+https://raw.githubusercontent.com/jamaynor/product-planning/refs/heads/main/README.md
 ```

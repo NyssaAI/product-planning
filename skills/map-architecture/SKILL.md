@@ -12,7 +12,7 @@ Generate the system architecture artifact from the persisted module graph.
 1. If `using-code-map` is not already loaded, read `../using-code-map/SKILL.md` first.
 2. Work from the target project root, not from the plugin root. If the user does not provide a target path, use the current workspace root.
 3. Apply the code-map staleness gate. If the index or module graph is missing or stale, run `map-code` first.
-4. Resolve the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill.
+4. Resolve the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill. No harness sets a bare `PLUGIN_ROOT`, so substitute the resolved absolute path for `${PLUGIN_ROOT}` in the commands below before running them.
 5. Generate the architecture artifact:
 
 ```bash

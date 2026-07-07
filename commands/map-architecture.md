@@ -1,3 +1,8 @@
+---
+description: Generate or refresh the system architecture handoff from the persisted module graph.
+argument-hint: "[target repo path]"
+---
+
 # map-architecture - generate architecture handoff
 
 Generate or refresh the system architecture handoff from the persisted module graph.

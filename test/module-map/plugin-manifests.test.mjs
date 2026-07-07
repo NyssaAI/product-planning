@@ -36,15 +36,15 @@ test('plugin manifests point at the current repository and package excludes loca
   const cursor = readJson('.cursor-plugin/plugin.json');
   const install = readFileSync('.codex/INSTALL.md', 'utf8');
 
-  assert.equal(codex.repository, 'https://github.com/jamaynor/code-indexer');
-  assert.equal(codex.homepage, 'https://github.com/jamaynor/code-indexer');
-  assert.equal(codex.interface.websiteURL, 'https://github.com/jamaynor/code-indexer');
-  assert.equal(claude.repository, 'https://github.com/jamaynor/code-indexer');
-  assert.equal(cursor.repository, 'https://github.com/jamaynor/code-indexer');
-  assert.equal(cursor.homepage, 'https://github.com/jamaynor/code-indexer');
+  assert.equal(codex.repository, 'https://github.com/jamaynor/product-planning');
+  assert.equal(codex.homepage, 'https://github.com/jamaynor/product-planning');
+  assert.equal(codex.interface.websiteURL, 'https://github.com/jamaynor/product-planning');
+  assert.equal(claude.repository, 'https://github.com/jamaynor/product-planning');
+  assert.equal(cursor.repository, 'https://github.com/jamaynor/product-planning');
+  assert.equal(cursor.homepage, 'https://github.com/jamaynor/product-planning');
   assert.match(
     install,
-    /raw\.githubusercontent\.com\/jamaynor\/code-indexer\/refs\/heads\/main\/README\.md/
+    /raw\.githubusercontent\.com\/jamaynor\/product-planning\/refs\/heads\/main\/README\.md/
   );
 
   const pack =

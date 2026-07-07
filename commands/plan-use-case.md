@@ -1,4 +1,11 @@
+---
+description: Interview the user and create or update one use case under a feature folder, checked for distinct, non-contradictory coverage.
+argument-hint: "[feature id + use-case name]"
+---
+
 # plan-use-case - define a feature use case
+
+Load the `plan-use-case` skill and follow its workflow. The skill owns the entry-route/trigger separation, the ASCII process-tree shape, the sibling-comparison consistency check, and the failure-case rules; this command file is only the entry point.
 
 Interview the user and create or update one use case under a feature folder.
 

@@ -1,3 +1,8 @@
+---
+description: Generate or refresh the target repo's code-map context - symbol index, endpoint index, module graph, and module docs.
+argument-hint: "[target repo path]"
+---
+
 # map-code - generate code-map context
 
 Generate or refresh the target repo's code-map context: symbol index, endpoint index, module graph, and module docs.

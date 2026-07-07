@@ -1,7 +1,7 @@
 ---
 id: F-101
 phase: 1
-status: planned
+status: complete
 ---
 
 # F-101 Feature Inventory
@@ -10,9 +10,13 @@ status: planned
 
 Make `docs/features.md` the organized index for feature IDs, statuses, phases, and feature guide locations.
 
-## Use Case
+## User Need
 
 An agent can quickly understand what must be built, in what order, and where the details live.
+
+## Use Cases
+
+None yet.
 
 ## Scope
 

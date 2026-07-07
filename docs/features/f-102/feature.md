@@ -1,7 +1,7 @@
 ---
 id: F-102
 phase: 1
-status: planned
+status: complete
 ---
 
 # F-102 Feature Detail Docs
@@ -10,9 +10,13 @@ status: planned
 
 Store detailed feature guides under `docs/features/`.
 
-## Use Case
+## User Need
 
 A feature can carry scope, inputs, outputs, acceptance criteria, and dependencies without bloating the root inventory.
+
+## Use Cases
+
+- [UC-001: Author a Feature Guide From the Template](uc-001-author-feature-guide.md)
 
 ## Scope
 

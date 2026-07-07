@@ -12,7 +12,7 @@ Review the mapped codebase for structural pattern evidence rooted in application
 1. If `using-code-map` is not already loaded, read `../using-code-map/SKILL.md` first.
 2. Work from the target project root, not from the plugin root. If the user does not provide a target path, use the current workspace root.
 3. Apply the code-map staleness gate. If the code map or module graph is missing or stale, run `map-code` first.
-4. Resolve the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill.
+4. Resolve the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill. No harness sets a bare `PLUGIN_ROOT`, so substitute the resolved absolute path for `${PLUGIN_ROOT}` in the commands below before running them.
 5. Read `.plan-product/config.json` if present. Treat these configured files as the repo-specific tuning surface:
    - `paths.patternLibrary`: canonical pattern families and language detectors.
    - `paths.patternExpectations`: module-tag rules for which pattern families should appear in which kinds of modules.

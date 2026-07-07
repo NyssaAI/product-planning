@@ -54,6 +54,10 @@ plan-product:using-code-map
 
 Command-capable runtimes can use the matching markdown files under `commands/`.
 
+## Gemini Usage
+
+The Gemini extension (`gemini-extension.json`) loads repository context through `GEMINI.md`, which imports `AGENTS.md`. Gemini CLI extensions expose slash commands from `commands/*.toml`, and this plugin ships markdown commands only, so Gemini receives the plan-product context but not the workflows as native slash commands. Drive the workflows by asking Gemini to follow the capability described in `AGENTS.md` (for example, "plan this product" or "map this repo's code").
+
 ## Code-Map Commands
 
 The exposed capability names are plan-product names. The current implementation still uses the existing generator scripts under `scripts/code-map/` and `scripts/module-map/`.

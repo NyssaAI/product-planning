@@ -1,4 +1,11 @@
+---
+description: Interview the user and create or update plan-product's core product docs (product, features, tech-stack).
+argument-hint: "[what to define or update]"
+---
+
 # plan-product - define product docs
+
+Load the `plan-product` skill and follow its workflow. The skill owns the interview flow, the product-capsule confirmation, feature-ID banding, and the merge-by-heading preservation rules; this command file is only the entry point.
 
 Interview the user and create or update plan-product's core product docs.
 Use `.plan-product/config.json` for paths and verify the configured templates
