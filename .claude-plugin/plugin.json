@@ -1,6 +1,6 @@
 {
   "name": "plan-product",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "plan-product: plans products, features, and use cases, then generates code-map context for implementation planning.",
   "author": {
     "name": "jamaynor"
