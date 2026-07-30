@@ -59,11 +59,17 @@ test('bootstrap package scripts use plan-product command names', () => {
     '.plan-product/templates/tech-stack.md',
     '.plan-product/templates/feature.md',
     '.plan-product/templates/use-case.md',
+    '.plan-product/templates/roadmap.md',
     '.plan-product/templates/pattern-library.json',
     '.plan-product/templates/pattern-expectations.json',
   ]) {
     assert.equal(existsSync(path.join(root, relPath)), true, relPath);
   }
+  assert.equal(
+    existsSync(path.join(root, 'docs/roadmap.md')),
+    false,
+    'bootstrap must not scaffold docs/roadmap.md — plan-roadmap creates it'
+  );
   assert.equal(
     existsSync(path.join(root, '.plan-product/patterns/library.json')),
     true

@@ -134,6 +134,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
     'tech-stack.md',
     'feature.md',
     'use-case.md',
+    'roadmap.md',
     'pattern-library.json',
     'pattern-expectations.json',
   ]) {
