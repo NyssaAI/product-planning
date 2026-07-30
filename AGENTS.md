@@ -9,6 +9,7 @@ This is the plan-product plugin source. It owns product, feature, use-case, and 
 - `plan-product` - create or update `docs/product.md`, `docs/features.md`, and `docs/tech-stack.md`.
 - `plan-feature` - create or update `docs/features/f-nxx/feature.md`.
 - `plan-use-case` - create or update use-case files beside a feature guide.
+- `plan-roadmap` - create or update `docs/roadmap.md`, the dependency-ordered work-slice sequence.
 - `map-code` - refresh symbol, endpoint, module, and module-doc context.
 - `map-architecture` - generate the system architecture handoff.
 - `find-code-patterns` - generate structural pattern reports.
@@ -32,6 +33,7 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |   |-- product.md          Product purpose, audience, problem, solution.
 |   |-- features.md         Feature inventory, status, phases, links.
 |   |-- tech-stack.md       Stack, services, tools, runtime assumptions.
+|   |-- roadmap.md          Dependency-ordered implementation roadmap.
 |   |-- features/           Feature guides and use cases.
 |   |-- code-map/           Generated code-map artifacts.
 |   |-- plans/              Compound Engineering implementation plans.

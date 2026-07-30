@@ -9,6 +9,7 @@ plan-product helps users define a product, organize features and use cases, and 
 | Product definition | `plan-product` | `commands/plan-product.md` |
 | Feature guide interview | `plan-feature` | `commands/plan-feature.md` |
 | Use-case interview | `plan-use-case` | `commands/plan-use-case.md` |
+| Implementation roadmap | `plan-roadmap` | `commands/plan-roadmap.md` |
 | Code-map generation | `map-code` | `commands/map-code.md` |
 | Architecture handoff | `map-architecture` | `commands/map-architecture.md` |
 | Module-rooted pattern review | `find-code-patterns` | `commands/find-code-patterns.md` |
@@ -24,6 +25,7 @@ Core product files:
 docs/product.md
 docs/features.md
 docs/tech-stack.md
+docs/roadmap.md
 docs/features/f-nxx/feature.md
 docs/features/f-nxx/uc-nnn-short-slug.md
 docs/code-map/
@@ -46,6 +48,7 @@ Codex loads bundled skills from `.codex-plugin/plugin.json`; it does not load pl
 plan-product:plan-product
 plan-product:plan-feature
 plan-product:plan-use-case
+plan-product:plan-roadmap
 plan-product:map-code
 plan-product:map-architecture
 plan-product:find-code-patterns
