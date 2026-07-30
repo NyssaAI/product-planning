@@ -5,8 +5,9 @@
 | Phase 0 - Planning Foundation | 3 / 3 | 100% |
 | Phase 1 - Feature Guide Workflow | 3 / 3 | 100% |
 | Phase 2 - Code Map Workflow | 2 / 2 | 100% |
+| Phase 3 - Roadmap Workflow | 1 / 1 | 100% |
 | Existing Code-Map Capabilities | 15 / 15 | 100% |
-| **Overall** | 23 / 23 | 100% |
+| **Overall** | 24 / 24 | 100% |
 
 ---
 
@@ -18,7 +19,7 @@ This document lists plan-product features in intended build order and retains th
 * **Feature folders:** Each plan-product feature owns a folder named with the lowercase feature ID, for example `docs/features/f-001/`.
 * **Feature files:** The main feature guide is always `feature.md` inside that folder. Use cases live beside it as `uc-001-short-slug.md`.
 * **Status:** An item is marked `complete` only when the capability is implemented, documented, and verified against `.plan-product/config.json`.
-* **Phases:** Phase 0 establishes the repo-local planning contract, Phase 1 builds feature guide workflows, and Phase 2 connects product planning to code-map artifacts.
+* **Phases:** Phase 0 establishes the repo-local planning contract, Phase 1 builds feature guide workflows, Phase 2 connects product planning to code-map artifacts, and Phase 3 adds the dependency-ordered implementation roadmap.
 * **Code-map capabilities:** The `CM-xxx` entries track the implemented generator capabilities that plan-product keeps alongside product planning workflows.
 
 ---
@@ -35,6 +36,8 @@ This document lists plan-product features in intended build order and retains th
 ---
 * [x] F-201: Product code map
 * [x] F-202: Code map planning handoff
+---
+* [x] F-301: Implementation roadmap
 
 ## Feature Inventory
 
@@ -79,6 +82,14 @@ Product-oriented code context lives under `docs/code-map/` and supports implemen
 **F-202: Code map planning handoff**  
 Planning workflows can reference product code-map artifacts alongside feature guides.  
 [Feature Guide: Code Map Planning Handoff](features/f-202/feature.md)
+
+---
+
+### Phase 3 - Roadmap Workflow
+
+**F-301: Implementation roadmap**  
+Dependency-ordered work slices in `docs/roadmap.md`, authored and validated by the `plan-roadmap` skill.  
+[Feature Guide: Implementation Roadmap](features/f-301/feature.md)
 
 ---
 
