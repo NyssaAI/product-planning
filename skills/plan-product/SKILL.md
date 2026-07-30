@@ -250,6 +250,8 @@ plan-product documentation created or updated:
 Use plan-feature to deepen any individual feature and plan-use-case to add concrete use cases.
 ```
 
+If the configured roadmap file from `paths.roadmap` exists and the feature inventory changed, remind the user to run `plan-roadmap` so slice coverage stays in sync. Do not edit the roadmap in this skill.
+
 ## Notes
 
 - Keep feature names user-facing and short.

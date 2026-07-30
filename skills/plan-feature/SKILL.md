@@ -58,5 +58,6 @@ Define or refine one plan-product feature. Use `.plan-product/config.json` for p
 9. Write or update the feature guide from the configured feature template. If updating an older feature without `User Need` or `Use Cases`, add those sections in the template order and normalize `## Use Case` singular as described above.
 10. Update the configured feature inventory when the feature ID, name, summary, phase, status, group, checkbox state, or link changes. Ensure the inventory link points to the configured feature guide path.
 11. After writing, verify the feature guide has no template placeholders, no fake `UC-nnn` links, and no unresolved duplicate coverage or contradictions.
+12. If the configured roadmap file from `paths.roadmap` exists and the feature's ID, status, or dependencies changed, remind the user to run `plan-roadmap` so slice coverage stays in sync. Do not edit the roadmap in this skill.
 
 Do not create use-case files unless the user asks to break the feature into specific use cases. Use `plan-use-case` for that pass.
