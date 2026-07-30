@@ -6,6 +6,7 @@
     "features": "docs/features.md",
     "techStack": "docs/tech-stack.md",
     "featureDocs": "docs/features",
+    "roadmap": "docs/roadmap.md",
     "codeMap": "docs/code-map",
     "configSchema": ".plan-product/schema.json",
     "templates": ".plan-product/templates",
@@ -14,6 +15,7 @@
     "techStackTemplate": ".plan-product/templates/tech-stack.md",
     "featureTemplate": ".plan-product/templates/feature.md",
     "useCaseTemplate": ".plan-product/templates/use-case.md",
+    "roadmapTemplate": ".plan-product/templates/roadmap.md",
     "patternLibrary": ".plan-product/patterns/library.json",
     "patternExpectations": ".plan-product/patterns/expectations.json",
     "patternLibraryTemplate": ".plan-product/templates/pattern-library.json",
@@ -37,6 +39,10 @@
     },
     "codeMap": {
       "root": "docs/code-map"
+    },
+    "roadmap": {
+      "file": "docs/roadmap.md",
+      "idPattern": "R-NNN"
     },
     "patterns": {
       "root": ".plan-product/patterns",

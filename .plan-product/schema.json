@@ -29,6 +29,7 @@
         "features": { "type": "string" },
         "techStack": { "type": "string" },
         "featureDocs": { "type": "string" },
+        "roadmap": { "type": "string" },
         "codeMap": { "type": "string" },
         "configSchema": { "type": "string" },
         "templates": { "type": "string" },
@@ -37,6 +38,7 @@
         "techStackTemplate": { "type": "string" },
         "featureTemplate": { "type": "string" },
         "useCaseTemplate": { "type": "string" },
+        "roadmapTemplate": { "type": "string" },
         "patternLibrary": { "type": "string" },
         "patternExpectations": { "type": "string" },
         "patternLibraryTemplate": { "type": "string" },
@@ -84,6 +86,15 @@
           "additionalProperties": false,
           "properties": {
             "root": { "type": "string" }
+          }
+        },
+        "roadmap": {
+          "type": "object",
+          "required": ["file", "idPattern"],
+          "additionalProperties": false,
+          "properties": {
+            "file": { "type": "string" },
+            "idPattern": { "type": "string" }
           }
         },
         "patterns": {
