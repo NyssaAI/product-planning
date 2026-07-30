@@ -104,6 +104,16 @@ test('init and planning docs route through supported commands and configured pat
   assert.match(useCaseCommand, /paths\.useCaseTemplate/);
   assert.match(useCaseCommand, /structure\.features\.useCasePathPattern/);
 
+  const roadmapSkill = readFileSync('skills/plan-roadmap/SKILL.md', 'utf8');
+  assert.match(roadmapSkill, /paths\.roadmapTemplate/);
+  assert.match(roadmapSkill, /paths\.roadmap/);
+  assert.match(roadmapSkill, /structure\.roadmap/);
+
+  const roadmapCommand = readFileSync('commands/plan-roadmap.md', 'utf8');
+  assert.match(roadmapCommand, /Load the `plan-roadmap` skill/);
+  assert.match(roadmapCommand, /paths\.roadmap/);
+  assert.match(roadmapCommand, /paths\.roadmapTemplate/);
+
   const patternSkill = readFileSync('skills/find-code-patterns/SKILL.md', 'utf8');
   assert.match(patternSkill, /paths\.patternLibrary/);
   assert.match(patternSkill, /paths\.patternExpectations/);

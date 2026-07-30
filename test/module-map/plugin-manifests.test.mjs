@@ -67,5 +67,6 @@ test('plugin manifests point at the current repository and package excludes loca
   assert.equal(paths.has('.plan-product/usage/events.jsonl'), false);
   assert.equal(paths.has('.plan-product/config.json'), true);
   assert.equal(paths.has('.plan-product/templates/product.md'), true);
+  assert.equal(paths.has('.plan-product/templates/roadmap.md'), true);
   assert.equal(paths.has('.plan-product/patterns/library.json'), true);
 });

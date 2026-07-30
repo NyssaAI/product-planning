@@ -30,6 +30,32 @@ test('plan-product uses configured template paths that exist', () => {
   assert.doesNotMatch(skill, /# F-000 Feature Name/);
 });
 
+test('plan-roadmap uses configured paths and enforces tie-out validation', () => {
+  const config = readJson('.plan-product/config.json');
+  const skill = readFileSync('skills/plan-roadmap/SKILL.md', 'utf8');
+
+  assert.equal(typeof config.paths.roadmap, 'string', 'paths.roadmap');
+  assert.equal(typeof config.paths.roadmapTemplate, 'string', 'paths.roadmapTemplate');
+  assert.ok(existsSync(config.paths.roadmapTemplate), config.paths.roadmapTemplate);
+  assert.equal(typeof config.structure.roadmap.file, 'string', 'structure.roadmap.file');
+  assert.equal(config.structure.roadmap.idPattern, 'R-NNN');
+
+  for (const phrase of [
+    'paths\\.roadmapTemplate',
+    'paths\\.roadmap',
+    'never renumber',
+    'Resolution',
+    'Coverage',
+    'Ordering',
+    'Reference integrity',
+    'after:',
+    'no cycles',
+    'placeholder features',
+  ]) {
+    assert.match(skill, new RegExp(phrase), phrase);
+  }
+});
+
 test('product doc templates live in .plan-product/templates only', () => {
   for (const path of [
     'scripts/bootstrap-templates/docs-product.md',
