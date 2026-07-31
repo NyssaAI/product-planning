@@ -57,6 +57,11 @@ test('plan-roadmap uses configured paths and enforces tie-out validation', () =>
     'Reference integrity',
     'Plan links',
     'Plan: none yet',
+    'Verification',
+    'Verify:',
+    'demo data',
+    'user-verifiable stopping point',
+    'never more than two consecutive open slices defer',
     'after:',
     'no cycles',
     'placeholder features',
@@ -70,6 +75,9 @@ test('roadmap template uses scannable slice blocks with plan links', () => {
   const template = readFileSync(config.paths.roadmapTemplate, 'utf8');
 
   assert.match(template, /- \[ \] R-001: /, 'checkbox statement line');
+  assert.match(template, /\n {4}- Verify: /, 'indented verify sub-bullet');
+  assert.match(template, /Verify checkpoint/, 'verify checkpoint convention');
+  assert.match(template, /demo data/, 'demo data guidance');
   assert.match(template, /\n {4}- Plan: none yet/, 'indented plan sub-bullet');
   assert.match(template, /\{R-NNN\}-\{yyyy\.mm\.dd\}-\{step-slug\}\.md/, 'plan naming pattern');
   assert.match(template, /Detail bullets/, 'detail bullet convention');
