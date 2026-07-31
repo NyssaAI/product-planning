@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { readGoWorkMembers } from '../../../lib/go-mod.mjs';
 import { createLogger } from '../logger.mjs';
 
 const log = createLogger({ module: 'stack-profiles' });
@@ -231,29 +232,12 @@ const goProfile = {
     log.info('go profile matched');
     /** @type {string[]} */
     const moduleDirs = hasRootMod ? [''] : [];
-    if (existsSync(workFile)) {
-      const text = readFileSync(workFile, 'utf8');
-      const blockMatch = text.match(/^use\s*\(([\s\S]*?)\)/m);
-      const entries = [
-        ...(blockMatch
-          ? blockMatch[1].split('\n').map((line) => line.trim())
-          : []),
-        ...[...text.matchAll(/^use\s+([^\s(][^\n]*)$/gm)].map((m) => m[1]),
-      ];
-      for (const raw of entries) {
-        const entry = raw.replace(/\/\/.*$/, '').trim();
-        if (!entry) {
-          continue;
-        }
-        const rel = entry.replace(/^\.\//, '').replace(/\\/g, '/');
-        const dir = rel === '.' ? '' : rel;
-        if (
-          !dir.startsWith('..') &&
-          !moduleDirs.includes(dir) &&
-          existsSync(path.join(repoRoot, dir, 'go.mod'))
-        ) {
-          moduleDirs.push(dir);
-        }
+    for (const dir of readGoWorkMembers(repoRoot)) {
+      if (
+        !moduleDirs.includes(dir) &&
+        existsSync(path.join(repoRoot, dir, 'go.mod'))
+      ) {
+        moduleDirs.push(dir);
       }
     }
 

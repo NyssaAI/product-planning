@@ -21,6 +21,10 @@ import { createLogger } from '../logger.mjs';
 import { runBatchedScan } from './sg-scan.mjs';
 import { symbolNameFromMatch } from '../../../lib/sg-result.mjs';
 import { BASE_SKIP_DIRS } from '../../../lib/skip-dirs.mjs';
+import {
+  readGoModulePath,
+  readGoWorkMembers,
+} from '../../../lib/go-mod.mjs';
 
 const log = createLogger({ module: 'go-adapter' });
 
@@ -200,7 +204,7 @@ function discoverModuleRoots(repoRoot) {
   }
 
   for (const dir of rootDirs) {
-    const modulePath = readModulePath(repoRoot, dir);
+    const modulePath = readGoModulePath(repoRoot, dir);
     if (modulePath) {
       roots.set(dir, modulePath);
     }
@@ -233,55 +237,6 @@ function findGoModDirs(repoRoot) {
     }
   }
   return dirs.sort();
-}
-
-/**
- * @param {string} repoRoot
- * @returns {string[]} repo-relative member dirs from go.work `use` directives
- */
-function readGoWorkMembers(repoRoot) {
-  const workFile = path.join(repoRoot, 'go.work');
-  if (!existsSync(workFile)) {
-    return [];
-  }
-  const text = readFileSync(workFile, 'utf8');
-  /** @type {string[]} */
-  const members = [];
-  const blockMatch = text.match(/^use\s*\(([\s\S]*?)\)/m);
-  const singles = [...text.matchAll(/^use\s+([^\s(][^\n]*)$/gm)].map(
-    (m) => m[1]
-  );
-  const rawEntries = [
-    ...(blockMatch
-      ? blockMatch[1].split('\n').map((line) => line.trim())
-      : []),
-    ...singles,
-  ];
-  for (const raw of rawEntries) {
-    const entry = raw.replace(/\/\/.*$/, '').trim();
-    if (!entry) {
-      continue;
-    }
-    const rel = normalizePath(entry.replace(/^\.\//, ''));
-    if (!rel.startsWith('..')) {
-      members.push(rel === '.' ? '' : rel);
-    }
-  }
-  return members;
-}
-
-/**
- * @param {string} repoRoot
- * @param {string} dir repo-relative module dir ('' for root)
- * @returns {string | null} the go.mod `module` path
- */
-function readModulePath(repoRoot, dir) {
-  const modFile = path.join(repoRoot, dir, 'go.mod');
-  if (!existsSync(modFile)) {
-    return null;
-  }
-  const match = readFileSync(modFile, 'utf8').match(/^module\s+(\S+)/m);
-  return match ? match[1] : null;
 }
 
 /**
