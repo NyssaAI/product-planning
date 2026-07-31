@@ -4,10 +4,10 @@
 |----------------|------------------|------------|
 | Phase 0 - Planning Foundation | 3 / 3 | 100% |
 | Phase 1 - Feature Guide Workflow | 3 / 3 | 100% |
-| Phase 2 - Code Map Workflow | 3 / 3 | 100% |
+| Phase 2 - Code Map Workflow | 4 / 4 | 100% |
 | Phase 3 - Roadmap Workflow | 1 / 1 | 100% |
 | Existing Code-Map Capabilities | 15 / 15 | 100% |
-| **Overall** | 25 / 25 | 100% |
+| **Overall** | 26 / 26 | 100% |
 
 ---
 
@@ -37,6 +37,7 @@ This document lists plan-product features in intended build order and retains th
 * [x] F-201: Product code map
 * [x] F-202: Code map planning handoff
 * [x] F-203: Pre-push code-map regeneration
+* [x] F-204: Go code-map support
 ---
 * [x] F-301: Implementation roadmap
 
@@ -87,6 +88,10 @@ Planning workflows can reference product code-map artifacts alongside feature gu
 **F-203: Pre-push code-map regeneration**  
 Warn-only hook that refreshes code-map artifacts before `git push`, shipped as a Claude Code plugin hook and installable as a git pre-push hook elsewhere.  
 [Feature Guide: Pre-Push Code-Map Regeneration](features/f-203/feature.md)
+
+**F-204: Go code-map support**  
+Go symbols, endpoints (net/http, gin/echo/chi, MCP), and package-level module discovery at parity with TypeScript, C#, and Python.  
+[Feature Guide: Go Code-Map Support](features/f-204/feature.md) · [UC-001: Map a Go repository](features/f-204/uc-001-map-a-go-repository.md) · [UC-002: Verify Go endpoint detection](features/f-204/uc-002-verify-go-endpoint-detection.md)
 
 ---
 

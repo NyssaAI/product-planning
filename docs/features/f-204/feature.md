@@ -1,7 +1,7 @@
 ---
 id: F-204
 phase: 2
-status: planned
+status: complete
 ---
 
 # F-204 Go Code-Map Support

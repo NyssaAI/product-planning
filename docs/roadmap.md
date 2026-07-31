@@ -40,3 +40,16 @@ This document lists work slices in implementation order. `docs/features.md` owns
     - Ship the marker-delimited git pre-push installer for runtimes without native hooks.
     - Add the `install-code-map-hook` skill, command entry point, docs, and content-assertion tests.
     - Plan: [R-005-2026.07.31-pre-push-code-map-regeneration](plans/R-005-2026.07.31-pre-push-code-map-regeneration.md)
+- [x] R-006: Build the Go adapter and symbol indexing — [F-204](features/f-204/feature.md)
+    - Add the Go module-map adapter, stack profile, and package-level module discovery under `go.mod`/`go.work`.
+    - Add ast-grep symbol rules for Go functions, methods, structs, and interfaces.
+    - Skip `vendor/` directories and `*.pb.go` files at scan time.
+    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
+- [x] R-007: Detect Go endpoints — [F-204](features/f-204/feature.md) — after: R-006
+    - Extract `net/http`, gin, echo, and chi route registrations into the endpoint index.
+    - Extract Go MCP tool declarations, matching the MCP detection other languages have.
+    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
+- [x] R-008: Prove Go parity with fixtures and tests — [F-204](features/f-204/feature.md) — after: R-006, R-007
+    - Add Go fixture repos mirroring the existing per-language test layout.
+    - Cover adapter edges, symbol ownership, endpoint extraction, and the vendor/generated-code skips.
+    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
