@@ -28,7 +28,7 @@ import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
 import { extractEndpoints } from '../lib/endpoint-extractor.mjs';
 import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
-import { sourceFilesInRoots } from './lib/source-files.mjs';
+import { isExcludedGoFile, sourceFilesInRoots } from './lib/source-files.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -234,6 +234,12 @@ function collectSymbols(matches) {
     }
 
     const file = normalizeRepoPath(String(match.file ?? ''));
+    // The ast-grep scan walks roots itself and bypasses sourceFilesInRoots,
+    // so excluded Go files must be dropped here or their symbols re-enter
+    // the index and the endpoint file union.
+    if (isExcludedGoFile(file)) {
+      continue;
+    }
     const range = /** @type {{ start?: { line?: number } }} */ (match.range);
     const line = (range?.start?.line ?? 0) + 1;
     const kind = mapKindFromMatch(match, name);

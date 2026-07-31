@@ -1,0 +1,11 @@
+id: map-go-interface
+message: interface
+severity: info
+language: Go
+metadata:
+  mapKind: interface
+rule:
+  kind: type_spec
+  all:
+    - has: { field: name, pattern: $NAME }
+    - has: { field: type, kind: interface_type }

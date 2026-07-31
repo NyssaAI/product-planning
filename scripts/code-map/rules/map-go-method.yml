@@ -1,0 +1,9 @@
+id: map-go-method
+message: method
+severity: info
+language: Go
+metadata:
+  mapKind: method
+rule:
+  kind: method_declaration
+  has: { field: name, pattern: $NAME }

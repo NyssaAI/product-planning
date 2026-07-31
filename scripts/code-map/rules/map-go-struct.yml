@@ -1,0 +1,11 @@
+id: map-go-struct
+message: struct
+severity: info
+language: Go
+metadata:
+  mapKind: struct
+rule:
+  kind: type_spec
+  all:
+    - has: { field: name, pattern: $NAME }
+    - has: { field: type, kind: struct_type }

@@ -5,4 +5,5 @@ language: Go
 metadata:
   mapKind: function
 rule:
-  pattern: func $NAME($$$)
+  kind: function_declaration
+  has: { field: name, pattern: $NAME }

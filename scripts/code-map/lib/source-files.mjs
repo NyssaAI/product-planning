@@ -12,6 +12,25 @@ export const SOURCE_SCAN_SKIP_DIRS = new Set([
   '__pycache__',
 ]);
 
+// Go-scoped hygiene: vendored, generated, and test Go files stay out of the
+// symbol index and the endpoint walk without changing other languages' walks.
+const GO_EXCLUDED_DIR_RE = /(^|\/)(vendor|testdata)\//;
+
+/**
+ * @param {string} repoRelPath forward-slash repo-relative path
+ * @returns {boolean}
+ */
+export function isExcludedGoFile(repoRelPath) {
+  if (!repoRelPath.endsWith('.go')) {
+    return false;
+  }
+  return (
+    GO_EXCLUDED_DIR_RE.test(repoRelPath) ||
+    repoRelPath.endsWith('_test.go') ||
+    repoRelPath.endsWith('.pb.go')
+  );
+}
+
 const EXTENSION_LANGUAGES = new Map([
   ['.js', 'JavaScript'],
   ['.jsx', 'JavaScript'],
@@ -78,6 +97,9 @@ function walkSourceFiles(repoRoot, dir, acc, seen) {
     }
     if (entry.isFile() && isKnownSourceFile(entry.name)) {
       const rel = path.relative(repoRoot, full).replace(/\\/g, '/');
+      if (isExcludedGoFile(rel)) {
+        continue;
+      }
       if (!seen.has(rel)) {
         seen.add(rel);
         acc.push(rel);
