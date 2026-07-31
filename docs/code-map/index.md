@@ -1,6 +1,6 @@
 # plan-product Code Map
 
-Generated: 2026-07-31T22:10:07.913Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
+Generated: 2026-07-31T23:18:06.861Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
 
 ## Progressive disclosure (for planning agents)
 
