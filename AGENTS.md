@@ -38,7 +38,7 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |   |-- features/           Feature guides and use cases.
 |   |-- code-map/           Generated code-map artifacts.
 |   |-- plans/              Implementation plans; new ones named R-NNN-yyyy.mm.dd-step-slug.md.
-|   `-- solutions/          Compound Engineering captured learnings.
+|   `-- solutions/          Captured learnings by category; YAML frontmatter (module, tags, problem_type) for search.
 |
 |-- .plan-product/
 |   |-- config.json         plan-product path map; repo-relative.
@@ -65,5 +65,5 @@ Start at `docs/code-map/index.md` to pick the module set.
 | module-map | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-map/modules/module-map.md` |
 | code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-map/modules/code-map.md` |
 | lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and<br>endpoint extraction. | Feature code and services under `scripts/lib/` | `docs/code-map/modules/lib.md` |
-<!-- plan-product:module-map generated 2026-07-07T21:34:13.239Z -->
+<!-- plan-product:module-map generated 2026-07-31T22:10:07.913Z -->
 <!-- plan-product:module-map:end -->
