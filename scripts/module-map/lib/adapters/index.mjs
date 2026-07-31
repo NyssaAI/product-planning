@@ -6,24 +6,27 @@
  */
 
 import csharpAdapter from './csharp.mjs';
+import goAdapter from './go.mjs';
 import pythonAdapter from './python.mjs';
 import typescriptAdapter from './typescript.mjs';
 import { createLogger } from '../logger.mjs';
 
 const log = createLogger({ module: 'adapters' });
 
-// Adapter/code-map asymmetry: code-map ships ast-grep rules for Go and Java
-// (see scripts/code-map/sgconfig.yml + rules/), but plan-product has NO stack-graph
-// adapter for them — only csharp/python/typescript below. For a Go/Java repo,
-// code-map still extracts symbols/endpoints, but plan-product cannot build the
-// import/reference FileGraph used for module dependsOn/usedBy edges. Writing
-// those adapters is out of scope here; selectAdapter warns instead of silently
-// returning null so the gap is observable.
+// Adapter/code-map asymmetry: code-map ships ast-grep rules for Java
+// (see scripts/code-map/sgconfig.yml + rules/), but plan-product has NO
+// stack-graph adapter for it. For a Java repo, code-map still extracts
+// symbols/endpoints, but plan-product cannot build the import/reference
+// FileGraph used for module dependsOn/usedBy edges. Writing that adapter is
+// out of scope here; selectAdapter warns instead of silently returning null
+// so the gap is observable. Go is appended after the original three so
+// polyglot repos keep their current adapter selection.
 /** @type {import('../detection/types.mjs').StackGraphAdapter[]} */
 const ADAPTERS = [
   csharpAdapter,
   pythonAdapter,
   typescriptAdapter,
+  goAdapter,
 ];
 
 /**
