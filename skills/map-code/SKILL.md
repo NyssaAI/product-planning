@@ -11,7 +11,7 @@ Generate code-map planning context for a target repository. This is the public w
 
 A target repo can hold two distinct plan-product configs. Do not confuse them:
 
-- `.plan-product/config.json` — the path map read by the planning skills (`plan-product`, `plan-feature`, `plan-use-case`). It says where docs, templates, and artifacts live.
+- `.plan-product/config.json` — the path map read by the planning skills (`plan-product`, `plan-feature`, `plan-use-case`, `plan-roadmap`). It says where docs, templates, and artifacts live.
 - `plan-product.config.json` — the generator/usage config read by the code-map generators. It sets source roots, module discovery, output directory, and usage capture.
 
 Doc and template paths belong in `.plan-product/config.json`; generator roots, module discovery, and usage settings belong in `plan-product.config.json`.

@@ -10,7 +10,7 @@ Define or refine one plan-product feature. Use `.plan-product/config.json` for p
 ## Operating Rules
 
 - Preserve existing user-authored content unless the user asks to replace it.
-- Ask one blocking question at a time only for missing required information.
+- Ask one blocking question at a time only for missing required information. In Codex, present numbered choices in chat and wait for the user answer. If a runtime provides an AskUserQuestion tool, use that tool.
 - Do not invent feature ownership, user need, acceptance checks, dependencies, or delivery status. Mark inferred items as `[inferred]` and confirm them before writing.
 - Keep `Summary`, `User Need`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` as separate output sections.
 - Keep feature boundaries at the capability level. Put actor workflows, entry routes, process trees, failures, and workflow-specific acceptance in use-case files through `plan-use-case`.

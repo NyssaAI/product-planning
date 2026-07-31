@@ -55,7 +55,7 @@ From the target project root:
 node "${PLUGIN_ROOT}/scripts/map-code/generate.mjs"
 ```
 
-Replace `${PLUGIN_ROOT}` with the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then runtime-specific plugin root variables.
+Replace `${PLUGIN_ROOT}` with the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill.
 
 ## Staleness Gate
 

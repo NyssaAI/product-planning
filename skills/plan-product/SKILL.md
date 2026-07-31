@@ -199,7 +199,7 @@ For each newly listed feature, create a lightweight feature guide stub only when
 - Fill feature ID, phase, status, title, and summary when known.
 - Leave deeper sections such as scope, acceptance, dependencies, and detailed outputs as `To be defined.` unless the user already provided that information.
 - Do not invent use cases or detailed acceptance checks in this skill.
-- Do not create `f-Nxx-final.md` files.
+- Do not create `f-nxx-final.md` files.
 
 Use `plan-feature` after this workflow to deepen any individual feature guide.
 

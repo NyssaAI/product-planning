@@ -10,7 +10,7 @@ Define one use case under an existing feature folder. Use `.plan-product/config.
 ## Operating Rules
 
 - Preserve existing user-authored content unless the user asks to replace it.
-- Ask one blocking question at a time only for missing required information.
+- Ask one blocking question at a time only for missing required information. In Codex, present numbered choices in chat and wait for the user answer. If a runtime provides an AskUserQuestion tool, use that tool.
 - Do not invent a happy path from the feature summary. The user must explain the workflow steps, or explicitly say a step is unknown.
 - Require an entry route: how the actor gets to the workflow, if known. This might be a screen, command, file, prompt, link, menu item, automation trigger, background event, or prerequisite state.
 - Preserve `Starting Context`, `Entry Route`, `Trigger`, `Process`, and `Step Details` as separate output sections. Do not merge the entry route into the trigger.
@@ -38,7 +38,7 @@ Define one use case under an existing feature folder. Use `.plan-product/config.
    - Which steps are complex enough to need a short description below the tree?
    - What failure cases matter?
    - What proves the use case is supported?
-7. Restate the candidate use case before writing, with `Actor`, `Goal`, `Starting Context`, `Entry Route`, `Trigger`, `ASCII Process Tree`, `Complex Step Details`, `Failures`, `Acceptance`, and `Open Unknowns`. Mark inferred items as `[inferred]`, then ask the user to confirm or correct them. Only record `Unknown; not inferred.` when the user explicitly says they do not know.
+7. Restate the candidate use case before writing, with `Actor`, `Goal`, `Starting Context`, `Entry Route`, `Trigger`, `Process`, `Step Details`, `Failure Cases`, `Acceptance`, and `Open Unknowns`. Mark inferred items as `[inferred]`, then ask the user to confirm or correct them. Only record `Unknown; not inferred.` when the user explicitly says they do not know.
 8. Run an adversarial completeness pass before writing:
    - Each process tree node must identify who or what acts, the concrete action, and the observable input, output, artifact, or state change.
    - If a node has multiple decisions, hidden prerequisites, external handoffs, or meaningful validation rules, add a matching `Step Details` subsection.
@@ -54,6 +54,6 @@ Define one use case under an existing feature folder. Use `.plan-product/config.
    - If the candidate contradicts another use case's preconditions, flow, failure behavior, ownership, or acceptance checks, stop and ask the user to resolve the contradiction before writing.
    - Record the result in `Consistency Check`.
 10. Write or update the use-case file from the configured use-case template. If updating an older use case without `Starting Context`, `Entry Route`, `Process`, `Step Details`, or `Consistency Check`, add those sections in the template order.
-11. Add or update the use-case link in the parent feature guide. Prefer a `## Use Cases` list using this format: `- UC-nnn: Title - filename`. Put the actual file name in backticks. If the guide has `## Use Case` singular, convert it only when adding the first linked use-case list.
+11. Add or update the use-case link in the parent feature guide. Prefer a `## Use Cases` list of markdown links using this format: `- [UC-nnn: Title](uc-nnn-short-slug.md)`, linking the actual file name. If the guide has `## Use Case` singular, convert it only when adding the first linked use-case list.
 
 Keep the use case focused on behavior. Put broader feature boundaries in `feature.md`.
