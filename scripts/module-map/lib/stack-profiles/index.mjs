@@ -163,31 +163,104 @@ const pythonProfile = {
   },
 };
 
+const GO_PROFILE_SKIP_DIRS = new Set([
+  '.git',
+  'node_modules',
+  'vendor',
+  'testdata',
+]);
+
+/**
+ * Package-level module discovery for one Go module tree: every directory
+ * under moduleDir with non-generated, non-test .go files becomes a module.
+ * Nested go.mod subtrees are excluded, matching Go semantics.
+ * @param {string} repoRoot
+ * @param {string} moduleDir repo-relative module dir ('' for repo root)
+ * @param {import('../config.mjs').PlanProductConfig} config
+ * @returns {ModuleDef[]}
+ */
+function goPackageModules(repoRoot, moduleDir, config) {
+  /** @type {ModuleDef[]} */
+  const modules = [];
+  const absModuleDir = path.join(repoRoot, moduleDir);
+  const stack = [absModuleDir];
+  let checked = 0;
+  while (stack.length > 0 && checked < 2000) {
+    const current = stack.pop();
+    checked += 1;
+    let hasGoFiles = false;
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        if (
+          !GO_PROFILE_SKIP_DIRS.has(entry.name) &&
+          !existsSync(path.join(current, entry.name, 'go.mod'))
+        ) {
+          stack.push(path.join(current, entry.name));
+        }
+        continue;
+      }
+      if (
+        entry.name.endsWith('.go') &&
+        !entry.name.endsWith('_test.go') &&
+        !entry.name.endsWith('.pb.go')
+      ) {
+        hasGoFiles = true;
+      }
+    }
+    if (hasGoFiles) {
+      const rel = path.relative(repoRoot, current).replace(/\\/g, '/') || '.';
+      const id = rel === '.' ? path.basename(repoRoot) : path.basename(rel);
+      modules.push(makeModule(repoRoot, rel, id, id, config, 'go'));
+    }
+  }
+  return modules.sort((a, b) => a.root.localeCompare(b.root));
+}
+
 /** @type {StackProfile} */
 const goProfile = {
   id: 'go',
   priority: 30,
   detect(repoRoot, config) {
-    if (!existsSync(path.join(repoRoot, 'go.mod'))) {
+    const hasRootMod = existsSync(path.join(repoRoot, 'go.mod'));
+    const workFile = path.join(repoRoot, 'go.work');
+    if (!hasRootMod && !existsSync(workFile)) {
       log.debug('go profile: no signal');
       return [];
     }
 
     log.info('go profile matched');
-    /** @type {ModuleDef[]} */
-    const modules = [];
-    const cmdDir = path.join(repoRoot, 'cmd');
-    if (existsSync(cmdDir)) {
-      for (const entry of readdirSync(cmdDir, { withFileTypes: true })) {
-        if (entry.isDirectory()) {
-          const rel = path.join('cmd', entry.name).replace(/\\/g, '/');
-          modules.push(makeModule(repoRoot, rel, entry.name, entry.name, config, 'go'));
+    /** @type {string[]} */
+    const moduleDirs = hasRootMod ? [''] : [];
+    if (existsSync(workFile)) {
+      const text = readFileSync(workFile, 'utf8');
+      const blockMatch = text.match(/^use\s*\(([\s\S]*?)\)/m);
+      const entries = [
+        ...(blockMatch
+          ? blockMatch[1].split('\n').map((line) => line.trim())
+          : []),
+        ...[...text.matchAll(/^use\s+([^\s(][^\n]*)$/gm)].map((m) => m[1]),
+      ];
+      for (const raw of entries) {
+        const entry = raw.replace(/\/\/.*$/, '').trim();
+        if (!entry) {
+          continue;
+        }
+        const rel = entry.replace(/^\.\//, '').replace(/\\/g, '/');
+        const dir = rel === '.' ? '' : rel;
+        if (
+          !dir.startsWith('..') &&
+          !moduleDirs.includes(dir) &&
+          existsSync(path.join(repoRoot, dir, 'go.mod'))
+        ) {
+          moduleDirs.push(dir);
         }
       }
     }
 
-    if (modules.length === 0 && existsSync(path.join(repoRoot, 'internal'))) {
-      modules.push(makeModule(repoRoot, 'internal', 'internal', 'internal', config, 'go'));
+    /** @type {ModuleDef[]} */
+    const modules = [];
+    for (const dir of moduleDirs) {
+      modules.push(...goPackageModules(repoRoot, dir, config));
     }
 
     log.debug('go profile modules', { count: modules.length });
