@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-07-07T21:34:11.528Z",
+  "generated": "2026-07-31T22:10:06.936Z",
   "roots": [
     "scripts",
     "skills"
@@ -13,8 +13,8 @@
     "Python",
     "Go"
   ],
-  "fileCount": 46,
-  "symbolCount": 92,
+  "fileCount": 47,
+  "symbolCount": 95,
   "endpointCount": 0,
   "files": [
     {
@@ -295,7 +295,7 @@
         {
           "name": "sourceFilesInRoots",
           "kind": "function",
-          "line": 35,
+          "line": 40,
           "signature": "export function sourceFilesInRoots(repoRoot, roots)",
           "moduleId": "code-map",
           "moduleName": "code-map",
@@ -305,7 +305,7 @@
         {
           "name": "languageForFile",
           "kind": "function",
-          "line": 48,
+          "line": 53,
           "signature": "export function languageForFile(filePath)",
           "moduleId": "code-map",
           "moduleName": "code-map",
@@ -315,7 +315,7 @@
         {
           "name": "isKnownSourceFile",
           "kind": "function",
-          "line": 56,
+          "line": 61,
           "signature": "export function isKnownSourceFile(filePath)",
           "moduleId": "code-map",
           "moduleName": "code-map",
@@ -334,7 +334,7 @@
         {
           "name": "extractEndpoints",
           "kind": "function",
-          "line": 56,
+          "line": 85,
           "signature": "export function extractEndpoints(repoRoot, files)",
           "moduleId": "lib",
           "moduleName": "lib",
@@ -344,8 +344,49 @@
         {
           "name": "nextRouteSegment",
           "kind": "function",
-          "line": 187,
+          "line": 430,
           "signature": "export function nextRouteSegment(seg)",
+          "moduleId": "lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/code-map/modules/lib.md"
+        }
+      ],
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
+    },
+    {
+      "path": "scripts/lib/go-mod.mjs",
+      "symbols": [
+        {
+          "name": "isExcludedGoFile",
+          "kind": "function",
+          "line": 23,
+          "signature": "export function isExcludedGoFile(repoRelPath)",
+          "summary": "The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e",
+          "moduleId": "lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/code-map/modules/lib.md"
+        },
+        {
+          "name": "readGoWorkMembers",
+          "kind": "function",
+          "line": 42,
+          "signature": "export function readGoWorkMembers(repoRoot)",
+          "summary": "Parses `use` directives from a root go.work file: every block form (`use ( ...",
+          "moduleId": "lib",
+          "moduleName": "lib",
+          "moduleRoot": "scripts/lib",
+          "planningModule": "docs/code-map/modules/lib.md"
+        },
+        {
+          "name": "readGoModulePath",
+          "kind": "function",
+          "line": 78,
+          "signature": "export function readGoModulePath(repoRoot, dir)",
           "moduleId": "lib",
           "moduleName": "lib",
           "moduleRoot": "scripts/lib",
@@ -519,7 +560,7 @@
         {
           "name": "selectAdapter",
           "kind": "function",
-          "line": 37,
+          "line": 40,
           "signature": "export function selectAdapter(repoRoot, forcedId)",
           "summary": "Select an adapter for the repo.",
           "moduleId": "module-map",
@@ -1346,7 +1387,7 @@
         {
           "name": "detectStackModules",
           "kind": "function",
-          "line": 245,
+          "line": 324,
           "signature": "export function detectStackModules(repoRoot, config)",
           "moduleId": "module-map",
           "moduleName": "module-map",
@@ -1406,8 +1447,8 @@
       "name": "lib",
       "root": "scripts/lib",
       "planningModule": "docs/code-map/modules/lib.md",
-      "fileCount": 6,
-      "symbolCount": 13,
+      "fileCount": 7,
+      "symbolCount": 16,
       "endpointCount": 0
     }
   ],
@@ -1606,7 +1647,7 @@
       "file": "scripts/code-map/lib/source-files.mjs",
       "name": "sourceFilesInRoots",
       "kind": "function",
-      "line": 35,
+      "line": 40,
       "signature": "export function sourceFilesInRoots(repoRoot, roots)",
       "moduleId": "code-map",
       "moduleName": "code-map",
@@ -1617,7 +1658,7 @@
       "file": "scripts/code-map/lib/source-files.mjs",
       "name": "languageForFile",
       "kind": "function",
-      "line": 48,
+      "line": 53,
       "signature": "export function languageForFile(filePath)",
       "moduleId": "code-map",
       "moduleName": "code-map",
@@ -1628,7 +1669,7 @@
       "file": "scripts/code-map/lib/source-files.mjs",
       "name": "isKnownSourceFile",
       "kind": "function",
-      "line": 56,
+      "line": 61,
       "signature": "export function isKnownSourceFile(filePath)",
       "moduleId": "code-map",
       "moduleName": "code-map",
@@ -1639,7 +1680,7 @@
       "file": "scripts/lib/endpoint-extractor.mjs",
       "name": "extractEndpoints",
       "kind": "function",
-      "line": 56,
+      "line": 85,
       "signature": "export function extractEndpoints(repoRoot, files)",
       "moduleId": "lib",
       "moduleName": "lib",
@@ -1650,8 +1691,43 @@
       "file": "scripts/lib/endpoint-extractor.mjs",
       "name": "nextRouteSegment",
       "kind": "function",
-      "line": 187,
+      "line": 430,
       "signature": "export function nextRouteSegment(seg)",
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
+    },
+    {
+      "file": "scripts/lib/go-mod.mjs",
+      "name": "isExcludedGoFile",
+      "kind": "function",
+      "line": 23,
+      "signature": "export function isExcludedGoFile(repoRelPath)",
+      "summary": "The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e",
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
+    },
+    {
+      "file": "scripts/lib/go-mod.mjs",
+      "name": "readGoWorkMembers",
+      "kind": "function",
+      "line": 42,
+      "signature": "export function readGoWorkMembers(repoRoot)",
+      "summary": "Parses `use` directives from a root go.work file: every block form (`use ( ...",
+      "moduleId": "lib",
+      "moduleName": "lib",
+      "moduleRoot": "scripts/lib",
+      "planningModule": "docs/code-map/modules/lib.md"
+    },
+    {
+      "file": "scripts/lib/go-mod.mjs",
+      "name": "readGoModulePath",
+      "kind": "function",
+      "line": 78,
+      "signature": "export function readGoModulePath(repoRoot, dir)",
       "moduleId": "lib",
       "moduleName": "lib",
       "moduleRoot": "scripts/lib",
@@ -1783,7 +1859,7 @@
       "file": "scripts/module-map/lib/adapters/index.mjs",
       "name": "selectAdapter",
       "kind": "function",
-      "line": 37,
+      "line": 40,
       "signature": "export function selectAdapter(repoRoot, forcedId)",
       "summary": "Select an adapter for the repo.",
       "moduleId": "module-map",
@@ -2433,7 +2509,7 @@
       "file": "scripts/module-map/lib/stack-profiles/index.mjs",
       "name": "detectStackModules",
       "kind": "function",
-      "line": 245,
+      "line": 324,
       "signature": "export function detectStackModules(repoRoot, config)",
       "moduleId": "module-map",
       "moduleName": "module-map",

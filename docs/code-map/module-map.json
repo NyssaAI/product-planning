@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-07-07T21:34:13.239Z",
+  "generated": "2026-07-31T22:10:07.913Z",
   "project": {
     "name": "plan-product",
     "docs": {
@@ -85,7 +85,7 @@
         "module-map"
       ],
       "routeCount": 0,
-      "symbolCount": 13,
+      "symbolCount": 16,
       "planningModule": "docs/code-map/modules/lib.md",
       "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and endpoint extraction.",
       "capabilities": [
@@ -111,6 +111,6 @@
   "stats": {
     "moduleCount": 3,
     "routeCount": 0,
-    "codeMapSymbols": 92
+    "codeMapSymbols": 95
   }
 }

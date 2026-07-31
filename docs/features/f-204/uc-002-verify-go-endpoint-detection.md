@@ -1,7 +1,7 @@
 ---
 feature: F-204
 id: UC-002
-status: planned
+status: complete
 ---
 
 # UC-002 Verify Go Endpoint Detection

@@ -14,6 +14,9 @@
 |--------|---------|
 | `extractEndpoints` |  |
 | `nextRouteSegment` |  |
+| `isExcludedGoFile` | The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e |
+| `readGoWorkMembers` | Parses `use` directives from a root go.work file: every block form (`use ( ... |
+| `readGoModulePath` |  |
 | `findPluginRoot` |  |
 | `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the plan-product plugin. |
 | `parseScanJson` |  |
@@ -49,6 +52,7 @@
 ## Key symbols (sample)
 
 - `scripts/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
+- `scripts/lib/go-mod.mjs`: isExcludedGoFile, readGoWorkMembers, readGoModulePath
 - `scripts/lib/plugin-root.mjs`: findPluginRoot
 - `scripts/lib/resolve-ast-grep.mjs`: resolveAstGrepBinary
 - `scripts/lib/sg-result.mjs`: parseScanJson, symbolNameFromMatch
