@@ -30,6 +30,7 @@
         "techStack": { "type": "string" },
         "featureDocs": { "type": "string" },
         "roadmap": { "type": "string" },
+        "plans": { "type": "string" },
         "codeMap": { "type": "string" },
         "configSchema": { "type": "string" },
         "templates": { "type": "string" },
@@ -94,7 +95,8 @@
           "additionalProperties": false,
           "properties": {
             "file": { "type": "string" },
-            "idPattern": { "type": "string" }
+            "idPattern": { "type": "string" },
+            "planNamePattern": { "type": "string" }
           }
         },
         "patterns": {

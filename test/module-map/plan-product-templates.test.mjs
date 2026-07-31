@@ -36,24 +36,44 @@ test('plan-roadmap uses configured paths and enforces tie-out validation', () =>
 
   assert.equal(typeof config.paths.roadmap, 'string', 'paths.roadmap');
   assert.equal(typeof config.paths.roadmapTemplate, 'string', 'paths.roadmapTemplate');
+  assert.equal(typeof config.paths.plans, 'string', 'paths.plans');
   assert.ok(existsSync(config.paths.roadmapTemplate), config.paths.roadmapTemplate);
   assert.equal(typeof config.structure.roadmap.file, 'string', 'structure.roadmap.file');
   assert.equal(config.structure.roadmap.idPattern, 'R-NNN');
+  assert.equal(
+    config.structure.roadmap.planNamePattern,
+    'R-NNN-yyyy.mm.dd-step-slug.md'
+  );
 
   for (const phrase of [
     'paths\\.roadmapTemplate',
     'paths\\.roadmap',
+    'paths\\.plans',
+    'planNamePattern',
     'never renumber',
     'Resolution',
     'Coverage',
     'Ordering',
     'Reference integrity',
+    'Plan links',
+    'Plan: none yet',
     'after:',
     'no cycles',
     'placeholder features',
   ]) {
     assert.match(skill, new RegExp(phrase), phrase);
   }
+});
+
+test('roadmap template uses scannable slice blocks with plan links', () => {
+  const config = readJson('.plan-product/config.json');
+  const template = readFileSync(config.paths.roadmapTemplate, 'utf8');
+
+  assert.match(template, /- \[ \] R-001: /, 'checkbox statement line');
+  assert.match(template, /\n {4}- Plan: none yet/, 'indented plan sub-bullet');
+  assert.match(template, /\{R-NNN\}-\{yyyy\.mm\.dd\}-\{step-slug\}\.md/, 'plan naming pattern');
+  assert.match(template, /Detail bullets/, 'detail bullet convention');
+  assert.doesNotMatch(template, /- \[ \] R-\d+ — /, 'legacy em-dash slice lines');
 });
 
 test('product doc templates live in .plan-product/templates only', () => {

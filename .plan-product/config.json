@@ -7,6 +7,7 @@
     "techStack": "docs/tech-stack.md",
     "featureDocs": "docs/features",
     "roadmap": "docs/roadmap.md",
+    "plans": "docs/plans",
     "codeMap": "docs/code-map",
     "configSchema": ".plan-product/schema.json",
     "templates": ".plan-product/templates",
@@ -42,7 +43,8 @@
     },
     "roadmap": {
       "file": "docs/roadmap.md",
-      "idPattern": "R-NNN"
+      "idPattern": "R-NNN",
+      "planNamePattern": "R-NNN-yyyy.mm.dd-step-slug.md"
     },
     "patterns": {
       "root": ".plan-product/patterns",

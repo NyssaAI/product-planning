@@ -8,6 +8,9 @@ This document lists work slices in implementation order. `docs/features.md` owns
 
 * **Slice IDs:** Each slice uses the `R-NNN` scheme. IDs are assigned once and never renumbered or reused; the next ID is the highest ever assigned plus one.
 * **Order:** The list order below is the implementation order. Inserting a slice mid-sequence takes the next unused number and the right position — existing IDs never change.
+* **Statement:** Each slice is one human-readable statement line: `- [ ] R-NNN: Imperative statement — [F-Nxx](features/f-nxx/feature.md)`, with `— after: ...` appended only when the slice declares dependencies.
+* **Detail bullets:** Indented sub-bullets under the statement describe the work in plain language. Keep deep detail in the plan document; the roadmap stays scannable.
+* **Plan link:** The last sub-bullet links the slice's plan document, or reads `Plan: none yet` before a plan exists. Plan documents live in `docs/plans/` and new ones are named `{R-NNN}-{yyyy.mm.dd}-{step-slug}.md`, dated when the plan is created. Plan documents track their own steps with `[ ]` checkbox task lists.
 * **Parent feature:** Each slice references exactly one feature and links to its guide, for example `[F-301](features/f-301/feature.md)`. A feature may be covered by more than one slice.
 * **Dependencies:** An optional `after:` list names the slice or feature IDs this slice must follow. A feature ID means "after all existing slices of that feature." A slice must not name its own parent feature.
 * **Status:** Check a slice only when its work is implemented and verified. Completed slices are immutable history — rework on a shipped feature is a new slice, never an unchecked old one.
@@ -17,7 +20,23 @@ This document lists work slices in implementation order. `docs/features.md` owns
 
 ## Slices
 
-- [x] R-001 — Roadmap template and config contract — [F-301](features/f-301/feature.md)
-- [x] R-002 — Bootstrap template delivery — [F-301](features/f-301/feature.md) — after: R-001
-- [x] R-003 — plan-roadmap skill, command doc, and capability registration — [F-301](features/f-301/feature.md) — after: R-001
-- [x] R-004 — Tie-out test coverage and repo dogfood — [F-301](features/f-301/feature.md) — after: R-002, R-003
+- [x] R-001: Establish the roadmap template and config contract — [F-301](features/f-301/feature.md)
+    - Add the roadmap template to `.plan-product/templates/`.
+    - Add the `paths.roadmap`, `paths.roadmapTemplate`, and `structure.roadmap` config and schema entries.
+    - Plan: [2026-07-29-001-feat-roadmap-implementation-order-plan](plans/2026-07-29-001-feat-roadmap-implementation-order-plan.md)
+- [x] R-002: Deliver the roadmap template through bootstrap — [F-301](features/f-301/feature.md) — after: R-001
+    - Copy the roadmap template into place during `--init` bootstrap.
+    - Plan: [2026-07-29-001-feat-roadmap-implementation-order-plan](plans/2026-07-29-001-feat-roadmap-implementation-order-plan.md)
+- [x] R-003: Ship the plan-roadmap skill and command entry point — [F-301](features/f-301/feature.md) — after: R-001
+    - Add the `plan-roadmap` skill with entry validation and stable-ID rules.
+    - Add `commands/plan-roadmap.md` and register the capability in README, CLAUDE.md, and AGENTS.md.
+    - Plan: [2026-07-29-001-feat-roadmap-implementation-order-plan](plans/2026-07-29-001-feat-roadmap-implementation-order-plan.md)
+- [x] R-004: Lock tie-out coverage and dogfood the roadmap — [F-301](features/f-301/feature.md) — after: R-002, R-003
+    - Lock the roadmap contract into the content-assertion test suite.
+    - Author this roadmap for the plugin repo itself.
+    - Plan: [2026-07-29-001-feat-roadmap-implementation-order-plan](plans/2026-07-29-001-feat-roadmap-implementation-order-plan.md)
+- [x] R-005: Ship warn-only pre-push code-map regeneration — [F-203](features/f-203/feature.md)
+    - Ship the Claude Code plugin hook (`hooks/hooks.json` + `pre-push-regen.mjs`) that regenerates on `git push` and warns, never blocks.
+    - Ship the marker-delimited git pre-push installer for runtimes without native hooks.
+    - Add the `install-code-map-hook` skill, command entry point, docs, and content-assertion tests.
+    - Plan: [R-005-2026.07.31-pre-push-code-map-regeneration](plans/R-005-2026.07.31-pre-push-code-map-regeneration.md)
