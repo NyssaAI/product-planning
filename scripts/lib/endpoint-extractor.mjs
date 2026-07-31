@@ -34,6 +34,29 @@ const CSHARP_HTTP_RE =
 const CSHARP_MCP_TRANSPORT_RE = /\.\s*MapMcp\(\s*"([^"]+)"/g;
 const CSHARP_MCP_ATTRIBUTE_RE =
   /\[\s*(McpServerTool|McpServerResource|McpServerPrompt)[^\]]*\]\s*(?:public|private|internal|protected|static|async|\s)*(?:[\w<>,.?[\]\s]+\s+)?([A-Za-z_]\w*)\s*\(/g;
+// Go net/http registrations: http.HandleFunc/Handle and mux-style receivers.
+// The literal may be a Go 1.22 "METHOD /path" pattern.
+const GO_NET_HTTP_RE =
+  /\b[A-Za-z_]\w*\.Handle(?:Func)?\(\s*"([^"]+)"\s*(?:,\s*([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*))?/g;
+// gin/echo-style uppercase route methods on a receiver variable.
+const GO_UPPER_ROUTE_RE =
+  /\b([A-Za-z_]\w*)\.(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\(\s*"([^"]+)"\s*(?:,\s*([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*))?/g;
+// chi-style titlecase route methods; gated on a chi import to avoid ordinary
+// getter collisions (store.Get("/tmp/x")).
+const GO_TITLE_ROUTE_RE =
+  /\b([A-Za-z_]\w*)\.(Get|Post|Put|Delete|Patch|Head|Options)\(\s*"([^"]+)"\s*(?:,\s*([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*))?/g;
+const GO_CHI_METHOD_RE =
+  /\b[A-Za-z_]\w*\.Method(?:Func)?\(\s*"(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)"\s*,\s*"([^"]+)"\s*(?:,\s*([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*))?/g;
+// File-scoped router-group bindings: g := r.Group("/prefix").
+const GO_GROUP_BINDING_RE =
+  /\b([A-Za-z_]\w*)\s*:?=\s*([A-Za-z_]\w*)\.Group\(\s*"([^"]+)"/g;
+// Go MCP tools: mark3labs/mcp-go and the official SDK registration shapes.
+const GO_MCP_MARK3LABS_RE =
+  /\b[A-Za-z_]\w*\.AddTool\(\s*mcp\.NewTool\(\s*"([^"]+)"/g;
+const GO_MCP_OFFICIAL_RE =
+  /\bmcp\.AddTool\(\s*[^,]+,\s*&mcp\.Tool\{[^}]*?Name:\s*"([^"]+)"/g;
+const GO_HTTP_METHOD_PATTERN_RE =
+  /^(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s+(\S+)$/;
 
 /**
  * @typedef {object} Endpoint
@@ -88,7 +111,194 @@ function extractEndpointsFromText(file, text) {
   if (ext === '.cs') {
     return extractCSharpEndpoints(file, text);
   }
+  if (ext === '.go') {
+    return extractGoEndpoints(file, text);
+  }
   return [];
+}
+
+/**
+ * @param {string} file
+ * @param {string} text
+ * @returns {Endpoint[]}
+ */
+function extractGoEndpoints(file, text) {
+  /** @type {Endpoint[]} */
+  const endpoints = [];
+  const importsGin = text.includes('github.com/gin-gonic/gin');
+  const importsEcho = text.includes('github.com/labstack/echo');
+  const importsChi = text.includes('github.com/go-chi/chi');
+  const groupPrefixes = collectGoGroupPrefixes(text);
+  const hasUnresolvableGrouping = /\.(Route|Mount)\(\s*"/.test(text);
+
+  for (const match of text.matchAll(GO_NET_HTTP_RE)) {
+    const pattern = parseGoHttpPattern(match[1]);
+    if (!pattern) {
+      continue;
+    }
+    endpoints.push({
+      kind: 'http',
+      method: pattern.method,
+      path: pattern.path,
+      file,
+      line: lineAt(text, match.index ?? 0),
+      handler: match[2],
+      framework: 'net-http',
+      confidence: 'high',
+    });
+  }
+
+  if (importsGin || importsEcho) {
+    for (const match of text.matchAll(GO_UPPER_ROUTE_RE)) {
+      if (!match[3].startsWith('/')) {
+        continue;
+      }
+      const resolved = resolveGoGroupPath(match[1], match[3], groupPrefixes);
+      endpoints.push({
+        kind: 'http',
+        method: match[2],
+        path: resolved.path,
+        file,
+        line: lineAt(text, match.index ?? 0),
+        handler: match[4],
+        framework: importsGin ? 'gin' : 'echo',
+        confidence: resolved.resolved ? 'high' : 'medium',
+      });
+    }
+  }
+
+  if (importsChi) {
+    for (const match of text.matchAll(GO_TITLE_ROUTE_RE)) {
+      if (!match[3].startsWith('/')) {
+        continue;
+      }
+      endpoints.push({
+        kind: 'http',
+        method: match[2].toUpperCase(),
+        path: match[3],
+        file,
+        line: lineAt(text, match.index ?? 0),
+        handler: match[4],
+        framework: 'chi',
+        // Routes inside chi Route/Mount closures carry sub-paths this
+        // file-scoped pass cannot prefix; mark the whole file medium.
+        confidence: hasUnresolvableGrouping ? 'medium' : 'high',
+      });
+    }
+    for (const match of text.matchAll(GO_CHI_METHOD_RE)) {
+      if (!match[2].startsWith('/')) {
+        continue;
+      }
+      endpoints.push({
+        kind: 'http',
+        method: match[1],
+        path: match[2],
+        file,
+        line: lineAt(text, match.index ?? 0),
+        handler: match[3],
+        framework: 'chi',
+        confidence: hasUnresolvableGrouping ? 'medium' : 'high',
+      });
+    }
+  }
+
+  for (const match of text.matchAll(GO_MCP_MARK3LABS_RE)) {
+    endpoints.push({
+      kind: 'mcp-tool',
+      name: match[1],
+      file,
+      line: lineAt(text, match.index ?? 0),
+      framework: 'go-mcp',
+      confidence: 'high',
+    });
+  }
+  for (const match of text.matchAll(GO_MCP_OFFICIAL_RE)) {
+    endpoints.push({
+      kind: 'mcp-tool',
+      name: match[1],
+      file,
+      line: lineAt(text, match.index ?? 0),
+      framework: 'go-mcp',
+      confidence: 'high',
+    });
+  }
+
+  return endpoints;
+}
+
+/**
+ * Go 1.22 ServeMux patterns embed the method in the path literal
+ * ("GET /users/{id}"). Plain "/path" literals carry no method.
+ * @param {string} literal
+ * @returns {{ method?: string, path: string } | null}
+ */
+function parseGoHttpPattern(literal) {
+  const withMethod = literal.match(GO_HTTP_METHOD_PATTERN_RE);
+  if (withMethod) {
+    return { method: withMethod[1], path: withMethod[2] };
+  }
+  if (literal.startsWith('/')) {
+    return { path: literal };
+  }
+  return null;
+}
+
+/**
+ * File-scoped `g := r.Group("/prefix")` bindings, resolved transitively so
+ * nested groups accumulate their parents' prefixes.
+ * @param {string} text
+ * @returns {Map<string, string | null>} var -> full prefix, or null when the
+ *   parent chain leaves the file (unresolvable)
+ */
+function collectGoGroupPrefixes(text) {
+  /** @type {Map<string, { parent: string, prefix: string }>} */
+  const bindings = new Map();
+  for (const match of text.matchAll(GO_GROUP_BINDING_RE)) {
+    if (!bindings.has(match[1])) {
+      bindings.set(match[1], { parent: match[2], prefix: match[3] });
+    }
+  }
+
+  /** @type {Map<string, string | null>} */
+  const resolved = new Map();
+  for (const name of bindings.keys()) {
+    let prefix = '';
+    let current = name;
+    let ok = true;
+    for (let depth = 0; depth < 10; depth += 1) {
+      const binding = bindings.get(current);
+      if (!binding) {
+        // Chain root: a variable with no Group binding is the router itself.
+        break;
+      }
+      prefix = binding.prefix + prefix;
+      current = binding.parent;
+      if (bindings.has(current) && depth === 9) {
+        ok = false;
+      }
+    }
+    resolved.set(name, ok ? prefix : null);
+  }
+  return resolved;
+}
+
+/**
+ * @param {string} receiver
+ * @param {string} subPath
+ * @param {Map<string, string | null>} groupPrefixes
+ * @returns {{ path: string, resolved: boolean }}
+ */
+function resolveGoGroupPath(receiver, subPath, groupPrefixes) {
+  if (!groupPrefixes.has(receiver)) {
+    // Not a group variable: the route is registered on the router directly.
+    return { path: subPath, resolved: true };
+  }
+  const prefix = groupPrefixes.get(receiver);
+  if (prefix === null) {
+    return { path: subPath, resolved: false };
+  }
+  const joined = `${prefix}/${subPath}`.replace(/\/{2,}/g, '/');
+  return { path: joined, resolved: true };
 }
 
 /**

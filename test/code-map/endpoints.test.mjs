@@ -198,3 +198,157 @@ def lookup_order(order_id: str):
   assert.equal(byKey.has('mcp-tool::lookup_order:src/tools.py'), true);
   assert.equal(byKey.has('mcp-tool::LookupOrder:Tools/OrderTools.cs'), true);
 });
+
+test('extractEndpoints maps Go net/http including Go 1.22 method patterns', () => {
+  const root = repo();
+  write(
+    root,
+    'cmd/api/main.go',
+    `package main
+
+import "net/http"
+
+func main() {
+	mux := http.NewServeMux()
+	http.HandleFunc("/health", health)
+	mux.HandleFunc("GET /users/{id}", getUser)
+	store.Get("key")
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['cmd/api/main.go']);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  assert.equal(byKey.has('http::/health:cmd/api/main.go'), true);
+  assert.equal(byKey.has('http:GET:/users/{id}:cmd/api/main.go'), true);
+  assert.equal(byKey.get('http::/health:cmd/api/main.go').framework, 'net-http');
+  assert.equal(endpoints.length, 2);
+});
+
+test('extractEndpoints resolves gin group prefixes file-scoped', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/api/routes.go',
+    `package api
+
+import "github.com/gin-gonic/gin"
+
+func Register(r *gin.Engine) {
+	g := r.Group("/api/v1")
+	g.GET("/users", listUsers)
+	r.POST("/login", login)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['internal/api/routes.go']);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  assert.equal(byKey.has('http:GET:/api/v1/users:internal/api/routes.go'), true);
+  assert.equal(
+    byKey.get('http:GET:/api/v1/users:internal/api/routes.go').confidence,
+    'high'
+  );
+  assert.equal(byKey.has('http:POST:/login:internal/api/routes.go'), true);
+});
+
+test('extractEndpoints maps chi and echo routes with import gating', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/chi/routes.go',
+    `package chiapi
+
+import "github.com/go-chi/chi/v5"
+
+func Register(r chi.Router) {
+	r.Get("/orders", listOrders)
+	r.Method("DELETE", "/orders/{id}", deleteOrder)
+	r.Route("/admin", func(r chi.Router) {
+		r.Get("/stats", stats)
+	})
+}
+`
+  );
+  write(
+    root,
+    'internal/echo/routes.go',
+    `package echoapi
+
+import "github.com/labstack/echo/v4"
+
+func Register(e *echo.Echo) {
+	e.POST("/login", login)
+}
+`
+  );
+  write(
+    root,
+    'internal/store/store.go',
+    `package store
+
+func Load(c Cache) {
+	c.Get("/tmp/cache", nil)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, [
+    'internal/chi/routes.go',
+    'internal/echo/routes.go',
+    'internal/store/store.go',
+  ]);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  assert.equal(byKey.has('http:GET:/orders:internal/chi/routes.go'), true);
+  assert.equal(
+    byKey.get('http:GET:/orders:internal/chi/routes.go').confidence,
+    'medium'
+  );
+  assert.equal(
+    byKey.has('http:DELETE:/orders/{id}:internal/chi/routes.go'),
+    true
+  );
+  assert.equal(byKey.has('http:POST:/login:internal/echo/routes.go'), true);
+  assert.equal(
+    byKey.get('http:POST:/login:internal/echo/routes.go').framework,
+    'echo'
+  );
+  assert.equal(
+    endpoints.some((endpoint) => endpoint.file === 'internal/store/store.go'),
+    false
+  );
+});
+
+test('extractEndpoints maps both Go MCP SDK registration shapes', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/mcp/server.go',
+    `package mcpserver
+
+import "github.com/mark3labs/mcp-go/mcp"
+
+func Register(s *Server) {
+	s.AddTool(mcp.NewTool("lookup_order",
+		mcp.WithDescription("Lookup an order"),
+	), lookupOrder)
+	mcp.AddTool(server, &mcp.Tool{
+		Name: "cancel_order",
+	}, cancelOrder)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['internal/mcp/server.go']);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  assert.equal(byKey.has('mcp-tool::lookup_order:internal/mcp/server.go'), true);
+  assert.equal(byKey.has('mcp-tool::cancel_order:internal/mcp/server.go'), true);
+  assert.equal(
+    byKey.get('mcp-tool::lookup_order:internal/mcp/server.go').framework,
+    'go-mcp'
+  );
+});
