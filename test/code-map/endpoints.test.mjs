@@ -352,3 +352,75 @@ func Register(s *Server) {
     'go-mcp'
   );
 });
+
+test('extractEndpoints marks cross-file group receivers medium per UC-002', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/api/users.go',
+    `package api
+
+import "github.com/gin-gonic/gin"
+
+func RegisterUsers(g *gin.RouterGroup) {
+	g.GET("/users", listUsers)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['internal/api/users.go']);
+  const entry = endpoints.find((e) => e.path === '/users');
+  assert.notEqual(entry, undefined);
+  assert.equal(entry.confidence, 'medium');
+});
+
+test('extractEndpoints degrades reused group variable names to medium', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/api/reuse.go',
+    `package api
+
+import "github.com/gin-gonic/gin"
+
+func RegisterA(r *gin.Engine) {
+	g := r.Group("/a")
+	g.GET("/x", ax)
+}
+
+func RegisterB(r *gin.Engine) {
+	g := r.Group("/b")
+	g.GET("/y", by)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['internal/api/reuse.go']);
+  for (const entry of endpoints) {
+    assert.equal(entry.confidence, 'medium');
+    assert.equal(entry.path.startsWith('/a') || entry.path.startsWith('/b'), false);
+  }
+  assert.equal(endpoints.length, 2);
+});
+
+test('extractEndpoints accumulates chained Group prefixes', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/api/chain.go',
+    `package api
+
+import "github.com/gin-gonic/gin"
+
+func Register(r *gin.Engine) {
+	g := r.Group("/api").Group("/v2")
+	g.GET("/z", z)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['internal/api/chain.go']);
+  const entry = endpoints.find((e) => e.method === 'GET');
+  assert.equal(entry.path, '/api/v2/z');
+  assert.equal(entry.confidence, 'high');
+});

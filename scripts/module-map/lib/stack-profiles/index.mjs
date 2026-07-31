@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { readGoWorkMembers } from '../../../lib/go-mod.mjs';
+import { isExcludedGoFile, readGoWorkMembers } from '../../../lib/go-mod.mjs';
+import { BASE_SKIP_DIRS } from '../../../lib/skip-dirs.mjs';
 import { createLogger } from '../logger.mjs';
 
 const log = createLogger({ module: 'stack-profiles' });
@@ -165,8 +166,7 @@ const pythonProfile = {
 };
 
 const GO_PROFILE_SKIP_DIRS = new Set([
-  '.git',
-  'node_modules',
+  ...BASE_SKIP_DIRS,
   'vendor',
   'testdata',
 ]);
@@ -177,12 +177,11 @@ const GO_PROFILE_SKIP_DIRS = new Set([
  * Nested go.mod subtrees are excluded, matching Go semantics.
  * @param {string} repoRoot
  * @param {string} moduleDir repo-relative module dir ('' for repo root)
- * @param {import('../config.mjs').PlanProductConfig} config
- * @returns {ModuleDef[]}
+ * @returns {string[]} repo-relative package dirs ('.' for the module root)
  */
-function goPackageModules(repoRoot, moduleDir, config) {
-  /** @type {ModuleDef[]} */
-  const modules = [];
+function goPackageDirs(repoRoot, moduleDir) {
+  /** @type {string[]} */
+  const dirs = [];
   const absModuleDir = path.join(repoRoot, moduleDir);
   const stack = [absModuleDir];
   let checked = 0;
@@ -200,21 +199,43 @@ function goPackageModules(repoRoot, moduleDir, config) {
         }
         continue;
       }
-      if (
-        entry.name.endsWith('.go') &&
-        !entry.name.endsWith('_test.go') &&
-        !entry.name.endsWith('.pb.go')
-      ) {
-        hasGoFiles = true;
+      if (entry.name.endsWith('.go')) {
+        const rel = path
+          .relative(repoRoot, path.join(current, entry.name))
+          .replace(/\\/g, '/');
+        if (!isExcludedGoFile(rel)) {
+          hasGoFiles = true;
+        }
       }
     }
     if (hasGoFiles) {
-      const rel = path.relative(repoRoot, current).replace(/\\/g, '/') || '.';
-      const id = rel === '.' ? path.basename(repoRoot) : path.basename(rel);
-      modules.push(makeModule(repoRoot, rel, id, id, config, 'go'));
+      dirs.push(path.relative(repoRoot, current).replace(/\\/g, '/') || '.');
     }
   }
-  return modules.sort((a, b) => a.root.localeCompare(b.root));
+  return dirs.sort();
+}
+
+/**
+ * Assign module ids for package dirs. Ids default to the package basename;
+ * when two packages share a basename (internal/util vs pkg/util) the later
+ * one gets a path-derived id so module docs and edges never collide.
+ * @param {string} repoRoot
+ * @param {string[]} dirs sorted repo-relative package dirs
+ * @param {import('../config.mjs').PlanProductConfig} config
+ * @returns {ModuleDef[]}
+ */
+function goModulesFromDirs(repoRoot, dirs, config) {
+  /** @type {Set<string>} */
+  const taken = new Set();
+  /** @type {ModuleDef[]} */
+  const modules = [];
+  for (const rel of dirs) {
+    const base = rel === '.' ? path.basename(repoRoot) : path.basename(rel);
+    const id = taken.has(base) ? rel.replace(/\//g, '-') : base;
+    taken.add(id);
+    modules.push(makeModule(repoRoot, rel, id, base, config, 'go'));
+  }
+  return modules;
 }
 
 /** @type {StackProfile} */
@@ -241,11 +262,12 @@ const goProfile = {
       }
     }
 
-    /** @type {ModuleDef[]} */
-    const modules = [];
+    /** @type {string[]} */
+    const packageDirs = [];
     for (const dir of moduleDirs) {
-      modules.push(...goPackageModules(repoRoot, dir, config));
+      packageDirs.push(...goPackageDirs(repoRoot, dir));
     }
+    const modules = goModulesFromDirs(repoRoot, [...new Set(packageDirs)].sort(), config);
 
     log.debug('go profile modules', { count: modules.length });
     return modules;

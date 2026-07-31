@@ -50,6 +50,12 @@ const GO_CHI_METHOD_RE =
 // File-scoped router-group bindings: g := r.Group("/prefix").
 const GO_GROUP_BINDING_RE =
   /\b([A-Za-z_]\w*)\s*:?=\s*([A-Za-z_]\w*)\.Group\(\s*"([^"]+)"/g;
+// Chained segments immediately after a group binding: .Group("/v2")...
+const GO_GROUP_CHAIN_RE = /^\s*\)\s*\.Group\(\s*"([^"]+)"/;
+// Group-typed function parameters: routes on these receivers come from
+// another file's Group call, so their prefix is unresolvable here.
+const GO_GROUP_PARAM_RE =
+  /\b([A-Za-z_]\w*)\s+\*?(?:gin\.RouterGroup|echo\.Group)\b/g;
 // Go MCP tools: mark3labs/mcp-go and the official SDK registration shapes.
 const GO_MCP_MARK3LABS_RE =
   /\b[A-Za-z_]\w*\.AddTool\(\s*mcp\.NewTool\(\s*"([^"]+)"/g;
@@ -245,17 +251,40 @@ function parseGoHttpPattern(literal) {
 
 /**
  * File-scoped `g := r.Group("/prefix")` bindings, resolved transitively so
- * nested groups accumulate their parents' prefixes.
+ * nested groups accumulate their parents' prefixes. A variable maps to null
+ * (unresolvable -> sub-path at confidence medium) when it is rebound with a
+ * second Group call, is a group-typed function parameter (the prefix lives in
+ * another file), or its chain cannot be resolved within this file.
  * @param {string} text
- * @returns {Map<string, string | null>} var -> full prefix, or null when the
- *   parent chain leaves the file (unresolvable)
+ * @returns {Map<string, string | null>} var -> full prefix, or null
  */
 function collectGoGroupPrefixes(text) {
-  /** @type {Map<string, { parent: string, prefix: string }>} */
+  const POISONED = Symbol('poisoned');
+  /** @type {Map<string, { parent: string, prefix: string } | typeof POISONED>} */
   const bindings = new Map();
   for (const match of text.matchAll(GO_GROUP_BINDING_RE)) {
+    let prefix = match[3];
+    // Accumulate chained .Group("...") segments on the same expression.
+    let rest = text.slice(match.index + match[0].length);
+    for (;;) {
+      const chain = rest.match(GO_GROUP_CHAIN_RE);
+      if (!chain) {
+        break;
+      }
+      prefix += chain[1];
+      rest = rest.slice(chain.index + chain[0].length);
+    }
+    if (bindings.has(match[1])) {
+      // Rebinding across functions: first-binding-wins would fabricate wrong
+      // paths at high confidence, so the name becomes unresolvable instead.
+      bindings.set(match[1], POISONED);
+    } else {
+      bindings.set(match[1], { parent: match[2], prefix });
+    }
+  }
+  for (const match of text.matchAll(GO_GROUP_PARAM_RE)) {
     if (!bindings.has(match[1])) {
-      bindings.set(match[1], { parent: match[2], prefix: match[3] });
+      bindings.set(match[1], POISONED);
     }
   }
 
@@ -267,8 +296,12 @@ function collectGoGroupPrefixes(text) {
     let ok = true;
     for (let depth = 0; depth < 10; depth += 1) {
       const binding = bindings.get(current);
-      if (!binding) {
+      if (binding === undefined) {
         // Chain root: a variable with no Group binding is the router itself.
+        break;
+      }
+      if (binding === POISONED) {
+        ok = false;
         break;
       }
       prefix = binding.prefix + prefix;

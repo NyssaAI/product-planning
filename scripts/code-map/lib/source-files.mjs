@@ -12,24 +12,10 @@ export const SOURCE_SCAN_SKIP_DIRS = new Set([
   '__pycache__',
 ]);
 
-// Go-scoped hygiene: vendored, generated, and test Go files stay out of the
-// symbol index and the endpoint walk without changing other languages' walks.
-const GO_EXCLUDED_DIR_RE = /(^|\/)(vendor|testdata)\//;
-
-/**
- * @param {string} repoRelPath forward-slash repo-relative path
- * @returns {boolean}
- */
-export function isExcludedGoFile(repoRelPath) {
-  if (!repoRelPath.endsWith('.go')) {
-    return false;
-  }
-  return (
-    GO_EXCLUDED_DIR_RE.test(repoRelPath) ||
-    repoRelPath.endsWith('_test.go') ||
-    repoRelPath.endsWith('.pb.go')
-  );
-}
+// Go-scoped hygiene lives in the shared go-mod helper; re-exported here for
+// code-map consumers (generate-code-map.mjs and tests import from this file).
+export { isExcludedGoFile } from '../../lib/go-mod.mjs';
+import { isExcludedGoFile } from '../../lib/go-mod.mjs';
 
 const EXTENSION_LANGUAGES = new Map([
   ['.js', 'JavaScript'],

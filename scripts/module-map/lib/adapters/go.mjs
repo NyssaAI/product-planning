@@ -22,6 +22,7 @@ import { runBatchedScan } from './sg-scan.mjs';
 import { symbolNameFromMatch } from '../../../lib/sg-result.mjs';
 import { BASE_SKIP_DIRS } from '../../../lib/skip-dirs.mjs';
 import {
+  isExcludedGoFile,
   readGoModulePath,
   readGoWorkMembers,
 } from '../../../lib/go-mod.mjs';
@@ -165,13 +166,7 @@ function extract(repoRoot, files) {
  */
 function normalizeCandidateFiles(files) {
   return [...new Set(files.map(normalizePath))]
-    .filter(
-      (file) =>
-        file.endsWith('.go') &&
-        !file.endsWith('_test.go') &&
-        !file.endsWith('.pb.go') &&
-        !/(^|\/)(vendor|testdata)\//.test(file)
-    )
+    .filter((file) => file.endsWith('.go') && !isExcludedGoFile(file))
     .sort();
 }
 

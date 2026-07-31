@@ -180,3 +180,45 @@ test('plan-product model preserves Go adapter dependencies in module graph', () 
   assert.equal(orders.dependsOn.includes(shared.id), true);
   assert.equal(shared.usedBy.includes(orders.id), true);
 });
+
+test('go adapter treats independent go.mod subdirs as module roots when no root module exists', async () => {
+  const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const dir = mkdtempSync(path.join(tmpdir(), 'go-monorepo-'));
+  try {
+    for (const [rel, content] of [
+      ['services/a/go.mod', 'module example.com/a\n'],
+      ['services/a/main.go', 'package main\n\nimport "example.com/a/lib"\n\nfunc main() { lib.Run() }\n'],
+      ['services/a/lib/lib.go', 'package lib\n\nfunc Run() {\n}\n'],
+      ['services/b/go.mod', 'module example.com/b\n'],
+      ['services/b/main.go', 'package main\n\nfunc main() {\n}\n'],
+    ]) {
+      const file = path.join(dir, rel);
+      mkdirSync(path.dirname(file), { recursive: true });
+      writeFileSync(file, content, 'utf8');
+    }
+
+    assert.equal(goAdapter.matches(dir), true);
+    const graph = goAdapter.extract(dir, [
+      'services/a/main.go',
+      'services/a/lib/lib.go',
+      'services/b/main.go',
+    ]);
+    const paths = graph.files.map((file) => file.path);
+    assert.deepEqual(paths, [
+      'services/a/lib/lib.go',
+      'services/a/main.go',
+      'services/b/main.go',
+    ]);
+    assert.equal(
+      graph.edges.some(
+        (edge) =>
+          edge.from === 'services/a/main.go' &&
+          edge.to === 'services/a/lib/lib.go'
+      ),
+      true
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
