@@ -4,10 +4,10 @@
 |----------------|------------------|------------|
 | Phase 0 - Planning Foundation | 3 / 3 | 100% |
 | Phase 1 - Feature Guide Workflow | 3 / 3 | 100% |
-| Phase 2 - Code Map Workflow | 2 / 2 | 100% |
+| Phase 2 - Code Map Workflow | 3 / 3 | 100% |
 | Phase 3 - Roadmap Workflow | 1 / 1 | 100% |
 | Existing Code-Map Capabilities | 15 / 15 | 100% |
-| **Overall** | 24 / 24 | 100% |
+| **Overall** | 25 / 25 | 100% |
 
 ---
 
@@ -36,6 +36,7 @@ This document lists plan-product features in intended build order and retains th
 ---
 * [x] F-201: Product code map
 * [x] F-202: Code map planning handoff
+* [x] F-203: Pre-push code-map regeneration
 ---
 * [x] F-301: Implementation roadmap
 
@@ -82,6 +83,10 @@ Product-oriented code context lives under `docs/code-map/` and supports implemen
 **F-202: Code map planning handoff**  
 Planning workflows can reference product code-map artifacts alongside feature guides.  
 [Feature Guide: Code Map Planning Handoff](features/f-202/feature.md)
+
+**F-203: Pre-push code-map regeneration**  
+Warn-only hook that refreshes code-map artifacts before `git push`, shipped as a Claude Code plugin hook and installable as a git pre-push hook elsewhere.  
+[Feature Guide: Pre-Push Code-Map Regeneration](features/f-203/feature.md)
 
 ---
 

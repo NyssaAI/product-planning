@@ -13,6 +13,7 @@ This is the plan-product plugin source. It owns product, feature, use-case, and 
 - `map-code` - refresh symbol, endpoint, module, and module-doc context.
 - `map-architecture` - generate the system architecture handoff.
 - `find-code-patterns` - generate structural pattern reports.
+- `install-code-map-hook` - install or verify the warn-only pre-push code-map regeneration hook.
 - `using-code-map` - load generated code-map context with progressive disclosure.
 
 ## Dependencies
@@ -36,13 +37,14 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |   |-- roadmap.md          Dependency-ordered implementation roadmap.
 |   |-- features/           Feature guides and use cases.
 |   |-- code-map/           Generated code-map artifacts.
-|   |-- plans/              Compound Engineering implementation plans.
+|   |-- plans/              Implementation plans; new ones named R-NNN-yyyy.mm.dd-step-slug.md.
 |   `-- solutions/          Compound Engineering captured learnings.
 |
 |-- .plan-product/
 |   |-- config.json         plan-product path map; repo-relative.
 |   |-- schema.json         Config schema.
 |   `-- templates/          Starter plan-product artifacts.
+|-- hooks/                  Claude Code plugin hooks (pre-push regeneration).
 |-- scripts/                Plugin generators and support code.
 |-- skills/                 Codex skill entrypoints.
 |-- commands/               Command-capable runtime docs.

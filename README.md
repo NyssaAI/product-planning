@@ -13,6 +13,7 @@ plan-product helps users define a product, organize features and use cases, and 
 | Code-map generation | `map-code` | `commands/map-code.md` |
 | Architecture handoff | `map-architecture` | `commands/map-architecture.md` |
 | Module-rooted pattern review | `find-code-patterns` | `commands/find-code-patterns.md` |
+| Pre-push hook install | `install-code-map-hook` | `commands/install-code-map-hook.md` |
 | Generated context guidance | `using-code-map` | skill only |
 
 ## plan-product Structure
@@ -26,6 +27,7 @@ docs/product.md
 docs/features.md
 docs/tech-stack.md
 docs/roadmap.md
+docs/plans/R-NNN-yyyy.mm.dd-step-slug.md
 docs/features/f-nxx/feature.md
 docs/features/f-nxx/uc-nnn-short-slug.md
 docs/code-map/
@@ -52,6 +54,7 @@ plan-product:plan-roadmap
 plan-product:map-code
 plan-product:map-architecture
 plan-product:find-code-patterns
+plan-product:install-code-map-hook
 plan-product:using-code-map
 ```
 
@@ -73,6 +76,20 @@ node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --arch
 node "${PLUGIN_ROOT}/scripts/code-map/generate-patterns.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness
 ```
+
+## Pre-Push Regeneration
+
+The plugin ships a warn-only pre-push hook that regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push.
+
+- Claude Code loads `hooks/hooks.json` automatically when the plugin is installed — a PreToolUse hook runs `scripts/module-map/pre-push-regen.mjs` on `git push` Bash commands.
+- Runtimes without native hooks (Codex, Gemini, Cursor, plain terminals) install a marker-delimited git pre-push hook instead:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs"
+node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
+```
+
+Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`.
 
 ## Usage and Effectiveness
 
