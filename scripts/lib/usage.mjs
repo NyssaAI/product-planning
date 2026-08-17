@@ -64,6 +64,42 @@ export function loadUsageSettings(repoRoot, env = process.env) {
  * @param {{ settings?: UsageSettings, now?: Date }} [options]
  * @returns {{ recorded: boolean, skipped?: boolean, path?: string, error?: string }}
  */
+/**
+ * Keep the usage ledger out of version control.
+ *
+ * The ledger is append-only machine-local telemetry: one line per generator
+ * run. Tracked, it dirties the working tree on every regeneration and grows
+ * without bound — and the pre-push hook regenerates on every push, so the
+ * dirt is permanent. Writing the ignore rule beside the ledger means no repo
+ * has to remember, and it travels with whatever `usage.events` path is
+ * configured.
+ *
+ * Scoped to the ledger's own filename rather than a blanket `*`, in case the
+ * configured path points into a directory holding anything else.
+ *
+ * @param {string} ledgerPath absolute path to the events file
+ */
+function ensureLedgerIgnored(ledgerPath) {
+  try {
+    const ignoreFile = path.join(path.dirname(ledgerPath), '.gitignore');
+    const rule = path.basename(ledgerPath);
+    const existing = existsSync(ignoreFile)
+      ? readFileSync(ignoreFile, 'utf8')
+      : '';
+    if (existing.split(/\r?\n/).some((line) => line.trim() === rule)) {
+      return;
+    }
+    const header = existing
+      ? existing.endsWith('\n')
+        ? existing
+        : `${existing}\n`
+      : '# plan-product local usage telemetry — machine-local, never shared.\n';
+    writeFileSync(ignoreFile, `${header}${rule}\n`, 'utf8');
+  } catch {
+    // Never break a generator run over telemetry hygiene.
+  }
+}
+
 export function recordUsageEvent(repoRoot, event, options = {}) {
   try {
     const settings = options.settings ?? loadUsageSettings(repoRoot);
@@ -73,6 +109,7 @@ export function recordUsageEvent(repoRoot, event, options = {}) {
 
     const fullPath = resolveInsideRepo(repoRoot, settings.eventsPath);
     mkdirSync(path.dirname(fullPath), { recursive: true });
+    ensureLedgerIgnored(fullPath);
     const entry = {
       schemaVersion: 'plan-product-usage-event/v1',
       timestamp: (options.now ?? new Date()).toISOString(),

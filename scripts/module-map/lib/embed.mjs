@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { writeArtifactIfChanged } from '../../lib/write-artifact.mjs';
 import path from 'node:path';
 import { createLogger } from './logger.mjs';
 import { summarizeDescription } from './summarize.mjs';
@@ -71,11 +72,11 @@ function embedIntoFile(filePath, tableMarkdown, generated) {
     updated = `${base}\n${section}\n`;
   }
 
-  if (updated === original) {
-    return false;
-  }
-  writeFileSync(filePath, updated, 'utf8');
-  return true;
+  // Not `updated === original`: that guard could never fire, because the
+  // embedded `generated` stamp differs on every run. writeArtifactIfChanged
+  // compares with timestamps neutralized, so an unchanged module table leaves
+  // CLAUDE.md and AGENTS.md untouched.
+  return writeArtifactIfChanged(filePath, updated);
 }
 
 /**
