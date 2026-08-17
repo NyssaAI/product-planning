@@ -42,14 +42,56 @@ function readJsonIfPresent(repoRoot, name) {
   return {};
 }
 
+/** Git global options that consume the following token as their value. */
+const GIT_GLOBAL_OPTIONS_WITH_VALUE = new Set([
+  '-C',
+  '-c',
+  '--git-dir',
+  '--work-tree',
+  '--namespace',
+  '--exec-path',
+  '--config-env',
+]);
+
+/**
+ * Whether one shell segment invokes git with `push` as its subcommand.
+ *
+ * Deliberately not a regex over the whole segment. The previous
+ * `/^\s*git\b[\s\S]*\bpush\b/` matched any git command that merely *mentioned*
+ * "push" anywhere, and `\b` treats the hyphen in `pre-push` as a word boundary
+ * — so `git add .githooks/pre-push` and `git rm .githooks/pre-push` each
+ * triggered a full code-map regeneration. Instead, skip git's global options
+ * and require the first non-option token to be exactly `push`.
+ *
+ * @param {string} segment
+ * @returns {boolean}
+ */
+function segmentIsGitPush(segment) {
+  const tokens = segment.trim().split(/\s+/).filter(Boolean);
+  if (tokens.length === 0 || tokens[0] !== 'git') {
+    return false;
+  }
+
+  for (let i = 1; i < tokens.length; i += 1) {
+    const token = tokens[i];
+    if (!token.startsWith('-')) {
+      return token === 'push';
+    }
+    // `--git-dir=/path` carries its value inline; the bare form takes the next token.
+    if (GIT_GLOBAL_OPTIONS_WITH_VALUE.has(token)) {
+      i += 1;
+    }
+  }
+
+  return false;
+}
+
 /**
  * @param {string} command
  * @returns {boolean} whether any shell segment invokes `git ... push`
  */
 function isGitPush(command) {
-  return command
-    .split(/[;&|]+/)
-    .some((segment) => /^\s*git\b[\s\S]*\bpush\b/.test(segment));
+  return command.split(/[;&|]+/).some(segmentIsGitPush);
 }
 
 /**

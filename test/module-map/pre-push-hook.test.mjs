@@ -50,6 +50,32 @@ test('pre-push-regen matches only git push commands and never blocks', () => {
   assert.equal(lookalike.status, 0);
   assert.equal(lookalike.stdout.trim(), '');
 
+  // A path containing "push" is not a push. `\b` treats the hyphen in
+  // `pre-push` as a word boundary, so the old regex fired a full regeneration
+  // on ordinary file operations against a hook file.
+  for (const command of [
+    'git add .githooks/pre-push',
+    'git rm -q .githooks/pre-push scripts/setup-git-hooks.mjs',
+    'git log --oneline -- .githooks/pre-push',
+    'git commit -m "remove pre-push hook"',
+  ]) {
+    const result = runHook(JSON.stringify({ tool_input: { command } }));
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout.trim(), '', `must not regenerate for: ${command}`);
+  }
+
+  // Git global options precede the subcommand and must be skipped, including
+  // the ones that consume the following token as a value.
+  for (const command of [
+    'git -C /repo push origin main',
+    'git --no-pager push',
+    'git -c user.name=x push',
+  ]) {
+    const result = runHook(JSON.stringify({ tool_input: { command } }));
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /would regenerate/, `must regenerate for: ${command}`);
+  }
+
   const noPayload = runHook('');
   assert.equal(noPayload.status, 0);
 });
