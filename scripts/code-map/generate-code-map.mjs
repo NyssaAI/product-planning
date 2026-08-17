@@ -30,6 +30,7 @@ import { extractEndpoints } from '../lib/endpoint-extractor.mjs';
 import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
 import { isExcludedGoFile, sourceFilesInRoots } from './lib/source-files.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
+import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOLKIT_DIR = __dirname;
@@ -384,15 +385,16 @@ function runCodeMap() {
   const document = buildCodeMapDocument(symbols, options);
 
   mkdirSync(path.dirname(options.outputPath), { recursive: true });
-  writeFileSync(
+  const written = writeArtifactIfChanged(
     options.outputPath,
-    `${JSON.stringify(document, null, 2)}\n`,
-    'utf8'
+    `${JSON.stringify(document, null, 2)}\n`
   );
 
   const relOut = path.relative(REPO_ROOT, options.outputPath);
   process.stdout.write(
-    `Wrote ${relOut} (${document.symbolCount} symbols in ${document.fileCount} files${options.includeComments ? ', with comments' : ''})\n`
+    written
+      ? `Wrote ${relOut} (${document.symbolCount} symbols in ${document.fileCount} files${options.includeComments ? ', with comments' : ''})\n`
+      : `Unchanged ${relOut} (${document.symbolCount} symbols in ${document.fileCount} files)\n`
   );
   return {
     output: relOut.replace(/\\/g, '/'),

@@ -18,9 +18,9 @@ import {
   readFileSync,
   readdirSync,
   unlinkSync,
-  writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
+import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
 import { buildPlanProductModel } from './lib/build.mjs';
 import { bootstrapRepo } from './lib/bootstrap.mjs';
 import {
@@ -256,13 +256,12 @@ function runGenerate() {
   const modulesDir = path.join(outDir, 'modules');
   mkdirSync(modulesDir, { recursive: true });
 
-  writeFileSync(
+  writeArtifactIfChanged(
     path.join(outDir, 'index.md'),
-    renderIndex(model, config),
-    'utf8'
+    renderIndex(model, config)
   );
   wrote.push(path.join(config.outputDir, 'index.md').replace(/\\/g, '/'));
-  writeFileSync(
+  writeArtifactIfChanged(
     path.join(outDir, 'module-map.json'),
     `${JSON.stringify(
       {
@@ -297,8 +296,7 @@ function runGenerate() {
       },
       null,
       2
-    )}\n`,
-    'utf8'
+    )}\n`
   );
   wrote.push(path.join(config.outputDir, 'module-map.json').replace(/\\/g, '/'));
 
@@ -308,10 +306,9 @@ function runGenerate() {
       log.debug('skip preserveModule module', { moduleId: mod.id });
       continue;
     }
-    writeFileSync(
+    writeArtifactIfChanged(
       path.join(modulesDir, `${mod.id}.md`),
-      renderModuleScope(model, mod),
-      'utf8'
+      renderModuleScope(model, mod)
     );
     wrote.push(
       path
@@ -426,10 +423,9 @@ function runArchitecture() {
   try {
     mkdirSync(outDir, { recursive: true });
     const moduleMapPath = path.join(config.outputDir, 'module-map.json');
-    writeFileSync(
+    writeArtifactIfChanged(
       archPath,
-      renderSystemArchitecture(model, { existingMarkdown, moduleMapPath }),
-      'utf8'
+      renderSystemArchitecture(model, { existingMarkdown, moduleMapPath })
     );
     wrote.push(path.relative(REPO_ROOT, archPath).replace(/\\/g, '/'));
   } catch (err) {
