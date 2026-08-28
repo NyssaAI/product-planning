@@ -62,7 +62,11 @@ test('plugin manifests point at the current repository and package excludes loca
             encoding: 'utf8',
           });
   assert.equal(pack.status, 0, pack.stderr);
-  const [payload] = JSON.parse(pack.stdout);
+  // npm <= 11 prints an array of tarball reports; npm 12 prints an object
+  // keyed by package name. Accept either so the suite is not npm-version bound.
+  const report = JSON.parse(pack.stdout);
+  const [payload] = Array.isArray(report) ? report : Object.values(report);
+  assert.ok(payload?.files, `unexpected npm pack --json shape: ${pack.stdout}`);
   const paths = new Set(payload.files.map((file) => file.path));
   assert.equal(paths.has('.plan-product/usage/events.jsonl'), false);
   assert.equal(paths.has('.plan-product/config.json'), true);
