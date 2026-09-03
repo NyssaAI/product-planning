@@ -46,7 +46,7 @@ export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs) {
       maxBuffer: 64 * 1024 * 1024,
     });
     if (result.error || (result.status !== 0 && !result.stdout?.trim())) {
-      log.debug('ast-grep scan batch failed', {
+      log.warn('ast-grep scan batch failed', {
         error: errorMessage(result.error) || result.stderr?.trim(),
       });
       continue;

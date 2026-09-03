@@ -53,7 +53,7 @@ function matches(repoRoot) {
     const scan = scanForGoMarkers(repoRoot);
     return scan.hasGoMod && scan.hasGoFiles;
   } catch (error) {
-    log.debug('go matches failed', { error: errorMessage(error) });
+    log.warn('go matches failed', { error: errorMessage(error) });
     return false;
   }
 }
@@ -351,15 +351,11 @@ function extractSymbols(repoRoot, candidateFiles) {
     return symbols;
   }
 
+  const binary = resolveAstGrepBinary({
+    toolkitDir: CODE_MAP_DIR,
+    projectRoot: repoRoot,
+  });
   try {
-    const binary = resolveAstGrepBinary({
-      toolkitDir: CODE_MAP_DIR,
-      projectRoot: repoRoot,
-    });
-    if (!existsSync(binary)) {
-      log.debug('ast-grep binary not found for Go symbols', { binary });
-      return symbols;
-    }
 
     const matches = runBatchedScan(
       binary,
@@ -394,7 +390,7 @@ function extractSymbols(repoRoot, candidateFiles) {
       fileSymbols.sort((a, b) => a.line - b.line || a.name.localeCompare(b.name));
     }
   } catch (error) {
-    log.debug('symbol extraction failed', { error: errorMessage(error) });
+    log.warn('symbol extraction failed', { error: errorMessage(error) });
   }
 
   return symbols;

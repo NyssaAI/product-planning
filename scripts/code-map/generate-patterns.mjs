@@ -4,7 +4,7 @@
  * ast-grep pattern catalogs and module-rooted practice signals.
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { findProjectRoot } from '../module-map/lib/project-root.mjs';
 import { sourceFilesInRoots } from './lib/source-files.mjs';
@@ -20,6 +20,7 @@ import {
 } from './lib/patterns/model.mjs';
 import { renderPatternsMarkdown } from './lib/patterns/render.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
+import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
@@ -139,10 +140,12 @@ function runPatterns() {
   mkdirSync(outDir, { recursive: true });
   const jsonPath = path.join(outDir, 'patterns.json');
   const mdPath = path.join(outDir, 'patterns.md');
-  writeFileSync(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  wrote.push(toRelative(REPO_ROOT, jsonPath));
-  writeFileSync(mdPath, renderPatternsMarkdown(report), 'utf8');
-  wrote.push(toRelative(REPO_ROOT, mdPath));
+  if (writeArtifactIfChanged(jsonPath, `${JSON.stringify(report, null, 2)}\n`)) {
+    wrote.push(toRelative(REPO_ROOT, jsonPath));
+  }
+  if (writeArtifactIfChanged(mdPath, renderPatternsMarkdown(report))) {
+    wrote.push(toRelative(REPO_ROOT, mdPath));
+  }
 
   return {
     ok: true,

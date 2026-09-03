@@ -90,3 +90,116 @@ test('structural extraction: dynamic import() and re-export still create edges',
   assert.equal(edges.has('src/a.ts->src/c.ts'), true);
   assert.equal(edges.has('src/a.ts->src/d.ts'), true);
 });
+
+test('NodeNext emitted extensions resolve to their TypeScript source files', () => {
+  const root = repo();
+  write(
+    root,
+    'src/a.ts',
+    [
+      `import './b.js';`,
+      `import './view.jsx';`,
+      `import './module.mjs';`,
+      `import './common.cjs';`,
+    ].join('\n')
+  );
+  write(root, 'src/b.ts', `export const b = 1;\n`);
+  write(root, 'src/view.tsx', `export const view = 1;\n`);
+  write(root, 'src/module.mts', `export const moduleValue = 1;\n`);
+  write(root, 'src/common.cts', `export const common = 1;\n`);
+
+  const edges = edgeSet(
+    typescriptAdapter.extract(root, [
+      'src/a.ts',
+      'src/b.ts',
+      'src/view.tsx',
+      'src/module.mts',
+      'src/common.cts',
+    ])
+  );
+  assert.deepEqual(
+    edges,
+    new Set([
+      'src/a.ts->src/b.ts',
+      'src/a.ts->src/common.cts',
+      'src/a.ts->src/module.mts',
+      'src/a.ts->src/view.tsx',
+    ])
+  );
+});
+
+test('root package self-references resolve to source', () => {
+  const root = repo();
+  writeFileSync(
+    path.join(root, 'package.json'),
+    JSON.stringify({ name: 'fixture', main: './dist/index.js' }),
+    'utf8'
+  );
+  write(root, 'src/consumer.ts', `import { value } from 'fixture';\n`);
+  write(root, 'src/index.ts', `export const value = 1;\n`);
+
+  const edges = edgeSet(
+    typescriptAdapter.extract(root, ['src/consumer.ts', 'src/index.ts'])
+  );
+  assert.equal(edges.has('src/consumer.ts->src/index.ts'), true);
+});
+
+test('workspace packages fall back from dist entries to source and package indexes', () => {
+  const root = repo();
+  write(
+    root,
+    'packages/source/package.json',
+    JSON.stringify({ name: '@fixture/source', main: 'dist/index.js' })
+  );
+  write(root, 'packages/source/src/index.mjs', `export const source = 1;\n`);
+  write(
+    root,
+    'packages/root/package.json',
+    JSON.stringify({ name: '@fixture/root', main: 'dist/index.js' })
+  );
+  write(root, 'packages/root/index.js', `export const rootValue = 1;\n`);
+  write(
+    root,
+    'packages/typed/package.json',
+    JSON.stringify({
+      name: '@fixture/typed',
+      main: 'dist/index.js',
+      typings: 'source/public.ts',
+    })
+  );
+  write(root, 'packages/typed/source/public.ts', `export const typed = 1;\n`);
+  write(
+    root,
+    'src/consumer.ts',
+    [
+      `import '@fixture/source';`,
+      `import '@fixture/root';`,
+      `import '@fixture/typed';`,
+    ].join('\n')
+  );
+
+  const files = [
+    'src/consumer.ts',
+    'packages/source/src/index.mjs',
+    'packages/root/index.js',
+    'packages/typed/source/public.ts',
+  ];
+  assert.deepEqual(
+    edgeSet(typescriptAdapter.extract(root, files)),
+    new Set([
+      'src/consumer.ts->packages/root/index.js',
+      'src/consumer.ts->packages/source/src/index.mjs',
+      'src/consumer.ts->packages/typed/source/public.ts',
+    ])
+  );
+});
+
+test('adapter matches JS-only package repos outside skipped directories', () => {
+  const root = repo();
+  write(root, 'src/index.mjs', `export const value = 1;\n`);
+  assert.equal(typescriptAdapter.matches(root), true);
+
+  const skippedRoot = repo();
+  write(skippedRoot, 'fixtures/index.js', `export const fixture = 1;\n`);
+  assert.equal(typescriptAdapter.matches(skippedRoot), false);
+});

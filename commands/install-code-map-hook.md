@@ -1,13 +1,13 @@
 ---
-description: Install or verify the warn-only pre-push code-map regeneration hook for the current runtime.
+description: Install or verify the opt-in, warn-only git pre-push hook that regenerates code-map artifacts before a push.
 argument-hint: "[target repo path]"
 ---
 
 # install-code-map-hook - regenerate the code map before push
 
-Load the `install-code-map-hook` skill and follow its workflow. The skill owns runtime detection, the `${PLUGIN_ROOT}` substitution guidance, and the warn-only behavior contract; this command file is only the entry point.
+Load the `install-code-map-hook` skill and follow its workflow. The skill owns the `${PLUGIN_ROOT}` substitution guidance, the plan-product-repo precondition, and the warn-only behavior contract; this command file is only the entry point.
 
-In Claude Code the plugin's `hooks/hooks.json` PreToolUse hook is active automatically; installing the git hook adds coverage for pushes made outside Claude Code. In Codex, Gemini, Cursor, or a plain terminal, the git pre-push hook is the trigger mechanism.
+The plugin ships no runtime-level hook. In every runtime the trigger is a git pre-push hook installed per repo, and it only acts in repos that have `.plan-product/config.json`.
 
 ## Run
 
@@ -25,4 +25,4 @@ node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 
 ## Behavior
 
-Warn-only: the hook regenerates code-map artifacts before the push and warns when the configured code-map directory has uncommitted changes; it never blocks the push. Opt out with `"prePushRegenerate": false` in `plan-product.config.json`.
+Warn-only: the hook regenerates code-map artifacts before the push, reports a failed generator by name, and warns when the configured code-map directory has uncommitted changes; it never blocks the push. Regeneration logs to `.temp/regen.log`. Opt out with `"prePushRegenerate": false` in `plan-product.config.json`.

@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -11,6 +12,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import {
+  buildEffectivenessModel,
   loadUsageSettings,
   readUsageEvents,
   recordUsageEvent,
@@ -172,4 +174,35 @@ test('--effectiveness --json writes a markdown effectiveness report', () => {
     existsSync(path.join(dir, 'docs/code-map/effectiveness.md')),
     true
   );
+});
+
+test('effectiveness artifact paths follow generator output precedence', () => {
+  for (const [config, pathConfig, expected] of [
+    [
+      { outputDir: 'explicit/output', codeMapOutput: 'ignored/code-map.json' },
+      { paths: { codeMap: 'ignored/path-config' } },
+      'explicit/output',
+    ],
+    [
+      { codeMapOutput: 'from-code-map/code-map.json' },
+      { paths: { codeMap: 'ignored/path-config' } },
+      'from-code-map',
+    ],
+    [{}, { paths: { codeMap: 'from-path-config' } }, 'from-path-config'],
+    [{}, {}, 'docs/code-map'],
+  ]) {
+    const dir = tempRepo(config);
+    mkdirSync(path.join(dir, '.plan-product'), { recursive: true });
+    writeFileSync(
+      path.join(dir, '.plan-product', 'config.json'),
+      `${JSON.stringify(pathConfig)}\n`,
+      { encoding: 'utf8', flag: 'w' }
+    );
+    const model = buildEffectivenessModel(dir, {
+      events: [],
+      invalidLines: 0,
+      eventsPath: '.plan-product/usage/events.jsonl',
+    });
+    assert.equal(model.artifacts[1].path, `${expected}/module-map.json`);
+  }
 });

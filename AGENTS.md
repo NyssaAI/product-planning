@@ -10,6 +10,7 @@ This is the plan-product plugin source. It owns product, feature, use-case, and 
 - `plan-feature` - create or update `docs/features/f-nxx/feature.md`.
 - `plan-use-case` - create or update use-case files beside a feature guide.
 - `plan-roadmap` - create or update `docs/roadmap.md`, the dependency-ordered work-slice sequence.
+- `build-roadmap` - implement roadmap slices (or inventory features when no roadmap exists) in a Compound Engineering loop with dev-standards enforced.
 - `map-code` - refresh symbol, endpoint, module, and module-doc context.
 - `map-architecture` - generate the system architecture handoff.
 - `find-code-patterns` - generate structural pattern reports.
@@ -29,6 +30,7 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |-- STRATEGY.md             Optional upstream strategy context.
 |-- CONCEPTS.md             Optional shared vocabulary.
 |-- AGENTS.md               Agent instructions and repo conventions.
+|-- plan-product.config.json  Generator config: source roots, module discovery, output dir, usage capture.
 |
 |-- docs/
 |   |-- product.md          Product purpose, audience, problem, solution.
@@ -43,8 +45,8 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |-- .plan-product/
 |   |-- config.json         plan-product path map; repo-relative.
 |   |-- schema.json         Config schema.
+|   |-- patterns/           Pattern library and expectations for find-code-patterns.
 |   `-- templates/          Starter plan-product artifacts.
-|-- hooks/                  Claude Code plugin hooks (pre-push regeneration).
 |-- scripts/                Plugin generators and support code.
 |-- skills/                 Codex skill entrypoints.
 |-- commands/               Command-capable runtime docs.

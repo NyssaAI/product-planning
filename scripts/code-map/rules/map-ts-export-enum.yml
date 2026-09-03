@@ -1,9 +1,13 @@
 id: map-ts-export-enum
-message: export enum
+message: exported enum (including const enum)
 severity: info
 language: TypeScript
 metadata:
   mapKind: enum
 rule:
-  pattern: export enum $NAME { $$$ }
-
+  kind: enum_declaration
+  inside:
+    kind: export_statement
+  has:
+    field: name
+    pattern: $NAME

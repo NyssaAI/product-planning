@@ -10,9 +10,11 @@ The native plugin packages Codex skills for plan-product workflows plus the code
 - `plan-product:plan-feature`
 - `plan-product:plan-use-case`
 - `plan-product:plan-roadmap`
+- `plan-product:build-roadmap`
 - `plan-product:map-code`
 - `plan-product:map-architecture`
 - `plan-product:find-code-patterns`
+- `plan-product:install-code-map-hook`
 - `plan-product:using-code-map`
 
 Raw URL for agents:

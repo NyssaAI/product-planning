@@ -10,6 +10,7 @@ plan-product helps users define a product, organize features and use cases, and 
 | Feature guide interview | `plan-feature` | `commands/plan-feature.md` |
 | Use-case interview | `plan-use-case` | `commands/plan-use-case.md` |
 | Implementation roadmap | `plan-roadmap` | `commands/plan-roadmap.md` |
+| Roadmap build loop | `build-roadmap` | `commands/build-roadmap.md` |
 | Code-map generation | `map-code` | `commands/map-code.md` |
 | Architecture handoff | `map-architecture` | `commands/map-architecture.md` |
 | Module-rooted pattern review | `find-code-patterns` | `commands/find-code-patterns.md` |
@@ -51,6 +52,7 @@ plan-product:plan-product
 plan-product:plan-feature
 plan-product:plan-use-case
 plan-product:plan-roadmap
+plan-product:build-roadmap
 plan-product:map-code
 plan-product:map-architecture
 plan-product:find-code-patterns
@@ -77,19 +79,18 @@ node "${PLUGIN_ROOT}/scripts/code-map/generate-patterns.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness
 ```
 
+Generator options: `generate-code-map.mjs` accepts `--include-comments` (or `CODE_MAP_INCLUDE_COMMENTS=1`) to embed file header comments and `-o <path>` to override the output file; `generate-patterns.mjs` accepts `--output-dir <dir>`. Run any generator with `--help` for its full flag list; `scripts/module-map/README.md` documents the module-map config keys.
+
 ## Pre-Push Regeneration
 
-The plugin ships a warn-only pre-push hook that regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push.
-
-- Claude Code loads `hooks/hooks.json` automatically when the plugin is installed — a PreToolUse hook runs `scripts/module-map/pre-push-regen.mjs` on `git push` Bash commands.
-- Runtimes without native hooks (Codex, Gemini, Cursor, plain terminals) install a marker-delimited git pre-push hook instead:
+An opt-in, warn-only git pre-push hook regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push, and it only acts in repos that have `.plan-product/config.json`. The plugin ships no Claude Code plugin hook; install the git hook per repo, from any runtime:
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 ```
 
-Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`.
+Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`. Regeneration logs to `.temp/regen.log` in the target repo; the directory ignores itself through a generated `.temp/.gitignore`.
 
 ## Usage and Effectiveness
 

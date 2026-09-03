@@ -23,6 +23,7 @@ Do not duplicate product, feature, use-case, or tech-stack formats in this skill
 - Run a standard-depth product discovery interview by default. Keep it lighter than `plan-feature` or `plan-use-case`, but gather enough context to make the first-pass docs useful for future planning work.
 - If the user says "skip", "unknown", or gives a very brief answer, write `To be defined.` only into empty target sections. Never replace existing non-empty content with `To be defined.`.
 - Preserve existing user-authored content unless the user chooses to replace that file. For updates, merge by section heading and preserve unmatched sections, comments, links, and local notes.
+- A core doc whose content is identical to its configured template is not user-authored: `--init` copies the product, feature-inventory, and tech-stack templates into place. Treat such a file as `template only` in step 1, and write it from the interview without asking to replace it and without preserving the template's instructional sentences as content.
 - Put detailed feature guides under the configured feature root and path pattern. Create only lightweight feature guide stubs in this skill; use `plan-feature` to deepen a feature.
 - Do not create use-case files during this skill unless the user explicitly asks. If they do, use the configured use-case path pattern and current `paths.useCaseTemplate`.
 - Keep tech-stack capture light touch. Record high-level stack context and unknowns only; do not establish language-specific engineering standards or implementation policy in this workflow.
@@ -83,15 +84,15 @@ If the user chooses option 2, collect corrections and update the capsule once be
 
 ### 1. Check Existing plan-product Docs
 
-After resolving paths, check the configured product, feature inventory, and tech-stack files.
+After resolving paths, check the configured product, feature inventory, and tech-stack files. Compare each existing file against its configured template; a byte-identical copy is `template only`.
 
-If any exist, ask using the actual configured paths:
+If any file exists with real content, ask using the actual configured paths:
 
 ```text
 I found existing plan-product documentation:
-- <productPath>: [exists/missing]
-- <featuresPath>: [exists/missing]
-- <techStackPath>: [exists/missing]
+- <productPath>: [exists/template only/missing]
+- <featuresPath>: [exists/template only/missing]
+- <techStackPath>: [exists/template only/missing]
 
 Would you like to:
 1. Start fresh and replace the selected core files
@@ -101,7 +102,7 @@ Would you like to:
 Choose 1, 2, or 3.
 ```
 
-If option 2, ask which configured files to update and only gather information for those files. If option 3, stop.
+If option 2, ask which configured files to update and only gather information for those files. If option 3, stop. When every existing file is `template only`, skip this question and proceed as a fresh run.
 
 ### 2. Gather Product Definition
 

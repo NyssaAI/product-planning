@@ -5,6 +5,11 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { extractSignature } from '../../scripts/code-map/lib/signature-extractor.mjs';
 import { extractDocComment } from '../../scripts/code-map/lib/comment-extractor.mjs';
+import { extractFileHeaderComment } from '../../scripts/code-map/lib/file-header-comment.mjs';
+import {
+  createSourceFileCache,
+  splitSourceLines,
+} from '../../scripts/code-map/lib/source-lines.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];
@@ -118,4 +123,53 @@ test('extractDocComment: truncates to 120 chars', () => {
   const file = fixture('l.ts', `// ${long}\nexport function f() {}\n`);
   const result = extractDocComment(file, 2);
   assert.ok(result.length <= 120);
+});
+
+test('extractFileHeaderComment reads CRLF line-doc header variants', () => {
+  for (const prefix of ['//', '///', '//!']) {
+    assert.equal(
+      extractFileHeaderComment(
+        `${prefix} First header line.\r\n${prefix} Second header line.\r\nexport const value = 1;\r\n`
+      ),
+      'First header line.\nSecond header line.'
+    );
+  }
+});
+
+test('extractors accept pre-split lines without changing results', () => {
+  const content =
+    '/**\n * Builds a user.\n */\nexport function buildUser(id: string) {\n}\n';
+  const file = fixture('pre-split.ts', content);
+  const lines = splitSourceLines(content);
+
+  assert.equal(extractSignature(lines, 4), extractSignature(file, 4));
+  assert.equal(extractDocComment(lines, 4), extractDocComment(file, 4));
+});
+
+test('source cache reads and splits each file once per build', () => {
+  let reads = 0;
+  const readSource = createSourceFileCache(() => {
+    reads += 1;
+    return 'export function cached() {}\n';
+  });
+
+  const first = readSource('cached.ts');
+  const second = readSource('cached.ts');
+  assert.equal(reads, 1);
+  assert.equal(second, first);
+  assert.equal(extractSignature(first.lines, 1), 'export function cached()');
+});
+
+test('extractDocComment removes C# XML tags and preserves referenced names', () => {
+  const lines = splitSourceLines(
+    '/// <summary>Loads <see cref="Order"/> for <paramref name="id"/>.</summary>\npublic Order Load(string id) { }\n'
+  );
+  assert.equal(extractDocComment(lines, 2), 'Loads Order for id.');
+});
+
+test('extractSignature skips multi-line decorated Python declarations', () => {
+  const lines = splitSourceLines(
+    '@app.route(\n    "/orders",\n    methods=["GET"],\n)\ndef list_orders():\n    pass\n'
+  );
+  assert.equal(extractSignature(lines, 1), 'def list_orders()');
 });

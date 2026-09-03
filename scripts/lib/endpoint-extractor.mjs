@@ -13,8 +13,12 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
+// Express-style registrations. The path must start with `/` so settings
+// lookups (`app.get('env')`) are not reported as routes; the handler is the
+// last call argument, after any middleware.
 const JS_HTTP_RE =
-  /\b(?:app|router|server)\.(get|post|put|delete|patch|head|options)\(\s*['"`]([^'"`]+)['"`]\s*(?:,\s*([A-Za-z_$][\w$]*))?/g;
+  /\b(?:app|router|server)\.(get|post|put|delete|patch|head|options)\(\s*['"`](\/[^'"`]*)['"`]/g;
+const JS_IDENTIFIER_RE = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/;
 // Next.js App Router route handlers: a `route.{js,ts,…}` file anywhere under an
 // `app/` directory, exporting one function per HTTP method.
 const NEXT_ROUTE_FILE_RE =
@@ -23,17 +27,29 @@ const NEXT_METHOD_EXPORT_RE =
   /export\s+(?:async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s*\(|export\s+const\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s*=/g;
 const JS_MCP_RE =
   /\b(?:server|mcp)\.(tool|resource|prompt)\(\s*['"`]([^'"`]+)['"`]\s*(?:,\s*['"`]([^'"`]+)['"`])?/g;
+// FastAPI/Flask method decorators on any receiver (app, router, bp, api).
 const PY_HTTP_RE =
-  /^\s*@(?:app|router)\.(get|post|put|delete|patch|head|options)\(\s*['"]([^'"]+)['"]/gm;
-const PY_MCP_RE =
-  /^\s*@(?:mcp|server)\.(tool|resource|prompt)\(\s*(?:name\s*=\s*)?['"]?([^'")\n]+)?/gm;
-const PY_MCP_DECORATED_RE =
-  /^\s*@(?:mcp|server)\.(tool|resource|prompt)\([^)]*\)\s*\n\s*def\s+([A-Za-z_]\w*)/gm;
+  /^[ \t]*@([A-Za-z_]\w*)\.(get|post|put|delete|patch|head|options)\(/gm;
+// Flask `@<name>.route(path, methods=[...])`; GET when `methods` is omitted.
+const PY_ROUTE_RE = /^[ \t]*@([A-Za-z_]\w*)\.route\(/gm;
+const PY_METHODS_KWARG_RE = /^methods\s*=\s*[[(]([^\])]*)[\])]/;
+const PY_FLASK_IMPORT_RE = /^[ \t]*(?:from|import)\s+flask\b/m;
+// FastMCP decorators, with or without a call. The registration name is the
+// explicit positional or `name=` string, else the decorated function's name.
+const PY_MCP_RE = /^[ \t]*@(?:mcp|server)\.(tool|resource|prompt)\b/gm;
+// The `def`/`async def` that follows a decorator, past any further decorator,
+// comment, or blank lines.
+const PY_DECORATED_DEF_RE =
+  /^[ \t]*(?:#[^\n]*)?\r?\n(?:[ \t]*(?:@[^\n]*|#[^\n]*)?\r?\n)*[ \t]*(?:async\s+)?def\s+([A-Za-z_]\w*)/;
+const PY_STRING_RE = /^(?:[rbu]|rb|br)?(['"])([^'"]*)\1$/i;
+const PY_NAME_KWARG_RE = /^name\s*=\s*(['"])([^'"]*)\1$/;
 const CSHARP_HTTP_RE =
   /\.\s*Map(Get|Post|Put|Delete|Patch|Head|Options)\(\s*"([^"]+)"\s*(?:,\s*([A-Za-z_]\w*))?/g;
 const CSHARP_MCP_TRANSPORT_RE = /\.\s*MapMcp\(\s*"([^"]+)"/g;
+// MCP attributes may be followed by further attribute lines ([Description])
+// before the method declaration.
 const CSHARP_MCP_ATTRIBUTE_RE =
-  /\[\s*(McpServerTool|McpServerResource|McpServerPrompt)[^\]]*\]\s*(?:public|private|internal|protected|static|async|\s)*(?:[\w<>,.?[\]\s]+\s+)?([A-Za-z_]\w*)\s*\(/g;
+  /\[\s*(McpServerTool|McpServerResource|McpServerPrompt)[^\]]*\](?:\s*\[[^\]]*\])*\s*(?:public|private|internal|protected|static|async|\s)*(?:[\w<>,.?[\]\s]+\s+)?([A-Za-z_]\w*)\s*\(/g;
 // Go net/http registrations: http.HandleFunc/Handle and mux-style receivers.
 // The literal may be a Go 1.22 "METHOD /path" pattern.
 const GO_NET_HTTP_RE =
@@ -50,8 +66,9 @@ const GO_CHI_METHOD_RE =
 // File-scoped router-group bindings: g := r.Group("/prefix").
 const GO_GROUP_BINDING_RE =
   /\b([A-Za-z_]\w*)\s*:?=\s*([A-Za-z_]\w*)\.Group\(\s*"([^"]+)"/g;
-// Chained segments immediately after a group binding: .Group("/v2")...
-const GO_GROUP_CHAIN_RE = /^\s*\)\s*\.Group\(\s*"([^"]+)"/;
+// Chained segments after a group call's closing paren: .Group("/v2", mw)...
+const GO_GROUP_CHAIN_RE = /^\s*\.Group\(/;
+const GO_STRING_RE = /^"([^"]*)"$/;
 // Group-typed function parameters: routes on these receivers come from
 // another file's Group call, so their prefix is unresolvable here.
 const GO_GROUP_PARAM_RE =
@@ -105,20 +122,21 @@ export function extractEndpoints(repoRoot, files) {
  */
 function extractEndpointsFromText(file, text) {
   const ext = path.extname(file).toLowerCase();
+  const lineAt = createLineLookup(text);
   if (['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(ext)) {
     return [
-      ...extractJavaScriptEndpoints(file, text),
-      ...extractNextAppRouterEndpoints(file, text),
+      ...extractJavaScriptEndpoints(file, text, lineAt),
+      ...extractNextAppRouterEndpoints(file, text, lineAt),
     ];
   }
   if (ext === '.py') {
-    return extractPythonEndpoints(file, text);
+    return extractPythonEndpoints(file, text, lineAt);
   }
   if (ext === '.cs') {
-    return extractCSharpEndpoints(file, text);
+    return extractCSharpEndpoints(file, text, lineAt);
   }
   if (ext === '.go') {
-    return extractGoEndpoints(file, text);
+    return extractGoEndpoints(file, text, lineAt);
   }
   return [];
 }
@@ -126,9 +144,10 @@ function extractEndpointsFromText(file, text) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractGoEndpoints(file, text) {
+function extractGoEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
   const importsGin = text.includes('github.com/gin-gonic/gin');
@@ -147,7 +166,7 @@ function extractGoEndpoints(file, text) {
       method: pattern.method,
       path: pattern.path,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       handler: match[2],
       framework: 'net-http',
       confidence: 'high',
@@ -165,7 +184,7 @@ function extractGoEndpoints(file, text) {
         method: match[2],
         path: resolved.path,
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         handler: match[4],
         framework: importsGin ? 'gin' : 'echo',
         confidence: resolved.resolved ? 'high' : 'medium',
@@ -183,7 +202,7 @@ function extractGoEndpoints(file, text) {
         method: match[2].toUpperCase(),
         path: match[3],
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         handler: match[4],
         framework: 'chi',
         // Routes inside chi Route/Mount closures carry sub-paths this
@@ -200,7 +219,7 @@ function extractGoEndpoints(file, text) {
         method: match[1],
         path: match[2],
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         handler: match[3],
         framework: 'chi',
         confidence: hasUnresolvableGrouping ? 'medium' : 'high',
@@ -213,7 +232,7 @@ function extractGoEndpoints(file, text) {
       kind: 'mcp-tool',
       name: match[1],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'go-mcp',
       confidence: 'high',
     });
@@ -223,7 +242,7 @@ function extractGoEndpoints(file, text) {
       kind: 'mcp-tool',
       name: match[1],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'go-mcp',
       confidence: 'high',
     });
@@ -264,17 +283,27 @@ function collectGoGroupPrefixes(text) {
   const bindings = new Map();
   for (const match of text.matchAll(GO_GROUP_BINDING_RE)) {
     let prefix = match[3];
-    // Accumulate chained .Group("...") segments on the same expression.
-    let rest = text.slice(match.index + match[0].length);
+    let chainResolved = true;
+    // Accumulate chained .Group("...") links on the same expression. Each
+    // link may carry middleware arguments after its prefix string; a link
+    // whose prefix is not a string literal makes the chain unresolvable.
+    let openIndex = match.index + match[0].indexOf('.Group(') + '.Group'.length;
     for (;;) {
-      const chain = rest.match(GO_GROUP_CHAIN_RE);
+      const call = scanCallArguments(text, openIndex);
+      const chain = call ? text.slice(call.end).match(GO_GROUP_CHAIN_RE) : null;
       if (!chain) {
         break;
       }
-      prefix += chain[1];
-      rest = rest.slice(chain.index + chain[0].length);
+      openIndex = call.end + chain[0].length - 1;
+      const link = scanCallArguments(text, openIndex);
+      const literal = link?.args[0]?.match(GO_STRING_RE);
+      if (!literal) {
+        chainResolved = false;
+        break;
+      }
+      prefix += literal[1];
     }
-    if (bindings.has(match[1])) {
+    if (bindings.has(match[1]) || !chainResolved) {
       // Rebinding across functions: first-binding-wins would fabricate wrong
       // paths at high confidence, so the name becomes unresolvable instead.
       bindings.set(match[1], POISONED);
@@ -337,20 +366,22 @@ function resolveGoGroupPath(receiver, subPath, groupPrefixes) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractJavaScriptEndpoints(file, text) {
+function extractJavaScriptEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
   for (const match of text.matchAll(JS_HTTP_RE)) {
+    const call = scanCallArguments(text, match.index + match[0].indexOf('('));
     endpoints.push({
       kind: 'http',
       method: match[1].toUpperCase(),
       path: match[2],
       file,
-      line: lineAt(text, match.index ?? 0),
-      handler: match[3],
+      line: lineAt(match.index ?? 0),
+      handler: lastIdentifierArgument(call),
       framework: 'node',
       confidence: 'high',
     });
@@ -362,7 +393,7 @@ function extractJavaScriptEndpoints(file, text) {
       name: match[2],
       path: match[1] === 'resource' ? match[3] : undefined,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'mcp',
       confidence: 'high',
     });
@@ -378,9 +409,10 @@ function extractJavaScriptEndpoints(file, text) {
  *
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractNextAppRouterEndpoints(file, text) {
+function extractNextAppRouterEndpoints(file, text, lineAt) {
   if (!NEXT_ROUTE_FILE_RE.test(file)) {
     return [];
   }
@@ -394,7 +426,7 @@ function extractNextAppRouterEndpoints(file, text) {
       method,
       path: routePath,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'nextjs-app-router',
       confidence: 'high',
     });
@@ -446,48 +478,81 @@ export function nextRouteSegment(seg) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractPythonEndpoints(file, text) {
+function extractPythonEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
+  const httpFramework = PY_FLASK_IMPORT_RE.test(text) ? 'flask' : 'fastapi';
 
   for (const match of text.matchAll(PY_HTTP_RE)) {
+    const routePath = pythonRoutePath(text, match);
+    if (!routePath) {
+      continue;
+    }
     endpoints.push({
       kind: 'http',
-      method: match[1].toUpperCase(),
-      path: match[2],
+      method: match[2].toUpperCase(),
+      path: routePath,
       file,
-      line: lineAt(text, match.index ?? 0),
-      framework: 'fastapi',
+      line: lineAt(match.index ?? 0),
+      framework: httpFramework,
       confidence: 'high',
     });
   }
 
+  for (const match of text.matchAll(PY_ROUTE_RE)) {
+    const routePath = pythonRoutePath(text, match);
+    if (!routePath) {
+      continue;
+    }
+    const call = scanCallArguments(text, match.index + match[0].length - 1);
+    for (const method of pythonRouteMethods(call?.args ?? [])) {
+      endpoints.push({
+        kind: 'http',
+        method,
+        path: routePath,
+        file,
+        line: lineAt(match.index ?? 0),
+        framework: 'flask',
+        confidence: 'high',
+      });
+    }
+  }
+
   for (const match of text.matchAll(PY_MCP_RE)) {
     const type = match[1];
-    const name = (match[2] ?? '').trim();
+    let end = match.index + match[0].length;
+    /** @type {string[]} */
+    let args = [];
+    if (text[end] === '(') {
+      const call = scanCallArguments(text, end);
+      if (!call) {
+        continue;
+      }
+      args = call.args;
+      end = call.end;
+    }
+    const positional = args[0]?.match(PY_STRING_RE)?.[2];
+    const keyword = args
+      .map((arg) => arg.match(PY_NAME_KWARG_RE)?.[2])
+      .find((value) => value !== undefined);
+    // A resource's positional string is its URI, not its name.
+    const explicitName = keyword ?? (type === 'resource' ? undefined : positional);
+    const defName = text.slice(end).match(PY_DECORATED_DEF_RE)?.[1];
+    const name = explicitName ?? defName;
     if (!name) {
       continue;
     }
     endpoints.push({
       kind: mcpKind(type),
       name,
+      path: type === 'resource' ? positional : undefined,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'mcp',
-      confidence: 'medium',
-    });
-  }
-
-  for (const match of text.matchAll(PY_MCP_DECORATED_RE)) {
-    endpoints.push({
-      kind: mcpKind(match[1]),
-      name: match[2],
-      file,
-      line: lineAt(text, match.index ?? 0),
-      framework: 'mcp',
-      confidence: 'high',
+      confidence: defName ? 'high' : 'medium',
     });
   }
 
@@ -495,11 +560,44 @@ function extractPythonEndpoints(file, text) {
 }
 
 /**
+ * The route path of a Python decorator whose match ends at its `(`: the first
+ * argument must be a plain string starting with `/`.
+ * @param {string} text
+ * @param {RegExpMatchArray} match
+ * @returns {string | undefined}
+ */
+function pythonRoutePath(text, match) {
+  const call = scanCallArguments(text, match.index + match[0].length - 1);
+  const literal = call?.args[0]?.match(PY_STRING_RE)?.[2];
+  return literal?.startsWith('/') ? literal : undefined;
+}
+
+/**
+ * HTTP methods of a Flask `route(...)` call from its `methods=` keyword; GET
+ * when absent.
+ * @param {string[]} args
+ * @returns {string[]}
+ */
+function pythonRouteMethods(args) {
+  for (const arg of args) {
+    const kwarg = arg.match(PY_METHODS_KWARG_RE);
+    if (kwarg) {
+      const methods = [...kwarg[1].matchAll(/['"]([A-Za-z]+)['"]/g)].map((m) =>
+        m[1].toUpperCase()
+      );
+      return methods.length > 0 ? methods : ['GET'];
+    }
+  }
+  return ['GET'];
+}
+
+/**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractCSharpEndpoints(file, text) {
+function extractCSharpEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
@@ -509,7 +607,7 @@ function extractCSharpEndpoints(file, text) {
       method: match[1].toUpperCase(),
       path: match[2],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       handler: match[3],
       framework: 'aspnet-minimal-api',
       confidence: 'high',
@@ -521,7 +619,7 @@ function extractCSharpEndpoints(file, text) {
       kind: 'mcp-transport',
       path: match[1],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'aspnet-mcp',
       confidence: 'high',
     });
@@ -532,7 +630,7 @@ function extractCSharpEndpoints(file, text) {
       kind: csharpMcpKind(match[1]),
       name: match[2],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'dotnet-mcp',
       confidence: 'high',
     });
@@ -567,6 +665,70 @@ function csharpMcpKind(attribute) {
     return 'mcp-prompt';
   }
   return 'mcp-tool';
+}
+
+/**
+ * Splits the argument list of the call whose `(` sits at `openIndex` on
+ * top-level commas, tolerating nested brackets and quoted strings. Returns
+ * null when the parenthesis is unbalanced.
+ * @param {string} text
+ * @param {number} openIndex
+ * @returns {{ args: string[], end: number } | null} end = index after `)`
+ */
+function scanCallArguments(text, openIndex) {
+  if (text[openIndex] !== '(') {
+    return null;
+  }
+  /** @type {string[]} */
+  const args = [];
+  let depth = 0;
+  let start = openIndex + 1;
+  /** @type {string | null} */
+  let quote = null;
+  for (let i = openIndex + 1; i < text.length; i += 1) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === '\\') {
+        i += 1;
+      } else if (ch === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch;
+    } else if (ch === '(' || ch === '[' || ch === '{') {
+      depth += 1;
+    } else if (ch === ')' || ch === ']' || ch === '}') {
+      if (depth > 0) {
+        depth -= 1;
+      } else if (ch === ')') {
+        args.push(text.slice(start, i).trim());
+        return { args: args.filter(Boolean), end: i + 1 };
+      } else {
+        return null;
+      }
+    } else if (ch === ',' && depth === 0) {
+      args.push(text.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  return null;
+}
+
+/**
+ * The handler of a route registration: the last argument after the path,
+ * when it is a plain (possibly dotted) identifier rather than an inline
+ * function.
+ * @param {{ args: string[] } | null} call
+ * @returns {string | undefined}
+ */
+function lastIdentifierArgument(call) {
+  if (!call || call.args.length < 2) {
+    return undefined;
+  }
+  const last = call.args[call.args.length - 1];
+  return JS_IDENTIFIER_RE.test(last) ? last : undefined;
 }
 
 /**
@@ -607,12 +769,34 @@ function compareEndpoints(a, b) {
 }
 
 /**
+ * Build a line-number lookup once per source file so route-heavy files do not
+ * repeatedly scan and allocate the full prefix before each match.
+ *
  * @param {string} text
- * @param {number} index
- * @returns {number}
+ * @returns {(index: number) => number}
  */
-function lineAt(text, index) {
-  return text.slice(0, index).split('\n').length;
+function createLineLookup(text) {
+  const newlineOffsets = [];
+  for (
+    let index = text.indexOf('\n');
+    index !== -1;
+    index = text.indexOf('\n', index + 1)
+  ) {
+    newlineOffsets.push(index);
+  }
+  return (index) => {
+    let low = 0;
+    let high = newlineOffsets.length;
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2);
+      if (newlineOffsets[middle] < index) {
+        low = middle + 1;
+      } else {
+        high = middle;
+      }
+    }
+    return low + 1;
+  };
 }
 
 /**

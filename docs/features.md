@@ -6,8 +6,9 @@
 | Phase 1 - Feature Guide Workflow | 3 / 3 | 100% |
 | Phase 2 - Code Map Workflow | 4 / 4 | 100% |
 | Phase 3 - Roadmap Workflow | 1 / 1 | 100% |
+| Phase 4 - Implementation Loop | 1 / 1 | 100% |
 | Existing Code-Map Capabilities | 15 / 15 | 100% |
-| **Overall** | 26 / 26 | 100% |
+| **Overall** | 27 / 27 | 100% |
 
 ---
 
@@ -19,7 +20,7 @@ This document lists plan-product features in intended build order and retains th
 * **Feature folders:** Each plan-product feature owns a folder named with the lowercase feature ID, for example `docs/features/f-001/`.
 * **Feature files:** The main feature guide is always `feature.md` inside that folder. Use cases live beside it as `uc-001-short-slug.md`.
 * **Status:** An item is marked `complete` only when the capability is implemented, documented, and verified against `.plan-product/config.json`.
-* **Phases:** Phase 0 establishes the repo-local planning contract, Phase 1 builds feature guide workflows, Phase 2 connects product planning to code-map artifacts, and Phase 3 adds the dependency-ordered implementation roadmap.
+* **Phases:** Phase 0 establishes the repo-local planning contract, Phase 1 builds feature guide workflows, Phase 2 connects product planning to code-map artifacts, Phase 3 adds the dependency-ordered implementation roadmap, and Phase 4 builds the roadmap in a Compound Engineering loop.
 * **Code-map capabilities:** The `CM-xxx` entries track the implemented generator capabilities that plan-product keeps alongside product planning workflows.
 
 ---
@@ -40,6 +41,8 @@ This document lists plan-product features in intended build order and retains th
 * [x] F-204: Go code-map support
 ---
 * [x] F-301: Implementation roadmap
+---
+* [x] F-401: Roadmap build loop
 
 ## Feature Inventory
 
@@ -100,6 +103,14 @@ Go symbols, endpoints (net/http, gin/echo/chi, MCP), and package-level module di
 **F-301: Implementation roadmap**  
 Dependency-ordered work slices in `docs/roadmap.md`, authored and validated by the `plan-roadmap` skill.  
 [Feature Guide: Implementation Roadmap](features/f-301/feature.md)
+
+---
+
+### Phase 4 - Implementation Loop
+
+**F-401: Roadmap build loop**
+The `build-roadmap` skill implements roadmap slices one at a time through Compound Engineering planning, adversarial review, implementation, testing, fixing, code review, learning capture, and a code-map rebuild, with dev-standards enforced.
+[Feature Guide: Roadmap Build Loop](features/f-401/feature.md)
 
 ---
 

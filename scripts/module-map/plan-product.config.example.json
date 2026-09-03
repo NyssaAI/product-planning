@@ -3,13 +3,39 @@
   "output": "docs/code-map/code-map.json",
   "outputDir": "docs/code-map",
   "codeMapOutput": "docs/code-map/code-map.json",
+  "projectName": "Example product",
+  "roots": ["src"],
+  "sourceRoots": ["src", "app", "packages"],
+  "autoRegenerate": true,
   "docs": {
     "product": ["docs/product.md"],
     "features": ["docs/features.md"],
     "techStack": ["docs/tech-stack.md"]
   },
+  "briefMaxCharsPerDoc": 1200,
   "modules": {
-    "discover": "auto"
+    "discover": "auto",
+    "adapter": "typescript",
+    "minFiles": 2,
+    "maxFiles": 200,
+    "globs": ["packages/*"],
+    "manual": [
+      { "id": "platform", "root": "src/platform", "preserveModule": false }
+    ],
+    "pinned": [
+      { "id": "legacy", "root": "src/legacy", "exclude": true }
+    ],
+    "flows": {
+      "platform": ["Receive request -> invoke application service"]
+    }
+  },
+  "nav": "src/navigation.ts",
+  "conventions": ["Keep feature dependencies directional."],
+  "apiRoutes": {
+    "enabled": true,
+    "root": "src/app/api",
+    "routeFile": "route.ts",
+    "pathPrefix": "src/app"
   },
   "patterns": {
     "_comment": "Optional extra pattern catalogs. Primary pattern tuning lives in .plan-product/patterns/library.json and .plan-product/patterns/expectations.json. Bundled catalogs and the .plan-product library run first.",
@@ -20,11 +46,5 @@
     "enabled": true,
     "events": ".plan-product/usage/events.jsonl",
     "effectivenessReport": "docs/code-map/effectiveness.md"
-  },
-  "test": {
-    "_comment": "Optional. Test command(s) plan-product records for the repo. Omit `commands` to auto-detect (npm/dotnet/pytest/go/cargo). Set enabled:false to omit.",
-    "commands": ["npm test"],
-    "e2e": ["npx playwright test"],
-    "enabled": true
   }
 }

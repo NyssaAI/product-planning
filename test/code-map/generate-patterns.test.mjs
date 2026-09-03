@@ -6,6 +6,8 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  statSync,
+  utimesSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -139,6 +141,23 @@ test('generate-patterns --json writes patterns artifacts', () => {
     readFileSync(path.join(dir, 'docs/code-map/patterns.md'), 'utf8'),
     /Node CLI argument parser/
   );
+});
+
+test('generate-patterns leaves unchanged artifacts untouched on regeneration', () => {
+  const dir = tempProject();
+  writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = [];\n', 'utf8');
+  assert.equal(run(dir).status, 0);
+  const jsonPath = path.join(dir, 'docs/code-map/patterns.json');
+  const mdPath = path.join(dir, 'docs/code-map/patterns.md');
+  const oldTime = new Date('2020-01-01T00:00:00.000Z');
+  utimesSync(jsonPath, oldTime, oldTime);
+  utimesSync(mdPath, oldTime, oldTime);
+
+  const result = run(dir);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout).wrote, []);
+  assert.equal(statSync(jsonPath).mtime.toISOString(), oldTime.toISOString());
+  assert.equal(statSync(mdPath).mtime.toISOString(), oldTime.toISOString());
 });
 
 test('generate-patterns --json fails parseably when code-map is missing', () => {

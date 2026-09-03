@@ -14,8 +14,6 @@ languageGlobs:
     - '*.cjs'
   CSharp:
     - '*.cs'
-  Java:
-    - '*.java'
   Python:
     - '*.py'
   Go:

@@ -15,7 +15,10 @@
 /** @type {ReadonlySet<string>} */
 export const BASE_SKIP_DIRS = new Set([
   '.git',
+  '.cache',
   '.next',
+  '.nx',
+  '.turbo',
   '.worktrees',
   '__fixtures__',
   'bin',
@@ -26,4 +29,7 @@ export const BASE_SKIP_DIRS = new Set([
   'logs',
   'node_modules',
   'obj',
+  'target',
+  'third_party',
+  'vendor',
 ]);

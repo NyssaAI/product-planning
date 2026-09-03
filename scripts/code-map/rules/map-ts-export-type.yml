@@ -1,9 +1,13 @@
 id: map-ts-export-type
-message: export type
+message: exported type alias (including generic)
 severity: info
 language: TypeScript
 metadata:
   mapKind: type
 rule:
-  pattern: export type $NAME = $VALUE
-
+  kind: type_alias_declaration
+  inside:
+    kind: export_statement
+  has:
+    field: name
+    pattern: $NAME

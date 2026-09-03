@@ -12,6 +12,15 @@ import { ownsFile } from './module-ownership.mjs';
 const log = createLogger({ module: 'build' });
 
 /**
+ * @param {string} root
+ * @returns {string} forward-slashed, no trailing slash; '' for the repo root
+ */
+function normalizeRoot(root) {
+  const normalized = String(root ?? '').replace(/\\/g, '/').replace(/\/$/, '');
+  return normalized === '.' ? '' : normalized;
+}
+
+/**
  * @param {string} repoRoot
  */
 function detectSharedRoot(repoRoot) {
@@ -54,24 +63,41 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
     config.nav ? path.join(repoRoot, config.nav) : null
   );
   const routes = discoverHttpRoutes(repoRoot, config, modules, codeMap);
+
+  // The auto `platform` module must exist before edges are derived, or it can
+  // never appear in dependsOn/usedBy. It is skipped when its shared root is
+  // already owned by a discovered module, since two modules on one root would
+  // double-own every symbol under it.
+  const moduleIds = new Set(modules.map((m) => m.id));
+  const hasPlatformRoutes = routes.some((r) => r.moduleId === 'platform');
+  if (hasPlatformRoutes && !moduleIds.has('platform')) {
+    const platformRoot = detectSharedRoot(repoRoot);
+    const rootOwner = modules.find(
+      (m) => normalizeRoot(m.root) === normalizeRoot(platformRoot)
+    );
+    if (rootOwner) {
+      log.warn('platform module skipped — shared root already owned', {
+        root: platformRoot,
+        owner: rootOwner.id,
+      });
+    } else {
+      modules.push({
+        id: 'platform',
+        name: 'Platform',
+        root: platformRoot,
+        description: 'Shared HTTP APIs and cross-cutting libraries (auto-detected).',
+        flows: config.modules.flows.platform ?? [],
+        packageDependencies: [],
+        exportEntries: [],
+        source: 'manual',
+      });
+      moduleIds.add('platform');
+    }
+  }
+
   const edges = buildModuleEdges(repoRoot, modules, config, stack);
 
   const navById = new Map(nav.map((n) => [n.id, n]));
-  const moduleIds = new Set(modules.map((m) => m.id));
-
-  const hasPlatformRoutes = routes.some((r) => r.moduleId === 'platform');
-  if (hasPlatformRoutes && !moduleIds.has('platform')) {
-    modules.push({
-      id: 'platform',
-      name: 'Platform',
-      root: detectSharedRoot(repoRoot),
-      description: 'Shared HTTP APIs and cross-cutting libraries (auto-detected).',
-      flows: config.modules.flows.platform ?? [],
-      packageDependencies: [],
-      exportEntries: [],
-      source: 'manual',
-    });
-  }
 
   const routeModules = modules.map((mod) => {
     const modRoutes = routes.filter((r) => r.moduleId === mod.id);
@@ -218,6 +244,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
     brief: brief.excerpts,
     modules: enrichedModules,
     moduleGraph: { edges },
+    outputDir: config.outputDir.replace(/\\/g, '/').replace(/\/$/, ''),
     codeMap: config.codeMapOutput.replace(/\\/g, '/'),
     conventions: [
       ...config.conventions,

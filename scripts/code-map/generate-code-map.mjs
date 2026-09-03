@@ -9,8 +9,6 @@ import { spawnSync } from 'node:child_process';
 import {
   existsSync,
   mkdirSync,
-  readFileSync,
-  writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +16,7 @@ import { resolveAstGrepBinary } from '../lib/resolve-ast-grep.mjs';
 import { parseScanJson, symbolNameFromMatch } from '../lib/sg-result.mjs';
 import {
   loadCodeMapConfig,
+  resolveRepoContainedPath,
   SOURCE_EXTENSIONS,
   SUPPORTED_LANGUAGES,
 } from './lib/code-map-config.mjs';
@@ -28,7 +27,13 @@ import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
 import { extractEndpoints } from '../lib/endpoint-extractor.mjs';
 import { annotateCodeMapWithModules } from './lib/module-linker.mjs';
-import { isExcludedGoFile, sourceFilesInRoots } from './lib/source-files.mjs';
+import {
+  isExcludedGoFile,
+  isInSkippedDir,
+  isLanguageEnabled,
+  sourceFilesInRoots,
+} from './lib/source-files.mjs';
+import { createSourceFileCache } from './lib/source-lines.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
 import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
 
@@ -102,7 +107,12 @@ function parseOptions() {
       printHelp(config);
       process.exit(0);
     } else if (arg === '--output' || arg === '-o') {
-      outputPath = path.resolve(REPO_ROOT, args[++i] ?? '');
+      const value = args[i + 1];
+      if (!value || value.startsWith('-')) {
+        throw new Error(`${arg} requires a path within the project root`);
+      }
+      i += 1;
+      outputPath = resolveRepoContainedPath(REPO_ROOT, value, arg);
     } else if (arg.startsWith('-')) {
       throw new Error(`Unknown option: ${arg}`);
     }
@@ -211,7 +221,11 @@ function mapKindFromMatch(match, name) {
   const metadata = /** @type {{ mapKind?: string }} */ (match.metadata ?? {});
   const file = normalizeRepoPath(String(match.file ?? ''));
 
-  if (file.endsWith('/route.js') && name && HTTP_METHODS.has(name)) {
+  if (
+    /(?:^|\/)route\.(?:[cm]?[jt]sx?)$/.test(file) &&
+    name &&
+    HTTP_METHODS.has(name)
+  ) {
     return 'route';
   }
   if (metadata.mapKind === 'route') {
@@ -224,7 +238,7 @@ function mapKindFromMatch(match, name) {
  * @param {Array<Record<string, unknown>>} matches
  * @returns {Map<string, { file: string, line: number, kind: string, name: string }>}
  */
-function collectSymbols(matches) {
+function collectSymbols(matches, languages) {
   /** @type {Map<string, { file: string, line: number, kind: string, name: string }>} */
   const byKey = new Map();
 
@@ -236,9 +250,13 @@ function collectSymbols(matches) {
 
     const file = normalizeRepoPath(String(match.file ?? ''));
     // The ast-grep scan walks roots itself and bypasses sourceFilesInRoots,
-    // so excluded Go files must be dropped here or their symbols re-enter
-    // the index and the endpoint file union.
-    if (isExcludedGoFile(file)) {
+    // so skipped directories, excluded Go files, and disabled languages must
+    // be dropped here or their symbols re-enter the index and endpoint union.
+    if (
+      isInSkippedDir(file) ||
+      isExcludedGoFile(file) ||
+      !isLanguageEnabled(file, languages)
+    ) {
       continue;
     }
     const range = /** @type {{ start?: { line?: number } }} */ (match.range);
@@ -256,22 +274,6 @@ function collectSymbols(matches) {
 }
 
 /**
- * @param {string} repoRelativePath
- * @returns {string | null}
- */
-function readFileHeaderComment(repoRelativePath) {
-  const absPath = path.join(REPO_ROOT, repoRelativePath);
-  if (!existsSync(absPath)) {
-    return null;
-  }
-  if (!SOURCE_EXTENSIONS.has(path.extname(absPath))) {
-    return null;
-  }
-  const content = readFileSync(absPath, 'utf8');
-  return extractFileHeaderComment(content);
-}
-
-/**
  * @param {Map<string, { file: string, line: number, kind: string, name: string }>} symbols
  * @param {CodeMapOptions} options
  * @returns {object}
@@ -286,6 +288,33 @@ function buildCodeMapDocument(symbols, options) {
 
   /** @type {Map<string, { path: string, symbols: Array<{ name: string, kind: string, line: number }>, comment?: string }>} */
   const byFile = new Map();
+  const enabledLanguages = new Set(options.languages);
+  const readCachedSource = createSourceFileCache();
+  /** @type {Map<string, { content: string, lines: readonly string[] } | null>} */
+  const sources = new Map();
+
+  /** @param {string} repoRelativePath */
+  function sourceFor(repoRelativePath) {
+    if (sources.has(repoRelativePath)) {
+      return sources.get(repoRelativePath);
+    }
+    const absPath = path.join(REPO_ROOT, repoRelativePath);
+    if (!SOURCE_EXTENSIONS.has(path.extname(absPath))) {
+      sources.set(repoRelativePath, null);
+      return null;
+    }
+    try {
+      const source = readCachedSource(absPath);
+      sources.set(repoRelativePath, source);
+      return source;
+    } catch (error) {
+      if (/** @type {{ code?: string }} */ (error)?.code !== 'ENOENT') {
+        throw error;
+      }
+      sources.set(repoRelativePath, null);
+      return null;
+    }
+  }
 
   for (const entry of entries) {
     if (!byFile.has(entry.file)) {
@@ -294,9 +323,13 @@ function buildCodeMapDocument(symbols, options) {
         symbols: [],
       });
     }
-    const absPath = path.join(REPO_ROOT, entry.file);
-    const signature = extractSignature(absPath, entry.line);
-    const summary = extractDocComment(absPath, entry.line);
+    const source = sourceFor(entry.file);
+    const signature = source
+      ? extractSignature(source.lines, entry.line)
+      : undefined;
+    const summary = source
+      ? extractDocComment(source.lines, entry.line)
+      : undefined;
     /** @type {{ name: string, kind: string, line: number, signature?: string, summary?: string }} */
     const symbol = {
       name: entry.name,
@@ -314,7 +347,8 @@ function buildCodeMapDocument(symbols, options) {
 
   if (options.includeComments) {
     for (const fileEntry of byFile.values()) {
-      const comment = readFileHeaderComment(fileEntry.path);
+      const source = sourceFor(fileEntry.path);
+      const comment = source ? extractFileHeaderComment(source.content) : null;
       if (comment) {
         fileEntry.comment = comment;
       }
@@ -329,7 +363,9 @@ function buildCodeMapDocument(symbols, options) {
       ...files.map((file) => file.path),
       ...sourceFilesInRoots(REPO_ROOT, options.scanRoots),
     ]),
-  ].sort();
+  ]
+    .filter((file) => isLanguageEnabled(file, enabledLanguages))
+    .sort();
   const endpoints = extractEndpoints(REPO_ROOT, endpointFiles);
   const moduleContext = loadModuleContext();
 
@@ -360,7 +396,11 @@ function loadModuleContext() {
       outputDir: config.outputDir,
       modules: discoverModules(REPO_ROOT, config),
     };
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    process.stderr.write(
+      `code-map: warning: module context unavailable (${message}); generating an unlinked map\n`
+    );
     return {
       outputDir: 'docs/code-map',
       modules: [],
@@ -381,7 +421,7 @@ function runCodeMap() {
   }
 
   const matches = parseScanJson(result.stdout ?? '');
-  const symbols = collectSymbols(matches);
+  const symbols = collectSymbols(matches, new Set(options.languages));
   const document = buildCodeMapDocument(symbols, options);
 
   mkdirSync(path.dirname(options.outputPath), { recursive: true });

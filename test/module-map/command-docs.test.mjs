@@ -122,3 +122,43 @@ test('init and planning docs route through supported commands and configured pat
   assert.match(patternCommand, /paths\.patternLibrary/);
   assert.match(patternCommand, /paths\.patternExpectations/);
 });
+
+test('module-map README documents the supported flags, config keys, and environment', () => {
+  const readme = readFileSync('scripts/module-map/README.md', 'utf8');
+  for (const token of [
+    '--migrate',
+    '--runtimes',
+    '--usage-report',
+    '--with-project-manifest',
+    '--include-comments',
+    '--omit-comments',
+    '--output-dir',
+    'modules.minFiles',
+    'modules.maxFiles',
+    'modules.adapter',
+    'modules.globs',
+    'modules.manual',
+    'modules.flows',
+    'pinned[].exclude',
+    'briefMaxCharsPerDoc',
+    'apiRoutes.pathPrefix',
+    'sourceRoots',
+    'autoRegenerate',
+    'preserveModule',
+    'preserveScope',
+    'projectName',
+    'roots',
+    'LOG_LEVEL',
+    'DEBUG_PLAN_PRODUCT',
+    'JAMAYNOR_HOME',
+  ]) {
+    assert.match(readme, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), token);
+  }
+  assert.doesNotMatch(readme, /test commands/);
+
+  const exampleConfig = readFileSync(
+    'scripts/module-map/plan-product.config.example.json',
+    'utf8'
+  );
+  assert.equal(Object.hasOwn(JSON.parse(exampleConfig), 'test'), false);
+});

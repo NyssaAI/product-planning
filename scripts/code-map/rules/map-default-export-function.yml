@@ -1,8 +1,15 @@
 id: map-default-export-function
-message: default export function
+message: default-exported named function
 severity: info
 language: JavaScript
 metadata:
   mapKind: default-function
 rule:
-  pattern: export default function $NAME($$$) { $$$ }
+  kind: function_declaration
+  inside:
+    kind: export_statement
+    has:
+      regex: '^default$'
+  has:
+    field: name
+    pattern: $NAME

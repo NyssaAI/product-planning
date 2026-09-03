@@ -8,6 +8,7 @@ const log = createLogger({ module: 'embed' });
 
 const START_MARKER = '<!-- plan-product:module-map:start -->';
 const END_MARKER = '<!-- plan-product:module-map:end -->';
+const DEFAULT_OUTPUT_DIR = 'docs/code-map';
 
 /**
  * @param {{ id: string, name: string, description?: string, capabilities?: string[], planningModule: string }[]} modules
@@ -29,47 +30,125 @@ export function renderModuleMapTable(modules) {
 }
 
 /**
+ * @param {string} text
+ * @param {string} marker
+ * @returns {number}
+ */
+function countOccurrences(text, marker) {
+  let count = 0;
+  let idx = text.indexOf(marker);
+  while (idx >= 0) {
+    count += 1;
+    idx = text.indexOf(marker, idx + marker.length);
+  }
+  return count;
+}
+
+/**
+ * Describes why a file's markers cannot be rewritten safely, or null when the
+ * markers are either absent (append) or a single well-formed pair (replace).
+ *
+ * A lone start marker, a lone end marker, an end before its start, or repeated
+ * markers all mean a previous edit or merge damaged the block. Rewriting in
+ * that state can swallow user prose between the damaged marker and wherever a
+ * later marker lands, so the file is left alone and the problem is reported.
+ *
+ * @param {string} original
+ * @returns {string | null}
+ */
+export function describeMarkerDamage(original) {
+  const starts = countOccurrences(original, START_MARKER);
+  const ends = countOccurrences(original, END_MARKER);
+  if (starts === 0 && ends === 0) {
+    return null;
+  }
+  if (starts > 1 || ends > 1) {
+    return `found ${starts} start and ${ends} end markers; expected one of each`;
+  }
+  if (starts === 1 && ends === 0) {
+    return 'start marker present but end marker missing';
+  }
+  if (starts === 0 && ends === 1) {
+    return 'end marker present but start marker missing';
+  }
+  if (original.indexOf(END_MARKER) < original.indexOf(START_MARKER)) {
+    return 'end marker appears before start marker';
+  }
+  return null;
+}
+
+/**
+ * Line ending the file already uses, so the injected block matches instead of
+ * leaving a CRLF file with a mixed LF island.
+ *
+ * @param {string} text
+ * @returns {'\r\n' | '\n'}
+ */
+function detectEol(text) {
+  return text.includes('\r\n') ? '\r\n' : '\n';
+}
+
+/**
  * Rewrites the bounded plan-product:module-map section in one file. Content
- * outside the markers is never touched; if the markers are absent the
- * whole section is appended.
+ * outside the markers is never touched; if the markers are absent the whole
+ * section is appended. If the markers are damaged the file is left unchanged
+ * and a warning names the file and the damage.
  *
  * @param {string} filePath
  * @param {string} tableMarkdown
- * @param {string} [generated] ISO timestamp shared with index.md, stamped into
+ * @param {string | undefined} generated ISO timestamp shared with index.md, stamped into
  *   the managed block so the staleness gate can observe drift from index.md
+ * @param {string} outputDir configured code-map output dir (repo-relative)
  * @returns {boolean} true when the file was written
  */
-function embedIntoFile(filePath, tableMarkdown, generated) {
+function embedIntoFile(filePath, tableMarkdown, generated, outputDir) {
   if (!existsSync(filePath)) {
     return false;
   }
+
+  const original = readFileSync(filePath, 'utf8');
+  const eol = detectEol(original);
+  const indexPath = path.posix.join(
+    outputDir.replace(/\\/g, '/').replace(/\/$/, ''),
+    'index.md'
+  );
 
   const section = [
     START_MARKER,
     '## Module map (auto-updated — do not edit)',
     '',
     // Always-loaded coarse table: route through the index to pick the module set.
-    'Start at `docs/code-map/index.md` to pick the module set.',
+    `Start at \`${indexPath}\` to pick the module set.`,
     '',
     tableMarkdown,
     `<!-- plan-product:module-map generated ${generated ?? new Date().toISOString()} -->`,
     END_MARKER,
-  ].join('\n');
+  ]
+    .join('\n')
+    .replace(/\r?\n/g, eol);
 
-  const original = readFileSync(filePath, 'utf8');
-  let updated;
+  const damage = describeMarkerDamage(original);
+  if (damage) {
+    log.warn('module-map markers damaged; file left unchanged', {
+      file: path.basename(filePath),
+      damage,
+      fix: `restore a single '${START_MARKER}' ... '${END_MARKER}' pair, or remove both markers so the block is re-appended`,
+    });
+    return false;
+  }
 
   const startIdx = original.indexOf(START_MARKER);
   const endIdx = original.indexOf(END_MARKER);
+  let updated;
 
-  if (startIdx >= 0 && endIdx > startIdx) {
+  if (startIdx >= 0) {
     updated =
       original.slice(0, startIdx) +
       section +
       original.slice(endIdx + END_MARKER.length);
   } else {
-    const base = original.endsWith('\n') ? original : `${original}\n`;
-    updated = `${base}\n${section}\n`;
+    const base = original.endsWith('\n') ? original : `${original}${eol}`;
+    updated = `${base}${eol}${section}${eol}`;
   }
 
   // Not `updated === original`: that guard could never fire, because the
@@ -88,13 +167,18 @@ function embedIntoFile(filePath, tableMarkdown, generated) {
  * @param {string} repoRoot
  * @param {string} tableMarkdown from renderModuleMapTable
  * @param {string} [generated] ISO timestamp shared with index.md (model.generated)
+ * @param {{ outputDir?: string }} [options] configured code-map output dir;
+ *   defaults to docs/code-map
  * @returns {string[]} relative paths of files updated
  */
-export function embedModuleMap(repoRoot, tableMarkdown, generated) {
+export function embedModuleMap(repoRoot, tableMarkdown, generated, options = {}) {
+  const outputDir = options.outputDir ?? DEFAULT_OUTPUT_DIR;
   /** @type {string[]} */
   const updated = [];
   for (const name of ['CLAUDE.md', 'AGENTS.md']) {
-    if (embedIntoFile(path.join(repoRoot, name), tableMarkdown, generated)) {
+    if (
+      embedIntoFile(path.join(repoRoot, name), tableMarkdown, generated, outputDir)
+    ) {
       updated.push(name);
     }
   }

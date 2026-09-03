@@ -1,7 +1,53 @@
-import { readFileSync } from 'node:fs';
+import { resolveSourceLines } from './source-lines.mjs';
 
 const MAX_SIGNATURE_LINES = 8;
 const MAX_SIGNATURE_LENGTH = 300;
+// Decorators and attributes may stack and span lines (`@app.route(` … `)`);
+// bound how far we read forward looking for the declaration they annotate.
+const MAX_DECORATOR_LINES = 40;
+
+/**
+ * Net bracket depth contributed by one line: `(` and `[` open, `)` and `]`
+ * close. Used to find where a multi-line decorator or attribute ends.
+ *
+ * @param {string} line
+ * @returns {number}
+ */
+function bracketDelta(line) {
+  let delta = 0;
+  for (const ch of line) {
+    if (ch === '(' || ch === '[') {
+      delta += 1;
+    } else if (ch === ')' || ch === ']') {
+      delta -= 1;
+    }
+  }
+  return delta;
+}
+
+/**
+ * Matches on attributed/decorated declarations start at the attribute or
+ * decorator line. Skip forward past every decorator — including ones whose
+ * argument list continues on following lines — to the declaration itself
+ * (the `def` / `class` / method line).
+ *
+ * @param {readonly string[]} lines
+ * @param {number} start 0-based index of the match line
+ * @returns {number} 0-based index of the first non-decorator line
+ */
+function skipDecorators(lines, start) {
+  const limit = Math.min(lines.length - 1, start + MAX_DECORATOR_LINES);
+  let idx = start;
+  while (idx < limit && /^\s*(@|\[)/.test(lines[idx])) {
+    let depth = bracketDelta(lines[idx]);
+    idx += 1;
+    while (depth > 0 && idx < limit) {
+      depth += bracketDelta(lines[idx]);
+      idx += 1;
+    }
+  }
+  return idx;
+}
 
 /**
  * Extracts the declaration signature starting at the given line.
@@ -10,27 +56,19 @@ const MAX_SIGNATURE_LENGTH = 300;
  * result at the start of the body (`{`, `=>`, or a Python `:` at the end of
  * the parameter list). Language-agnostic — works on text, not the AST.
  *
- * @param {string} filePath absolute path to the source file
+ * @param {string | readonly string[]} source absolute path to the source file, or its lines pre-split with `splitSourceLines`
  * @param {number} lineNumber 1-based line of the declaration
  * @returns {string | undefined} the signature, or undefined when extraction fails
  */
-export function extractSignature(filePath, lineNumber) {
+export function extractSignature(source, lineNumber) {
   try {
-    const lines = readFileSync(filePath, 'utf8').split('\n');
+    const lines = resolveSourceLines(source);
     let start = lineNumber - 1;
     if (start < 0 || start >= lines.length) {
       return undefined;
     }
 
-    // Matches on attributed/decorated declarations start at the attribute or
-    // decorator line — skip forward to the declaration itself.
-    while (
-      start < lines.length - 1 &&
-      /^\s*(@|\[)/.test(lines[start]) &&
-      start < lineNumber - 1 + MAX_SIGNATURE_LINES
-    ) {
-      start += 1;
-    }
+    start = skipDecorators(lines, start);
 
     const chunk = lines.slice(
       start,
