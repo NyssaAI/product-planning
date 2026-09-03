@@ -8,7 +8,7 @@ status: complete
 
 ## Summary
 
-The `build-roadmap` skill implements the roadmap one slice at a time: it selects the next buildable slice, drives it through Compound Engineering planning, adversarial plan review, implementation, the full test suite, bounded fixing, code review, learning capture, and a code-map rebuild, then checks the slice off and repeats.
+The `build-roadmap` skill autonomously implements the roadmap one slice at a time by default: it selects the next buildable slice, drives it through Compound Engineering planning, adversarial plan review, implementation, the full test suite, bounded fixing, code review, learning capture, and a code-map rebuild, then checks the slice off and repeats.
 
 ## User Need
 
@@ -27,6 +27,7 @@ None yet.
 - Completion writes: slice checkboxes, feature checkboxes, guide `status:` frontmatter, and the inventory progress table.
 - Dev-standards enforcement through a standards preamble in every subagent packet and a standards lens in review.
 - Pre-iteration drift review that mirrors `plan-roadmap`'s validation classes and repairs mechanical status drift only.
+- Autonomous resolution of in-scope `ce-plan` decision blockers, with each decision and its rationale recorded in the plan and summarized in the completion commit body.
 
 ## Out of Scope
 
@@ -40,7 +41,7 @@ None yet.
 
 - `.plan-product/config.json` roadmap, inventory, plans, code-map, and tech-stack paths.
 - The configured roadmap and feature inventory, feature guides, and any existing plan linked from a slice.
-- Arguments: a target `R-NNN` or `F-Nxx`, `mode:autonomous`, `max:N|all`, `branch:<name>`, `test:<command>`.
+- Arguments: a target `R-NNN` or `F-Nxx`, opt-in `mode:interactive`, `max:N|all`, `branch:<name>`, `test:<command>`; `mode:autonomous` remains a compatibility alias for the default behavior.
 - Structured returns from `ce-plan`, `ce-doc-review`, `ce-work`, `ce-debug`, `ce-code-review`, and `ce-compound`.
 
 ## Outputs
@@ -50,6 +51,7 @@ None yet.
 - Checked slices and features, updated guide status, and a refreshed progress table.
 - A learning under `docs/solutions/` when one qualified, and refreshed `docs/code-map/` artifacts.
 - A completion report naming completed units, the stop reason, and residuals by category.
+- Autonomous decision records in the plan and, when any were made, the completion commit body.
 
 ## Acceptance
 
@@ -58,6 +60,7 @@ None yet.
 - Every pipeline phase names its skill, its mode tokens, and its gate; the fix loop is bounded to three rounds and the plan-revision loop to one.
 - Dev-standards enforcement cannot be disabled by a flag, and every subagent packet carries the standards preamble.
 - The skill never unchecks history, never renumbers IDs, never pushes, and never works on the default branch.
+- The default run is hands-off with `max:all`; planning decision blockers are resolved from settled docs, verification needs, repository conventions, and reversibility, while missing authority and impossible prerequisites remain hard stops.
 - Content-assertion tests in `test/module-map/build-roadmap-docs.test.mjs` lock the contract, and the capability is registered in README, CLAUDE.md, AGENTS.md, and the Codex install docs.
 
 ## Dependencies

@@ -145,6 +145,21 @@ test('build-roadmap keeps its post-plan adversarial review as a separate phase',
   assert.match(skill, /ce-doc-review mode:non-interactive/);
 });
 
+test('build-roadmap defaults to fully autonomous planning and persists its decisions', () => {
+  const skill = readFileSync(SKILL, 'utf8');
+  const contracts = readFileSync(CONTRACTS, 'utf8');
+  const command = readFileSync(COMMAND, 'utf8');
+
+  assert.match(skill, /fully autonomous loop by default/);
+  assert.match(skill, /Default `max:all` autonomous and `1` interactive/);
+  assert.match(skill, /mode:interactive/);
+  assert.match(skill, /## Autonomous decisions/);
+  assert.match(skill, /commit body headed `Autonomous decisions:`/);
+  assert.match(contracts, /make the best\s+supported choice and continue/);
+  assert.match(contracts, /autonomous_decisions:/);
+  assert.match(command, /Default is fully autonomous/);
+});
+
 test('build-roadmap is registered across plugin docs', () => {
   const readme = readFileSync('README.md', 'utf8');
   assert.match(readme, /`build-roadmap`/);

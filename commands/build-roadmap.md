@@ -1,6 +1,6 @@
 ---
 description: Build the roadmap one slice at a time in a Compound Engineering loop - plan, adversarial plan review, implement, test, fix, code review, compound, code-map rebuild, mark complete, repeat - with dev-standards enforced at every phase.
-argument-hint: "[R-NNN or F-Nxx] [mode:autonomous] [max:N|all] [branch:<name>] [test:<command>]"
+argument-hint: "[R-NNN or F-Nxx] [mode:interactive] [max:N|all] [branch:<name>] [test:<command>]"
 ---
 
 # build-roadmap - implement the next slice, then the next
@@ -37,4 +37,4 @@ The loop refuses `branch:<name>` when it resolves to the default branch. It also
 - The `compound-engineering` plugin (`ce-plan`, `ce-doc-review`, `ce-work`, `ce-debug`, `ce-code-review`, `ce-compound`, `ce-commit`) and the `dev-standards` plugin installed on the host.
 - Node.js for the code-map rebuild.
 
-Default is interactive: one confirmation before each unit, one unit per run. `mode:autonomous max:all` runs hands-off until nothing is buildable or a gate stops the loop. Ship the branch afterwards with `ce-commit-push-pr`.
+Default is fully autonomous: it runs hands-off with `max:all` until nothing is buildable or a hard gate stops the loop. When `ce-plan` encounters an in-scope decision blocker, the loop makes the best supported choice, records the blocker, decision, rationale, and evidence in the plan, and includes a concise decision list in the completion commit body before proceeding. Use `mode:interactive` to opt into one confirmation before each unit and user answers for planning decisions. Ship the branch afterwards with `ce-commit-push-pr`.
