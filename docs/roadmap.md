@@ -46,11 +46,9 @@ This document lists work slices in implementation order. `docs/features.md` owns
     - Add ast-grep symbol rules for Go functions, methods, structs, and interfaces.
     - Skip `vendor/` directories and `*.pb.go` files at scan time.
     - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
-- [x] R-007: Detect Go endpoints — [F-204](features/f-204/feature.md) — after: R-006
-    - Extract `net/http`, gin, echo, and chi route registrations into the endpoint index.
-    - Extract Go MCP tool declarations, matching the MCP detection other languages have.
-    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
-- [x] R-008: Prove Go parity with fixtures and tests — [F-204](features/f-204/feature.md) — after: R-006, R-007
-    - Add Go fixture repos mirroring the existing per-language test layout.
-    - Cover adapter edges, symbol ownership, endpoint extraction, and the vendor/generated-code skips.
-    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
+- [x] R-009: Ship the build-roadmap implementation loop — [F-401](features/f-401/feature.md) — after: F-301
+    - Add the `build-roadmap` skill, its phase-contract reference, and `commands/build-roadmap.md`.
+    - Select the next buildable slice from the roadmap, or the next buildable feature when no roadmap exists, and drive it through ce-plan, ce-doc-review, ce-work, the test suite, ce-debug, ce-code-review, ce-compound, and map-code with dev-standards enforced.
+    - Register the capability across README, CLAUDE.md, AGENTS.md, and Codex docs; lock the contract into content-assertion tests.
+    - Verify: run `npm test` and confirm `build-roadmap-docs.test.mjs` passes; in a repo with an open slice, run `/plan-product:build-roadmap` and confirm it names that slice, writes a plan under `docs/plans/R-NNN-yyyy.mm.dd-*.md`, and checks the slice off only after the suite passes.
+    - Plan: [R-009-2026.09.02-build-roadmap-loop](plans/R-009-2026.09.02-build-roadmap-loop.md)

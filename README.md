@@ -10,6 +10,7 @@ plan-product helps users define a product, organize features and use cases, and 
 | Feature guide interview | `plan-feature` | `commands/plan-feature.md` |
 | Use-case interview | `plan-use-case` | `commands/plan-use-case.md` |
 | Implementation roadmap | `plan-roadmap` | `commands/plan-roadmap.md` |
+| Roadmap build loop | `build-roadmap` | `commands/build-roadmap.md` |
 | Code-map generation | `map-code` | `commands/map-code.md` |
 | Architecture handoff | `map-architecture` | `commands/map-architecture.md` |
 | Module-rooted pattern review | `find-code-patterns` | `commands/find-code-patterns.md` |
@@ -51,6 +52,7 @@ plan-product:plan-product
 plan-product:plan-feature
 plan-product:plan-use-case
 plan-product:plan-roadmap
+plan-product:build-roadmap
 plan-product:map-code
 plan-product:map-architecture
 plan-product:find-code-patterns

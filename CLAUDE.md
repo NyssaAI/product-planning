@@ -10,6 +10,7 @@ This is the plan-product plugin source. It owns product, feature, use-case, and 
 - `plan-feature` - create or update `docs/features/f-nxx/feature.md`.
 - `plan-use-case` - create or update use-case files beside a feature guide.
 - `plan-roadmap` - create or update `docs/roadmap.md`, the dependency-ordered work-slice sequence.
+- `build-roadmap` - implement roadmap slices (or inventory features when no roadmap exists) in a Compound Engineering loop with dev-standards enforced.
 - `map-code` - refresh symbol, endpoint, module, and module-doc context.
 - `map-architecture` - generate the system architecture handoff.
 - `find-code-patterns` - generate structural pattern reports.

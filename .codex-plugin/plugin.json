@@ -33,6 +33,7 @@
     "defaultPrompt": [
       "Plan this product",
       "Plan a feature",
+      "Build the roadmap",
       "Map this repo's code"
     ],
     "brandColor": "#2563EB",
