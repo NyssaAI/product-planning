@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { createLogger } from './logger.mjs';
 import {
   DEFAULT_DOC_CANDIDATES,
   detectApiRoutes,
@@ -32,9 +33,11 @@ import {
  * @property {{ enabled: boolean, root: string, routeFile: string, pathPrefix: string }} apiRoutes
  * @property {string[]} conventions
  * @property {boolean} configFilePresent
+ * @property {string | null} pathConfigError
  */
 
 const DOC_KEYS = ['product', 'features', 'techStack'];
+const log = createLogger({ module: 'config' });
 
 /**
  * @param {string} repoRoot
@@ -47,7 +50,8 @@ export function loadPlanProductConfig(repoRoot, opts = {}) {
   const raw = configFilePresent
     ? JSON.parse(readFileSync(configPath, 'utf8'))
     : {};
-  const planProductPathConfig = readPlanProductPathConfig(repoRoot);
+  const planProductPathResult = readPlanProductPathConfig(repoRoot);
+  const planProductPathConfig = planProductPathResult.value;
   const planProductPaths = planProductPathConfig?.paths ?? {};
   const defaultOutputDir =
     typeof planProductPaths.codeMap === 'string'
@@ -122,10 +126,14 @@ export function loadPlanProductConfig(repoRoot, opts = {}) {
         typeof apiRaw.routeFile === 'string'
           ? apiRaw.routeFile
           : apiDetected.routeFile,
-      pathPrefix: apiDetected.pathPrefix,
+      pathPrefix:
+        typeof apiRaw.pathPrefix === 'string'
+          ? apiRaw.pathPrefix
+          : apiDetected.pathPrefix,
     },
     conventions: Array.isArray(raw.conventions) ? raw.conventions : [],
     configFilePresent,
+    pathConfigError: planProductPathResult.error,
   };
 }
 
@@ -200,17 +208,22 @@ export function writeStarterConfigs(repoRoot) {
 
 /**
  * @param {string} repoRoot
- * @returns {Record<string, any> | null}
+ * @returns {{ value: Record<string, any> | null, error: string | null }}
  */
 function readPlanProductPathConfig(repoRoot) {
   const configPath = path.join(repoRoot, '.plan-product', 'config.json');
   if (!existsSync(configPath)) {
-    return null;
+    return { value: null, error: null };
   }
   try {
-    return JSON.parse(readFileSync(configPath, 'utf8'));
-  } catch {
-    return null;
+    return { value: JSON.parse(readFileSync(configPath, 'utf8')), error: null };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    log.warn('could not parse plan-product path config', {
+      path: configPath,
+      error: message,
+    });
+    return { value: null, error: message };
   }
 }
 

@@ -8,6 +8,7 @@ const log = createLogger({ module: 'embed' });
 
 const START_MARKER = '<!-- plan-product:module-map:start -->';
 const END_MARKER = '<!-- plan-product:module-map:end -->';
+const DEFAULT_OUTPUT_DIR = 'docs/code-map';
 
 /**
  * @param {{ id: string, name: string, description?: string, capabilities?: string[], planningModule: string }[]} modules
@@ -77,6 +78,17 @@ export function describeMarkerDamage(original) {
 }
 
 /**
+ * Line ending the file already uses, so the injected block matches instead of
+ * leaving a CRLF file with a mixed LF island.
+ *
+ * @param {string} text
+ * @returns {'\r\n' | '\n'}
+ */
+function detectEol(text) {
+  return text.includes('\r\n') ? '\r\n' : '\n';
+}
+
+/**
  * Rewrites the bounded plan-product:module-map section in one file. Content
  * outside the markers is never touched; if the markers are absent the whole
  * section is appended. If the markers are damaged the file is left unchanged
@@ -84,28 +96,36 @@ export function describeMarkerDamage(original) {
  *
  * @param {string} filePath
  * @param {string} tableMarkdown
- * @param {string} [generated] ISO timestamp shared with index.md, stamped into
+ * @param {string | undefined} generated ISO timestamp shared with index.md, stamped into
  *   the managed block so the staleness gate can observe drift from index.md
+ * @param {string} outputDir configured code-map output dir (repo-relative)
  * @returns {boolean} true when the file was written
  */
-function embedIntoFile(filePath, tableMarkdown, generated) {
+function embedIntoFile(filePath, tableMarkdown, generated, outputDir) {
   if (!existsSync(filePath)) {
     return false;
   }
+
+  const original = readFileSync(filePath, 'utf8');
+  const eol = detectEol(original);
+  const indexPath = path.posix.join(
+    outputDir.replace(/\\/g, '/').replace(/\/$/, ''),
+    'index.md'
+  );
 
   const section = [
     START_MARKER,
     '## Module map (auto-updated — do not edit)',
     '',
     // Always-loaded coarse table: route through the index to pick the module set.
-    'Start at `docs/code-map/index.md` to pick the module set.',
+    `Start at \`${indexPath}\` to pick the module set.`,
     '',
     tableMarkdown,
     `<!-- plan-product:module-map generated ${generated ?? new Date().toISOString()} -->`,
     END_MARKER,
-  ].join('\n');
-
-  const original = readFileSync(filePath, 'utf8');
+  ]
+    .join('\n')
+    .replace(/\r?\n/g, eol);
 
   const damage = describeMarkerDamage(original);
   if (damage) {
@@ -127,8 +147,8 @@ function embedIntoFile(filePath, tableMarkdown, generated) {
       section +
       original.slice(endIdx + END_MARKER.length);
   } else {
-    const base = original.endsWith('\n') ? original : `${original}\n`;
-    updated = `${base}\n${section}\n`;
+    const base = original.endsWith('\n') ? original : `${original}${eol}`;
+    updated = `${base}${eol}${section}${eol}`;
   }
 
   // Not `updated === original`: that guard could never fire, because the
@@ -147,13 +167,18 @@ function embedIntoFile(filePath, tableMarkdown, generated) {
  * @param {string} repoRoot
  * @param {string} tableMarkdown from renderModuleMapTable
  * @param {string} [generated] ISO timestamp shared with index.md (model.generated)
+ * @param {{ outputDir?: string }} [options] configured code-map output dir;
+ *   defaults to docs/code-map
  * @returns {string[]} relative paths of files updated
  */
-export function embedModuleMap(repoRoot, tableMarkdown, generated) {
+export function embedModuleMap(repoRoot, tableMarkdown, generated, options = {}) {
+  const outputDir = options.outputDir ?? DEFAULT_OUTPUT_DIR;
   /** @type {string[]} */
   const updated = [];
   for (const name of ['CLAUDE.md', 'AGENTS.md']) {
-    if (embedIntoFile(path.join(repoRoot, name), tableMarkdown, generated)) {
+    if (
+      embedIntoFile(path.join(repoRoot, name), tableMarkdown, generated, outputDir)
+    ) {
       updated.push(name);
     }
   }

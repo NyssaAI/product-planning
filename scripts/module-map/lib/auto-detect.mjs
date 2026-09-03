@@ -39,13 +39,12 @@ const CODE_ROOT_CANDIDATES = [
   'test',
 ];
 
-/** @type {readonly { root: string, routeFile: string, pathPrefix: string }[]} */
+/** @type {readonly { root: string, routeFile?: string, pathPrefix: string, router?: 'app' | 'pages' }[]} */
 const API_ROUTE_CANDIDATES = [
-  { root: 'src/app/api', routeFile: 'route.js', pathPrefix: 'src/app' },
-  { root: 'src/app/api', routeFile: 'route.ts', pathPrefix: 'src/app' },
-  { root: 'app/api', routeFile: 'route.js', pathPrefix: 'app' },
-  { root: 'app/api', routeFile: 'route.ts', pathPrefix: 'app' },
-  { root: 'src/pages/api', routeFile: 'ts', pathPrefix: 'src/pages' },
+  { root: 'src/app/api', pathPrefix: 'src/app', router: 'app' },
+  { root: 'app/api', pathPrefix: 'app', router: 'app' },
+  { root: 'src/pages/api', pathPrefix: 'src/pages', router: 'pages' },
+  { root: 'pages/api', pathPrefix: 'pages', router: 'pages' },
   { root: 'routes', routeFile: 'index.js', pathPrefix: '' },
   { root: 'src/routes', routeFile: 'index.js', pathPrefix: 'src' },
 ];
@@ -105,16 +104,50 @@ export function detectCodeMapRoots(repoRoot) {
 export function detectApiRoutes(repoRoot) {
   for (const candidate of API_ROUTE_CANDIDATES) {
     const full = path.join(repoRoot, candidate.root);
-    if (existsSync(full)) {
+    const routeFile = findApiRouteFile(full, candidate);
+    if (routeFile) {
       return {
         enabled: true,
         root: candidate.root,
-        routeFile: candidate.routeFile,
+        routeFile,
         pathPrefix: candidate.pathPrefix,
       };
     }
   }
   return { enabled: false, root: '', routeFile: 'route.js', pathPrefix: '' };
+}
+
+/**
+ * Return an actual matching route filename below a candidate root. Merely
+ * having the directory is not enough: empty App Router roots must not mask a
+ * later Pages Router candidate.
+ *
+ * @param {string} root
+ * @param {{ routeFile?: string, router?: 'app' | 'pages' }} candidate
+ * @returns {string | null}
+ */
+function findApiRouteFile(root, candidate) {
+  if (!existsSync(root)) {
+    return null;
+  }
+  const stack = [root];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        stack.push(path.join(current, entry.name));
+        continue;
+      }
+      if (
+        (candidate.router === 'app' && /^route\.(?:js|ts|jsx|tsx)$/.test(entry.name)) ||
+        (candidate.router === 'pages' && /\.(?:js|ts|jsx|tsx)$/.test(entry.name)) ||
+        (!candidate.router && entry.name === candidate.routeFile)
+      ) {
+        return entry.name;
+      }
+    }
+  }
+  return null;
 }
 
 /**

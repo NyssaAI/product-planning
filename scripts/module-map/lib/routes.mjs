@@ -53,12 +53,15 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
   const apiRoot = path.join(repoRoot, config.apiRoutes.root);
   const routeFileName = config.apiRoutes.routeFile;
   const routeFiles = [];
-  walkFiles(apiRoot, routeFileName, routeFiles);
+  walkFiles(apiRoot, routeFileName, config.apiRoutes.root, routeFiles);
 
   const methodsByFile = new Map();
+  const routeFilePaths = new Set(
+    routeFiles.map((file) => path.relative(repoRoot, file).replace(/\\/g, '/'))
+  );
   for (const file of codeMapFiles) {
     const rel = file.path.replace(/\\/g, '/');
-    if (!rel.endsWith(`/${routeFileName}`)) {
+    if (!routeFilePaths.has(rel)) {
       continue;
     }
     const methods = (file.symbols ?? [])
@@ -77,7 +80,8 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
       const apiPath = filePathToApiRoute(
         rel,
         routeFileName,
-        config.apiRoutes.pathPrefix
+        config.apiRoutes.pathPrefix,
+        config.apiRoutes.root
       );
       return {
         kind: 'http',
@@ -253,29 +257,55 @@ function moduleFromApiSegment(apiPath, modules, moduleIds) {
 /**
  * @param {string} dir
  * @param {string} routeFileName
+ * @param {string} apiRoot
  * @param {string[]} acc
  */
-function walkFiles(dir, routeFileName, acc) {
+function walkFiles(dir, routeFileName, apiRoot, acc) {
   if (!existsSync(dir)) {
     return;
   }
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      walkFiles(full, routeFileName, acc);
-    } else if (entry.name === routeFileName) {
+      walkFiles(full, routeFileName, apiRoot, acc);
+    } else if (isRouteFile(entry.name, routeFileName, apiRoot)) {
       acc.push(full);
     }
   }
 }
 
 /**
+ * @param {string} name
+ * @param {string} configuredName
+ * @param {string} apiRoot
+ */
+function isRouteFile(name, configuredName, apiRoot) {
+  const normalizedRoot = apiRoot.replace(/\\/g, '/');
+  if (/(?:^|\/)app\/api$/.test(normalizedRoot)) {
+    return /^route\.(?:js|ts|jsx|tsx)$/.test(name);
+  }
+  if (/(?:^|\/)pages\/api$/.test(normalizedRoot)) {
+    return /\.(?:js|ts|jsx|tsx)$/.test(name) && !name.endsWith('.d.ts');
+  }
+  return name === configuredName;
+}
+
+/**
  * @param {string} relPath
  * @param {string} routeFileName
  * @param {string} pathPrefix
+ * @param {string} apiRoot
  */
-function filePathToApiRoute(relPath, routeFileName, pathPrefix) {
-  let route = relPath.replace(new RegExp(`/${routeFileName}$`), '');
+function filePathToApiRoute(relPath, routeFileName, pathPrefix, apiRoot) {
+  const normalizedRoot = apiRoot.replace(/\\/g, '/');
+  const pagesRouter = /(?:^|\/)pages\/api$/.test(normalizedRoot);
+  let route = pagesRouter
+    ? relPath.replace(/\.(?:js|ts|jsx|tsx)$/, '').replace(/\/index$/, '')
+    : relPath.replace(/\/route\.(?:js|ts|jsx|tsx)$/, '');
+  if (!pagesRouter && route === relPath) {
+    const escaped = routeFileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    route = relPath.replace(new RegExp(`/${escaped}$`), '');
+  }
   if (pathPrefix) {
     const prefix = pathPrefix.replace(/\\/g, '/');
     if (route.startsWith(`${prefix}/`)) {

@@ -198,6 +198,15 @@ export function runDoctor(repoRoot, options = {}) {
   /** @type {DoctorCheck[]} */
   const checks = [];
 
+  if (config.pathConfigError) {
+    checks.push({
+      id: 'plan-product-path-config',
+      status: 'fail',
+      message: `.plan-product/config.json is not valid JSON: ${config.pathConfigError}`,
+      hint: 'Fix or replace .plan-product/config.json, then rerun --doctor',
+    });
+  }
+
   if (missing.length > 0) {
     for (const key of missing) {
       checks.push({

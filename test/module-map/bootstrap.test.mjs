@@ -117,13 +117,15 @@ test('bootstrap removes known stale local plan-product package scripts', () => {
   assert.equal(pkg.scripts.test, 'node --test');
 });
 
-test('bootstrap does not create an empty project manifest when template is absent', () => {
+test('bootstrap fails clearly instead of creating an empty project manifest', () => {
   const root = tempRepo();
 
-  const result = bootstrapRepo(root, { withProjectManifest: true });
+  assert.throws(
+    () => bootstrapRepo(root, { withProjectManifest: true }),
+    /jamaynor\.project\.json.*(?:missing|not found)/i
+  );
 
   assert.equal(existsSync(path.join(root, 'jamaynor.project.json')), false);
-  assert.ok(result.skipped.includes('jamaynor.project.json (template missing)'));
 });
 
 test('map-architecture package script resolves plugin root and forwards arguments', () => {

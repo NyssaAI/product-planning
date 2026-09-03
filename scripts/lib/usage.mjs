@@ -194,8 +194,19 @@ export function writeEffectivenessReport(repoRoot, options = {}) {
  */
 export function buildEffectivenessModel(repoRoot, input) {
   const config = readJsonIfPresent(path.join(repoRoot, 'plan-product.config.json'));
+  const pathConfig = readJsonIfPresent(
+    path.join(repoRoot, '.plan-product', 'config.json')
+  );
+  const configuredCodeMap =
+    typeof config?.codeMapOutput === 'string' ? config.codeMapOutput : null;
   const outputDir = normalizeRel(
-    typeof config?.outputDir === 'string' ? config.outputDir : 'docs/code-map'
+    typeof config?.outputDir === 'string'
+      ? config.outputDir
+      : configuredCodeMap
+        ? path.posix.dirname(normalizeRel(configuredCodeMap))
+        : typeof pathConfig?.paths?.codeMap === 'string'
+          ? pathConfig.paths.codeMap
+          : 'docs/code-map'
   );
   const codeMapPath = normalizeRel(
     typeof config?.codeMapOutput === 'string'

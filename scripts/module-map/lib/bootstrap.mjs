@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { writeStarterConfigs } from './config.mjs';
+import { loadPlanProductConfig, writeStarterConfigs } from './config.mjs';
 import { createLogger } from './logger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -27,8 +27,7 @@ const log = createLogger({ module: 'bootstrap' });
 function readBootstrapTemplate(name) {
   const templatePath = path.join(TEMPLATES_DIR, name);
   if (!existsSync(templatePath)) {
-    log.warn('bootstrap template missing', { template: name, path: templatePath });
-    return '';
+    throw missingBundledAsset('template', name, templatePath);
   }
   return readFileSync(templatePath, 'utf8');
 }
@@ -40,8 +39,7 @@ function readBootstrapTemplate(name) {
 function readPlanProductTemplate(name) {
   const templatePath = path.join(PLAN_PRODUCT_TEMPLATES_DIR, name);
   if (!existsSync(templatePath)) {
-    log.warn('plan-product template missing', { template: name, path: templatePath });
-    return '';
+    throw missingBundledAsset('template', name, templatePath);
   }
   return readFileSync(templatePath, 'utf8');
 }
@@ -53,10 +51,22 @@ function readPlanProductTemplate(name) {
 function readPlanProductAsset(relPath) {
   const fullPath = path.join(PLAN_PRODUCT_DIR, relPath);
   if (!existsSync(fullPath)) {
-    log.warn('plan-product asset missing', { path: fullPath });
-    return '';
+    throw missingBundledAsset('asset', relPath, fullPath);
   }
   return readFileSync(fullPath, 'utf8');
+}
+
+/**
+ * @param {'template' | 'asset'} kind
+ * @param {string} name
+ * @param {string} filePath
+ */
+function missingBundledAsset(kind, name, filePath) {
+  const error = new Error(
+    `MISSING_BUNDLED_${kind.toUpperCase()}: ${name} not found at ${filePath}`
+  );
+  error.code = `MISSING_BUNDLED_${kind.toUpperCase()}`;
+  return error;
 }
 
 /**
@@ -113,6 +123,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
   const skipped = [];
 
   writeStarterConfigs(repoRoot);
+  const config = loadPlanProductConfig(repoRoot);
 
   writeIfMissing(
     repoRoot,
@@ -171,7 +182,12 @@ export function bootstrapRepo(repoRoot, options = {}) {
 
   ensureDirIfMissing(repoRoot, 'test/unit', created, skipped);
   ensureDirIfMissing(repoRoot, 'docs/features', created, skipped);
-  ensureDirIfMissing(repoRoot, 'docs/code-map/modules', created, skipped);
+  ensureDirIfMissing(
+    repoRoot,
+    path.join(config.outputDir, 'modules').replace(/\\/g, '/'),
+    created,
+    skipped
+  );
   writeIfMissing(
     repoRoot,
     '.plan-product/patterns/library.json',
@@ -199,17 +215,13 @@ export function bootstrapRepo(repoRoot, options = {}) {
 
   if (options.withProjectManifest) {
     const projectManifest = readBootstrapTemplate('jamaynor.project.json');
-    if (projectManifest.trim()) {
-      writeIfMissing(
-        repoRoot,
-        'jamaynor.project.json',
-        projectManifest,
-        created,
-        skipped
-      );
-    } else {
-      skipped.push('jamaynor.project.json (template missing)');
-    }
+    writeIfMissing(
+      repoRoot,
+      'jamaynor.project.json',
+      projectManifest,
+      created,
+      skipped
+    );
   }
 
   if (options.writeScripts) {

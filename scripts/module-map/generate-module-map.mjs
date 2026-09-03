@@ -180,13 +180,15 @@ function printHelp() {
 Generate or manage plan-product module-map artifacts.
 
 Options:
-  --init                 Bootstrap plan-product docs/config in this repo
+  --init, -i             Bootstrap plan-product docs/config in this repo
   --write-scripts        With --init, add npm scripts for map-code, map-architecture, and find-code-patterns
+  --with-project-manifest With --init, also scaffold jamaynor.project.json
   --doctor               Validate docs, code-map, module-map, and agent files
-  --doctor --runtimes    Include runtime dependency checks in doctor output
+  --runtimes             With --doctor, include runtime dependency checks
   --migrate              Normalize generated docs/code-map layout
   --arch                 Refresh the system architecture handoff
   --effectiveness        Write usage/effectiveness report
+  --usage-report         Alias for --effectiveness
   --json                 Emit machine-readable JSON where supported
   --pin <module-id>      Freeze a derived module into plan-product.config.json
   --unpin <module-id>    Return a pinned module to auto-derivation
@@ -337,7 +339,8 @@ function runGenerate() {
   const embedded = embedModuleMap(
     REPO_ROOT,
     renderModuleMapTable(model.modules),
-    model.generated
+    model.generated,
+    { outputDir: config.outputDir }
   );
 
   if (model.modules.length === 0) {
@@ -540,6 +543,8 @@ function main() {
     return;
   }
 
+  warnIgnoredModeFlags();
+
   if (pinId !== null) {
     runPinCommand(pinId, false);
     return;
@@ -561,7 +566,8 @@ function main() {
   }
 
   if (migrateMode) {
-    const actions = runMigrate(REPO_ROOT);
+    const config = loadPlanProductConfig(REPO_ROOT);
+    const actions = runMigrate(REPO_ROOT, { outputDir: config.outputDir });
     process.stdout.write(formatMigrateReport(actions));
     return;
   }
@@ -589,6 +595,41 @@ function main() {
       summary: `generation failed — ${message}`,
     }, 'generate-module-map');
   }
+}
+
+function warnIgnoredModeFlags() {
+  const winner =
+    pinId !== null
+      ? '--pin'
+      : unpinId !== null
+        ? '--unpin'
+        : doctorMode
+          ? '--doctor'
+          : migrateMode
+            ? '--migrate'
+            : initMode
+              ? '--init'
+              : null;
+
+  if (pinId !== null && unpinId !== null) {
+    warnIgnoredFlag('--unpin', '--pin');
+  }
+  if (doctorMode && initMode && pinId === null && unpinId === null) {
+    warnIgnoredFlag('--init', '--doctor');
+  }
+  if (jsonMode && winner) {
+    warnIgnoredFlag('--json', winner);
+  }
+}
+
+/**
+ * @param {string} ignored
+ * @param {string} winner
+ */
+function warnIgnoredFlag(ignored, winner) {
+  process.stderr.write(
+    `plan-product: warning: ${ignored} ignored because ${winner} mode takes precedence\n`
+  );
 }
 
 main();
