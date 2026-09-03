@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { BASE_SKIP_DIRS } from '../../lib/skip-dirs.mjs';
 import { SOURCE_EXTENSIONS } from './code-map-config.mjs';
@@ -31,6 +31,10 @@ const EXTENSION_LANGUAGES = new Map([
   ['.go', 'Go'],
 ]);
 
+// Directory errors that mean "cannot look inside", not "the walk is broken":
+// skip the subtree with a warning instead of aborting the whole generation.
+const SKIPPABLE_DIR_ERRORS = new Set(['EPERM', 'EACCES']);
+
 /**
  * Whether a repo-relative path sits under a directory the source walkers
  * skip. The ast-grep symbol scan walks roots itself, so its matches must be
@@ -53,9 +57,18 @@ export function isInSkippedDir(repoRelativePath) {
  */
 export function sourceFilesInRoots(repoRoot, roots) {
   const seen = new Set();
+  const visitedDirs = new Set();
   const files = [];
+  const realRepoRoot = realpathSync(repoRoot);
   for (const root of roots) {
-    walkSourceFiles(repoRoot, path.join(repoRoot, root), files, seen);
+    walkSourceFiles(
+      repoRoot,
+      realRepoRoot,
+      path.resolve(repoRoot, root),
+      files,
+      seen,
+      visitedDirs
+    );
   }
   return files.sort();
 }
@@ -69,6 +82,20 @@ export function languageForFile(filePath) {
 }
 
 /**
+ * True when the file maps to a configured language. Unknown extensions are
+ * excluded from symbol and endpoint inputs because no configured language can
+ * enable them.
+ *
+ * @param {string} filePath
+ * @param {ReadonlySet<string>} languages
+ * @returns {boolean}
+ */
+export function isLanguageEnabled(filePath, languages) {
+  const language = languageForFile(filePath);
+  return language !== null && languages.has(language);
+}
+
+/**
  * @param {string} filePath
  * @returns {boolean}
  */
@@ -78,24 +105,125 @@ export function isKnownSourceFile(filePath) {
 
 /**
  * @param {string} repoRoot
+ * @param {string} target
+ * @returns {import('node:fs').Stats | null} stats following links, or null when the target is missing
+ */
+function statFollowing(repoRoot, target) {
+  try {
+    return statSync(target);
+  } catch (err) {
+    warnSkippedDirectory(repoRoot, target, err);
+    return null;
+  }
+}
+
+/**
+ * @param {string} repoRoot
+ * @param {string} dir
+ * @returns {string | null}
+ */
+function realDirectoryPath(repoRoot, dir) {
+  try {
+    return realpathSync(dir);
+  } catch (err) {
+    warnSkippedDirectory(repoRoot, dir, err);
+    return null;
+  }
+}
+
+/**
+ * @param {string} repoRoot
+ * @param {string} dir
+ * @param {unknown} err
+ * @returns {boolean} whether the error was reported as a skippable permission failure
+ */
+function warnSkippedDirectory(repoRoot, dir, err) {
+  const code = /** @type {{ code?: string }} */ (err)?.code ?? '';
+  if (!SKIPPABLE_DIR_ERRORS.has(code)) {
+    return false;
+  }
+  const rel = path.relative(repoRoot, dir).replace(/\\/g, '/') || '.';
+  process.stderr.write(
+    `code-map: skipping ${rel} (${code}: directory is not readable)\n`
+  );
+  return true;
+}
+
+/**
+ * @param {string} root
+ * @param {string} candidate
+ * @returns {boolean}
+ */
+function isContained(root, candidate) {
+  const relative = path.relative(root, candidate);
+  return (
+    relative === '' ||
+    (!relative.startsWith(`..${path.sep}`) &&
+      relative !== '..' &&
+      !path.isAbsolute(relative))
+  );
+}
+
+/**
+ * @param {string} repoRoot
+ * @param {string} realRepoRoot
  * @param {string} dir
  * @param {string[]} acc
- * @param {Set<string>} seen
+ * @param {Set<string>} seen repo-relative file paths already collected
+ * @param {Set<string>} visitedDirs real paths of directories already walked; a
+ *   symlink or junction is followed at most once and cycles terminate here
  */
-function walkSourceFiles(repoRoot, dir, acc, seen) {
+function walkSourceFiles(repoRoot, realRepoRoot, dir, acc, seen, visitedDirs) {
   if (!existsSync(dir)) {
     return;
   }
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+  const realDir = realDirectoryPath(repoRoot, dir);
+  if (
+    realDir === null ||
+    !isContained(realRepoRoot, realDir) ||
+    visitedDirs.has(realDir)
+  ) {
+    return;
+  }
+  visitedDirs.add(realDir);
+
+  /** @type {import('node:fs').Dirent[]} */
+  let entries;
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch (err) {
+    if (warnSkippedDirectory(repoRoot, dir, err)) {
+      return;
+    }
+    throw err;
+  }
+
+  for (const entry of entries) {
     if (SOURCE_SCAN_SKIP_DIRS.has(entry.name)) {
       continue;
     }
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      walkSourceFiles(repoRoot, full, acc, seen);
+    let isDirectory = entry.isDirectory();
+    let isFile = entry.isFile();
+    if (entry.isSymbolicLink()) {
+      // Symlinks and Windows junctions: resolve the target once; `visitedDirs`
+      // keeps a link back into an ancestor from looping.
+      const stats = statFollowing(repoRoot, full);
+      isDirectory = stats?.isDirectory() ?? false;
+      isFile = stats?.isFile() ?? false;
+    }
+    if (isDirectory) {
+      walkSourceFiles(
+        repoRoot,
+        realRepoRoot,
+        full,
+        acc,
+        seen,
+        visitedDirs
+      );
       continue;
     }
-    if (entry.isFile() && isKnownSourceFile(entry.name)) {
+    if (isFile && isKnownSourceFile(entry.name)) {
       const rel = path.relative(repoRoot, full).replace(/\\/g, '/');
       if (isExcludedGoFile(rel)) {
         continue;

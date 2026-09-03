@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
@@ -15,6 +15,14 @@ import { isExcludedGoFile } from '../../scripts/code-map/lib/source-files.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CODE_MAP_DIR = path.resolve(__dirname, '../../scripts/code-map');
 const SG_CONFIG = path.join(CODE_MAP_DIR, 'sgconfig.yml');
+/** @type {string[]} */
+const tempDirs = [];
+
+test.after(() => {
+  for (const dir of tempDirs) {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
 
 const GO_SAMPLE = `package sample
 
@@ -37,6 +45,7 @@ func (s *Server) Handle(path string) string {
 
 function scanGoSample() {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'go-rules-'));
+  tempDirs.push(dir);
   writeFileSync(path.join(dir, 'sample.go'), GO_SAMPLE, 'utf8');
   const binary = resolveAstGrepBinary({
     toolkitDir: CODE_MAP_DIR,

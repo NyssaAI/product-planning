@@ -14,10 +14,23 @@
  * the more useful meaning: when the content last *changed*, not when the
  * generator last *ran*.
  *
+ * Writes are atomic: content goes to a temp file beside the target and is
+ * renamed into place, so a crash or a concurrent reader (the pre-push hook
+ * runs while editors and other tools may hold the file open) never sees a
+ * truncated artifact.
+ *
  * @module scripts/lib/write-artifact
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import path from 'node:path';
 
 /**
  * ISO-8601 instants, the only form the generators stamp. Generated artifacts
@@ -32,6 +45,32 @@ const ISO_TIMESTAMP = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/g;
  */
 function withoutTimestamps(text) {
   return text.replace(ISO_TIMESTAMP, '<generated>');
+}
+
+/**
+ * Write `content` through a temp file in the target's directory and rename it
+ * over `filePath`. The temp file lives beside the target so the rename never
+ * crosses a filesystem boundary.
+ *
+ * @param {string} filePath
+ * @param {string} content
+ */
+function writeAtomically(filePath, content) {
+  const tempPath = path.join(
+    path.dirname(filePath),
+    `.${path.basename(filePath)}.${process.pid}.${randomBytes(4).toString('hex')}.tmp`
+  );
+  try {
+    writeFileSync(tempPath, content, 'utf8');
+    renameSync(tempPath, filePath);
+  } catch (err) {
+    try {
+      unlinkSync(tempPath);
+    } catch {
+      // Temp file already gone or never created.
+    }
+    throw err;
+  }
 }
 
 /**
@@ -54,6 +93,6 @@ export function writeArtifactIfChanged(filePath, content) {
     }
   }
 
-  writeFileSync(filePath, content, 'utf8');
+  writeAtomically(filePath, content);
   return true;
 }

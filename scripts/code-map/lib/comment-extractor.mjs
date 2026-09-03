@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { resolveSourceLines } from './source-lines.mjs';
 
 const MAX_LOOKBACK_LINES = 20;
 const MAX_SUMMARY_LENGTH = 120;
@@ -35,6 +35,25 @@ function stripCommentMarkers(line) {
 }
 
 /**
+ * C# / F# `///` documentation is XML: `<summary>` wrappers, `<param>` and
+ * `<returns>` blocks, and inline `<see cref="X"/>`, `<paramref/>`, `<c>`
+ * tags. Reduce one `///` line to its prose so summaries read as sentences
+ * instead of markup. Only `///` lines are treated this way — a JSDoc line
+ * such as `Returns Promise<Array<T>>` must keep its generics.
+ *
+ * @param {string} text a `///` line with its comment markers stripped
+ * @returns {string}
+ */
+function stripXmlDocTags(text) {
+  return text
+    .replace(/<(?:see|seealso)\s+cref="([^"]*)"\s*\/>/g, '$1')
+    .replace(/<(?:paramref|typeparamref)\s+name="([^"]*)"\s*\/>/g, '$1')
+    .replace(/<\/?[A-Za-z][^<>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Scans backwards from a symbol's declaration line for a leading comment
  * block (`//`, `/* … *​/`, `#`, `"""`) and extracts the first sentence.
  *
@@ -42,13 +61,13 @@ function stripCommentMarkers(line) {
  * skipped so doc comments above `@decorator` / `[Attribute]` lines still
  * attach to the symbol.
  *
- * @param {string} filePath absolute path to the source file
+ * @param {string | readonly string[]} source absolute path to the source file, or its lines pre-split with `splitSourceLines`
  * @param {number} lineNumber 1-based line of the declaration
  * @returns {string | undefined} first sentence (≤120 chars), or undefined
  */
-export function extractDocComment(filePath, lineNumber) {
+export function extractDocComment(source, lineNumber) {
   try {
-    const lines = readFileSync(filePath, 'utf8').split('\n');
+    const lines = resolveSourceLines(source);
     const targetIdx = lineNumber - 1;
     if (targetIdx <= 0 || targetIdx >= lines.length) {
       return undefined;
@@ -63,7 +82,10 @@ export function extractDocComment(filePath, lineNumber) {
       const line = lines[i].trim();
 
       if (isCommentLine(line)) {
-        const stripped = stripCommentMarkers(line);
+        let stripped = stripCommentMarkers(line);
+        if (line.startsWith('///')) {
+          stripped = stripXmlDocTags(stripped);
+        }
         // JSDoc tag lines (@param, @returns, @type, …) are metadata, not prose.
         if (stripped && !stripped.startsWith('@')) {
           commentLines.unshift(stripped);

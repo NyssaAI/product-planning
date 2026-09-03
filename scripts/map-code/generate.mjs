@@ -12,6 +12,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { recordUsageEvent } from '../lib/usage.mjs';
 import { findProjectRoot } from '../module-map/lib/project-root.mjs';
+import { loadPlanProductConfig } from '../module-map/lib/config.mjs';
+import { loadCodeMapConfig } from '../code-map/lib/code-map-config.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PLUGIN_ROOT = path.resolve(__dirname, '../..');
@@ -51,10 +53,16 @@ for (const arg of args) {
   process.exit(1);
 }
 
-main();
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  main();
+}
 
 function main() {
   try {
+    const outputs = mapCodeOutputs(REPO_ROOT);
     runStep('code-map', CODE_MAP_SCRIPT, codeMapArgs);
     runStep('module-map', MODULE_MAP_SCRIPT, moduleMapArgs);
     recordUsageEvent(REPO_ROOT, {
@@ -62,7 +70,7 @@ function main() {
       status: 'ok',
       durationMs: Date.now() - started,
       summary: 'code-map and module-map generation completed',
-      outputs: ['docs/code-map/code-map.json', 'docs/code-map/module-map.json'],
+      outputs,
       metrics: { steps: 2 },
       warnings: [],
       errors: [],
@@ -81,6 +89,26 @@ function main() {
     process.stderr.write(`map-code: ${message}\n`);
     process.exit(1);
   }
+}
+
+/**
+ * @param {string} repoRoot
+ * @returns {string[]}
+ */
+export function mapCodeOutputs(repoRoot) {
+  const codeMapConfig = loadCodeMapConfig(repoRoot);
+  const planProductConfig = loadPlanProductConfig(repoRoot);
+  return [
+    normalizeRepoPath(codeMapConfig.output),
+    normalizeRepoPath(
+      path.posix.join(planProductConfig.outputDir, 'module-map.json')
+    ),
+  ];
+}
+
+/** @param {string} value */
+function normalizeRepoPath(value) {
+  return value.replace(/\\/g, '/');
 }
 
 /**

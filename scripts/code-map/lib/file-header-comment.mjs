@@ -115,7 +115,10 @@ function readLineCommentBlock(text, offset, linePrefix) {
  * @returns {string | null}
  */
 export function extractFileHeaderComment(content) {
-  let text = content.replace(/^\uFEFF/, '');
+  // Line comments are matched with `(.*)$`, and `.` never matches `\r`, so a
+  // CRLF file would lose every `//`, `///`, and `//!` header. Normalize line
+  // endings once so every reader below sees LF-only text.
+  let text = content.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
   let offset = 0;
 
   if (text.startsWith('#!')) {
