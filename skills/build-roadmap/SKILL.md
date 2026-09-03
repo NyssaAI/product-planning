@@ -32,6 +32,7 @@ Tokens are flags, not context. Strip them before treating the remainder as a bri
 - Enforce the dev-standards plugin at every phase. See Dev Standards Enforcement; it is not optional and no flag disables it.
 - Commit locally after each completed unit. Never push, open a pull request, merge, rebase, or force-push. Shipping is the user's call afterwards through `ce-commit-push-pr`.
 - Never work on the default branch. Never commit files the user had dirty before the run started; record them as excluded and leave them untouched.
+- Treat repo-relative paths as identical after normalizing separators and resolving `.` segments. A path under a managed directory collides with that directory; do not rely on Git's status prefix alone when comparing paths.
 - Interactive mode asks one blocking question at a time through the host's blocking question tool when one is listed; otherwise present numbered choices in chat and wait. Autonomous mode asks nothing.
 - Bound every retry. The fix loop runs at most three rounds; the plan-revision loop runs at most one; every other phase runs once and its failure is a stop.
 
@@ -65,8 +66,8 @@ If neither file exists, or the inventory holds only template placeholder feature
 
 1. Read `.plan-product/config.json` and resolve every path above. If the config is missing, stop and route the user to `plan-product`; this skill never bootstraps a repo.
 2. Read the configured roadmap, feature inventory, and tech-stack doc. Decide the work source.
-3. Confirm `git` is available and the working tree is a repository. Record `git status --short --untracked-files=all` as the pre-run dirty set and `git branch --show-current` as the starting branch.
-4. Resolve the run branch. Use `branch:<name>` when given. Otherwise, if the current branch is the default branch (`origin/HEAD`, else `main` or `master`), create and switch to `build-roadmap/<yyyy.mm.dd>`; if the branch already exists, switch to it. If the current branch is not the default, stay on it.
+3. Confirm `git` is available and the working tree is a repository. Record every path from `git status --short --untracked-files=all` as the pre-run dirty set (both old and new paths for a rename, with Git quoting decoded) and `git branch --show-current` as the starting branch.
+4. Resolve the default branch name first (`origin/HEAD`, else an existing local `main` or `master`) and canonicalize local branch spellings by removing `refs/heads/` or `refs/remotes/origin/`. If the canonical `branch:<name>` equals the canonical default branch name, stop before switching branches or making any working-tree write and tell the user to choose a non-default branch. Compare names, not tip commit SHAs: a new work branch may legitimately start at the same commit as the default branch. Otherwise use `branch:<name>` when given. Without it, if the current branch is the default branch, create and switch to `build-roadmap/<yyyy.mm.dd>`; if the branch already exists, switch to it. If the current branch is not the default, stay on it.
 5. Resolve the plugin root for the code-map rebuild. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill. Substitute that absolute path for `${PLUGIN_ROOT}` before running any command.
 6. Resolve the test-suite command (see Test Suite).
 7. Load the `dev-standards` skill in the main context and read its required baseline. Keep a two-to-five-line summary of the applicable constraints for this repo; every subagent packet carries it.
@@ -98,6 +99,15 @@ Dev standards: <the preflight constraint summary>
 ```
 
 Interactive mode asks: "Build R-NNN next? 1. Yes 2. Pick a different slice 3. Stop". Autonomous mode proceeds.
+
+Before normalizing any artifact or dispatching any phase, discover the selected unit's mandatory managed write targets and intersect them with the pre-run dirty set:
+
+- the configured roadmap path when roadmap mode is active;
+- the configured feature-inventory path;
+- the selected feature guide, resolved from the selected parent/feature ID and `structure.features.featurePathPattern`; and
+- the resolving existing `Plan:` path when this run will reuse that plan.
+
+Resolve links relative to the repo root, normalize every target to a repo-relative path, and compare exact file paths (a directory target also covers descendants). If the intersection is non-empty, stop before plan normalization or subagent dispatch. Report every colliding path and tell the user to commit, stash, or move those changes, then rerun. This is a recovery stop, not an excluded-file exception: the loop cannot safely complete while one of its mandatory writes was dirty before the run.
 
 ### 3. Plan
 
@@ -147,13 +157,15 @@ Dispatch the **compound** packet: `ce-compound mode:non-interactive depth:full` 
 
 ### 10. Rebuild the code map
 
-Dispatch the **codemap** packet: run the `map-code` workflow from the repo root:
+The generator-managed targets are every path under the configured code-map root plus repo-root `AGENTS.md` and `CLAUDE.md`, because the generator may refresh embedded module-map sections in those root files. Intersect those targets with the pre-run dirty set before dispatch. If any collide, skip the code-map rebuild entirely and record every colliding path as a warn-only code-map residual; never let the generator overwrite a pre-run dirty managed target.
+
+Otherwise dispatch the **codemap** packet: run the `map-code` workflow from the repo root:
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/map-code/generate.mjs"
 ```
 
-Regeneration is warn-only. A generator failure is a residual; it never stops the loop. Stage the refreshed artifacts under the configured code-map root with the completion commit.
+Regeneration is warn-only. A generator failure is a residual; it never stops the loop. The packet returns every path changed by the generator, including changed root `AGENTS.md` or `CLAUDE.md` embeddings, not only artifacts below the code-map root. Keep that returned path set for the completion commit.
 
 ### 11. Mark complete and commit
 
@@ -162,7 +174,7 @@ In the main agent:
 1. Check the plan document's remaining `[ ]` tasks that the implement envelope reports complete. Leave any it did not complete unchecked and name them as residuals.
 2. Roadmap mode: flip the slice's `- [ ] R-NNN:` to `- [x] R-NNN:`. Then, if every slice of the parent feature is checked, check the feature in the inventory, set the guide's `status: complete`, and recompute the progress table.
 3. Inventory mode: check the feature in the inventory, set the guide's `status: complete`, and recompute the progress table.
-4. Stage the roadmap, inventory, feature guide, plan document, solutions doc, and code-map artifacts, and commit `feat(R-NNN): <slice statement>` (inventory mode: `feat(F-Nxx): <feature name>`). Use `ce-commit` when it is available; otherwise commit directly with that message. Exclude the pre-run dirty set.
+4. Build an explicit completion staging allowlist from the managed docs written for this unit (roadmap when applicable, inventory, selected feature guide, plan document, and returned solutions doc) plus the exact changed paths returned by the codemap packet. Remove every path in the pre-run dirty set, then stage only that allowlist; do not stage by directory or with a catch-all pathspec. This includes clean-at-start `AGENTS.md` or `CLAUDE.md` changes returned by the generator while still excluding every pre-run dirty path. Commit `feat(R-NNN): <slice statement>` (inventory mode: `feat(F-Nxx): <feature name>`). Use `ce-commit` when it is available; otherwise commit directly with that message.
 
 ### 12. Loop
 

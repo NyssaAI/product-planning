@@ -164,9 +164,22 @@ Gate: either signal advances. A missing terminal signal is recorded as a residua
 
 ```text
 <standards preamble>
+The orchestrator has already confirmed that none of the generator-managed targets were dirty before
+the run. Generator-managed targets are all paths under <code-map root> plus repo-root AGENTS.md and
+CLAUDE.md. Before generating, snapshot the existence and content hash of every current managed
+target. After generating, enumerate the targets again and compare existence and hashes so root
+embedding changes and created or deleted artifacts are included.
 From the repo root, run:
 node "<absolute plugin root>/scripts/map-code/generate.mjs"
-Return the generator's reported files, warnings, and errors, and `git status --short <code-map root>`.
+Return:
+changed_paths: <every repo-relative generator-managed path whose existence or content changed;
+include AGENTS.md and CLAUDE.md when their embedded sections changed; "none" otherwise>
+reported_files: <the generator's reported files>
+warnings: <generator warnings or none>
+errors: <generator errors or none>
+status: <`git status --short --` limited to changed_paths, or none>
 ```
 
-Gate: never stops the loop. Errors and warnings are residuals; changed artifacts are staged with the completion commit.
+Gate: never stops the loop. Errors and warnings are residuals. `changed_paths` is the authoritative
+generator staging input for the completion commit; the main agent combines it with the managed docs
+allowlist and removes every pre-run dirty path before staging.

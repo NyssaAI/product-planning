@@ -26,8 +26,10 @@ Work from `paths.roadmap` (usually `docs/roadmap.md`) when it exists: the next u
 - the configured roadmap (`paths.roadmap`): `[x]` on completed slices and `Plan:` links
 - the configured feature inventory (`paths.features`): `[x]` on completed features and the progress table
 - feature guides: `status: complete`
-- plan documents under `paths.plans`, learnings under `docs/solutions/`, and code-map artifacts under `paths.codeMap`
+- plan documents under `paths.plans`, learnings under `docs/solutions/`, code-map artifacts under `paths.codeMap`, and clean-at-start root `AGENTS.md`/`CLAUDE.md` embeddings returned by the generator
 - local commits on a `build-roadmap/<yyyy.mm.dd>` branch (or `branch:<name>`); never a push or PR
+
+The loop refuses `branch:<name>` when it resolves to the default branch. It also stops before phase dispatch when the selected unit's roadmap, inventory, feature guide, or reused plan was dirty before the run. Pre-run dirty code-map or root embedding targets skip regeneration with a warning instead of being overwritten.
 
 ## Prerequisites
 

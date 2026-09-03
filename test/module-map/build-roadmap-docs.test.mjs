@@ -95,6 +95,56 @@ test('build-roadmap enforces dev-standards and protects roadmap history', () => 
   assert.match(skill, /Never work on the default branch/);
 });
 
+test('build-roadmap rejects an explicit default branch before switching or writing', () => {
+  const skill = readFileSync(SKILL, 'utf8');
+
+  assert.match(skill, /canonical `branch:<name>` equals the canonical default branch name/);
+  assert.match(skill, /stop before switching branches or making any working-tree write/);
+  assert.match(skill, /Compare names, not tip commit SHAs/);
+  assert.match(skill, /choose a non-default branch/);
+});
+
+test('build-roadmap blocks mandatory managed-write collisions before dispatch', () => {
+  const skill = readFileSync(SKILL, 'utf8');
+
+  assert.match(skill, /Before normalizing any artifact or dispatching any phase/);
+  assert.match(skill, /configured roadmap path when roadmap mode is active/);
+  assert.match(skill, /configured feature-inventory path/);
+  assert.match(skill, /structure\.features\.featurePathPattern/);
+  assert.match(skill, /resolving existing `Plan:` path when this run will reuse that plan/);
+  assert.match(skill, /commit, stash, or move those changes, then rerun/);
+});
+
+test('build-roadmap skips code-map generation for dirty managed targets', () => {
+  const skill = readFileSync(SKILL, 'utf8');
+
+  assert.match(skill, /every path under the configured code-map root plus repo-root `AGENTS\.md` and `CLAUDE\.md`/);
+  assert.match(skill, /If any collide, skip the code-map rebuild entirely/);
+  assert.match(skill, /warn-only code-map residual/);
+});
+
+test('codemap contract returns every generator path and completion stages an explicit allowlist', () => {
+  const skill = readFileSync(SKILL, 'utf8');
+  const contracts = readFileSync(CONTRACTS, 'utf8');
+
+  assert.match(contracts, /snapshot the existence and content hash of every current managed/);
+  assert.match(contracts, /changed_paths: <every repo-relative generator-managed path/);
+  assert.match(contracts, /include AGENTS\.md and CLAUDE\.md when their embedded sections changed/);
+  assert.match(contracts, /`changed_paths` is the authoritative/);
+  assert.match(skill, /managed docs written for this unit/);
+  assert.match(skill, /exact changed paths returned by the codemap packet/);
+  assert.match(skill, /Remove every path in the pre-run dirty set/);
+  assert.match(skill, /do not stage by directory or with a catch-all pathspec/);
+});
+
+test('build-roadmap keeps its post-plan adversarial review as a separate phase', () => {
+  const skill = readFileSync(SKILL, 'utf8');
+
+  assert.match(skill, /### 3\. Plan[\s\S]*### 4\. Review the plan adversarially/);
+  assert.match(skill, /Dispatch the \*\*plan-review\*\* packet/);
+  assert.match(skill, /ce-doc-review mode:non-interactive/);
+});
+
 test('build-roadmap is registered across plugin docs', () => {
   const readme = readFileSync('README.md', 'utf8');
   assert.match(readme, /`build-roadmap`/);
