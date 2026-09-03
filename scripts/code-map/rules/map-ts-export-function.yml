@@ -1,10 +1,21 @@
 id: map-ts-export-function
-message: export function
+message: exported function (any signature, generic, or generator)
 severity: info
 language: TypeScript
 metadata:
   mapKind: function
 rule:
-  pattern: export function $NAME($$$) { $$$ }
+  any:
+    - kind: function_declaration
+    - kind: generator_function_declaration
+  inside:
+    kind: export_statement
+    not:
+      has:
+        regex: '^default$'
   not:
-    pattern: export async function $NAME($$$) { $$$ }
+    has:
+      regex: '^async$'
+  has:
+    field: name
+    pattern: $NAME

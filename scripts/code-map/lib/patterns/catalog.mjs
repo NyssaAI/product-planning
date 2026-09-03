@@ -33,13 +33,6 @@ const REGEX_RULE_KINDS_BY_LANGUAGE = {
     'method_declaration',
     'class_declaration',
   ],
-  Java: [
-    'identifier',
-    'field_access',
-    'method_invocation',
-    'method_declaration',
-    'class_declaration',
-  ],
   Python: [
     'identifier',
     'attribute',

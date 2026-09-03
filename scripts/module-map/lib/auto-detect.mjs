@@ -166,6 +166,6 @@ export function detectSrcChildModules(repoRoot) {
 
   return readdirSync(srcDir, { withFileTypes: true })
     .filter((e) => e.isDirectory() && !skip.has(e.name) && !e.name.startsWith('.'))
-    .map((e) => path.join('src', e.name))
+    .map((e) => `src/${e.name}`)
     .filter((rel) => hasSourceFiles(path.join(repoRoot, rel)));
 }

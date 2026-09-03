@@ -441,15 +441,11 @@ function extractDeclarationsByFile(repoRoot, csFiles) {
     return byFile;
   }
 
+  const binary = resolveAstGrepBinary({
+    toolkitDir: CODE_MAP_DIR,
+    projectRoot: repoRoot,
+  });
   try {
-    const binary = resolveAstGrepBinary({
-      toolkitDir: CODE_MAP_DIR,
-      projectRoot: repoRoot,
-    });
-    if (!existsSync(binary)) {
-      log.debug('ast-grep binary not found for C# declarations', { binary });
-      return byFile;
-    }
 
     const matches = runBatchedScan(
       binary,
@@ -481,7 +477,7 @@ function extractDeclarationsByFile(repoRoot, csFiles) {
       });
     }
   } catch (error) {
-    log.debug('C# declaration extraction failed', { error: errorMessage(error) });
+    log.warn('C# declaration extraction failed', { error: errorMessage(error) });
   }
 
   return byFile;

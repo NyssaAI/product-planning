@@ -52,3 +52,18 @@ This document lists work slices in implementation order. `docs/features.md` owns
     - Register the capability across README, CLAUDE.md, AGENTS.md, and Codex docs; lock the contract into content-assertion tests.
     - Verify: run `npm test` and confirm `build-roadmap-docs.test.mjs` passes; in a repo with an open slice, run `/plan-product:build-roadmap` and confirm it names that slice, writes a plan under `docs/plans/R-NNN-yyyy.mm.dd-*.md`, and checks the slice off only after the suite passes.
     - Plan: [R-009-2026.09.02-build-roadmap-loop](plans/R-009-2026.09.02-build-roadmap-loop.md)
+- [x] R-010: Make pre-push regeneration opt-in and honest — [F-203](features/f-203/feature.md) — after: R-005
+    - Remove the Claude Code plugin hook (`hooks/hooks.json`) that fired in every repo where the plugin was enabled; the git pre-push hook installed per repo is the only trigger.
+    - Skip regeneration entirely in repos without `.plan-product/config.json`.
+    - Report generator failures as failures: `regen-if-source-changed.mjs --run` exits non-zero and the pre-push warning names the failing generator.
+    - Move the regeneration log from `docs/code-map/.regen.log` to `.temp/regen.log`, self-ignored, so it never trips the uncommitted-artifacts warning.
+    - Verify: in a scratch repo with no `.plan-product/config.json`, install the git hook and push; confirm no `docs/code-map/` appears. In a plan-product repo, break `plan-product.config.json` and push; confirm the warning names the failing generator and `.temp/regen.log` holds the error.
+    - Plan: none yet
+- [x] R-007: Detect Go endpoints — [F-204](features/f-204/feature.md) — after: R-006
+    - Extract `net/http`, gin, echo, and chi route registrations into the endpoint index.
+    - Extract Go MCP tool declarations, matching the MCP detection other languages have.
+    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)
+- [x] R-008: Prove Go parity with fixtures and tests — [F-204](features/f-204/feature.md) — after: R-006, R-007
+    - Add Go fixture repos mirroring the existing per-language test layout.
+    - Cover adapter edges, symbol ownership, endpoint extraction, and the vendor/generated-code skips.
+    - Plan: [R-006-2026.07.31-go-code-map-support](plans/R-006-2026.07.31-go-code-map-support.md)

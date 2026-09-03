@@ -10,7 +10,6 @@ export const SUPPORTED_LANGUAGES = [
   'JavaScript',
   'TypeScript',
   'CSharp',
-  'Java',
   'Python',
   'Go',
 ];
@@ -30,7 +29,6 @@ export const SOURCE_EXTENSIONS = new Set([
   '.mts',
   '.cts',
   '.cs',
-  '.java',
   '.py',
   '.go',
   // Detected-but-unsupported (no rules/adapter) below this line:

@@ -81,17 +81,14 @@ node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness
 
 ## Pre-Push Regeneration
 
-The plugin ships a warn-only pre-push hook that regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push.
-
-- Claude Code loads `hooks/hooks.json` automatically when the plugin is installed — a PreToolUse hook runs `scripts/module-map/pre-push-regen.mjs` on `git push` Bash commands.
-- Runtimes without native hooks (Codex, Gemini, Cursor, plain terminals) install a marker-delimited git pre-push hook instead:
+An opt-in, warn-only git pre-push hook regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push, and it only acts in repos that have `.plan-product/config.json`. The plugin ships no Claude Code plugin hook; install the git hook per repo, from any runtime:
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 ```
 
-Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`.
+Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`. Regeneration logs to `.temp/regen.log` in the target repo; the directory ignores itself through a generated `.temp/.gitignore`.
 
 ## Usage and Effectiveness
 

@@ -1,8 +1,13 @@
 id: map-export-class
-message: export class
+message: exported class (plain, decorated, or extends)
 severity: info
 language: JavaScript
 metadata:
   mapKind: class
 rule:
-  pattern: export class $NAME { $$$ }
+  kind: class_declaration
+  inside:
+    kind: export_statement
+  has:
+    field: name
+    pattern: $NAME

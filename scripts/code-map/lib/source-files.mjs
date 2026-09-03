@@ -27,10 +27,24 @@ const EXTENSION_LANGUAGES = new Map([
   ['.mts', 'TypeScript'],
   ['.cts', 'TypeScript'],
   ['.cs', 'CSharp'],
-  ['.java', 'Java'],
   ['.py', 'Python'],
   ['.go', 'Go'],
 ]);
+
+/**
+ * Whether a repo-relative path sits under a directory the source walkers
+ * skip. The ast-grep symbol scan walks roots itself, so its matches must be
+ * filtered with this before they enter the index or the endpoint file union.
+ *
+ * @param {string} repoRelativePath forward-slash repo-relative path
+ * @returns {boolean}
+ */
+export function isInSkippedDir(repoRelativePath) {
+  return repoRelativePath
+    .split('/')
+    .slice(0, -1)
+    .some((segment) => SOURCE_SCAN_SKIP_DIRS.has(segment));
+}
 
 /**
  * @param {string} repoRoot

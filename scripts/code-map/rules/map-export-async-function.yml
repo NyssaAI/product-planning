@@ -1,8 +1,21 @@
 id: map-export-async-function
-message: export async function
+message: exported async function
 severity: info
 language: JavaScript
 metadata:
   mapKind: async-function
 rule:
-  pattern: export async function $NAME($$$) { $$$ }
+  any:
+    - kind: function_declaration
+    - kind: generator_function_declaration
+  inside:
+    kind: export_statement
+    not:
+      has:
+        regex: '^default$'
+  has:
+    regex: '^async$'
+  all:
+    - has:
+        field: name
+        pattern: $NAME

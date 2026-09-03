@@ -31,6 +31,7 @@
 | `writeTempAstGrepConfig` |  |
 | `cleanupTempAstGrepConfig` |  |
 | `extractSignature` | Extracts the declaration signature starting at the given line. |
+| `isInSkippedDir` | Whether a repo-relative path sits under a directory the source walkers skip. |
 | `sourceFilesInRoots` |  |
 | `languageForFile` |  |
 | `isKnownSourceFile` |  |

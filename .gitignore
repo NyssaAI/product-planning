@@ -7,5 +7,5 @@ bin/
 obj/
 inspo
 triage/
-.regen.log
+.temp/
 .plan-product/usage/*.jsonl

@@ -1,6 +1,6 @@
 {
   "name": "plan-product",
   "description": "plan-product: plans products, features, and use cases, then generates code-map context for implementation planning.",
-  "version": "2.3.2",
+  "version": "3.0.0",
   "contextFileName": "GEMINI.md"
 }

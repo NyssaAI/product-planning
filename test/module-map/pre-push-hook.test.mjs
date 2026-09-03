@@ -1,92 +1,126 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, readFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
+import { fileURLToPath } from 'node:url';
 
-const PRE_PUSH_REGEN = path.resolve('scripts/module-map/pre-push-regen.mjs');
-const INSTALLER = path.resolve('scripts/module-map/install-git-hook.mjs');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '../..');
+const PRE_PUSH_REGEN = path.join(REPO_ROOT, 'scripts/module-map/pre-push-regen.mjs');
+const REGEN = path.join(REPO_ROOT, 'scripts/module-map/regen-if-source-changed.mjs');
+const INSTALLER = path.join(REPO_ROOT, 'scripts/module-map/install-git-hook.mjs');
 
-function runHook(input, env = {}) {
-  return spawnSync(process.execPath, [PRE_PUSH_REGEN], {
+function gitAvailable() {
+  return spawnSync('git', ['--version'], { encoding: 'utf8' }).status === 0;
+}
+
+/** @param {import('node:test').TestContext} t */
+function scratchRepo(t) {
+  const repo = mkdtempSync(path.join(os.tmpdir(), 'pp-hook-'));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  assert.equal(spawnSync('git', ['init', '-q'], { cwd: repo }).status, 0);
+  return repo;
+}
+
+function runPrePush(cwd, env = {}) {
+  return spawnSync(process.execPath, [PRE_PUSH_REGEN, '--git-hook'], {
+    cwd,
     encoding: 'utf8',
-    input,
-    env: { ...process.env, PLAN_PRODUCT_HOOK_DRY_RUN: '1', ...env },
+    env: { ...process.env, ...env },
   });
 }
 
-test('plugin ships a PreToolUse pre-push hook referencing an existing script', () => {
-  const manifest = JSON.parse(readFileSync('hooks/hooks.json', 'utf8'));
-  const [entry] = manifest.hooks.PreToolUse;
-  assert.equal(entry.matcher, 'Bash');
-  const [hook] = entry.hooks;
-  assert.equal(hook.type, 'command');
-  assert.match(hook.command, /\$\{CLAUDE_PLUGIN_ROOT\}/);
-  assert.match(hook.command, /pre-push-regen\.mjs/);
-  assert.ok(existsSync(PRE_PUSH_REGEN), 'pre-push-regen.mjs exists');
+test('plugin ships no runtime hook manifest', () => {
+  assert.equal(existsSync(path.join(REPO_ROOT, 'hooks')), false, 'hooks/ must not exist');
+  const pkg = JSON.parse(readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
+  assert.equal(pkg.files.includes('hooks/'), false);
 });
 
-test('pre-push-regen matches only git push commands and never blocks', () => {
-  const nonPush = runHook(JSON.stringify({ tool_input: { command: 'git status' } }));
-  assert.equal(nonPush.status, 0);
-  assert.equal(nonPush.stdout.trim(), '');
-
-  const push = runHook(
-    JSON.stringify({ tool_input: { command: 'git push origin main' } })
-  );
-  assert.equal(push.status, 0);
-  assert.match(push.stdout, /would regenerate/);
-
-  const chained = runHook(
-    JSON.stringify({ tool_input: { command: 'npm test && git push' } })
-  );
-  assert.equal(chained.status, 0);
-  assert.match(chained.stdout, /would regenerate/);
-
-  const lookalike = runHook(
-    JSON.stringify({ tool_input: { command: 'echo push it to the git log' } })
-  );
-  assert.equal(lookalike.status, 0);
-  assert.equal(lookalike.stdout.trim(), '');
-
-  // A path containing "push" is not a push. `\b` treats the hyphen in
-  // `pre-push` as a word boundary, so the old regex fired a full regeneration
-  // on ordinary file operations against a hook file.
-  for (const command of [
-    'git add .githooks/pre-push',
-    'git rm -q .githooks/pre-push scripts/setup-git-hooks.mjs',
-    'git log --oneline -- .githooks/pre-push',
-    'git commit -m "remove pre-push hook"',
-  ]) {
-    const result = runHook(JSON.stringify({ tool_input: { command } }));
-    assert.equal(result.status, 0);
-    assert.equal(result.stdout.trim(), '', `must not regenerate for: ${command}`);
-  }
-
-  // Git global options precede the subcommand and must be skipped, including
-  // the ones that consume the following token as a value.
-  for (const command of [
-    'git -C /repo push origin main',
-    'git --no-pager push',
-    'git -c user.name=x push',
-  ]) {
-    const result = runHook(JSON.stringify({ tool_input: { command } }));
-    assert.equal(result.status, 0);
-    assert.match(result.stdout, /would regenerate/, `must regenerate for: ${command}`);
-  }
-
-  const noPayload = runHook('');
-  assert.equal(noPayload.status, 0);
-});
-
-test('install-git-hook installs an idempotent warn-only pre-push block', (t) => {
-  if (spawnSync('git', ['--version'], { encoding: 'utf8' }).status !== 0) {
+test('pre-push-regen does nothing in a repo without .plan-product/config.json', (t) => {
+  if (!gitAvailable()) {
     t.skip('git unavailable');
     return;
   }
-  const repo = mkdtempSync(path.join(os.tmpdir(), 'pp-hook-'));
-  assert.equal(spawnSync('git', ['init'], { cwd: repo }).status, 0);
+  const repo = scratchRepo(t);
+  writeFileSync(path.join(repo, 'a.txt'), 'hello\n');
+
+  const result = runPrePush(repo);
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr.trim(), '');
+  assert.equal(existsSync(path.join(repo, 'docs')), false, 'no docs/ created');
+  assert.equal(existsSync(path.join(repo, '.temp')), false, 'no .temp/ created');
+});
+
+test('pre-push-regen honors the dry run and opt-out in a plan-product repo', (t) => {
+  if (!gitAvailable()) {
+    t.skip('git unavailable');
+    return;
+  }
+  const repo = scratchRepo(t);
+  mkdirSync(path.join(repo, '.plan-product'));
+  writeFileSync(path.join(repo, '.plan-product/config.json'), '{}');
+
+  const dry = runPrePush(repo, { PLAN_PRODUCT_HOOK_DRY_RUN: '1' });
+  assert.equal(dry.status, 0);
+  assert.match(dry.stderr, /would regenerate/);
+
+  writeFileSync(
+    path.join(repo, 'plan-product.config.json'),
+    JSON.stringify({ prePushRegenerate: false })
+  );
+  const optedOut = runPrePush(repo, { PLAN_PRODUCT_HOOK_DRY_RUN: '1' });
+  assert.equal(optedOut.status, 0);
+  assert.equal(optedOut.stderr.trim(), '');
+});
+
+test('a failing generator exits non-zero from --run, logs under .temp, and warns without blocking', (t) => {
+  if (!gitAvailable()) {
+    t.skip('git unavailable');
+    return;
+  }
+  const repo = scratchRepo(t);
+  mkdirSync(path.join(repo, '.plan-product'));
+  writeFileSync(path.join(repo, '.plan-product/config.json'), '{}');
+  // No docs/ at all, so generate-module-map fails with MISSING_DOCS.
+
+  const run = spawnSync(process.execPath, [REGEN, '--run'], {
+    cwd: repo,
+    encoding: 'utf8',
+  });
+  assert.notEqual(run.status, 0, 'run mode must report the generator failure');
+  assert.match(run.stderr, /generate-module-map\.mjs failed/);
+
+  const logFile = path.join(repo, '.temp', 'regen.log');
+  assert.ok(existsSync(logFile), '.temp/regen.log written');
+  assert.match(readFileSync(logFile, 'utf8'), /ERROR generate-module-map\.mjs/);
+  assert.equal(readFileSync(path.join(repo, '.temp', '.gitignore'), 'utf8').trim(), '*');
+  assert.equal(
+    existsSync(path.join(repo, 'docs/code-map/.regen.log')),
+    false,
+    'log must not live in the code-map directory'
+  );
+
+  const hook = runPrePush(repo);
+  assert.equal(hook.status, 0, 'hook never blocks');
+  assert.match(hook.stderr, /regeneration failed; push continues/);
+  assert.match(hook.stderr, /generate-module-map\.mjs/);
+});
+
+test('install-git-hook installs an idempotent warn-only pre-push block', (t) => {
+  if (!gitAvailable()) {
+    t.skip('git unavailable');
+    return;
+  }
+  const repo = scratchRepo(t);
   const hookFile = path.join(repo, '.git', 'hooks', 'pre-push');
 
   const install = spawnSync(process.execPath, [INSTALLER], {
@@ -115,19 +149,23 @@ test('install-git-hook installs an idempotent warn-only pre-push block', (t) => 
 });
 
 test('install-code-map-hook skill and command route through the installer', () => {
-  const skill = readFileSync('skills/install-code-map-hook/SKILL.md', 'utf8');
+  const skill = readFileSync(path.join(REPO_ROOT, 'skills/install-code-map-hook/SKILL.md'), 'utf8');
   assert.match(skill, /^name: install-code-map-hook$/m);
   assert.match(skill, /install-git-hook\.mjs/);
   assert.match(skill, /\$\{PLUGIN_ROOT\}/);
   assert.match(skill, /prePushRegenerate/);
   assert.match(skill, /never blocks a push/i);
+  assert.match(skill, /ships no runtime-level hook/);
+  assert.doesNotMatch(skill, /hooks\/hooks\.json/);
 
-  const command = readFileSync('commands/install-code-map-hook.md', 'utf8');
+  const command = readFileSync(path.join(REPO_ROOT, 'commands/install-code-map-hook.md'), 'utf8');
   assert.match(command, /Load the `install-code-map-hook` skill/);
   assert.match(command, /install-git-hook\.mjs/);
   assert.match(command, /--uninstall/);
+  assert.doesNotMatch(command, /hooks\/hooks\.json/);
 
-  const readme = readFileSync('README.md', 'utf8');
+  const readme = readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
   assert.match(readme, /`install-code-map-hook`/);
   assert.match(readme, /prePushRegenerate/);
+  assert.doesNotMatch(readme, /hooks\/hooks\.json/);
 });

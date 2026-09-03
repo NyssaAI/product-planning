@@ -240,8 +240,8 @@ function discoverFromWorkspaces(repoRoot, config) {
     ? rootPkg.workspaces
     : [];
 
-  /** @type {ModuleDef[]} */
-  const modules = [];
+  /** @type {PackageEntry[]} */
+  const entries = [];
   const seen = new Set();
 
   for (const pattern of patterns) {
@@ -251,11 +251,11 @@ function discoverFromWorkspaces(repoRoot, config) {
         continue;
       }
       seen.add(dir);
-      modules.push(readPackageAsModule(repoRoot, pkgPath, config));
+      entries.push(readPackageEntry(repoRoot, pkgPath, config));
     }
   }
 
-  return modules;
+  return assignUniquePackageIds(entries, config);
 }
 
 /**
@@ -265,15 +265,12 @@ function discoverFromWorkspaces(repoRoot, config) {
  */
 function discoverFromGlob(repoRoot, pattern, config) {
   const dirs = expandWorkspacePattern(repoRoot, pattern);
-  return dirs
+  const entries = dirs
     .filter((dir) => existsSync(path.join(dir, 'package.json')))
     .map((dir) =>
-      readPackageAsModule(
-        repoRoot,
-        path.join(dir, 'package.json'),
-        config
-      )
+      readPackageEntry(repoRoot, path.join(dir, 'package.json'), config)
     );
+  return assignUniquePackageIds(entries, config);
 }
 
 /**
@@ -302,46 +299,139 @@ function expandWorkspacePattern(repoRoot, pattern) {
 }
 
 /**
+ * @typedef {object} PackageEntry
+ * @property {ModuleDef} module
+ * @property {string[]} candidates ids to try in order, most preferred first
+ */
+
+/**
  * @param {string} repoRoot
  * @param {string} pkgPath
  * @param {import('./config.mjs').PlanProductConfig} config
+ * @returns {PackageEntry}
  */
-function readPackageAsModule(repoRoot, pkgPath, config) {
+function readPackageEntry(repoRoot, pkgPath, config) {
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
   const relDir = path
     .relative(repoRoot, path.dirname(pkgPath))
     .replace(/\\/g, '/');
-  const id = packageNameToId(pkg.name, path.basename(relDir));
-  const name = pkg.name ?? id;
+  const packageName = typeof pkg.name === 'string' ? pkg.name : undefined;
+  const candidates = packageIdCandidates(packageName, relDir);
+  const id = candidates[0];
 
   return {
-    id,
-    name,
-    root: relDir,
-    description: pkg.description ?? '',
-    flows: config.modules.flows[id] ?? [],
-    packageDependencies: [
-      ...Object.keys(pkg.dependencies ?? {}),
-      ...Object.keys(pkg.peerDependencies ?? {}),
-    ],
-    exportEntries: Object.keys(pkg.exports ?? {}),
-    source: 'workspace',
+    candidates,
+    module: {
+      id,
+      name: packageName ?? id,
+      root: relDir,
+      description: pkg.description ?? '',
+      flows: config.modules.flows[id] ?? [],
+      packageDependencies: [
+        ...Object.keys(pkg.dependencies ?? {}),
+        ...Object.keys(pkg.peerDependencies ?? {}),
+      ],
+      exportEntries: Object.keys(pkg.exports ?? {}),
+      source: 'workspace',
+    },
   };
 }
 
 /**
+ * Candidate module ids for one package, most preferred first: the unscoped
+ * package name, then `scope-name` for a scoped package, then an id derived
+ * from the package directory. Later candidates are used only when an earlier
+ * one collides with another package in the same discovery pass.
+ *
  * @param {string | undefined} packageName
- * @param {string} fallbackId
+ * @param {string} relDir forward-slash repo-relative package directory
+ * @returns {string[]}
  */
-function packageNameToId(packageName, fallbackId) {
+export function packageIdCandidates(packageName, relDir) {
+  const rootId =
+    relDir.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'root';
   if (!packageName) {
-    return fallbackId;
+    return unique([path.basename(relDir), rootId]);
   }
   if (packageName.startsWith('@')) {
-    const parts = packageName.split('/');
-    return parts.length > 1 ? parts[1] : parts[0].slice(1);
+    const [scope, name] = packageName.slice(1).split('/');
+    return name
+      ? unique([name, `${scope}-${name}`, rootId])
+      : unique([scope, rootId]);
   }
-  return packageName;
+  return unique([packageName, rootId]);
+}
+
+/** @param {string[]} values */
+function unique(values) {
+  return [...new Set(values)];
+}
+
+/**
+ * Give every package a distinct id. Packages whose preferred id collides all
+ * move to their next candidate together, so `@a/core` and `@b/core` become
+ * `a-core` and `b-core` while a lone `@acme/core` stays `core`. Exhausted
+ * candidates fall back to a numeric suffix. The result is sorted by root so
+ * the outcome does not depend on directory read order.
+ *
+ * @param {PackageEntry[]} entries
+ * @param {import('./config.mjs').PlanProductConfig} config
+ * @returns {ModuleDef[]}
+ */
+export function assignUniquePackageIds(entries, config) {
+  const sorted = [...entries].sort((a, b) =>
+    a.module.root.localeCompare(b.module.root)
+  );
+  const level = new Map(sorted.map((entry) => [entry, 0]));
+  const idAt = (entry) =>
+    entry.candidates[Math.min(level.get(entry), entry.candidates.length - 1)];
+
+  for (;;) {
+    /** @type {Map<string, PackageEntry[]>} */
+    const byId = new Map();
+    for (const entry of sorted) {
+      const id = idAt(entry);
+      byId.set(id, [...(byId.get(id) ?? []), entry]);
+    }
+    let changed = false;
+    for (const group of byId.values()) {
+      if (group.length < 2) {
+        continue;
+      }
+      for (const entry of group) {
+        if (level.get(entry) < entry.candidates.length - 1) {
+          level.set(entry, level.get(entry) + 1);
+          changed = true;
+        }
+      }
+    }
+    if (!changed) {
+      break;
+    }
+  }
+
+  const used = new Set();
+  for (const entry of sorted) {
+    const base = idAt(entry);
+    let id = base;
+    let n = 2;
+    while (used.has(id)) {
+      id = `${base}-${n}`;
+      n += 1;
+    }
+    used.add(id);
+    if (id !== entry.module.id) {
+      log.warn('package id collision resolved', {
+        package: entry.module.name,
+        root: entry.module.root,
+        from: entry.module.id,
+        to: id,
+      });
+      entry.module.id = id;
+      entry.module.flows = config.modules.flows[id] ?? entry.module.flows;
+    }
+  }
+  return sorted.map((entry) => entry.module);
 }
 
 /**

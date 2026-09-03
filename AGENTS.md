@@ -45,7 +45,6 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |   |-- config.json         plan-product path map; repo-relative.
 |   |-- schema.json         Config schema.
 |   `-- templates/          Starter plan-product artifacts.
-|-- hooks/                  Claude Code plugin hooks (pre-push regeneration).
 |-- scripts/                Plugin generators and support code.
 |-- skills/                 Codex skill entrypoints.
 |-- commands/               Command-capable runtime docs.

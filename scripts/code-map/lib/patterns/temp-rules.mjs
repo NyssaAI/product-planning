@@ -11,7 +11,6 @@ const LANGUAGE_GLOBS = {
   TypeScript: ['*.ts', '*.tsx', '*.mts', '*.cts'],
   JavaScript: ['*.js', '*.jsx', '*.mjs', '*.cjs'],
   CSharp: ['*.cs'],
-  Java: ['*.java'],
   Python: ['*.py'],
   Go: ['*.go'],
 };

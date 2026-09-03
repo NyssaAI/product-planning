@@ -18,15 +18,17 @@
 | `readGoWorkMembers` | Parses `use` directives from a root go.work file: every block form (`use ( ... |
 | `readGoModulePath` |  |
 | `findPluginRoot` |  |
+| `astGrepPlatformPackage` | The @ast-grep/cli optionalDependency holding this platform's prebuilt binary. |
 | `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the plan-product plugin. |
 | `parseScanJson` |  |
 | `symbolNameFromMatch` |  |
 | `loadUsageSettings` |  |
-| `recordUsageEvent` | Best-effort local usage capture. |
+| `recordUsageEvent` |  |
 | `readUsageEvents` |  |
 | `writeEffectivenessReport` |  |
 | `buildEffectivenessModel` |  |
 | `renderEffectivenessMarkdown` |  |
+| `writeArtifactIfChanged` | Write `content` to `filePath` unless the only difference from what is already there is a generation timestamp. |
 
 ## Boundaries
 
@@ -54,10 +56,11 @@
 - `scripts/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/lib/go-mod.mjs`: isExcludedGoFile, readGoWorkMembers, readGoModulePath
 - `scripts/lib/plugin-root.mjs`: findPluginRoot
-- `scripts/lib/resolve-ast-grep.mjs`: resolveAstGrepBinary
+- `scripts/lib/resolve-ast-grep.mjs`: astGrepPlatformPackage, resolveAstGrepBinary
 - `scripts/lib/sg-result.mjs`: parseScanJson, symbolNameFromMatch
 - `scripts/lib/skip-dirs.mjs`: BASE_SKIP_DIRS
 - `scripts/lib/usage.mjs`: loadUsageSettings, recordUsageEvent, readUsageEvents, writeEffectivenessReport, buildEffectivenessModel, renderEffectivenessMarkdown
+- `scripts/lib/write-artifact.mjs`: writeArtifactIfChanged
 
 ## After planning
 

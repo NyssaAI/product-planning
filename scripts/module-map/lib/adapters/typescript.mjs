@@ -96,7 +96,7 @@ function matches(repoRoot) {
     }
     return hasTypeScriptFiles(repoRoot);
   } catch (error) {
-    log.debug('typescript matches failed', { error: errorMessage(error) });
+    log.warn('typescript matches failed', { error: errorMessage(error) });
     return false;
   }
 }
@@ -211,15 +211,11 @@ function extractModuleSpecifiers(repoRoot, candidateFiles) {
     return byFile;
   }
 
+  const binary = resolveAstGrepBinary({
+    toolkitDir: CODE_MAP_DIR,
+    projectRoot: repoRoot,
+  });
   try {
-    const binary = resolveAstGrepBinary({
-      toolkitDir: CODE_MAP_DIR,
-      projectRoot: repoRoot,
-    });
-    if (!existsSync(binary)) {
-      log.debug('ast-grep binary not found for imports', { binary });
-      return byFile;
-    }
 
     const matches = runBatchedScan(
       binary,
@@ -241,7 +237,7 @@ function extractModuleSpecifiers(repoRoot, candidateFiles) {
       }
     }
   } catch (error) {
-    log.debug('module specifier extraction failed', {
+    log.warn('module specifier extraction failed', {
       error: errorMessage(error),
     });
   }
@@ -610,15 +606,11 @@ function extractSymbols(repoRoot, candidateFiles) {
     return symbols;
   }
 
+  const binary = resolveAstGrepBinary({
+    toolkitDir: CODE_MAP_DIR,
+    projectRoot: repoRoot,
+  });
   try {
-    const binary = resolveAstGrepBinary({
-      toolkitDir: CODE_MAP_DIR,
-      projectRoot: repoRoot,
-    });
-    if (!existsSync(binary)) {
-      log.debug('ast-grep binary not found for TypeScript symbols', { binary });
-      return symbols;
-    }
 
     const matches = runBatchedScan(
       binary,
@@ -653,7 +645,7 @@ function extractSymbols(repoRoot, candidateFiles) {
       fileSymbols.sort((a, b) => a.line - b.line || a.name.localeCompare(b.name));
     }
   } catch (error) {
-    log.debug('symbol extraction failed', { error: errorMessage(error) });
+    log.warn('symbol extraction failed', { error: errorMessage(error) });
   }
 
   return symbols;

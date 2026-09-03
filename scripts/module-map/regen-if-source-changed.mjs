@@ -8,8 +8,14 @@
  * Input (hook mode): Claude Code PostToolUse JSON on stdin
  * ({ tool_input: { file_path } }), or CLAUDE_TOOL_INPUT_FILE_PATH env var.
  *
+ * Run mode (--run): runs both generators synchronously. Exits 1 and writes the
+ * failing generator's stderr to this process's stderr when either generator
+ * fails, so a caller such as pre-push-regen.mjs can tell success from failure.
+ *
  * Opt-out: "autoRegenerate": false in plan-product.config.json.
- * Log: docs/code-map/.regen.log in the project repo.
+ * Log: .temp/regen.log in the project repo. The directory self-ignores through
+ * a generated .temp/.gitignore so the log never shows up as an uncommitted
+ * change beside the code-map artifacts.
  */
 
 import {
@@ -17,6 +23,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
@@ -25,13 +32,15 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SELF = fileURLToPath(import.meta.url);
 const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts', 'test'];
+const LOG_DIR = '.temp';
+const LOG_FILE = 'regen.log';
 
 /**
  * @param {string} repoRoot
  * @returns {string}
  */
-function logFile(repoRoot) {
-  return path.join(repoRoot, 'docs/code-map/.regen.log');
+function regenLogPath(repoRoot) {
+  return path.join(repoRoot, LOG_DIR, LOG_FILE);
 }
 
 /**
@@ -40,8 +49,13 @@ function logFile(repoRoot) {
  */
 function appendLog(repoRoot, message) {
   try {
-    const file = logFile(repoRoot);
-    mkdirSync(path.dirname(file), { recursive: true });
+    const file = regenLogPath(repoRoot);
+    const dir = path.dirname(file);
+    mkdirSync(dir, { recursive: true });
+    const ignore = path.join(dir, '.gitignore');
+    if (!existsSync(ignore)) {
+      writeFileSync(ignore, '*\n', 'utf8');
+    }
     appendFileSync(file, `${new Date().toISOString()} ${message}\n`, 'utf8');
   } catch {
     // Logging must never break the hook.
@@ -84,7 +98,10 @@ function readModifiedFilePath() {
   return typeof fromEnv === 'string' && fromEnv ? fromEnv : null;
 }
 
-/** Background mode: run the regeneration pipeline and log the outcome. */
+/**
+ * Run mode: run the regeneration pipeline, log the outcome, and exit non-zero
+ * on the first generator failure so callers can react.
+ */
 function runRegeneration() {
   const repoRoot = process.cwd();
   const codeMapScript = path.join(
@@ -100,11 +117,15 @@ function runRegeneration() {
       timeout: 120_000,
     });
     if (result.status !== 0) {
-      appendLog(
-        repoRoot,
-        `ERROR ${path.basename(script)}: ${(result.stderr || result.error?.message || 'unknown').trim().slice(0, 500)}`
+      const detail = (result.stderr || result.error?.message || 'unknown')
+        .trim()
+        .slice(0, 500);
+      const name = path.basename(script);
+      appendLog(repoRoot, `ERROR ${name}: ${detail}`);
+      process.stderr.write(
+        `plan-product: ${name} failed (exit ${result.status ?? 'signal'}); see ${path.join(LOG_DIR, LOG_FILE)}\n${detail}\n`
       );
-      process.exit(0);
+      process.exit(1);
     }
   }
   appendLog(repoRoot, 'REGEN complete');

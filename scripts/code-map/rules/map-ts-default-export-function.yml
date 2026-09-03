@@ -1,0 +1,15 @@
+id: map-ts-default-export-function
+message: default-exported named function
+severity: info
+language: TypeScript
+metadata:
+  mapKind: default-function
+rule:
+  kind: function_declaration
+  inside:
+    kind: export_statement
+    has:
+      regex: '^default$'
+  has:
+    field: name
+    pattern: $NAME

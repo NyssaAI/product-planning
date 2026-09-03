@@ -1,8 +1,16 @@
 id: map-export-const
-message: export const
+message: exported const or let binding with a plain identifier name
 severity: info
 language: JavaScript
 metadata:
   mapKind: const
 rule:
-  pattern: export const $NAME = $VALUE
+  kind: variable_declarator
+  inside:
+    kind: lexical_declaration
+    inside:
+      kind: export_statement
+  has:
+    field: name
+    kind: identifier
+    pattern: $NAME

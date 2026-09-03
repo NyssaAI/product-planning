@@ -8,11 +8,11 @@ status: complete
 
 ## Summary
 
-A warn-only hook that refreshes code-map artifacts before a `git push`, shipped natively as a Claude Code plugin hook and installable as a git pre-push hook for runtimes without hook support.
+An opt-in, warn-only git pre-push hook that refreshes code-map artifacts before a `git push` in repos that adopted plan-product, installable per repo from any runtime.
 
 ## User Need
 
-Users push PRs with stale `docs/code-map/` artifacts because description-based skill triggers are unreliable and Codex has no hook system. Regeneration must happen deterministically at push time, without ever blocking the push.
+Users push PRs with stale `docs/code-map/` artifacts because description-based skill triggers are unreliable and most runtimes have no hook system. Regeneration must happen deterministically at push time, without ever blocking the push, and only in repos that asked for it.
 
 ## Use Cases
 
@@ -20,36 +20,41 @@ None yet.
 
 ## Scope
 
-- `hooks/hooks.json`: Claude Code plugin PreToolUse hook intercepting Bash `git push` commands.
-- `scripts/module-map/pre-push-regen.mjs`: dual-mode warn-only regeneration wrapper (Claude hook stdin mode and `--git-hook` mode).
+- `scripts/module-map/pre-push-regen.mjs`: warn-only regeneration wrapper run by the git hook; exits early in repos without `.plan-product/config.json`.
+- `scripts/module-map/regen-if-source-changed.mjs --run`: the synchronous regeneration pipeline; exits non-zero when a generator fails so the wrapper can report it.
 - `scripts/module-map/install-git-hook.mjs`: idempotent, marker-delimited git pre-push installer and `--uninstall`.
 - The `install-code-map-hook` skill and `commands/install-code-map-hook.md` entry point.
 - Opt-out via `"prePushRegenerate": false` in `plan-product.config.json`.
+- The regeneration log at `.temp/regen.log`, self-ignored through `.temp/.gitignore`.
 
 ## Out of Scope
 
+- A Claude Code plugin hook that fires in every repo where the plugin is enabled; removed in R-010 because it regenerated in repos that never adopted plan-product.
 - Blocking or failing pushes; the hook is warn-only by decision.
-- Post-edit background regeneration — that is the existing `regen-if-source-changed.mjs` PostToolUse wrapper.
+- Post-edit background regeneration — that is the `regen-if-source-changed.mjs` PostToolUse wrapper written into a repo's `.claude/settings.json` by `--init --write-scripts`.
 - CI-side enforcement of fresh artifacts.
 
 ## Inputs
 
-- Claude Code PreToolUse JSON on stdin, or git pre-push invocation.
+- Git pre-push invocation.
+- `.plan-product/config.json` (presence gate and `paths.codeMap` for the artifact directory).
 - `plan-product.config.json` (`prePushRegenerate` opt-out).
-- `.plan-product/config.json` `paths.codeMap` for the artifact directory.
 - The existing code-map and module-map generator scripts.
 
 ## Outputs
 
 - Refreshed `docs/code-map/` artifacts before the push.
-- A non-blocking warning when regenerated artifacts are uncommitted.
+- A non-blocking warning naming the failing generator when regeneration fails, and a non-blocking warning when regenerated artifacts are uncommitted.
+- `.temp/regen.log` in the target repo.
 - An installed marker-delimited block in `.git/hooks/pre-push`.
 
 ## Acceptance
 
-- The Claude Code plugin hook regenerates on `git push` Bash commands, warns on uncommitted artifact changes, and always exits without blocking.
+- The hook does nothing in a repo without `.plan-product/config.json`.
+- A failing generator makes `regen-if-source-changed.mjs --run` exit non-zero, and the pre-push warning names it; the push still proceeds.
+- The regeneration log lives under `.temp/`, never under the code-map directory.
 - The git-hook installer is idempotent, preserves foreign hook content outside its markers, and uninstalls cleanly.
-- Content-assertion tests cover the hook manifest, the push matcher, and the installer.
+- Content-assertion tests cover the presence gate, the failure path, the log location, and the installer.
 - The path contract matches `.plan-product/config.json`.
 
 ## Dependencies
