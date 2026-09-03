@@ -5,7 +5,7 @@ description: Build the roadmap one slice at a time in a Compound Engineering loo
 
 # Build Roadmap
 
-Implement roadmap slices in a loop. The main agent reviews the plan-product docs, selects the next buildable unit of work, dispatches each pipeline phase to a subagent, gates on the phase's return, records completion in the roadmap and feature inventory, and starts over.
+Implement roadmap slices in a fully autonomous loop by default. The main agent reviews the plan-product docs, selects the next buildable unit of work, dispatches each pipeline phase to a subagent, gates on the phase's return, records completion in the roadmap and feature inventory, and starts over.
 
 Use `.plan-product/config.json` as the path authority. The roadmap owns the build order; the feature inventory owns feature status. This skill writes completion state into both and never invents new slices or features — that is `plan-roadmap` and `plan-feature` work.
 
@@ -16,8 +16,9 @@ Announce at start: "I'm running the build-roadmap loop; each slice is planned, r
 | Token | Meaning |
 | --- | --- |
 | `R-NNN` or `F-Nxx` | Start with this slice or feature instead of the first buildable one. The target must still be open and buildable. |
-| `mode:autonomous` | No check-ins. Every question point takes its conservative default and every gate failure stops the loop with a report. |
-| `max:N` or `max:all` | Stop after N completed units. Default `1` interactive, `3` autonomous. `max:all` runs until nothing is buildable. |
+| `mode:autonomous` | Explicitly selects the default hands-off behavior; retained for compatibility. |
+| `mode:interactive` | Opt in to confirmation before each unit and user answers for `ce-plan` decision blockers. |
+| `max:N` or `max:all` | Stop after N completed units. Default `max:all` autonomous and `1` interactive. |
 | `branch:<name>` | Work on this branch instead of the default `build-roadmap/<yyyy.mm.dd>` run branch. |
 | `test:<command>` | Test-suite command override. Otherwise detect it as described under Test Suite. |
 
@@ -33,7 +34,8 @@ Tokens are flags, not context. Strip them before treating the remainder as a bri
 - Commit locally after each completed unit. Never push, open a pull request, merge, rebase, or force-push. Shipping is the user's call afterwards through `ce-commit-push-pr`.
 - Never work on the default branch. Never commit files the user had dirty before the run started; record them as excluded and leave them untouched.
 - Treat repo-relative paths as identical after normalizing separators and resolving `.` segments. A path under a managed directory collides with that directory; do not rely on Git's status prefix alone when comparing paths.
-- Interactive mode asks one blocking question at a time through the host's blocking question tool when one is listed; otherwise present numbered choices in chat and wait. Autonomous mode asks nothing.
+- Autonomous mode is the default and asks nothing. Interactive mode asks one blocking question at a time through the host's blocking question tool when one is listed; otherwise present numbered choices in chat and wait.
+- In autonomous mode, resolve every in-scope `ce-plan` decision blocker with the best supported choice, log the blocker, decision, rationale, and evidence in the plan, and continue. Prefer settled product and feature decisions, then the roadmap's verification contract, then established repository conventions, then the least irreversible option that still completes the slice. Missing authority, a required destructive or external action, or a prerequisite that makes implementation impossible remains a hard blocker.
 - Bound every retry. The fix loop runs at most three rounds; the plan-revision loop runs at most one; every other phase runs once and its failure is a stop.
 
 ## Config Resolution
@@ -111,15 +113,16 @@ Resolve links relative to the repo root, normalize every target to a repo-relati
 
 ### 3. Plan
 
-Skip to step 4 when the unit already has a resolving `Plan:` link and the plan file is an implementation plan with open `[ ]` tasks; reuse that plan. Otherwise dispatch the **plan** packet from `references/phase-contracts.md`: `ce-plan confirm:auto` with the unit brief and the feature guide. `confirm:auto` is the only skip token ce-plan honors; it skips the scoping confirmation, and the packet tells the subagent to return `status: blocked` with the question when ce-plan still needs a decision it cannot default.
+Skip to step 4 when the unit already has a resolving `Plan:` link and the plan file is an implementation plan with open `[ ]` tasks; reuse that plan. Otherwise dispatch the **plan** packet from `references/phase-contracts.md`: `ce-plan confirm:auto` with the unit brief and the feature guide. `confirm:auto` is the only skip token ce-plan honors; it skips the scoping confirmation. In autonomous mode, the packet directs the planner to make the best supported in-scope decision, record it, and continue. In interactive mode, it directs the planner to return the decision question to the main agent.
 
-GATE. Only a return that names a written plan file advances. A `status: blocked` return whose blocker is a question is asked to the user in interactive mode and then the packet is dispatched again with the answer appended to the brief, once; autonomous mode stops. Any other `status: blocked`, a non-software classification, or a plan that is not implementation-ready stops the loop.
+GATE. Only a return that names a written plan file advances. A `status: blocked` return whose blocker is an in-scope decision question is asked to the user in interactive mode; in autonomous mode, the main agent makes the best supported decision using the Operating Rules hierarchy. Append the answer or autonomous decision to the brief and dispatch the packet again once. A repeated decision blocker, any hard blocker, a non-software classification, or a plan that is not implementation-ready stops the loop.
 
 Then normalize the artifact:
 
-1. Move the written plan to the configured plans directory and rename it to the configured plan-name pattern for this unit (`R-NNN-yyyy.mm.dd-step-slug.md`, dated today; inventory mode uses `F-Nxx` in place of the slice ID). Use `git mv` when the file is tracked. Keep the content unchanged.
+1. Move the written plan to the configured plans directory and rename it to the configured plan-name pattern for this unit (`R-NNN-yyyy.mm.dd-step-slug.md`, dated today; inventory mode uses `F-Nxx` in place of the slice ID). Use `git mv` when the file is tracked.
 2. Roadmap mode: write the new path into the unit's `Plan:` sub-bullet, replacing `none yet`. Inventory mode has no roadmap line; keep the path in loop state and name it in the completion report.
-3. Record the path as the plan path for every later phase.
+3. Ensure every autonomous planning decision returned by `ce-plan` is recorded in an `## Autonomous decisions` section in the plan. Each entry names the blocker, chosen decision, rationale, and evidence. Do not duplicate entries the planner already wrote.
+4. Record the path and autonomous decision summaries in loop state for every later phase and the completion commit.
 
 ### 4. Review the plan adversarially
 
@@ -174,7 +177,7 @@ In the main agent:
 1. Check the plan document's remaining `[ ]` tasks that the implement envelope reports complete. Leave any it did not complete unchecked and name them as residuals.
 2. Roadmap mode: flip the slice's `- [ ] R-NNN:` to `- [x] R-NNN:`. Then, if every slice of the parent feature is checked, check the feature in the inventory, set the guide's `status: complete`, and recompute the progress table.
 3. Inventory mode: check the feature in the inventory, set the guide's `status: complete`, and recompute the progress table.
-4. Build an explicit completion staging allowlist from the managed docs written for this unit (roadmap when applicable, inventory, selected feature guide, plan document, and returned solutions doc) plus the exact changed paths returned by the codemap packet. Remove every path in the pre-run dirty set, then stage only that allowlist; do not stage by directory or with a catch-all pathspec. This includes clean-at-start `AGENTS.md` or `CLAUDE.md` changes returned by the generator while still excluding every pre-run dirty path. Commit `feat(R-NNN): <slice statement>` (inventory mode: `feat(F-Nxx): <feature name>`). Use `ce-commit` when it is available; otherwise commit directly with that message.
+4. Build an explicit completion staging allowlist from the managed docs written for this unit (roadmap when applicable, inventory, selected feature guide, plan document, and returned solutions doc) plus the exact changed paths returned by the codemap packet. Remove every path in the pre-run dirty set, then stage only that allowlist; do not stage by directory or with a catch-all pathspec. This includes clean-at-start `AGENTS.md` or `CLAUDE.md` changes returned by the generator while still excluding every pre-run dirty path. Commit with subject `feat(R-NNN): <slice statement>` (inventory mode: `feat(F-Nxx): <feature name>`). When autonomous planning decisions were made, add a commit body headed `Autonomous decisions:` with one concise bullet per decision. Use `ce-commit` when it is available; otherwise commit directly with that subject and body.
 
 ### 12. Loop
 
@@ -221,6 +224,7 @@ Residuals:
 - Code map: <generator warnings>
 - Plan tasks left open: <list>
 Excluded pre-run changes: <paths or none>
+Autonomous decisions: <decision summaries, or none>
 Next: run `ce-commit-push-pr` to ship the branch, or `build-roadmap` again to continue.
 ```
 

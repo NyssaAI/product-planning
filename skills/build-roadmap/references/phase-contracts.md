@@ -20,15 +20,23 @@ merge, rebase, or switch branches. Do not touch these pre-run files: <dirty set 
 Invoke `ce-plan` with its skip token. ce-plan has no pipeline-mode token: `confirm:auto` is the only
 flag that suppresses a question (the scoping confirmation), and it treats an automated caller as
 pipeline mode on its own, which forces markdown, runs `ce-doc-review mode:non-interactive`, and
-returns before the handoff menu.
+returns before the handoff menu. The orchestrator states whether the run uses the default autonomous
+mode or the opt-in interactive mode.
 
 ```text
 <standards preamble>
 Invoke the `ce-plan` skill with `confirm:auto` followed by the brief below. You are an automated
 caller with no user present: write a Durable implementation plan and return before any handoff
-menu. If ce-plan reaches a question it cannot default (a Phase 0 route, a blocker, or a Phase 2
-decision), do not answer it yourself and do not render numbered choices: return `status: blocked`
-with the question as the blocker so the orchestrator can ask the user.
+menu. Run mode: <autonomous | interactive>.
+
+In autonomous mode, if ce-plan reaches an in-scope question or decision blocker, make the best
+supported choice and continue. Prefer settled product and feature decisions, then the roadmap's
+verification contract, then established repository conventions, then the least irreversible option
+that still completes the unit. Record each choice in the plan under `## Autonomous decisions` with
+the blocker, decision, rationale, and evidence. Return `status: blocked` only when implementation is
+impossible without missing authority, a destructive or external action not authorized by the user,
+or an unavailable prerequisite. In interactive mode, do not answer an unresolved question yourself
+and do not render numbered choices; return it as the blocker so the orchestrator can ask the user.
 
 Plan this unit:
 <unit brief>
@@ -47,9 +55,10 @@ artifact_readiness: <value from the plan metadata>
 execution: <value from the plan metadata>
 blocker: <text when blocked>
 recovery_path: <text when blocked>
+autonomous_decisions: <concise list of blocker, decision, rationale, and evidence; none when empty>
 ```
 
-Gate: `status: complete`, a readable `artifact_path` reported by this run, `artifact_readiness: implementation-ready`, and `execution: code`. A `status: blocked` whose blocker is a question goes to the user in interactive mode and the packet is redispatched once with the answer appended to the brief; anything else stops the loop. A plan file that exists but was not reported this run is not a written plan.
+Gate: `status: complete`, a readable `artifact_path` reported by this run, `artifact_readiness: implementation-ready`, and `execution: code`. A `status: blocked` whose blocker is an in-scope decision question goes to the user in interactive mode or is decided by the orchestrator in autonomous mode, then the packet is redispatched once with the answer or decision appended to the brief. A repeated decision blocker or any hard blocker stops the loop. A plan file that exists but was not reported this run is not a written plan. When `autonomous_decisions` is not `none`, every entry must be present in the plan's `## Autonomous decisions` section before implementation and retained for the completion commit body.
 
 ## plan-review
 
