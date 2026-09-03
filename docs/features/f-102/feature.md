@@ -28,7 +28,7 @@ A feature can carry scope, inputs, outputs, acceptance criteria, and dependencie
 
 ## Out of Scope
 
-- CE plans under `docs/plans/`.
+- Implementation plans under `docs/plans/`; F-301 and F-401 own plan naming and linking there.
 - Generated code-map module docs.
 
 ## Inputs

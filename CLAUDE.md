@@ -30,6 +30,7 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |-- STRATEGY.md             Optional upstream strategy context.
 |-- CONCEPTS.md             Optional shared vocabulary.
 |-- AGENTS.md               Agent instructions and repo conventions.
+|-- plan-product.config.json  Generator config: source roots, module discovery, output dir, usage capture.
 |
 |-- docs/
 |   |-- product.md          Product purpose, audience, problem, solution.
@@ -44,6 +45,7 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |-- .plan-product/
 |   |-- config.json         plan-product path map; repo-relative.
 |   |-- schema.json         Config schema.
+|   |-- patterns/           Pattern library and expectations for find-code-patterns.
 |   `-- templates/          Starter plan-product artifacts.
 |-- scripts/                Plugin generators and support code.
 |-- skills/                 Codex skill entrypoints.

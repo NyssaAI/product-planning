@@ -79,6 +79,8 @@ node "${PLUGIN_ROOT}/scripts/code-map/generate-patterns.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness
 ```
 
+Generator options: `generate-code-map.mjs` accepts `--include-comments` (or `CODE_MAP_INCLUDE_COMMENTS=1`) to embed file header comments and `-o <path>` to override the output file; `generate-patterns.mjs` accepts `--output-dir <dir>`. Run any generator with `--help` for its full flag list; `scripts/module-map/README.md` documents the module-map config keys.
+
 ## Pre-Push Regeneration
 
 An opt-in, warn-only git pre-push hook regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push, and it only acts in repos that have `.plan-product/config.json`. The plugin ships no Claude Code plugin hook; install the git hook per repo, from any runtime:

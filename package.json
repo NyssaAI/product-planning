@@ -12,6 +12,9 @@
     "url": "https://github.com/jamaynor/product-planning"
   },
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "files": [
     ".claude-plugin/",
     ".codex-plugin/",
