@@ -69,3 +69,47 @@ test('handles the markdown comment and prose timestamp forms', (t) => {
     assert.equal(writeArtifactIfChanged(file, after), expectWrite);
   }
 });
+
+test('writes when an ISO timestamp outside generator metadata changes', (t) => {
+  const file = tmpFile(t, 'doc.md');
+  const before = [
+    'Generated: 2026-08-17T19:26:47.572Z. Regenerate with the generator.',
+    '',
+    'Last deployment: 2026-08-17T19:26:47.572Z',
+    '',
+  ].join('\n');
+  const after = [
+    'Generated: 2026-08-17T19:34:40.926Z. Regenerate with the generator.',
+    '',
+    'Last deployment: 2026-08-17T19:34:40.926Z',
+    '',
+  ].join('\n');
+
+  writeFileSync(file, before, 'utf8');
+  assert.equal(writeArtifactIfChanged(file, after), true);
+  assert.equal(readFileSync(file, 'utf8'), after);
+});
+
+test('normalizes only a top-level JSON generated timestamp', (t) => {
+  const file = tmpFile(t);
+  const before = `${JSON.stringify(
+    {
+      generated: '2026-08-17T19:26:47.572Z',
+      payload: { generated: '2026-08-17T19:26:47.572Z' },
+    },
+    null,
+    2
+  )}\n`;
+  const after = `${JSON.stringify(
+    {
+      generated: '2026-08-17T19:34:40.926Z',
+      payload: { generated: '2026-08-17T19:34:40.926Z' },
+    },
+    null,
+    2
+  )}\n`;
+
+  writeFileSync(file, before, 'utf8');
+  assert.equal(writeArtifactIfChanged(file, after), true);
+  assert.equal(readFileSync(file, 'utf8'), after);
+});

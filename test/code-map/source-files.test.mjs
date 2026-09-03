@@ -109,3 +109,30 @@ test('source walker does not follow a linked directory outside the repository', 
 
   assert.deepEqual(sourceFilesInRoots(repo, ['src']), ['src/real/index.js']);
 });
+
+test('source walker does not include a linked file outside the repository', (t) => {
+  const repo = tempRepo();
+  const outside = mkdtempSync(path.join(os.tmpdir(), 'code-map-outside-file-'));
+  tempDirs.push(outside);
+  const escaped = path.join(outside, 'escaped.js');
+  writeFileSync(escaped, 'escaped();\n');
+  try {
+    symlinkSync(escaped, path.join(repo, 'src/escaped.js'), 'file');
+  } catch (error) {
+    t.skip(`file links unavailable: ${error.message}`);
+    return;
+  }
+
+  assert.deepEqual(sourceFilesInRoots(repo, ['src']), ['src/real/index.js']);
+});
+
+test('source walker ignores a missing root but rethrows unexpected walk errors', () => {
+  const repo = tempRepo();
+  writeFileSync(path.join(repo, 'not-a-directory.js'), 'export {};\n');
+
+  assert.deepEqual(sourceFilesInRoots(repo, ['missing']), []);
+  assert.throws(
+    () => sourceFilesInRoots(repo, ['not-a-directory.js']),
+    (error) => error?.code === 'ENOTDIR'
+  );
+});

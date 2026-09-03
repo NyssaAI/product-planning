@@ -290,20 +290,30 @@ function buildCodeMapDocument(symbols, options) {
   const byFile = new Map();
   const enabledLanguages = new Set(options.languages);
   const readCachedSource = createSourceFileCache();
-  /** @type {Set<string>} */
-  const unavailableSources = new Set();
+  /** @type {Map<string, { content: string, lines: readonly string[] } | null>} */
+  const sources = new Map();
 
   /** @param {string} repoRelativePath */
   function sourceFor(repoRelativePath) {
-    if (unavailableSources.has(repoRelativePath)) {
-      return null;
+    if (sources.has(repoRelativePath)) {
+      return sources.get(repoRelativePath);
     }
     const absPath = path.join(REPO_ROOT, repoRelativePath);
-    if (!existsSync(absPath) || !SOURCE_EXTENSIONS.has(path.extname(absPath))) {
-      unavailableSources.add(repoRelativePath);
+    if (!SOURCE_EXTENSIONS.has(path.extname(absPath))) {
+      sources.set(repoRelativePath, null);
       return null;
     }
-    return readCachedSource(absPath);
+    try {
+      const source = readCachedSource(absPath);
+      sources.set(repoRelativePath, source);
+      return source;
+    } catch (error) {
+      if (/** @type {{ code?: string }} */ (error)?.code !== 'ENOENT') {
+        throw error;
+      }
+      sources.set(repoRelativePath, null);
+      return null;
+    }
   }
 
   for (const entry of entries) {

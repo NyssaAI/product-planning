@@ -9,6 +9,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
+import { resolveRepoRelativePath } from '../../lib/repo-paths.mjs';
 import { createLogger } from './logger.mjs';
 
 const log = createLogger({ module: 'migrate' });
@@ -219,9 +220,11 @@ function patchContextReferences(actions, repoRoot, outputDir) {
  * @returns {MigrateAction[]}
  */
 export function runMigrate(repoRoot, options = {}) {
-  const outputDir = (options.outputDir ?? DEFAULT_OUTPUT_DIR)
-    .replace(/\\/g, '/')
-    .replace(/\/$/, '');
+  const outputDir = resolveRepoRelativePath(
+    repoRoot,
+    options.outputDir ?? DEFAULT_OUTPUT_DIR,
+    'migration output directory'
+  );
   log.info('migrate start', { repoRoot, outputDir });
   /** @type {MigrateAction[]} */
   const actions = [];

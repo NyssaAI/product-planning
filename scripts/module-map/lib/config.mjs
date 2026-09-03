@@ -1,5 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { resolveCodeMapOutput } from '../../lib/code-map-output.mjs';
+import { resolveRepoRelativePath } from '../../lib/repo-paths.mjs';
 import { createLogger } from './logger.mjs';
 import {
   DEFAULT_DOC_CANDIDATES,
@@ -57,6 +59,18 @@ export function loadPlanProductConfig(repoRoot, opts = {}) {
     typeof planProductPaths.codeMap === 'string'
       ? planProductPaths.codeMap
       : 'docs/code-map';
+  const outputDir = resolveRepoRelativePath(
+    repoRoot,
+    typeof raw.outputDir === 'string' ? raw.outputDir : defaultOutputDir,
+    'module-map output directory'
+  );
+  const codeMapOutput = resolveRepoRelativePath(
+    repoRoot,
+    resolveCodeMapOutput(raw, planProductPaths, {
+      warningPrefix: 'module-map',
+    }),
+    'module-map code-map input'
+  );
 
   /** @type {Record<string, string[]>} */
   const docs = {};
@@ -81,14 +95,8 @@ export function loadPlanProductConfig(repoRoot, opts = {}) {
       typeof raw.projectName === 'string'
         ? raw.projectName
         : readProjectName(repoRoot),
-    outputDir:
-      typeof raw.outputDir === 'string' ? raw.outputDir : defaultOutputDir,
-    codeMapOutput:
-      typeof raw.codeMapOutput === 'string'
-        ? raw.codeMapOutput
-        : typeof raw.output === 'string'
-          ? raw.output
-          : path.posix.join(defaultOutputDir.replace(/\\/g, '/').replace(/\/$/, ''), 'code-map.json'),
+    outputDir,
+    codeMapOutput,
     docs,
     briefMaxCharsPerDoc:
       typeof raw.briefMaxCharsPerDoc === 'number'

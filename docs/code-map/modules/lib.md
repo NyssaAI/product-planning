@@ -12,12 +12,17 @@
 
 | Symbol | Summary |
 |--------|---------|
+| `resolveCodeMapOutput` | Resolve the shared code-map output contract used by both generators. |
 | `extractEndpoints` |  |
 | `nextRouteSegment` |  |
 | `isExcludedGoFile` | The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e |
 | `readGoWorkMembers` | Parses `use` directives from a root go.work file: every block form (`use ( ... |
 | `readGoModulePath` |  |
+| `isPlanProductPluginRoot` | True when an environment-provided directory is a plan-product plugin root: it carries Claude's plugin manifest or a pack |
 | `findPluginRoot` |  |
+| `isPathContained` |  |
+| `resolveRepoContainedPath` | Resolve a configured path and reject escapes from the repository. |
+| `resolveRepoRelativePath` | Validate a configured path and return its normalized repo-relative form. |
 | `astGrepPlatformPackage` | The @ast-grep/cli optionalDependency holding this platform's prebuilt binary. |
 | `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the plan-product plugin. |
 | `parseScanJson` |  |
@@ -27,8 +32,6 @@
 | `readUsageEvents` |  |
 | `writeEffectivenessReport` |  |
 | `buildEffectivenessModel` |  |
-| `renderEffectivenessMarkdown` |  |
-| `writeArtifactIfChanged` | Write `content` to `filePath` unless the only difference from what is already there is a generation timestamp. |
 
 ## Boundaries
 
@@ -53,9 +56,11 @@
 
 ## Key symbols (sample)
 
+- `scripts/lib/code-map-output.mjs`: DEFAULT_CODE_MAP_OUTPUT, resolveCodeMapOutput
 - `scripts/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/lib/go-mod.mjs`: isExcludedGoFile, readGoWorkMembers, readGoModulePath
-- `scripts/lib/plugin-root.mjs`: findPluginRoot
+- `scripts/lib/plugin-root.mjs`: isPlanProductPluginRoot, findPluginRoot
+- `scripts/lib/repo-paths.mjs`: isPathContained, resolveRepoContainedPath, resolveRepoRelativePath
 - `scripts/lib/resolve-ast-grep.mjs`: astGrepPlatformPackage, resolveAstGrepBinary
 - `scripts/lib/sg-result.mjs`: parseScanJson, symbolNameFromMatch
 - `scripts/lib/skip-dirs.mjs`: BASE_SKIP_DIRS

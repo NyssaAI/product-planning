@@ -6,6 +6,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -166,6 +167,67 @@ test('migrate flattens legacy context contents and scopes, then removes it', (t)
   assert.ok(actions.some((action) => action.kind === 'removed'));
 });
 
+test('migrate rejects output paths that escape the repository before mutation', (t) => {
+  const root = tempRepo(t);
+  const outside = tempRepo(t);
+
+  for (const outputDir of ['', '../escaped', path.join(outside, 'generated')]) {
+    assert.throws(
+      () => runMigrate(root, { outputDir }),
+      /migration output directory must be (?:a non-empty path )?within the project root/
+    );
+    assert.equal(existsSync(path.join(root, 'docs/features.md')), false);
+  }
+
+  try {
+    symlinkSync(outside, path.join(root, 'linked-output'), 'junction');
+  } catch (error) {
+    t.diagnostic(`directory links unavailable: ${error.message}`);
+    return;
+  }
+  assert.throws(
+    () => runMigrate(root, { outputDir: 'linked-output/context' }),
+    /migration output directory must be within the project root/
+  );
+  assert.equal(existsSync(path.join(root, 'docs/features.md')), false);
+});
+
+test('migrate recursively merges directories without overwriting collisions', (t) => {
+  const root = tempRepo(t);
+  write(root, 'docs/code-map/context/scopes/core/shared.md', 'legacy collision\n');
+  write(root, 'docs/code-map/context/scopes/core/legacy.md', 'legacy only\n');
+  write(root, 'docs/code-map/modules/core/shared.md', 'current collision\n');
+  write(root, 'docs/code-map/modules/core/current.md', 'current only\n');
+
+  const actions = runMigrate(root);
+
+  assert.equal(
+    readFileSync(path.join(root, 'docs/code-map/modules/core/shared.md'), 'utf8'),
+    'current collision\n'
+  );
+  assert.equal(
+    readFileSync(path.join(root, 'docs/code-map/context/scopes/core/shared.md'), 'utf8'),
+    'legacy collision\n'
+  );
+  assert.equal(
+    readFileSync(path.join(root, 'docs/code-map/modules/core/legacy.md'), 'utf8'),
+    'legacy only\n'
+  );
+  assert.equal(
+    readFileSync(path.join(root, 'docs/code-map/modules/core/current.md'), 'utf8'),
+    'current only\n'
+  );
+  assert.ok(
+    actions.some(
+      (action) =>
+        action.kind === 'skipped' &&
+        action.detail.includes('core/shared.md') &&
+        action.detail.includes('target exists')
+    )
+  );
+  assert.equal(existsSync(path.join(root, 'docs/code-map/context')), true);
+});
+
 test('platform is present while edges are derived and duplicate roots are skipped', (t) => {
   const root = tempRepo(t);
   for (const doc of ['product', 'features', 'tech-stack']) {
@@ -256,6 +318,144 @@ test('Next fallback detects App Router extensions and Pages Router files', (t) =
     pagesRoutes.map((route) => route.path),
     ['/api/health', '/api/profile', '/api/users']
   );
+});
+
+test('empty App Router candidates do not mask a populated Pages Router API', (t) => {
+  const root = tempRepo(t);
+  mkdirSync(path.join(root, 'src/app/api'), { recursive: true });
+  mkdirSync(path.join(root, 'app/api'), { recursive: true });
+  write(root, 'src/pages/api/health.ts', 'export default function health() {}\n');
+
+  const detected = detectApiRoutes(root);
+  assert.deepEqual(detected, {
+    enabled: true,
+    root: 'src/pages/api',
+    routeFile: 'health.ts',
+    pathPrefix: 'src/pages',
+  });
+});
+
+test('module-map and code-map use the same output precedence and warn on conflicts', (t) => {
+  const root = tempRepo(t);
+  write(
+    root,
+    'plan-product.config.json',
+    JSON.stringify({
+      output: 'legacy/map.json',
+      codeMapOutput: 'new/map.json',
+      outputDir: 'ignored/context',
+    })
+  );
+  const writes = [];
+  const originalWrite = process.stderr.write;
+  process.stderr.write = (chunk) => {
+    writes.push(String(chunk));
+    return true;
+  };
+  let loaded;
+  try {
+    loaded = loadPlanProductConfig(root);
+  } finally {
+    process.stderr.write = originalWrite;
+  }
+
+  assert.equal(loaded.codeMapOutput, 'legacy/map.json');
+  assert.match(writes.join(''), /sets both output .*codeMapOutput .*using output/);
+
+  const codeMapOnly = tempRepo(t);
+  write(
+    codeMapOnly,
+    'plan-product.config.json',
+    JSON.stringify({ codeMapOutput: 'configured/map.json' })
+  );
+  assert.equal(
+    loadPlanProductConfig(codeMapOnly).codeMapOutput,
+    'configured/map.json'
+  );
+
+  const pathConfigured = tempRepo(t);
+  write(pathConfigured, 'plan-product.config.json', '{}');
+  write(
+    pathConfigured,
+    '.plan-product/config.json',
+    JSON.stringify({ paths: { codeMap: 'planning/context' } })
+  );
+  assert.equal(
+    loadPlanProductConfig(pathConfigured).codeMapOutput,
+    'planning/context/code-map.json'
+  );
+
+  const defaults = tempRepo(t);
+  write(defaults, 'plan-product.config.json', '{}');
+  assert.equal(
+    loadPlanProductConfig(defaults).codeMapOutput,
+    'docs/code-map/code-map.json'
+  );
+});
+
+test('module-map config rejects unsafe output paths and normalizes contained paths', (t) => {
+  const root = tempRepo(t);
+  const outside = tempRepo(t);
+
+  for (const outputDir of ['', '../escaped', path.join(outside, 'generated')]) {
+    write(root, 'plan-product.config.json', JSON.stringify({ outputDir }));
+    assert.throws(
+      () => loadPlanProductConfig(root),
+      /module-map output directory must be (?:a non-empty path )?within the project root/
+    );
+  }
+
+  try {
+    symlinkSync(outside, path.join(root, 'linked-output'), 'junction');
+  } catch (error) {
+    t.diagnostic(`directory links unavailable: ${error.message}`);
+    return;
+  }
+  write(
+    root,
+    'plan-product.config.json',
+    JSON.stringify({ outputDir: 'linked-output/context' })
+  );
+  assert.throws(
+    () => loadPlanProductConfig(root),
+    /module-map output directory must be within the project root/
+  );
+
+  for (const output of ['', '../escaped.json', path.join(outside, 'map.json')]) {
+    write(
+      root,
+      'plan-product.config.json',
+      JSON.stringify({ outputDir: 'docs/code-map', output })
+    );
+    assert.throws(
+      () => loadPlanProductConfig(root),
+      /module-map code-map input must be (?:a non-empty path )?within the project root/
+    );
+  }
+  write(
+    root,
+    'plan-product.config.json',
+    JSON.stringify({
+      outputDir: 'docs/code-map',
+      output: 'linked-output/code-map.json',
+    })
+  );
+  assert.throws(
+    () => loadPlanProductConfig(root),
+    /module-map code-map input must be within the project root/
+  );
+
+  write(
+    root,
+    'plan-product.config.json',
+    JSON.stringify({
+      outputDir: path.join(root, 'generated', 'context'),
+      output: path.join(root, 'generated', 'code-map.json'),
+    })
+  );
+  const normalized = loadPlanProductConfig(root);
+  assert.equal(normalized.outputDir, 'generated/context');
+  assert.equal(normalized.codeMapOutput, 'generated/code-map.json');
 });
 
 test('malformed local path config warns and doctor reports a failure', (t) => {

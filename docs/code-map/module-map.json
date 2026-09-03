@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "generated": "2026-09-03T00:59:35.592Z",
+  "generated": "2026-09-03T02:11:04.549Z",
   "project": {
     "name": "plan-product",
     "docs": {
@@ -49,7 +49,7 @@
         "code-map"
       ],
       "routeCount": 0,
-      "symbolCount": 60,
+      "symbolCount": 63,
       "planningModule": "docs/code-map/modules/module-map.md",
       "description": "Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.",
       "capabilities": [
@@ -67,7 +67,7 @@
       ],
       "usedBy": [],
       "routeCount": 0,
-      "symbolCount": 21,
+      "symbolCount": 25,
       "planningModule": "docs/code-map/modules/code-map.md",
       "description": "ast-grep-based symbol and endpoint indexer that feeds the module graph.",
       "capabilities": [
@@ -85,7 +85,7 @@
         "module-map"
       ],
       "routeCount": 0,
-      "symbolCount": 18,
+      "symbolCount": 24,
       "planningModule": "docs/code-map/modules/lib.md",
       "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and endpoint extraction.",
       "capabilities": [
@@ -111,6 +111,6 @@
   "stats": {
     "moduleCount": 3,
     "routeCount": 0,
-    "codeMapSymbols": 99
+    "codeMapSymbols": 113
   }
 }

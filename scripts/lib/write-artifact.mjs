@@ -32,19 +32,111 @@ import {
 import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 
+/** ISO-8601 instants, the only form the generators stamp. */
+const ISO_TIMESTAMP_SOURCE =
+  '\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z';
+const ISO_TIMESTAMP = new RegExp(`^${ISO_TIMESTAMP_SOURCE}$`);
+const PROSE_GENERATED = new RegExp(
+  `^(Generated:\\s*)${ISO_TIMESTAMP_SOURCE}`,
+  'gm'
+);
+const PLAN_PRODUCT_GENERATED = new RegExp(
+  `(<!--\\s*plan-product:[\\w-]+\\s+generated\\s+)${ISO_TIMESTAMP_SOURCE}(\\s*-->)`,
+  'g'
+);
+
 /**
- * ISO-8601 instants, the only form the generators stamp. Generated artifacts
- * carry these solely as generation metadata, so neutralizing them before the
- * comparison cannot mask a real content change.
+ * Replace only a top-level JSON object's `generated` string. Scanning the
+ * original text preserves formatting and avoids masking nested content.
+ *
+ * @param {string} text
+ * @returns {string}
  */
-const ISO_TIMESTAMP = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/g;
+function withoutTopLevelJsonGenerated(text) {
+  try {
+    const parsed = JSON.parse(text);
+    if (
+      !parsed ||
+      Array.isArray(parsed) ||
+      typeof parsed !== 'object' ||
+      !Object.hasOwn(parsed, 'generated') ||
+      typeof parsed.generated !== 'string' ||
+      !ISO_TIMESTAMP.test(parsed.generated)
+    ) {
+      return text;
+    }
+
+    let depth = 0;
+    let index = 0;
+    while (index < text.length) {
+      const char = text[index];
+      if (char === '{' || char === '[') {
+        depth += 1;
+        index += 1;
+        continue;
+      }
+      if (char === '}' || char === ']') {
+        depth -= 1;
+        index += 1;
+        continue;
+      }
+      if (char !== '"') {
+        index += 1;
+        continue;
+      }
+
+      const tokenStart = index;
+      index = jsonStringEnd(text, index);
+      const tokenEnd = index;
+      const token = JSON.parse(text.slice(tokenStart, tokenEnd));
+      if (depth !== 1 || token !== 'generated') continue;
+
+      while (/\s/.test(text[index] ?? '')) index += 1;
+      if (text[index] !== ':') continue;
+      index += 1;
+      while (/\s/.test(text[index] ?? '')) index += 1;
+      if (text[index] !== '"') continue;
+
+      const valueStart = index;
+      const valueEnd = jsonStringEnd(text, index);
+      if (JSON.parse(text.slice(valueStart, valueEnd)) === parsed.generated) {
+        return `${text.slice(0, valueStart)}"<generated>"${text.slice(valueEnd)}`;
+      }
+      index = valueEnd;
+    }
+  } catch {
+    // Not JSON; markdown metadata normalization below still applies.
+  }
+  return text;
+}
 
 /**
  * @param {string} text
- * @returns {string} text with every ISO timestamp replaced by a fixed token
+ * @param {number} start index of an opening quote
+ * @returns {number} index immediately after the closing quote
+ */
+function jsonStringEnd(text, start) {
+  let escaped = false;
+  for (let index = start + 1; index < text.length; index += 1) {
+    const char = text[index];
+    if (!escaped && char === '"') return index + 1;
+    if (char === '\\') {
+      escaped = !escaped;
+    } else {
+      escaped = false;
+    }
+  }
+  throw new Error('unterminated JSON string');
+}
+
+/**
+ * @param {string} text
+ * @returns {string} text with generator-owned metadata timestamps normalized
  */
 function withoutTimestamps(text) {
-  return text.replace(ISO_TIMESTAMP, '<generated>');
+  return withoutTopLevelJsonGenerated(text)
+    .replace(PROSE_GENERATED, '$1<generated>')
+    .replace(PLAN_PRODUCT_GENERATED, '$1<generated>$2');
 }
 
 /**

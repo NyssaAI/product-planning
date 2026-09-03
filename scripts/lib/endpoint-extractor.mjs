@@ -122,20 +122,21 @@ export function extractEndpoints(repoRoot, files) {
  */
 function extractEndpointsFromText(file, text) {
   const ext = path.extname(file).toLowerCase();
+  const lineAt = createLineLookup(text);
   if (['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(ext)) {
     return [
-      ...extractJavaScriptEndpoints(file, text),
-      ...extractNextAppRouterEndpoints(file, text),
+      ...extractJavaScriptEndpoints(file, text, lineAt),
+      ...extractNextAppRouterEndpoints(file, text, lineAt),
     ];
   }
   if (ext === '.py') {
-    return extractPythonEndpoints(file, text);
+    return extractPythonEndpoints(file, text, lineAt);
   }
   if (ext === '.cs') {
-    return extractCSharpEndpoints(file, text);
+    return extractCSharpEndpoints(file, text, lineAt);
   }
   if (ext === '.go') {
-    return extractGoEndpoints(file, text);
+    return extractGoEndpoints(file, text, lineAt);
   }
   return [];
 }
@@ -143,9 +144,10 @@ function extractEndpointsFromText(file, text) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractGoEndpoints(file, text) {
+function extractGoEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
   const importsGin = text.includes('github.com/gin-gonic/gin');
@@ -164,7 +166,7 @@ function extractGoEndpoints(file, text) {
       method: pattern.method,
       path: pattern.path,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       handler: match[2],
       framework: 'net-http',
       confidence: 'high',
@@ -182,7 +184,7 @@ function extractGoEndpoints(file, text) {
         method: match[2],
         path: resolved.path,
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         handler: match[4],
         framework: importsGin ? 'gin' : 'echo',
         confidence: resolved.resolved ? 'high' : 'medium',
@@ -200,7 +202,7 @@ function extractGoEndpoints(file, text) {
         method: match[2].toUpperCase(),
         path: match[3],
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         handler: match[4],
         framework: 'chi',
         // Routes inside chi Route/Mount closures carry sub-paths this
@@ -217,7 +219,7 @@ function extractGoEndpoints(file, text) {
         method: match[1],
         path: match[2],
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         handler: match[3],
         framework: 'chi',
         confidence: hasUnresolvableGrouping ? 'medium' : 'high',
@@ -230,7 +232,7 @@ function extractGoEndpoints(file, text) {
       kind: 'mcp-tool',
       name: match[1],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'go-mcp',
       confidence: 'high',
     });
@@ -240,7 +242,7 @@ function extractGoEndpoints(file, text) {
       kind: 'mcp-tool',
       name: match[1],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'go-mcp',
       confidence: 'high',
     });
@@ -364,9 +366,10 @@ function resolveGoGroupPath(receiver, subPath, groupPrefixes) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractJavaScriptEndpoints(file, text) {
+function extractJavaScriptEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
@@ -377,7 +380,7 @@ function extractJavaScriptEndpoints(file, text) {
       method: match[1].toUpperCase(),
       path: match[2],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       handler: lastIdentifierArgument(call),
       framework: 'node',
       confidence: 'high',
@@ -390,7 +393,7 @@ function extractJavaScriptEndpoints(file, text) {
       name: match[2],
       path: match[1] === 'resource' ? match[3] : undefined,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'mcp',
       confidence: 'high',
     });
@@ -406,9 +409,10 @@ function extractJavaScriptEndpoints(file, text) {
  *
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractNextAppRouterEndpoints(file, text) {
+function extractNextAppRouterEndpoints(file, text, lineAt) {
   if (!NEXT_ROUTE_FILE_RE.test(file)) {
     return [];
   }
@@ -422,7 +426,7 @@ function extractNextAppRouterEndpoints(file, text) {
       method,
       path: routePath,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'nextjs-app-router',
       confidence: 'high',
     });
@@ -474,9 +478,10 @@ export function nextRouteSegment(seg) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractPythonEndpoints(file, text) {
+function extractPythonEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
   const httpFramework = PY_FLASK_IMPORT_RE.test(text) ? 'flask' : 'fastapi';
@@ -491,7 +496,7 @@ function extractPythonEndpoints(file, text) {
       method: match[2].toUpperCase(),
       path: routePath,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: httpFramework,
       confidence: 'high',
     });
@@ -509,7 +514,7 @@ function extractPythonEndpoints(file, text) {
         method,
         path: routePath,
         file,
-        line: lineAt(text, match.index ?? 0),
+        line: lineAt(match.index ?? 0),
         framework: 'flask',
         confidence: 'high',
       });
@@ -545,7 +550,7 @@ function extractPythonEndpoints(file, text) {
       name,
       path: type === 'resource' ? positional : undefined,
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'mcp',
       confidence: defName ? 'high' : 'medium',
     });
@@ -589,9 +594,10 @@ function pythonRouteMethods(args) {
 /**
  * @param {string} file
  * @param {string} text
+ * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractCSharpEndpoints(file, text) {
+function extractCSharpEndpoints(file, text, lineAt) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
@@ -601,7 +607,7 @@ function extractCSharpEndpoints(file, text) {
       method: match[1].toUpperCase(),
       path: match[2],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       handler: match[3],
       framework: 'aspnet-minimal-api',
       confidence: 'high',
@@ -613,7 +619,7 @@ function extractCSharpEndpoints(file, text) {
       kind: 'mcp-transport',
       path: match[1],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'aspnet-mcp',
       confidence: 'high',
     });
@@ -624,7 +630,7 @@ function extractCSharpEndpoints(file, text) {
       kind: csharpMcpKind(match[1]),
       name: match[2],
       file,
-      line: lineAt(text, match.index ?? 0),
+      line: lineAt(match.index ?? 0),
       framework: 'dotnet-mcp',
       confidence: 'high',
     });
@@ -763,12 +769,34 @@ function compareEndpoints(a, b) {
 }
 
 /**
+ * Build a line-number lookup once per source file so route-heavy files do not
+ * repeatedly scan and allocate the full prefix before each match.
+ *
  * @param {string} text
- * @param {number} index
- * @returns {number}
+ * @returns {(index: number) => number}
  */
-function lineAt(text, index) {
-  return text.slice(0, index).split('\n').length;
+function createLineLookup(text) {
+  const newlineOffsets = [];
+  for (
+    let index = text.indexOf('\n');
+    index !== -1;
+    index = text.indexOf('\n', index + 1)
+  ) {
+    newlineOffsets.push(index);
+  }
+  return (index) => {
+    let low = 0;
+    let high = newlineOffsets.length;
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2);
+      if (newlineOffsets[middle] < index) {
+        low = middle + 1;
+      } else {
+        high = middle;
+      }
+    }
+    return low + 1;
+  };
 }
 
 /**

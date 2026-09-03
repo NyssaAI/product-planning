@@ -1,9 +1,21 @@
-import { existsSync, readFileSync, realpathSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { detectCodeMapRoots } from '../../module-map/lib/auto-detect.mjs';
+import {
+  DEFAULT_CODE_MAP_OUTPUT,
+  resolveCodeMapOutput,
+} from '../../lib/code-map-output.mjs';
+import {
+  isPathContained,
+  resolveRepoContainedPath,
+} from '../../lib/repo-paths.mjs';
 
-/** Fallback code-map location when neither config file names one. */
-export const DEFAULT_CODE_MAP_OUTPUT = 'docs/code-map/code-map.json';
+export {
+  DEFAULT_CODE_MAP_OUTPUT,
+  isPathContained,
+  resolveCodeMapOutput,
+  resolveRepoContainedPath,
+};
 
 /** @type {readonly string[]} */
 export const SUPPORTED_LANGUAGES = [
@@ -72,94 +84,6 @@ function readPlanProductPaths(repoRoot) {
   } catch {
     return {};
   }
-}
-
-/**
- * Resolve where the code map is written. Both generators must agree on this
- * path or module-map reads a stale/missing map. Preserve the legacy `output`
- * key as the most specific override, followed by `codeMapOutput`, then
- * `.plan-product/config.json` `paths.codeMap` + `/code-map.json`, then the
- * default.
- *
- * @param {Record<string, unknown>} raw parsed plan-product.config.json (or `{}`)
- * @param {Record<string, unknown>} planProductPaths `.plan-product/config.json` `paths`
- * @returns {string} repo-relative, forward-slash path
- */
-export function resolveCodeMapOutput(raw, planProductPaths) {
-  if (typeof raw.output === 'string') {
-    if (
-      typeof raw.codeMapOutput === 'string' &&
-      raw.codeMapOutput !== raw.output
-    ) {
-      process.stderr.write(
-        `code-map: plan-product.config.json sets both output (${raw.output}) and codeMapOutput (${raw.codeMapOutput}); using output\n`
-      );
-    }
-    return raw.output;
-  }
-  if (typeof raw.codeMapOutput === 'string') {
-    return raw.codeMapOutput;
-  }
-  if (typeof planProductPaths.codeMap === 'string') {
-    return path.posix.join(
-      planProductPaths.codeMap.replace(/\\/g, '/').replace(/\/$/, ''),
-      'code-map.json'
-    );
-  }
-  return DEFAULT_CODE_MAP_OUTPUT;
-}
-
-/**
- * Resolve a configured path and reject escapes from the repository. Existing
- * paths are checked after symlink/junction resolution as well as lexically.
- *
- * @param {string} repoRoot
- * @param {string} configuredPath
- * @param {string} label
- * @returns {string} absolute contained path
- */
-export function resolveRepoContainedPath(repoRoot, configuredPath, label) {
-  if (typeof configuredPath !== 'string' || configuredPath.trim() === '') {
-    throw new Error(`${label} must be a non-empty path within the project root`);
-  }
-  const root = path.resolve(repoRoot);
-  const resolved = path.resolve(root, configuredPath);
-  if (!isContained(root, resolved)) {
-    throw new Error(`${label} must be within the project root: ${configuredPath}`);
-  }
-  const realRoot = realpathSync(root);
-  let existingAncestor = resolved;
-  while (!existsSync(existingAncestor)) {
-    const parent = path.dirname(existingAncestor);
-    if (parent === existingAncestor) {
-      break;
-    }
-    existingAncestor = parent;
-  }
-  const realAncestor = realpathSync(existingAncestor);
-  const realTarget = path.resolve(
-    realAncestor,
-    path.relative(existingAncestor, resolved)
-  );
-  if (!isContained(realRoot, realTarget)) {
-    throw new Error(`${label} must be within the project root: ${configuredPath}`);
-  }
-  return resolved;
-}
-
-/**
- * @param {string} root
- * @param {string} candidate
- * @returns {boolean}
- */
-function isContained(root, candidate) {
-  const relative = path.relative(root, candidate);
-  return (
-    relative === '' ||
-    (!relative.startsWith(`..${path.sep}`) &&
-      relative !== '..' &&
-      !path.isAbsolute(relative))
-  );
 }
 
 /**

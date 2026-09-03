@@ -1,6 +1,7 @@
-import { existsSync, readdirSync, realpathSync, statSync } from 'node:fs';
+import { readdirSync, realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { BASE_SKIP_DIRS } from '../../lib/skip-dirs.mjs';
+import { isPathContained } from '../../lib/repo-paths.mjs';
 import { SOURCE_EXTENSIONS } from './code-map-config.mjs';
 
 // Shared base infra/test-output dirs (includes fixtures/__fixtures__ so scans
@@ -112,8 +113,10 @@ function statFollowing(repoRoot, target) {
   try {
     return statSync(target);
   } catch (err) {
-    warnSkippedDirectory(repoRoot, target, err);
-    return null;
+    if (isMissingError(err) || warnSkippedDirectory(repoRoot, target, err)) {
+      return null;
+    }
+    throw err;
   }
 }
 
@@ -126,9 +129,16 @@ function realDirectoryPath(repoRoot, dir) {
   try {
     return realpathSync(dir);
   } catch (err) {
-    warnSkippedDirectory(repoRoot, dir, err);
-    return null;
+    if (isMissingError(err) || warnSkippedDirectory(repoRoot, dir, err)) {
+      return null;
+    }
+    throw err;
   }
+}
+
+/** @param {unknown} err */
+function isMissingError(err) {
+  return /** @type {{ code?: string }} */ (err)?.code === 'ENOENT';
 }
 
 /**
@@ -150,21 +160,6 @@ function warnSkippedDirectory(repoRoot, dir, err) {
 }
 
 /**
- * @param {string} root
- * @param {string} candidate
- * @returns {boolean}
- */
-function isContained(root, candidate) {
-  const relative = path.relative(root, candidate);
-  return (
-    relative === '' ||
-    (!relative.startsWith(`..${path.sep}`) &&
-      relative !== '..' &&
-      !path.isAbsolute(relative))
-  );
-}
-
-/**
  * @param {string} repoRoot
  * @param {string} realRepoRoot
  * @param {string} dir
@@ -174,13 +169,10 @@ function isContained(root, candidate) {
  *   symlink or junction is followed at most once and cycles terminate here
  */
 function walkSourceFiles(repoRoot, realRepoRoot, dir, acc, seen, visitedDirs) {
-  if (!existsSync(dir)) {
-    return;
-  }
   const realDir = realDirectoryPath(repoRoot, dir);
   if (
     realDir === null ||
-    !isContained(realRepoRoot, realDir) ||
+    !isPathContained(realRepoRoot, realDir) ||
     visitedDirs.has(realDir)
   ) {
     return;
@@ -209,6 +201,10 @@ function walkSourceFiles(repoRoot, realRepoRoot, dir, acc, seen, visitedDirs) {
       // Symlinks and Windows junctions: resolve the target once; `visitedDirs`
       // keeps a link back into an ancestor from looping.
       const stats = statFollowing(repoRoot, full);
+      const realTarget = stats ? realDirectoryPath(repoRoot, full) : null;
+      if (realTarget === null || !isPathContained(realRepoRoot, realTarget)) {
+        continue;
+      }
       isDirectory = stats?.isDirectory() ?? false;
       isFile = stats?.isFile() ?? false;
     }

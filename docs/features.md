@@ -108,8 +108,8 @@ Dependency-ordered work slices in `docs/roadmap.md`, authored and validated by t
 
 ### Phase 4 - Implementation Loop
 
-**F-401: Roadmap build loop**  
-The `build-roadmap` skill implements roadmap slices one at a time through Compound Engineering planning, adversarial review, implementation, testing, fixing, code review, learning capture, and a code-map rebuild, with dev-standards enforced.  
+**F-401: Roadmap build loop**
+The `build-roadmap` skill implements roadmap slices one at a time through Compound Engineering planning, adversarial review, implementation, testing, fixing, code review, learning capture, and a code-map rebuild, with dev-standards enforced.
 [Feature Guide: Roadmap Build Loop](features/f-401/feature.md)
 
 ---

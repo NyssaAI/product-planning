@@ -34,9 +34,9 @@
 | `isInSkippedDir` | Whether a repo-relative path sits under a directory the source walkers skip. |
 | `sourceFilesInRoots` |  |
 | `languageForFile` |  |
+| `isLanguageEnabled` | True when the file maps to a configured language. |
 | `isKnownSourceFile` |  |
-| `SOURCE_EXTENSIONS` | Extensions that drive file detection. |
-| `SOURCE_SCAN_SKIP_DIRS` | Shared base infra/test-output dirs (includes fixtures/__fixtures__ so scans no longer leak fixture endpoints) plus Pytho |
+| `splitSourceLines` | Split file content the way every extractor expects it: on `\n` only, so line numbers stay 1:1 with ast-grep's and a trai |
 
 ## Boundaries
 

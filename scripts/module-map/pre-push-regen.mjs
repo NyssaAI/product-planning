@@ -44,16 +44,64 @@ function readJsonIfPresent(repoRoot, name) {
 }
 
 /**
- * @param {string} repoRoot
- * @param {string} outputDir
- * @returns {string} porcelain status of the artifact directory, '' when clean
+ * Resolve every path the regeneration pipeline can write. The code-map
+ * generator gives the legacy `output` key precedence over `codeMapOutput`,
+ * while the module-map generator uses `outputDir`. Both fall back through the
+ * shared `.plan-product/config.json` code-map directory.
+ *
+ * @param {Record<string, unknown>} generatorConfig
+ * @param {Record<string, unknown>} pathConfig
+ * @returns {string[]} deduplicated repo-relative pathspecs
  */
-function artifactStatus(repoRoot, outputDir) {
-  const result = spawnSync('git', ['status', '--porcelain', '--', outputDir], {
-    cwd: repoRoot,
-    encoding: 'utf8',
+function generatedArtifactTargets(generatorConfig, pathConfig) {
+  const configuredDir =
+    typeof pathConfig?.paths?.codeMap === 'string'
+      ? pathConfig.paths.codeMap
+      : DEFAULT_OUTPUT_DIR;
+  const outputDir =
+    typeof generatorConfig.outputDir === 'string'
+      ? generatorConfig.outputDir
+      : configuredDir;
+  const codeMapOutput =
+    typeof generatorConfig.output === 'string'
+      ? generatorConfig.output
+      : typeof generatorConfig.codeMapOutput === 'string'
+        ? generatorConfig.codeMapOutput
+        : path.posix.join(
+            configuredDir.replace(/\\/g, '/').replace(/\/$/, ''),
+            'code-map.json'
+          );
+
+  const normalizedOutputDir = outputDir.replace(/\\/g, '/').replace(/\/$/, '');
+  const normalizedCodeMap = codeMapOutput
+    .replace(/\\/g, '/')
+    .replace(/\/$/, '');
+  const codeMapCoveredByOutputDir =
+    normalizedCodeMap === normalizedOutputDir ||
+    normalizedCodeMap.startsWith(`${normalizedOutputDir}/`);
+  return [
+    ...new Set(
+      codeMapCoveredByOutputDir
+        ? [normalizedOutputDir]
+        : [normalizedCodeMap, normalizedOutputDir]
+    ),
+  ];
+}
+
+/**
+ * @param {string} repoRoot
+ * @param {string[]} targets
+ * @returns {string[]} configured targets containing uncommitted artifacts
+ */
+function dirtyArtifactTargets(repoRoot, targets) {
+  return targets.filter((target) => {
+    const result = spawnSync(
+      'git',
+      ['status', '--porcelain', '--untracked-files=all', '--', target],
+      { cwd: repoRoot, encoding: 'utf8' }
+    );
+    return result.status === 0 && Boolean((result.stdout || '').trim());
   });
-  return result.status === 0 ? (result.stdout || '').trim() : '';
 }
 
 /** @param {string} message */
@@ -79,10 +127,7 @@ function main() {
   }
 
   const pathConfig = readJsonIfPresent(repoRoot, PATH_CONFIG);
-  const outputDir =
-    typeof pathConfig?.paths?.codeMap === 'string'
-      ? pathConfig.paths.codeMap
-      : DEFAULT_OUTPUT_DIR;
+  const artifactTargets = generatedArtifactTargets(generatorConfig, pathConfig);
 
   const regen = spawnSync(process.execPath, [REGEN_SCRIPT, '--run'], {
     cwd: repoRoot,
@@ -97,9 +142,10 @@ function main() {
     return;
   }
 
-  if (artifactStatus(repoRoot, outputDir)) {
+  const dirtyTargets = dirtyArtifactTargets(repoRoot, artifactTargets);
+  if (dirtyTargets.length > 0) {
     warn(
-      `plan-product: code map regenerated before push and ${outputDir} has uncommitted changes — commit the refreshed artifacts`
+      `plan-product: code map regenerated before push and ${dirtyTargets.join(', ')} ${dirtyTargets.length === 1 ? 'has' : 'have'} uncommitted changes — commit the refreshed artifacts`
     );
   }
 }

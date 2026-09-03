@@ -115,6 +115,61 @@ test('a failing generator exits non-zero from --run, logs under .temp, and warns
   assert.match(hook.stderr, /generate-module-map\.mjs/);
 });
 
+test('successful regeneration warns for the actual configured dirty artifact targets', (t) => {
+  if (!gitAvailable()) {
+    t.skip('git unavailable');
+    return;
+  }
+  const repo = scratchRepo(t);
+  mkdirSync(path.join(repo, '.plan-product'));
+  mkdirSync(path.join(repo, 'docs'));
+  mkdirSync(path.join(repo, 'src'));
+  writeFileSync(
+    path.join(repo, '.plan-product/config.json'),
+    JSON.stringify({ paths: { codeMap: 'from-path-config' } })
+  );
+  writeFileSync(
+    path.join(repo, 'plan-product.config.json'),
+    JSON.stringify({
+      output: 'generated/symbols.json',
+      codeMapOutput: 'shadowed/code-map.json',
+      outputDir: 'generated/module-context',
+      roots: ['src'],
+    })
+  );
+  writeFileSync(path.join(repo, 'docs/product.md'), '# Product\n');
+  writeFileSync(path.join(repo, 'docs/features.md'), '# Features\n');
+  writeFileSync(path.join(repo, 'docs/tech-stack.md'), '# Stack\n');
+  writeFileSync(path.join(repo, 'src/index.js'), 'export function hello() {}\n');
+  assert.equal(spawnSync('git', ['add', '.'], { cwd: repo }).status, 0);
+  assert.equal(
+    spawnSync(
+      'git',
+      [
+        '-c',
+        'user.name=Plan Product Test',
+        '-c',
+        'user.email=test@example.com',
+        'commit',
+        '-qm',
+        'fixture',
+      ],
+      { cwd: repo }
+    ).status,
+    0
+  );
+
+  const hook = runPrePush(repo);
+  assert.equal(hook.status, 0, hook.stderr);
+  assert.match(hook.stderr, /generated\/symbols\.json/);
+  assert.match(hook.stderr, /generated\/module-context/);
+  assert.doesNotMatch(hook.stderr, /from-path-config|shadowed/);
+  assert.ok(existsSync(path.join(repo, 'generated/symbols.json')));
+  assert.ok(
+    existsSync(path.join(repo, 'generated/module-context/module-map.json'))
+  );
+});
+
 test('install-git-hook installs an idempotent warn-only pre-push block', (t) => {
   if (!gitAvailable()) {
     t.skip('git unavailable');
