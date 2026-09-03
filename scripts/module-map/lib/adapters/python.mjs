@@ -44,6 +44,11 @@ const SKIP_DIRS = new Set([
   '.tox',
 ]);
 
+// A directory holding one of these is a plausible absolute-import root: the
+// project is run, tested, or installed from there, so `from app.x import y`
+// resolves relative to it rather than to the repo root.
+const IMPORT_ROOT_MARKERS = ['pyproject.toml', 'setup.py', 'setup.cfg'];
+
 const FROM_IMPORT_RE = /^\s*from\s+([.\w][\w.]*|\.+)\s+import\s+(.+)$/gm;
 const IMPORT_RE = /^\s*import\s+(.+)$/gm;
 const DYNAMIC_IMPORT_RE =
@@ -82,7 +87,7 @@ function extract(repoRoot, files) {
   try {
     const candidateFiles = normalizeCandidateFiles(files);
     const candidateSet = new Set(candidateFiles);
-    const moduleIndex = buildModuleIndex(candidateFiles);
+    const moduleIndex = buildModuleIndex(repoRoot, candidateFiles);
     const symbolsByFile = extractSymbols(repoRoot, candidateFiles);
     const edgeWeights = new Map();
 
@@ -97,6 +102,7 @@ function extract(repoRoot, files) {
         const target = resolveImportSpecifier(source, specifier, {
           candidateSet,
           moduleIndex,
+          sourceFile: source,
         });
         if (!target || target === source) {
           continue;
@@ -212,7 +218,7 @@ function readImportSpecifiers(text) {
 /**
  * @param {string} sourceFile
  * @param {PythonSpecifier} specifier
- * @param {{ candidateSet: Set<string>, moduleIndex: Map<string, string> }} context
+ * @param {{ candidateSet: Set<string>, moduleIndex: Map<string, ModuleCandidate[]>, sourceFile: string }} context
  * @returns {string | null}
  */
 function resolveImportSpecifier(sourceFile, specifier, context) {
@@ -247,14 +253,17 @@ function resolveImportSpecifier(sourceFile, specifier, context) {
  * @returns {string | null}
  */
 function resolveModule(moduleName, context) {
-  const target = context.moduleIndex.get(moduleName);
-  return target && context.candidateSet.has(target) ? target : null;
+  const candidates = context.moduleIndex.get(moduleName) ?? [];
+  const target = candidates.find(({ file, root }) =>
+    context.candidateSet.has(file) && isWithinRoot(context.sourceFile, root)
+  )?.file;
+  return target ?? null;
 }
 
 /**
  * @param {string} baseModule
  * @param {string[]} names
- * @param {{ candidateSet: Set<string>, moduleIndex: Map<string, string> }} context
+ * @param {{ candidateSet: Set<string>, moduleIndex: Map<string, ModuleCandidate[]>, sourceFile: string }} context
  * @returns {string | null}
  */
 function resolveImportedSubmodule(baseModule, names, context) {
@@ -291,35 +300,107 @@ function resolveRelativeModule(sourceFile, relativeModule) {
 }
 
 /**
+ * @typedef {{ file: string, root: string }} ModuleCandidate
+ *
+ * @param {string} repoRoot
  * @param {string[]} candidateFiles
- * @returns {Map<string, string>}
+ * @returns {Map<string, ModuleCandidate[]>}
  */
-function buildModuleIndex(candidateFiles) {
+function buildModuleIndex(repoRoot, candidateFiles) {
+  const importRoots = discoverImportRoots(repoRoot, candidateFiles);
   const index = new Map();
   for (const file of candidateFiles) {
-    for (const moduleName of moduleNamesForFile(file)) {
-      if (!index.has(moduleName)) {
-        index.set(moduleName, file);
+    for (const root of importRoots) {
+      if (!isWithinRoot(file, root)) {
+        continue;
       }
+      const moduleName = moduleNameForRoot(file, root);
+      if (!moduleName) {
+        continue;
+      }
+      const candidates = index.get(moduleName) ?? [];
+      candidates.push({ file, root });
+      index.set(moduleName, candidates);
     }
+  }
+  for (const candidates of index.values()) {
+    candidates.sort(
+      (a, b) =>
+        pathDepth(b.root) - pathDepth(a.root) ||
+        a.root.localeCompare(b.root) ||
+        a.file.localeCompare(b.file)
+    );
   }
   return index;
 }
 
 /**
- * @param {string} file
+ * Plausible import roots come from project markers, conventional `src/`
+ * layouts, and the directory immediately above a contiguous `__init__.py`
+ * package chain. The repo root remains the lowest-priority fallback.
+ *
+ * @param {string} repoRoot
+ * @param {string[]} candidateFiles
  * @returns {string[]}
  */
-function moduleNamesForFile(file) {
-  const withoutExt = file.replace(/\.py$/u, '');
-  const rawParts = withoutExt.split('/').filter(Boolean);
-  const names = new Set([moduleNameFromParts(rawParts)]);
-
-  if (rawParts[0] === 'src') {
-    names.add(moduleNameFromParts(rawParts.slice(1)));
+function discoverImportRoots(repoRoot, candidateFiles) {
+  const roots = new Set(['']);
+  const directories = new Set();
+  for (const file of candidateFiles) {
+    let dir = path.posix.dirname(file);
+    while (dir !== '.') {
+      directories.add(dir);
+      const parent = path.posix.dirname(dir);
+      if (parent === dir) {
+        break;
+      }
+      dir = parent;
+    }
   }
 
-  return [...names].filter(Boolean);
+  for (const dir of [...directories].sort()) {
+    if (path.posix.basename(dir) === 'src') {
+      roots.add(dir);
+    }
+    if (
+      IMPORT_ROOT_MARKERS.some((marker) =>
+        existsSync(path.join(repoRoot, dir, marker))
+      )
+    ) {
+      roots.add(dir);
+    }
+  }
+
+  const candidateSet = new Set(candidateFiles);
+  for (const file of candidateFiles) {
+    let packageDir = path.posix.dirname(file);
+    while (candidateSet.has(`${packageDir}/__init__.py`)) {
+      const parent = path.posix.dirname(packageDir);
+      if (parent === '.') {
+        roots.add('');
+        break;
+      }
+      if (!candidateSet.has(`${parent}/__init__.py`)) {
+        roots.add(parent);
+        break;
+      }
+      packageDir = parent;
+    }
+  }
+
+  return [...roots].sort(
+    (a, b) => pathDepth(b) - pathDepth(a) || a.localeCompare(b)
+  );
+}
+
+/**
+ * @param {string} file
+ * @param {string} root
+ * @returns {string}
+ */
+function moduleNameForRoot(file, root) {
+  const relative = root === '' ? file : path.posix.relative(root, file);
+  return moduleNameFromParts(relative.replace(/\.py$/u, '').split('/').filter(Boolean));
 }
 
 /**
@@ -327,8 +408,11 @@ function moduleNamesForFile(file) {
  * @returns {string[]}
  */
 function packageNameForFile(file) {
-  const names = moduleNamesForFile(file);
-  const moduleName = names.find((name) => !name.startsWith('src.')) ?? names[0];
+  const rawParts = file.replace(/\.py$/u, '').split('/').filter(Boolean);
+  const srcIndex = rawParts.lastIndexOf('src');
+  const moduleName = moduleNameFromParts(
+    srcIndex === -1 ? rawParts : rawParts.slice(srcIndex + 1)
+  );
   if (!moduleName) {
     return [];
   }
@@ -336,6 +420,23 @@ function packageNameForFile(file) {
     return moduleName.split('.');
   }
   return moduleName.split('.').slice(0, -1);
+}
+
+/**
+ * @param {string} file
+ * @param {string} root
+ * @returns {boolean}
+ */
+function isWithinRoot(file, root) {
+  return root === '' || file === root || file.startsWith(`${root}/`);
+}
+
+/**
+ * @param {string} value
+ * @returns {number}
+ */
+function pathDepth(value) {
+  return value === '' ? 0 : value.split('/').filter(Boolean).length;
 }
 
 /**

@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import pythonAdapter from '../../scripts/module-map/lib/adapters/python.mjs';
 import { buildPlanProductModel } from '../../scripts/module-map/lib/build.mjs';
 import { selectAdapter } from '../../scripts/module-map/lib/adapters/index.mjs';
@@ -143,4 +145,37 @@ test('plan-product model preserves Python adapter dependencies in module graph',
   assert.deepEqual(orders.dependsOn, ['shared', 'users']);
   assert.deepEqual(shared.usedBy, ['orders', 'users']);
   assert.deepEqual(users.dependsOn, ['shared']);
+});
+
+test('absolute imports resolve from the deepest shared plausible Python root', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'python-import-root-'));
+  const write = (relative, content) => {
+    const file = path.join(root, relative);
+    mkdirSync(path.dirname(file), { recursive: true });
+    writeFileSync(file, content, 'utf8');
+  };
+
+  try {
+    write('backend/pyproject.toml', '[project]\nname = "backend"\n');
+    write('backend/app/__init__.py', '');
+    write('backend/app/service.py', 'from app.models import User\n');
+    write('backend/app/models.py', 'class User:\n    pass\n');
+    write('other/pyproject.toml', '[project]\nname = "other"\n');
+    write('other/app/__init__.py', '');
+    write('other/app/models.py', 'class WrongUser:\n    pass\n');
+
+    const files = [
+      'backend/app/__init__.py',
+      'backend/app/service.py',
+      'backend/app/models.py',
+      'other/app/__init__.py',
+      'other/app/models.py',
+    ];
+    assert.deepEqual(
+      new Set(pythonAdapter.extract(root, files).edges.map(edgeKey)),
+      new Set(['backend/app/service.py->backend/app/models.py'])
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

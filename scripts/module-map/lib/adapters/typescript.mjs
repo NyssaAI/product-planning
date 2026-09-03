@@ -35,6 +35,8 @@ const SG_CONFIG_PATH = path.join(CODE_MAP_DIR, 'sgconfig.yml');
 const SOURCE_EXTENSIONS = new Set([
   '.ts',
   '.tsx',
+  '.mts',
+  '.cts',
   '.d.ts',
   '.js',
   '.jsx',
@@ -45,12 +47,31 @@ const SOURCE_EXTENSIONS = new Set([
 const RESOLVE_EXTENSIONS = [
   '.ts',
   '.tsx',
+  '.mts',
+  '.cts',
   '.d.ts',
   '.js',
   '.jsx',
   '.mjs',
   '.cjs',
 ];
+
+// NodeNext/bundler-style specifiers name the emitted JS file while the source
+// on disk is TypeScript: `import './b.js'` must resolve to `b.ts`/`b.tsx`.
+// Tried after the literal path so a real `.js` source still wins.
+const EMITTED_EXTENSION_SOURCES = new Map([
+  ['.js', ['.ts', '.tsx']],
+  ['.jsx', ['.tsx']],
+  ['.mjs', ['.mts']],
+  ['.cjs', ['.cts']],
+]);
+
+// Files the adapter matches on and extracts from (TypeScript or JavaScript).
+const SOURCE_FILE_RE = /\.(tsx?|mts|cts|jsx?|mjs|cjs)$/i;
+
+// Extensionless entry points tried, in order, when a package's declared entry
+// (`exports`/`module`/`main`) points at build output that is never walked.
+const PACKAGE_ENTRY_FALLBACKS = ['src/index', 'index'];
 
 // TypeScript adds no language-specific skip dirs beyond the shared base.
 const SKIP_DIRS = new Set([...BASE_SKIP_DIRS]);
@@ -94,7 +115,9 @@ function matches(repoRoot) {
     if (existsSync(path.join(repoRoot, 'tsconfig.json'))) {
       return true;
     }
-    return hasTypeScriptFiles(repoRoot);
+    // JS-only repos get import-based discovery too: extract() already handles
+    // .js/.jsx/.mjs/.cjs, so any source file outside skipped dirs is enough.
+    return hasSourceFiles(repoRoot);
   } catch (error) {
     log.warn('typescript matches failed', { error: errorMessage(error) });
     return false;
@@ -175,7 +198,7 @@ function normalizeCandidateFiles(files) {
  * @param {string} repoRoot
  * @returns {boolean}
  */
-function hasTypeScriptFiles(repoRoot) {
+function hasSourceFiles(repoRoot) {
   const stack = [repoRoot];
   let checked = 0;
   while (stack.length > 0 && checked < 2000) {
@@ -188,7 +211,7 @@ function hasTypeScriptFiles(repoRoot) {
         }
         continue;
       }
-      if (/\.(tsx?|mts|cts)$/i.test(entry.name)) {
+      if (SOURCE_FILE_RE.test(entry.name)) {
         return true;
       }
     }
@@ -335,6 +358,10 @@ function candidatePaths(absBase) {
   const ext = extnameWithDts(absBase);
   if (ext) {
     paths.push(absBase);
+    const stem = absBase.slice(0, -ext.length);
+    for (const suffix of EMITTED_EXTENSION_SOURCES.get(ext.toLowerCase()) ?? []) {
+      paths.push(`${stem}${suffix}`);
+    }
   } else {
     for (const suffix of RESOLVE_EXTENSIONS) {
       paths.push(`${absBase}${suffix}`);
@@ -507,27 +534,34 @@ function resolveWorkspacePackage(repoRoot, specifier, candidateSet, packages) {
     if (specifier !== pkg.name && !specifier.startsWith(`${pkg.name}/`)) {
       continue;
     }
-    const subpath =
-      specifier === pkg.name
-        ? pkg.entry
-        : specifier.slice(pkg.name.length + 1);
-    const resolved = resolveCandidatePath(
-      repoRoot,
-      path.resolve(pkg.dir, subpath),
-      candidateSet
-    );
-    if (resolved) {
-      return resolved;
+    // Bare package name: the declared entry first, then the source-layout
+    // fallbacks (a `main` under dist/ is build output and never walked).
+    // Subpath: the literal path, then the same path under src/.
+    const subpath = specifier.slice(pkg.name.length + 1);
+    const subpaths =
+      specifier === pkg.name ? pkg.entries : [subpath, `src/${subpath}`];
+    for (const candidate of subpaths) {
+      const resolved = resolveCandidatePath(
+        repoRoot,
+        path.resolve(pkg.dir, candidate),
+        candidateSet
+      );
+      if (resolved) {
+        return resolved;
+      }
     }
   }
   return null;
 }
 
 /**
- * @typedef {{ name: string, dir: string, entry: string }} WorkspacePackage
+ * @typedef {{ name: string, dir: string, entries: string[] }} WorkspacePackage
  */
 
 /**
+ * Collect every named package.json in the repo, including the root package so
+ * self-references (`import 'my-pkg'` inside my-pkg) resolve to its own source.
+ *
  * @param {string} repoRoot
  * @returns {WorkspacePackage[]}
  */
@@ -553,18 +587,13 @@ function readWorkspacePackages(repoRoot) {
       const pkgPath = path.join(current, entry.name);
       try {
         const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-        if (typeof pkg.name !== 'string' || current === repoRoot) {
+        if (typeof pkg.name !== 'string') {
           continue;
         }
         packages.push({
           name: pkg.name,
           dir: current,
-          entry:
-            stringPackageEntry(pkg.exports) ??
-            stringPackageEntry(pkg.module) ??
-            stringPackageEntry(pkg.main) ??
-            stringPackageEntry(pkg.types) ??
-            'src/index',
+          entries: packageEntryCandidates(pkg),
         });
       } catch {
         // Best-effort workspace mapping only.
@@ -572,7 +601,33 @@ function readWorkspacePackages(repoRoot) {
     }
   }
 
-  return packages.sort((a, b) => a.name.localeCompare(b.name));
+  return packages.sort(
+    (a, b) => a.name.localeCompare(b.name) || a.dir.localeCompare(b.dir)
+  );
+}
+
+/**
+ * Ordered package-relative entry points to try for a bare package import:
+ * the declared entry (`exports`/`module`/`main`), then `src/index.*`, then
+ * `index.*` in the package dir, then `types`/`typings` (which only resolves
+ * when it points at walked source rather than emitted declarations).
+ *
+ * @param {Record<string, unknown>} pkg parsed package.json
+ * @returns {string[]}
+ */
+function packageEntryCandidates(pkg) {
+  const declared =
+    stringPackageEntry(pkg.exports) ??
+    stringPackageEntry(pkg.module) ??
+    stringPackageEntry(pkg.main);
+  const typed = stringPackageEntry(pkg.types) ?? stringPackageEntry(pkg.typings);
+  return [
+    ...new Set(
+      [declared, ...PACKAGE_ENTRY_FALLBACKS, typed].filter(
+        (candidate) => typeof candidate === 'string' && candidate !== ''
+      )
+    ),
+  ];
 }
 
 /**

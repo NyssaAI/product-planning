@@ -185,7 +185,8 @@ function extractGraph(repoRoot, files) {
  * @property {string} absDir
  * @property {string} rootNamespace
  * @property {string} assemblyName
- * @property {Set<string>} references referenced repo-relative .csproj paths
+ * @property {Set<string>} references directly referenced repo-relative .csproj paths
+ * @property {Set<string>} visibleProjects transitive closure of `references`
  * @property {string[]} compileIncludes
  * @property {string[]} compileRemoves
  */
@@ -281,7 +282,33 @@ function discoverProjects(repoRoot) {
       projects.push(readProject(repoRoot, full));
     }
   }
-  return projects.sort((a, b) => a.path.localeCompare(b.path));
+  projects.sort((a, b) => a.path.localeCompare(b.path));
+  addTransitiveReferences(projects);
+  return projects;
+}
+
+/**
+ * SDK-style projects flow references transitively (a project referencing
+ * App also compiles against everything App references), so visibility is the
+ * closure of `references`, not the direct set. Cycles are tolerated.
+ *
+ * @param {ProjectInfo[]} projects
+ */
+function addTransitiveReferences(projects) {
+  const byPath = new Map(projects.map((p) => [p.path, p]));
+  for (const project of projects) {
+    const stack = [...project.references];
+    while (stack.length > 0) {
+      const refPath = stack.pop();
+      if (project.visibleProjects.has(refPath)) {
+        continue;
+      }
+      project.visibleProjects.add(refPath);
+      for (const next of byPath.get(refPath)?.references ?? []) {
+        stack.push(next);
+      }
+    }
+  }
 }
 
 /**
@@ -320,6 +347,7 @@ function readProject(repoRoot, absPath) {
     rootNamespace,
     assemblyName,
     references,
+    visibleProjects: new Set(),
     compileIncludes,
     compileRemoves,
   };
@@ -358,7 +386,7 @@ function projectCanSee(source, target) {
   if (!source || !target || source.path === target.path) {
     return true;
   }
-  return source.references.has(target.path);
+  return source.visibleProjects.has(target.path);
 }
 
 /**
@@ -665,24 +693,233 @@ function addToIndex(index, key, value) {
 /**
  * Masks comments and string/char literals with spaces so regex scans ignore
  * non-code text while keeping offsets stable for line calculations.
+ *
+ * One left-to-right scan consumes each construct exactly once, so a `//`
+ * inside a string (`"https://example.com"`) is string text, not a comment, and
+ * a quote inside a comment never opens a string. Handles block and line
+ * comments, regular, verbatim (`@""`), interpolated (`$""`, `$@""`, `@$""`),
+ * and raw (`"""…"""`) strings, and char literals.
+ *
  * @param {string} content
  * @returns {string}
  */
 function maskCommentsAndStrings(content) {
-  return content
-    .replace(/\/\*[\s\S]*?\*\//g, maskExceptNewlines)
-    .replace(/\/\/[^\n\r]*/g, maskExceptNewlines)
-    .replace(/@""|@"(?:""|[^"])*"/g, maskExceptNewlines)
-    .replace(/"(?:\\.|[^"\\])*"/g, maskExceptNewlines)
-    .replace(/'(?:\\.|[^'\\])'/g, maskExceptNewlines);
+  const out = content.split('');
+  let i = 0;
+  while (i < content.length) {
+    const end = maskedSpanEnd(content, i);
+    if (end === null) {
+      i += 1;
+      continue;
+    }
+    for (let k = i; k < end; k += 1) {
+      if (out[k] !== '\n' && out[k] !== '\r') {
+        out[k] = ' ';
+      }
+    }
+    i = end;
+  }
+  return out.join('');
+}
+
+/**
+ * If a comment, string, or char literal starts at `i`, return the index just
+ * past its end; otherwise null. Unterminated constructs run to end of input.
+ *
+ * @param {string} text
+ * @param {number} i
+ * @returns {number | null}
+ */
+function maskedSpanEnd(text, i) {
+  const c = text[i];
+  const next = text[i + 1];
+
+  if (c === '/' && next === '*') {
+    const close = text.indexOf('*/', i + 2);
+    return close === -1 ? text.length : close + 2;
+  }
+  if (c === '/' && next === '/') {
+    return lineEnd(text, i);
+  }
+  if (c === "'") {
+    return charLiteralEnd(text, i);
+  }
+
+  // String prefixes: `$` and `@` in either order, then a quote.
+  let j = i;
+  let verbatim = false;
+  let interpolated = false;
+  while (text[j] === '$' || text[j] === '@') {
+    if (text[j] === '$') {
+      interpolated = true;
+    } else {
+      verbatim = true;
+    }
+    j += 1;
+  }
+  if (text[j] !== '"') {
+    return null;
+  }
+  if (text.startsWith('"""', j)) {
+    return rawStringEnd(text, j);
+  }
+  return verbatim
+    ? verbatimStringEnd(text, j + 1)
+    : regularStringEnd(text, j + 1, interpolated);
 }
 
 /**
  * @param {string} text
- * @returns {string}
+ * @param {number} i
+ * @returns {number}
  */
-function maskExceptNewlines(text) {
-  return text.replace(/[^\n\r]/g, ' ');
+function lineEnd(text, i) {
+  let j = i;
+  while (j < text.length && text[j] !== '\n' && text[j] !== '\r') {
+    j += 1;
+  }
+  return j;
+}
+
+/**
+ * A char literal is one escaped or plain character between single quotes; a
+ * lone `'` that does not fit that shape is left alone (one char consumed).
+ *
+ * @param {string} text
+ * @param {number} i index of the opening quote
+ * @returns {number}
+ */
+function charLiteralEnd(text, i) {
+  let j = i + 1;
+  if (text[j] === '\\') {
+    // Escapes: `'\''`, `'\n'`, `'\x41'`, unicode escapes — skip the escaped
+    // character, then any hex payload, and expect the closing quote.
+    j += 2;
+    while (j < text.length && j - i < 10 && /[0-9A-Fa-f]/.test(text[j])) {
+      j += 1;
+    }
+  } else {
+    j += 1;
+  }
+  return text[j] === "'" ? j + 1 : i + 1;
+}
+
+/**
+ * Regular string body after the opening quote: backslash escapes; for
+ * interpolated strings a `{…}` hole may contain nested strings, which are
+ * consumed recursively so their quotes cannot terminate the outer literal.
+ *
+ * @param {string} text
+ * @param {number} start index just past the opening quote
+ * @param {boolean} interpolated
+ * @returns {number}
+ */
+function regularStringEnd(text, start, interpolated) {
+  let j = start;
+  while (j < text.length) {
+    const c = text[j];
+    if (c === '\\') {
+      j += 2;
+      continue;
+    }
+    if (c === '"') {
+      return j + 1;
+    }
+    if (c === '\n' || c === '\r') {
+      return j;
+    }
+    if (interpolated && c === '{') {
+      if (text[j + 1] === '{') {
+        j += 2;
+        continue;
+      }
+      j = interpolationHoleEnd(text, j + 1);
+      continue;
+    }
+    j += 1;
+  }
+  return text.length;
+}
+
+/**
+ * Verbatim string body after the opening quote: `""` is an escaped quote and
+ * newlines are literal. Interpolation holes in `$@""` are handled the same way
+ * as in regular strings.
+ *
+ * @param {string} text
+ * @param {number} start index just past the opening quote
+ * @returns {number}
+ */
+function verbatimStringEnd(text, start) {
+  let j = start;
+  while (j < text.length) {
+    const c = text[j];
+    if (c === '"') {
+      if (text[j + 1] === '"') {
+        j += 2;
+        continue;
+      }
+      return j + 1;
+    }
+    if (c === '{') {
+      if (text[j + 1] === '{') {
+        j += 2;
+        continue;
+      }
+      j = interpolationHoleEnd(text, j + 1);
+      continue;
+    }
+    j += 1;
+  }
+  return text.length;
+}
+
+/**
+ * Raw string literal: N (>= 3) opening quotes close on the same count.
+ *
+ * @param {string} text
+ * @param {number} i index of the first opening quote
+ * @returns {number}
+ */
+function rawStringEnd(text, i) {
+  let quotes = 0;
+  while (text[i + quotes] === '"') {
+    quotes += 1;
+  }
+  const close = text.indexOf('"'.repeat(quotes), i + quotes);
+  return close === -1 ? text.length : close + quotes;
+}
+
+/**
+ * Consume an interpolation hole body up to and including its closing `}`,
+ * skipping nested strings, chars, and braces.
+ *
+ * @param {string} text
+ * @param {number} start index just past the opening `{`
+ * @returns {number}
+ */
+function interpolationHoleEnd(text, start) {
+  let j = start;
+  let depth = 1;
+  while (j < text.length) {
+    const c = text[j];
+    if (c === '{') {
+      depth += 1;
+      j += 1;
+      continue;
+    }
+    if (c === '}') {
+      depth -= 1;
+      j += 1;
+      if (depth === 0) {
+        return j;
+      }
+      continue;
+    }
+    const nested = c === '/' ? null : maskedSpanEnd(text, j);
+    j = nested === null ? j + 1 : nested;
+  }
+  return text.length;
 }
 
 /**
