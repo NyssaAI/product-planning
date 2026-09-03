@@ -424,3 +424,168 @@ func Register(r *gin.Engine) {
   assert.equal(entry.path, '/api/v2/z');
   assert.equal(entry.confidence, 'high');
 });
+
+test('extractEndpoints ignores Express settings lookups and records the last argument as handler', () => {
+  const root = repo();
+  write(
+    root,
+    'src/server.js',
+    `const app = express();
+app.get('env');
+app.get('port', 3000);
+app.get('/health', health);
+app.post('/orders', auth, validate, createOrder);
+app.put('/orders/:id', auth, (req, res) => res.json({}));
+router.get('/reports', ctrl.list);
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['src/server.js']);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  // app.get('env') / app.get('port') are settings reads, not routes.
+  assert.equal(endpoints.some((e) => e.path === 'env' || e.path === 'port'), false);
+  assert.equal(endpoints.length, 4);
+  assert.equal(byKey.get('http:GET:/health:src/server.js').handler, 'health');
+  // The handler is the last argument, after middleware.
+  assert.equal(byKey.get('http:POST:/orders:src/server.js').handler, 'createOrder');
+  // An inline handler has no name to record.
+  assert.equal(byKey.get('http:PUT:/orders/:id:src/server.js').handler, undefined);
+  assert.equal(byKey.get('http:GET:/reports:src/server.js').handler, 'ctrl.list');
+});
+
+test('extractEndpoints names FastMCP tools from the explicit name or the decorated def', () => {
+  const root = repo();
+  write(
+    root,
+    'src/tools.py',
+    `from mcp.server.fastmcp import FastMCP
+mcp = FastMCP("orders")
+
+@mcp.tool(description="Look up an order")
+def lookup_order(order_id: str):
+    return {}
+
+@mcp.tool()
+async def cancel_order(order_id: str):
+    return {}
+
+@mcp.tool("explicit")
+def impl():
+    return {}
+
+@mcp.tool(name="kw_name")
+def other():
+    return {}
+
+@mcp.resource("orders://{id}")
+def read_order(id: str):
+    return ""
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['src/tools.py']);
+  const names = endpoints.map((e) => e.name).sort();
+
+  // Keyword arguments never become names; async defs count; an explicit name
+  // wins over the def name and yields a single entry.
+  assert.deepEqual(names, ['cancel_order', 'explicit', 'kw_name', 'lookup_order', 'read_order']);
+  for (const endpoint of endpoints) {
+    assert.equal(endpoint.confidence, 'high');
+  }
+  const resource = endpoints.find((e) => e.kind === 'mcp-resource');
+  assert.equal(resource.path, 'orders://{id}');
+});
+
+test('extractEndpoints maps C# MCP attributes stacked above other attribute lines', () => {
+  const root = repo();
+  write(
+    root,
+    'Tools/OrderTools.cs',
+    `public static class OrderTools
+{
+    [McpServerTool]
+    [Description("Looks up an order")]
+    public static string LookupOrder(string orderId) => "";
+
+    [McpServerTool, Description("Cancels an order")]
+    public static async Task<string> CancelOrder(string orderId) => "";
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['Tools/OrderTools.cs']);
+  const names = endpoints.map((e) => e.name).sort();
+
+  assert.deepEqual(names, ['CancelOrder', 'LookupOrder']);
+  assert.equal(endpoints.find((e) => e.name === 'LookupOrder').line, 3);
+});
+
+test('extractEndpoints maps Flask route and Blueprint method decorators', () => {
+  const root = repo();
+  write(
+    root,
+    'src/app.py',
+    `from flask import Flask, Blueprint
+app = Flask(__name__)
+bp = Blueprint("bp", __name__)
+
+@app.route("/x", methods=["POST"])
+def x():
+    return ""
+
+@app.route("/y", methods=("GET", "PUT"))
+def y():
+    return ""
+
+@app.route("/")
+def index():
+    return ""
+
+@bp.get("/bp")
+def bp_get():
+    return ""
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['src/app.py']);
+  const byKey = new Map(endpoints.map((endpoint) => [key(endpoint), endpoint]));
+
+  assert.equal(byKey.has('http:POST:/x:src/app.py'), true);
+  // One endpoint per listed method.
+  assert.equal(byKey.has('http:GET:/y:src/app.py'), true);
+  assert.equal(byKey.has('http:PUT:/y:src/app.py'), true);
+  // GET is the default when methods is omitted.
+  assert.equal(byKey.has('http:GET:/:src/app.py'), true);
+  assert.equal(byKey.has('http:GET:/bp:src/app.py'), true);
+  assert.equal(endpoints.length, 5);
+  assert.equal(byKey.get('http:GET:/bp:src/app.py').framework, 'flask');
+});
+
+test('extractEndpoints resolves gin Group chains that carry middleware arguments', () => {
+  const root = repo();
+  write(
+    root,
+    'internal/api/middleware.go',
+    `package api
+
+import "github.com/gin-gonic/gin"
+
+func Register(r *gin.Engine) {
+	g := r.Group("/api", authMiddleware).Group("/v1")
+	g.GET("/users", listUsers)
+	h := r.Group("/x").Group(prefix)
+	h.GET("/y", y)
+}
+`
+  );
+
+  const endpoints = extractEndpoints(root, ['internal/api/middleware.go']);
+  const users = endpoints.find((e) => e.handler === 'listUsers');
+  assert.equal(users.path, '/api/v1/users');
+  assert.equal(users.confidence, 'high');
+  // A chain link whose prefix is not a string literal is unresolvable.
+  const y = endpoints.find((e) => e.handler === 'y');
+  assert.equal(y.path, '/y');
+  assert.equal(y.confidence, 'medium');
+});
