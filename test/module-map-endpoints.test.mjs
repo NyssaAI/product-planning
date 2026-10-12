@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { buildPlanProductModel } from '../scripts/module-map/lib/build.mjs';
 import { renderModuleScope } from '../scripts/module-map/lib/render.mjs';
+import { discoverHttpRoutes } from '../scripts/module-map/lib/routes.mjs';
 
 /** @type {string[]} */
 const tempDirs = [];
@@ -28,6 +29,19 @@ test.after(() => {
   for (const dir of tempDirs) {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('Next filename fallback does not duplicate an executable route', () => {
+  const root = repo();
+  const file = 'src/app/api/health/route.ts';
+  write(root, file, 'export async function GET() { return Response.json({ ok: true }); }');
+  const routes = discoverHttpRoutes(root, { apiRoutes: { enabled: true, root: 'src/app/api', routeFile: 'route.ts', pathPrefix: 'src/app' } }, [], {
+    schemaVersion: '2.0', files: [{ path: file, symbols: [{ name: 'GET' }] }],
+    endpoints: [{ kind: 'http', file, path: '/api/health', method: 'GET', line: 1, confidence: 'high' }],
+  });
+  assert.equal(routes.length, 1);
+  assert.equal(routes[0].line, 1);
+  assert.equal(routes[0].confidence, 'high');
 });
 
 test('plan-product renders HTTP routes and MCP capabilities from code-map endpoints', () => {
@@ -70,6 +84,7 @@ test('plan-product renders HTTP routes and MCP capabilities from code-map endpoi
         line: 4,
         framework: 'express',
         confidence: 'high',
+        pathResolution: 'resolved',
       },
       {
         kind: 'mcp-tool',
@@ -87,9 +102,11 @@ test('plan-product renders HTTP routes and MCP capabilities from code-map endpoi
   const rendered = renderModuleScope(model, mod);
 
   assert.match(rendered, /## HTTP routes/);
-  assert.match(rendered, /`POST` `\/orders` -> `src\/api\/server.ts`/);
+  assert.match(rendered, /`POST` `\/orders` -> `src\/api\/server.ts:4` \(high confidence; resolved\)/);
+  assert.equal(mod.httpRoutes[0].confidence, 'high');
+  assert.equal(mod.httpRoutes[0].framework, 'express');
   assert.match(rendered, /## MCP tools/);
-  assert.match(rendered, /`lookup_order` -> `src\/api\/server.ts`/);
+  assert.match(rendered, /`lookup_order` -> `src\/api\/server.ts:8`/);
 });
 
 test('plan-product uses code-map endpoints even when route-file scanning is disabled', () => {
@@ -135,7 +152,7 @@ test('plan-product uses code-map endpoints even when route-file scanning is disa
   const rendered = renderModuleScope(model, mod);
 
   assert.match(rendered, /## MCP tools/);
-  assert.match(rendered, /`ping` -> `src\/server\/mcp.ts`/);
+  assert.match(rendered, /`ping` -> `src\/server\/mcp.ts:3`/);
   assert.equal(
     mod.capabilities.some((capability) => capability.includes('MCP tools')),
     true

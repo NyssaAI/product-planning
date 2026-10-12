@@ -64,8 +64,9 @@ Start at `docs/code-map/index.md` to pick the module set.
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
+| map-code | Public mapping workflow, freshness checks, and bounded evidence queries. | Feature code and services under `scripts/map-code/` | `docs/code-map/modules/map-code.md` |
 | module-map | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | `docs/code-map/modules/module-map.md` |
 | code-map | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | `docs/code-map/modules/code-map.md` |
 | lib | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and<br>endpoint extraction. | Feature code and services under `scripts/lib/` | `docs/code-map/modules/lib.md` |
-<!-- plan-product:module-map generated 2026-07-31T23:18:06.861Z -->
+<!-- plan-product:module-map generated 2026-10-12T01:18:13.917Z -->
 <!-- plan-product:module-map:end -->

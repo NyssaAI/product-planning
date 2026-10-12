@@ -10,6 +10,9 @@ const ENTRY_POINT_NAMES = [
   'main.py',
   'main.ts',
   'main.js',
+  'main.mjs',
+  'index.mjs',
+  'generate.mjs',
   'index.ts',
   'index.js',
   'Program.cs',
@@ -266,7 +269,7 @@ function inferCapabilities(repoRoot, mod, enrichment) {
     const methodText = methods.length > 0 ? `${methods.join('/')} ` : '';
     const samplePaths = routes
       .slice(0, 3)
-      .map((r) => `\`${r.path}\``)
+      .map((r) => `\`${r.path ?? r.pathExpression ?? 'unresolved path'}\`${r.pathResolution && r.pathResolution !== 'resolved' ? ` (${r.pathResolution})` : ''}`)
       .join(', ');
     sentences.push(
       `Serves ${routes.length} HTTP ${methodText}route${routes.length === 1 ? '' : 's'} including ${samplePaths}.`

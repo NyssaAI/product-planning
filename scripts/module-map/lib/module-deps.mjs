@@ -1,5 +1,3 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import path from 'node:path';
 import { extractStackGraph } from './stack-graph.mjs';
 
 /**
@@ -14,17 +12,11 @@ export function buildModuleEdges(repoRoot, modules, config, stack) {
   const resolved = stack ?? extractStackGraph(repoRoot, config);
   if (resolved) {
     const adapterEdges = buildAdapterModuleEdges(modules, resolved.graph);
-    if (adapterEdges.length > 0) {
-      // Adapter import-resolution supersedes the regex import scan below, but
-      // declared package dependencies are orthogonal — fold them in so manual
-      // modules don't silently lose their workspace edges.
-      return dedupeEdges([...adapterEdges, ...packageDependencyEdges(modules)]);
-    }
+    return dedupeEdges([...adapterEdges, ...packageDependencyEdges(modules)]);
   }
 
   return dedupeEdges([
     ...packageDependencyEdges(modules),
-    ...importScanEdges(repoRoot, modules),
   ]);
 }
 
@@ -51,6 +43,15 @@ function buildAdapterModuleEdges(modules, graph) {
       edges.push({ from, to });
     }
   }
+  // A configured module name is a declared import boundary even when no
+  // package entry point can resolve it to a file. Keep the unresolved file
+  // diagnostic; only the explicitly named module relation can be inferred.
+  for (const diagnostic of graph.diagnostics ?? []) {
+    if (diagnostic.kind !== 'external-or-unresolved-import') continue;
+    const target = modules.find(mod => mod.name === diagnostic.specifier);
+    const from = moduleIdForFile(diagnostic.file ?? '', sortedModules);
+    if (target && from) edges.push({ from, to: target.id });
+  }
   return dedupeEdges(edges);
 }
 
@@ -70,35 +71,6 @@ function packageDependencyEdges(modules) {
       if (targetId) {
         edges.push({ from: mod.id, to: targetId });
       }
-    }
-  }
-  return edges;
-}
-
-/**
- * Edges discovered by scanning each module's source for relative/named imports.
- *
- * @param {string} repoRoot
- * @param {import('./discover-modules.mjs').ModuleDef[]} modules
- * @returns {{ from: string, to: string }[]}
- */
-function importScanEdges(repoRoot, modules) {
-  const byName = new Map();
-  const byRoot = new Map();
-  for (const mod of modules) {
-    byName.set(mod.name, mod.id);
-    byRoot.set(mod.root, mod.id);
-  }
-
-  /** @type {{ from: string, to: string }[]} */
-  const edges = [];
-  for (const mod of modules) {
-    const dir = path.join(repoRoot, mod.root);
-    if (!existsSync(dir)) {
-      continue;
-    }
-    for (const to of scanImportsInDir(repoRoot, dir, byName, byRoot, mod.id)) {
-      edges.push({ from: mod.id, to });
     }
   }
   return edges;
@@ -140,69 +112,4 @@ function moduleIdForFile(file, sortedModules) {
     }
   }
   return null;
-}
-
-/**
- * @param {string} repoRoot
- * @param {string} dir
- * @param {Map<string, string>} byName
- * @param {Map<string, string>} byRoot
- * @param {string} selfId
- */
-function scanImportsInDir(repoRoot, dir, byName, byRoot, selfId) {
-  /** @type {Set<string>} */
-  const targets = new Set();
-  const files = [];
-  collectSourceFiles(dir, files);
-
-  const importRe =
-    /(?:import|export)\s+[\s\S]*?\sfrom\s+['"]([^'"]+)['"]|import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
-
-  for (const file of files) {
-    const text = readFileSync(file, 'utf8');
-    for (const match of text.matchAll(importRe)) {
-      const spec = match[1] ?? match[2];
-      if (!spec) {
-        continue;
-      }
-      if (byName.has(spec)) {
-        targets.add(byName.get(spec));
-        continue;
-      }
-      if (spec.startsWith('.')) {
-        const resolved = path.normalize(
-          path.join(path.dirname(file), spec)
-        );
-        for (const [root, id] of byRoot) {
-          const rootAbs = path.normalize(path.join(repoRoot, root));
-          if (resolved.startsWith(rootAbs) && id !== selfId) {
-            targets.add(id);
-          }
-        }
-      }
-    }
-  }
-
-  return targets;
-}
-
-/**
- * @param {string} dir
- * @param {string[]} acc
- */
-function collectSourceFiles(dir, acc) {
-  if (!existsSync(dir)) {
-    return;
-  }
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (entry.name === 'node_modules') {
-        continue;
-      }
-      collectSourceFiles(full, acc);
-    } else if (/\.(m?js|tsx?|mts|cts)$/.test(entry.name)) {
-      acc.push(full);
-    }
-  }
 }

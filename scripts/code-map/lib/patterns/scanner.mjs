@@ -119,16 +119,10 @@ export function runPatternScan(repoRoot, patterns, eligibleFiles) {
       if (result.error) {
         throw scanError(`AST_GREP_FAILED: ${result.error.message}`, result.error);
       }
-      if (result.status !== 0) {
-        if (result.stdout?.trim()) {
-          process.stderr.write(
-            `plan-product: warning: ast-grep exited ${result.status}${result.stderr?.trim() ? `: ${result.stderr.trim()}` : ''}\n`
-          );
-        } else {
-          throw scanError(
-            `AST_GREP_FAILED: ${result.stderr?.trim() || `ast-grep exited ${result.status}`}`
-          );
-        }
+      if (result.status !== 0 && result.status !== 1) {
+        throw scanError(
+          `AST_GREP_FAILED: ${result.stderr?.trim() || `ast-grep exited ${result.status}`}`
+        );
       }
       try {
         rawMatches.push(...parseScanJson(result.stdout ?? ''));

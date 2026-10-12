@@ -589,3 +589,122 @@ func Register(r *gin.Engine) {
   assert.equal(y.path, '/y');
   assert.equal(y.confidence, 'medium');
 });
+
+test('extractEndpoints distinguishes executable registrations from examples and unresolved paths', () => {
+  const root = repo();
+  write(root, 'src/server.mts', [
+    '// app.get("/comment-only", handler);',
+    'const example = "router.post(\'/string-only\', handler)";',
+    'const templateExample = `app.delete("/template-example", handler)`;',
+    String.raw`const regexExample = /app.get("\/regex-example", handler)/;`,
+    'app.get(route, handler);',
+    'app.get(`/items/${id}`, handler);',
+    'app.post("/literal", auth, handler);',
+    'server.resource("entry", `entries://${id}`, readEntry);',
+    'server.tool(toolName, {}, handler);',
+  ].join('\n'));
+
+  const endpoints = extractEndpoints(root, ['src/server.mts']);
+  assert.equal(endpoints.length, 5);
+  const literal = endpoints.find((endpoint) => endpoint.path === '/literal');
+  assert.equal(literal.pathResolution, 'resolved');
+  assert.equal(literal.confidence, 'high');
+  assert.equal(literal.handler, 'handler');
+  const dynamic = endpoints.find((endpoint) => endpoint.pathExpression === 'route');
+  assert.equal(dynamic.path, undefined);
+  assert.equal(dynamic.pathResolution, 'unresolved');
+  assert.equal(dynamic.confidence, 'low');
+  assert.match(dynamic.evidence, /app\.get\(route, handler\)/);
+  const template = endpoints.find((endpoint) => endpoint.pathExpression === '`/items/${id}`');
+  assert.equal(template.pathResolution, 'unresolved');
+  assert.equal(template.path, undefined);
+  const resource = endpoints.find((endpoint) => endpoint.kind === 'mcp-resource');
+  assert.equal(resource.name, 'entry');
+  assert.equal(resource.pathResolution, 'unresolved');
+  const tool = endpoints.find((endpoint) => endpoint.kind === 'mcp-tool');
+  assert.equal(tool.name, undefined);
+  assert.equal(tool.nameExpression, 'toolName');
+  assert.equal(tool.confidence, 'low');
+});
+
+test('extractEndpoints ignores comments and quoted examples across supported endpoint languages', () => {
+  const root = repo();
+  const sources = {
+    'app/api/route.ts': [
+      '// export function POST() {}',
+      'const docs = "export function DELETE() {}";',
+      'export function GET() { return null; }',
+    ].join('\n'),
+    'api.py': [
+      '"""',
+      '@app.delete("/docstring")',
+      'def example(): pass',
+      '"""',
+      '# @app.post("/comment")',
+      '@app.get("/python")',
+      'def live(): pass',
+    ].join('\n'),
+    'api.cs': [
+      '// app.MapPost("/comment", handler);',
+      'var docs = """app.MapDelete("/raw-string", handler);""";',
+      'app.MapGet("/csharp", handler);',
+    ].join('\n'),
+    'api.go': [
+      'package api',
+      'import "net/http"',
+      '// http.HandleFunc("/comment", handler)',
+      'var docs = `http.HandleFunc("/raw-string", handler)`',
+      'func register() { http.HandleFunc("GET /go", handler) }',
+    ].join('\n'),
+  };
+  for (const [file, source] of Object.entries(sources)) write(root, file, source);
+  const endpoints = extractEndpoints(root, Object.keys(sources));
+  assert.deepEqual(endpoints.map((endpoint) => endpoint.path).sort(), ['/api', '/csharp', '/go', '/python']);
+});
+
+test('extractEndpoints never reports a literal prefix as a fully resolved C# or Go path', () => {
+  const root = repo();
+  write(root, 'api.cs', 'app.MapGet("/users/" + userId, handler);');
+  write(root, 'api.go', [
+    'package api',
+    'import "net/http"',
+    'func register() { http.HandleFunc("/users/" + userId, handler) }',
+  ].join('\n'));
+  const endpoints = extractEndpoints(root, ['api.cs', 'api.go']);
+  assert.equal(endpoints.length, 2);
+  for (const endpoint of endpoints) {
+    assert.equal(endpoint.path, undefined);
+    assert.equal(endpoint.pathExpression, '"/users/" + userId');
+    assert.equal(endpoint.pathResolution, 'unresolved');
+    assert.equal(endpoint.confidence, 'low');
+  }
+});
+
+test('extractEndpoints rejects quoted Go imports and preserves unresolved group prefixes', () => {
+  const root = repo();
+  write(root, 'not-gin.go', [
+    'package api',
+    '// import "github.com/gin-gonic/gin"',
+    'func plain() { custom.GET("/not-gin", handler) }',
+  ].join('\n'));
+  write(root, 'gin.go', [
+    'package api',
+    'import "github.com/gin-gonic/gin"',
+    'func register(r *gin.Engine) {',
+    '  g := r.Group("/api" + version)',
+    '  g.GET("/users", handler)',
+    '}',
+  ].join('\n'));
+  const endpoints = extractEndpoints(root, ['not-gin.go', 'gin.go']);
+  assert.equal(endpoints.length, 1);
+  assert.equal(endpoints[0].path, '/users');
+  assert.equal(endpoints[0].pathResolution, 'partial');
+  assert.equal(endpoints[0].confidence, 'medium');
+});
+
+test('extractEndpoints preserves distinct unresolved registrations on one line', () => {
+  const root = repo();
+  write(root, 'api.js', 'app.get(first, handler); app.get(second, handler);');
+  const endpoints = extractEndpoints(root, ['api.js']);
+  assert.deepEqual(endpoints.map((endpoint) => endpoint.pathExpression), ['first', 'second']);
+});

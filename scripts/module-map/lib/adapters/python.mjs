@@ -90,6 +90,7 @@ function extract(repoRoot, files) {
     const moduleIndex = buildModuleIndex(repoRoot, candidateFiles);
     const symbolsByFile = extractSymbols(repoRoot, candidateFiles);
     const edgeWeights = new Map();
+    const diagnostics = [];
 
     for (const source of candidateFiles) {
       const absSource = path.join(repoRoot, source);
@@ -104,7 +105,11 @@ function extract(repoRoot, files) {
           moduleIndex,
           sourceFile: source,
         });
-        if (!target || target === source) {
+        if (!target) {
+          diagnostics.push({ kind: specifier.module.startsWith('.') ? 'unresolved-local-import' : 'external-or-unresolved-import', file: source, specifier: specifier.module });
+          continue;
+        }
+        if (target === source) {
           continue;
         }
         const key = `${source}\0${target}`;
@@ -133,12 +138,12 @@ function extract(repoRoot, files) {
       files: graphFiles.length,
       edges: edges.length,
     });
-    return { files: graphFiles, edges };
+    return { files: graphFiles, edges, diagnostics };
   } catch (error) {
     log.warn('python extract failed; returning empty graph', {
       error: errorMessage(error),
     });
-    return { files: [], edges: [] };
+    return { files: [], edges: [], diagnostics: [{ kind: 'extraction-failed', message: errorMessage(error) }] };
   }
 }
 
@@ -523,6 +528,7 @@ function extractSymbols(repoRoot, candidateFiles) {
     }
   } catch (error) {
     log.warn('symbol extraction failed', { error: errorMessage(error) });
+    throw error;
   }
 
   return symbols;

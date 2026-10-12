@@ -143,6 +143,43 @@ test('generate-patterns --json writes patterns artifacts', () => {
   );
 });
 
+test('generate-patterns works with the shipped bootstrap catalog and keeps name evidence tentative', () => {
+  const dir = tempProject();
+  mkdirSync(path.join(dir, '.plan-product/patterns'), { recursive: true });
+  writeFileSync(path.join(dir, '.plan-product/patterns/library.json'),
+    readFileSync(path.join(repoRoot, '.plan-product/templates/pattern-library.json')));
+  writeFileSync(path.join(dir, 'src/cli.mjs'), 'export function OrderFactory() { return {}; }\n');
+  const result = run(dir);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  const report = JSON.parse(readFileSync(path.join(dir, 'docs/code-map/patterns.json'), 'utf8'));
+  const factory = report.patterns.find((pattern) => pattern.familyId === 'factory');
+  assert.equal(factory.confidence, 'intent-only');
+  assert.equal(factory.occurrenceCount, 1);
+  assert.equal(factory.occurrences[0].file, 'src/cli.mjs');
+  assert.equal(report.summary.coveredFiles, 0);
+});
+
+test('generate-patterns reuses the complete v2 inventory and reports unverified module context', () => {
+  const dir = tempProject();
+  writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = process.argv.slice(2);\n');
+  writeFileSync(path.join(dir, 'src/new-unmapped.mjs'), 'const args = process.argv.slice(2);\n');
+  const mapPath = path.join(dir, 'docs/code-map/code-map.json');
+  const map = JSON.parse(readFileSync(mapPath, 'utf8'));
+  map.schemaVersion = '2.0';
+  map.files[0].symbols = [];
+  map.coverage = { unsupportedFiles: [], disabledFiles: [] };
+  writeFileSync(mapPath, JSON.stringify(map));
+  const result = run(dir);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  const payload = JSON.parse(result.stdout);
+  assert.equal(payload.sourceFiles, 1);
+  assert.equal(payload.matches, 1);
+  assert.match(payload.warnings.join('\n'), /MAP_FRESHNESS/);
+  const report = JSON.parse(readFileSync(path.join(dir, 'docs/code-map/patterns.json'), 'utf8'));
+  assert.equal(report.source.freshness.fresh, false);
+  assert.match(readFileSync(path.join(dir, 'docs/code-map/patterns.md'), 'utf8'), /Warning:.*map-code/);
+});
+
 test('generate-patterns leaves unchanged artifacts untouched on regeneration', () => {
   const dir = tempProject();
   writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = [];\n', 'utf8');

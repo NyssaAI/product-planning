@@ -1,6 +1,6 @@
 /**
  * Extract leading file-level documentation from source text.
- * Supports JSDoc/JavaDoc, C#/Rust line docs, Python module strings, and more.
+ * Supports JSDoc, C#/Rust line docs, Python module strings, and more.
  */
 
 /**

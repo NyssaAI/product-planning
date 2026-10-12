@@ -41,7 +41,7 @@ docs/code-map/
 
 ## Pattern Library
 
-`find-code-patterns` uses `.plan-product/patterns/library.json` for canonical pattern families and language detectors, then uses `.plan-product/patterns/expectations.json` to decide which families should appear in matching modules. The report writes generated evidence to `docs/code-map/patterns.md` and `docs/code-map/patterns.json`; do not edit those generated files as the source of truth.
+`find-code-patterns` uses `.plan-product/patterns/library.json` for canonical pattern families and language detectors, then uses `.plan-product/patterns/expectations.json` to decide which families should appear in matching modules. Starter name-based detectors identify candidate code using known patterns; they do not prove the relationships that define each pattern. Reports include source locations, confidence, and verification checks. Matched-line coverage is descriptive and must not be used as a quality score. The report writes generated evidence to `docs/code-map/patterns.md` and `docs/code-map/patterns.json`; do not edit those generated files as the source of truth.
 
 ## Codex Usage
 
@@ -81,6 +81,26 @@ node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness
 
 Generator options: `generate-code-map.mjs` accepts `--include-comments` (or `CODE_MAP_INCLUDE_COMMENTS=1`) to embed file header comments and `-o <path>` to override the output file; `generate-patterns.mjs` accepts `--output-dir <dir>`. Run any generator with `--help` for its full flag list; `scripts/module-map/README.md` documents the module-map config keys.
 
+## Mapping Evidence and Limits
+
+Mapping works without product-planning documents. With no explicit `roots`, it inventories the repository with shared exclusions for dependencies, generated output and fixtures. All configured supported source files are retained, including files without recognized symbols; enabled language adapters contribute to one dependency graph. Scanners receive the explicit shared inventory: configure `roots` and `languages` to bound it; `.gitignore` and external ignore rules do not change that boundary.
+
+Code-map schema `2.0` stores symbols once in `files[].symbols`. Ownership is `files[].moduleId`; join it to `modules[]` for names, roots and module-doc paths. The old top-level `symbols[]` and repeated per-symbol module fields are removed. `fileDependencies[]` preserves resolved source-file edges. Coverage lists unsupported, disabled, unowned and zero-symbol files plus unresolved dependency evidence. These are static references, not a runtime call graph.
+
+Use small queries from the target repository:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" symbol run --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" module code-map --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" callers scripts/lib/endpoint-extractor.mjs --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" coverage --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/check-freshness.mjs"
+```
+
+`callers` returns incoming file dependencies, not symbol calls. Query results report omitted rows and `nextOffset`; use `--offset <nextOffset>` for another page of the same unchanged map (at most 200 rows per page). Maps are optional orientation: verify relevant source, and use ordinary search directly when it answers the question.
+
+The public generator writes `scan-state.json` only after both core mapping stages complete. Freshness checks source contents and inventory, configuration, resolver metadata, generator identity and core artifact hashes. A timestamp change alone does not invalidate maps. Architecture and pattern reports have separate generation steps; the core stamp does not certify them. Direct internal generator calls do not complete a core scan.
+
 ## Pre-Push Regeneration
 
 An opt-in, warn-only git pre-push hook regenerates code-map artifacts before `git push` and warns when the configured code-map directory has uncommitted changes. It never blocks the push, and it only acts in repos that have `.plan-product/config.json`. The plugin ships no Claude Code plugin hook; install the git hook per repo, from any runtime:
@@ -92,11 +112,11 @@ node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 
 Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`. Regeneration logs to `.temp/regen.log` in the target repo; the directory ignores itself through a generated `.temp/.gitignore`.
 
-## Usage and Effectiveness
+## Command Health
 
 Generator commands append local usage events to `.plan-product/usage/events.jsonl` by default. The raw JSONL ledger is ignored by git; set `"usage": { "enabled": false }` in `plan-product.config.json` or `PLAN_PRODUCT_USAGE=0` to disable capture.
 
-Run `generate-module-map.mjs --effectiveness` to write `docs/code-map/effectiveness.md`, which summarizes command success rates, warnings, current artifact health, doctor checks, and recent runs. This report intentionally does not include provenance, signatures, artifact hashes, or source attestations.
+Run `generate-module-map.mjs --effectiveness` to write `docs/code-map/effectiveness.md`, which summarizes command success rates, warnings, current artifact health, doctor checks, and recent runs. This is command health, not evidence of agent accuracy, time savings, or map usefulness. The historical flag and filename remain supported; `--usage-report` is an alias.
 
 ## Install
 

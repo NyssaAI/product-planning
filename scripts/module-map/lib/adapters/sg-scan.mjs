@@ -15,10 +15,7 @@
  */
 
 import { spawnSync } from 'node:child_process';
-import { createLogger } from '../logger.mjs';
 import { parseScanJson } from '../../../lib/sg-result.mjs';
-
-const log = createLogger({ module: 'sg-scan' });
 
 // Conservative cap on the total length of file-path arguments per ast-grep
 // invocation, well under the Windows ~32 KB command-line limit (the rest of the
@@ -45,11 +42,8 @@ export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs) {
       encoding: 'utf8',
       maxBuffer: 64 * 1024 * 1024,
     });
-    if (result.error || (result.status !== 0 && !result.stdout?.trim())) {
-      log.warn('ast-grep scan batch failed', {
-        error: errorMessage(result.error) || result.stderr?.trim(),
-      });
-      continue;
+    if (result.error || (result.status !== 0 && result.status !== 1)) {
+      throw new Error(`ast-grep scan batch failed: ${errorMessage(result.error) || result.stderr?.trim() || result.status}`);
     }
     matches.push(...parseScanJson(result.stdout ?? ''));
   }

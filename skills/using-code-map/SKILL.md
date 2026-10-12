@@ -17,7 +17,7 @@ Announce at start: "I'm using the code-map context to scope this work."
 
 ## When To Use
 
-- Before implementation planning in a repo that already has generated code-map artifacts.
+- During implementation planning when existing maps help identify relevant files or dependencies.
 - When a repo has source roots and the user asks to understand module boundaries, endpoints, symbols, or code ownership.
 - When a plan needs concrete module context rather than broad repository summaries.
 
@@ -30,22 +30,33 @@ Load context in levels; never inject the whole generated output at once.
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | The task, feature guide, use case, or bug prompt | Always |
-| L1 | In-scope module doc(s), usually one file | During planning |
+| L1 | In-scope module doc(s), usually one file | When they help orient the task |
 | L2 | Configured product, features, or tech-stack docs, usually `docs/product.md`, `docs/features.md`, or `docs/tech-stack.md` | When product or stack context matters |
-| L3 | Configured code-map artifact, usually `docs/code-map/code-map.json` | After the plan names symbols or files |
+| L3 | A bounded symbol, module, or dependency query | When the plan names symbols or files |
 
 Use the generated index to pick the minimum in-scope module docs. Add directly coupled modules only when the work crosses their boundary.
 
 ## Planning Evidence
 
-When producing an implementation plan, record the code-map context used:
+When maps inform an implementation plan, record the context used:
 
 - Planning module path.
 - Selected module id and responsibility.
 - Relevant dependencies or used-by edges.
 - Any named code-map slice, symbol, endpoint, or file that the plan depends on.
 
-If this context is missing, regenerate or rewrite the plan before implementation.
+Maps are optional evidence. Targeted file search and source reading are sufficient when they answer the task. Verify relevant source before relying on generated relationships; missing edges are not evidence that a dependency does not exist.
+
+Use bounded queries instead of loading the full JSON. Replace `<term>` with a symbol, module id, or repo-relative file as appropriate:
+
+```bash
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" symbol <term> --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" module <term> --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" callers <term> --limit 20
+node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" coverage --limit 20
+```
+
+Results include `total`, `omitted`, and `nextOffset`. Continue the same query with `--offset <nextOffset>` until it is null; keep the map unchanged between pages. `callers` means incoming static file dependencies, not symbol calls.
 
 ## Generate Or Refresh
 
@@ -57,14 +68,16 @@ node "${PLUGIN_ROOT}/scripts/map-code/generate.mjs"
 
 Replace `${PLUGIN_ROOT}` with the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill.
 
-## Staleness Gate
+## Freshness
 
-Run `map-code` before planning when:
+Before relying on existing maps, run the shared content check:
 
-- the generated index is missing,
-- the needed module file is missing,
-- source files are newer than the generated index,
-- `map-architecture` was requested and the module graph is missing,
-- `find-code-patterns` was requested and the code map or module graph is missing.
+```bash
+node "${PLUGIN_ROOT}/scripts/map-code/check-freshness.mjs"
+```
 
-Tell the user when you regenerated stale context before planning.
+Exit 0 means the core symbol index, module graph, index and module docs match the last completed scan. Exit 1 reports missing or stale context. The fingerprint includes source contents and inventory, configuration, resolver metadata, planning docs and generator identity; file modification times do not determine freshness.
+
+If maps would help and are stale, run `map-code`. Otherwise continue with targeted source reading and state that map evidence was unavailable or stale. Do not block implementation merely because a map is absent.
+
+This check does not certify optional architecture or pattern reports. Regenerate the requested report from fresh core maps when using it. Tell the user when context was refreshed.

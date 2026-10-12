@@ -9,7 +9,7 @@
  *   node scripts/module-map/generate-module-map.mjs --doctor --runtimes
  *   node scripts/module-map/generate-module-map.mjs --migrate    # normalize generated docs/code-map layout
  *   node scripts/module-map/generate-module-map.mjs --arch       # refresh system architecture doc
- *   node scripts/module-map/generate-module-map.mjs --effectiveness # write usage/effectiveness report
+ *   node scripts/module-map/generate-module-map.mjs --usage-report # write command-health report
  */
 
 import {
@@ -99,7 +99,7 @@ function loadCodeMap(repoRoot, codeMapOutput) {
   const files = Array.isArray(raw.files) ? raw.files : [];
   const endpoints = Array.isArray(raw.endpoints) ? raw.endpoints : [];
   log.debug('loaded CODE_MAP', { files: files.length, endpoints: endpoints.length });
-  return { files, endpoints };
+  return { ...raw, files, endpoints };
 }
 
 function runInit() {
@@ -187,7 +187,7 @@ Options:
   --runtimes             With --doctor, include runtime dependency checks
   --migrate              Normalize generated docs/code-map layout
   --arch                 Refresh the system architecture handoff
-  --effectiveness        Write usage/effectiveness report
+  --effectiveness        Write command-health report (legacy flag)
   --usage-report         Alias for --effectiveness
   --json                 Emit machine-readable JSON where supported
   --pin <module-id>      Freeze a derived module into plan-product.config.json
@@ -202,7 +202,7 @@ Options:
  * @property {boolean} skipped
  * @property {number} modules
  * @property {string[]} warnings Named codes: CODE_MAP_STALE, …
- * @property {string[]} errors Named codes: MISSING_DOCS, NO_MODULES_FOUND, AST_GREP_NOT_FOUND, …
+ * @property {string[]} errors Named codes: NO_MODULES_FOUND, AST_GREP_NOT_FOUND, …
  * @property {string} summary
  * @property {string[]} [wrote]
  * @property {number} [edges]
@@ -224,20 +224,11 @@ function runGenerate() {
   const { missing, resolved } = validateRequiredDocs(REPO_ROOT, config);
 
   if (missing.length > 0) {
-    log.error('required docs missing', { missing });
     for (const key of missing) {
-      errors.push(
-        `MISSING_DOCS: ${key} not found (tried ${config.docs[key].join(', ')})`
+      warnings.push(
+        `OPTIONAL_CONTEXT_MISSING: ${key} not found; source mapping continues without product context`
       );
     }
-    return {
-      ok: false,
-      skipped: true,
-      modules: 0,
-      warnings,
-      errors,
-      summary: `generation skipped — missing required docs: ${missing.join(', ')}. Run --init or configure plan-product.config.json → docs.`,
-    };
   }
 
   const codeMap = loadCodeMap(REPO_ROOT, config.codeMapOutput);
@@ -293,6 +284,8 @@ function runGenerate() {
           return entry;
         }),
         edges: model.moduleGraph.edges,
+        fileDependencies: { source: model.codeMap, field: 'fileDependencies' },
+        coverage: model.coverage,
         codeMap: model.codeMap,
         stats: model.stats,
       },

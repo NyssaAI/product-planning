@@ -15,6 +15,15 @@
 /** @type {ReadonlySet<string>} */
 export const BASE_SKIP_DIRS = new Set([
   '.git',
+  '.temp',
+  '.vs',
+  '.venv',
+  'venv',
+  '__pycache__',
+  '.mypy_cache',
+  '.pytest_cache',
+  '.ruff_cache',
+  '.tox',
   '.cache',
   '.next',
   '.nx',

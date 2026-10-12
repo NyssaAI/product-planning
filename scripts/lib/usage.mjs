@@ -253,11 +253,11 @@ export function buildEffectivenessModel(repoRoot, input) {
  */
 export function renderEffectivenessMarkdown(model) {
   const lines = [
-    '# plan-product Effectiveness Report',
+    '# plan-product Command Health Report',
     '',
     `Generated: ${model.generated}`,
     '',
-    'This report uses local command usage events and current generated artifact health. It does not include provenance, artifact hashes, signatures, or source attestations.',
+    'This report summarizes local command runs and artifact checks. It does not measure agent accuracy, time saved, or the usefulness of generated maps. The historical --effectiveness flag and output path remain supported.',
     '',
     '## Usage Summary',
     '',
@@ -315,10 +315,10 @@ export function renderEffectivenessMarkdown(model) {
     lines.push('');
   }
 
-  lines.push('## Effectiveness Signals', '');
-  lines.push('- Healthy usage means repeated successful runs with low failure counts and actionable warnings.');
-  lines.push('- Healthy generated context means doctor passes and the code-map, module-map, architecture, and pattern artifacts are present and fresh enough for planning.');
-  lines.push('- Pattern metrics are review signals, not correctness scores. Inspect cited modules before changing code.');
+  lines.push('## Interpretation', '');
+  lines.push('- Command success describes execution health, not task outcomes. Nested generator events are separate command runs, not independent agent tasks.');
+  lines.push('- Doctor checks core map freshness. Presence of architecture or pattern reports alone does not establish that they reflect current source.');
+  lines.push('- Pattern matches identify code to inspect for known patterns. Matched line coverage is not an architecture quality score.');
   lines.push('');
 
   return `${lines.join('\n')}\n`;

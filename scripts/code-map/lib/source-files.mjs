@@ -4,14 +4,7 @@ import { BASE_SKIP_DIRS } from '../../lib/skip-dirs.mjs';
 import { isPathContained } from '../../lib/repo-paths.mjs';
 import { SOURCE_EXTENSIONS } from './code-map-config.mjs';
 
-// Shared base infra/test-output dirs (includes fixtures/__fixtures__ so scans
-// no longer leak fixture endpoints) plus Python virtualenv dirs.
-export const SOURCE_SCAN_SKIP_DIRS = new Set([
-  ...BASE_SKIP_DIRS,
-  '.venv',
-  'venv',
-  '__pycache__',
-]);
+export const SOURCE_SCAN_SKIP_DIRS = new Set(BASE_SKIP_DIRS);
 
 // Go-scoped hygiene lives in the shared go-mod helper; re-exported here for
 // code-map consumers (generate-code-map.mjs and tests import from this file).
@@ -72,6 +65,19 @@ export function sourceFilesInRoots(repoRoot, roots) {
     );
   }
   return files.sort();
+}
+
+/** Shared source boundary for symbols, endpoints, patterns, and dependency adapters. */
+export function sourceInventory(repoRoot, { roots, languages }) {
+  const candidates = sourceFilesInRoots(repoRoot, roots);
+  const enabled = new Set(languages);
+  return {
+    roots: [...roots],
+    languages: [...languages],
+    files: candidates.filter(file => isLanguageEnabled(file, enabled)),
+    unsupportedFiles: candidates.filter(file => languageForFile(file) === null),
+    disabledFiles: candidates.filter(file => languageForFile(file) !== null && !isLanguageEnabled(file, enabled)),
+  };
 }
 
 /**

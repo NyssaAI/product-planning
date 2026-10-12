@@ -11,42 +11,22 @@ const REGEX_RULE_KINDS_BY_LANGUAGE = {
   JavaScript: [
     'identifier',
     'property_identifier',
-    'member_expression',
-    'call_expression',
-    'method_definition',
-    'class_declaration',
-    'function_declaration',
   ],
   TypeScript: [
     'identifier',
     'property_identifier',
-    'member_expression',
-    'call_expression',
-    'method_definition',
-    'class_declaration',
-    'function_declaration',
+    'type_identifier',
   ],
   CSharp: [
     'identifier',
-    'member_access_expression',
-    'invocation_expression',
-    'method_declaration',
-    'class_declaration',
   ],
   Python: [
     'identifier',
-    'attribute',
-    'call',
-    'function_definition',
-    'class_definition',
   ],
   Go: [
     'identifier',
     'type_identifier',
     'field_identifier',
-    'selector_expression',
-    'function_declaration',
-    'method_declaration',
   ],
 };
 
@@ -66,6 +46,7 @@ const REGEX_RULE_KINDS_BY_LANGUAGE = {
  * @property {string | undefined} familyIntent
  * @property {string | undefined} kind
  * @property {string | undefined} notes
+ * @property {string[]} reviewChecks
  */
 
 /**
@@ -179,6 +160,7 @@ function detectorsFromFamily(input, familyIndex) {
     familyName,
     familyIntent: typeof family.intent === 'string' ? family.intent : undefined,
     kind: typeof family.kind === 'string' ? family.kind : undefined,
+    reviewChecks: Array.isArray(family.reviewChecks) ? family.reviewChecks : [],
   };
 
   /** @type {Record<string, unknown>[]} */
@@ -259,6 +241,7 @@ function normalizeFamilyDetector(input, context) {
     familyName: context.familyName,
     familyIntent: context.familyIntent,
     kind: context.kind,
+    reviewChecks: context.reviewChecks,
   }));
 }
 
@@ -335,6 +318,9 @@ function normalizePattern(input, context) {
     familyIntent: typeof source.familyIntent === 'string' ? source.familyIntent : undefined,
     kind: typeof source.kind === 'string' ? source.kind : undefined,
     notes: typeof source.notes === 'string' ? source.notes : undefined,
+    reviewChecks: Array.isArray(source.reviewChecks)
+      ? source.reviewChecks.filter((entry) => typeof entry === 'string')
+      : [],
   };
 }
 

@@ -2,8 +2,8 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { loadPlanProductConfig, validateRequiredDocs } from './config.mjs';
-import { buildPlanProductModel } from './build.mjs';
 import { createLogger } from './logger.mjs';
+import { checkMapFreshness } from '../../lib/map-freshness.mjs';
 
 const log = createLogger({ module: 'doctor' });
 
@@ -211,8 +211,8 @@ export function runDoctor(repoRoot, options = {}) {
     for (const key of missing) {
       checks.push({
         id: `doc-${key}`,
-        status: 'fail',
-        message: `Missing required doc: ${key}`,
+        status: 'warn',
+        message: `Optional planning context missing: ${key}`,
         hint: `Tried: ${config.docs[key].join(', ')}`,
       });
     }
@@ -227,17 +227,13 @@ export function runDoctor(repoRoot, options = {}) {
   checks.push(...checkCodeMap(repoRoot, config.codeMapOutput));
   checks.push(...checkModuleMap(repoRoot, config));
   checks.push(...checkAgentEntrypoints(repoRoot));
-
-  if (existsSync(path.join(repoRoot, config.codeMapOutput))) {
-    const codeMap = JSON.parse(
-      readFileSync(path.join(repoRoot, config.codeMapOutput), 'utf8')
-    );
-    const model = buildPlanProductModel(repoRoot, config, codeMap);
-    log.debug('doctor built model for validation', {
-      moduleCount: model.modules.length,
-      routeCount: model.stats.routeCount,
-    });
-  }
+  const freshness = checkMapFreshness(repoRoot);
+  checks.push({
+    id: 'map-freshness',
+    status: freshness.fresh ? 'pass' : 'warn',
+    message: freshness.reason,
+    hint: freshness.fresh ? undefined : 'Run: node <PLUGIN_ROOT>/scripts/map-code/generate.mjs',
+  });
 
   const ok = checks.every((c) => c.status !== 'fail');
   /** @type {{ checks: DoctorCheck[], runtimes?: RuntimeReadiness[], ok: boolean }} */

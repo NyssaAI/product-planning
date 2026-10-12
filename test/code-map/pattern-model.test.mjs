@@ -96,6 +96,29 @@ test('buildPatternReport excludes intent-only from headline coverage', () => {
   assert.equal(report.summary.coverageByConfidence['intent-only'].includedInHeadline, false);
   assert.equal(report.modules.find((mod) => mod.id === 'cli').coveragePercent, 100);
   assert.equal(report.modules.find((mod) => mod.id === 'lib').coveragePercent, 0);
+  assert.equal(report.modules.find((mod) => mod.id === 'cli').signal, undefined);
+  assert.equal(report.summary.moduleSignals, undefined);
+});
+
+test('report retains every occurrence while bounding examples and describing evidence', () => {
+  const matches = Array.from({ length: 7 }, (_, index) => ({
+    patternId: 'factory', confidence: 'intent-only', includeInHeadline: false,
+    file: 'src/cli/index.mjs', line: index + 1, endLine: index + 1,
+  }));
+  const report = buildPatternReport({
+    runtime, codeMap: { files: [] }, moduleMap,
+    patterns: [{ id: 'factory', name: 'Factory', language: 'JavaScript', confidence: 'intent-only',
+      includeInHeadline: false, description: 'Name evidence.', notes: 'Verify creation behavior.',
+      reviewChecks: ['Construction is centralized.'], source: 'fixture', rule: {}, tags: [] }],
+    matches, sourceFiles: ['src/cli/index.mjs'], eligibleFiles: ['src/cli/index.mjs'],
+    sourceLineCounts: { 'src/cli/index.mjs': 10 }, excludedFiles: [],
+  });
+  assert.equal(report.patterns[0].occurrences.length, 7);
+  assert.equal(report.patterns[0].examples.length, 5);
+  assert.equal(report.patterns[0].occurrences[6].line, 7);
+  assert.equal(report.patterns[0].notes, 'Verify creation behavior.');
+  assert.deepEqual(report.patterns[0].reviewChecks, ['Construction is centralized.']);
+  assert.match(report.interpretation, /not a quality score/);
 });
 
 test('buildPatternReport uses pattern-eligible module denominators, not code-map file counts', () => {

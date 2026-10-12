@@ -31,7 +31,7 @@ Feature context should use `docs/features.md`.
 | `docs/code-map/index.md` | Progressive disclosure guide. |
 | `docs/code-map/system-architecture.md` | Optional architecture handoff from `map-architecture`. |
 | `docs/code-map/patterns.md` / `patterns.json` | Optional module-rooted code pattern review from `find-code-patterns`. |
-| `docs/code-map/effectiveness.md` | Optional usage and effectiveness report from `--effectiveness`. |
+| `docs/code-map/effectiveness.md` | Optional command-health report from `--usage-report` (legacy alias: `--effectiveness`). |
 
 ## Repo-Local Configuration
 

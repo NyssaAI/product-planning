@@ -98,8 +98,9 @@ test('recordUsageEvent writes local JSONL and report summarizes command health',
   );
   assert.match(report, /Usage events: 2/);
   assert.match(report, /\| `map-code` \| 2 \| 1 \| 1 \| 1 \|/);
-  assert.match(report, /This report uses local command usage events/);
-  assert.match(report, /does not include provenance/);
+  assert.match(report, /Command Health Report/);
+  assert.match(report, /does not measure agent accuracy, time saved/);
+  assert.match(report, /Command success describes execution health, not task outcomes/);
 });
 
 test('usage capture can be disabled in config and re-enabled by env', () => {

@@ -5,7 +5,6 @@
  * Per-repo settings: plan-product.config.json at the project root (discovered from cwd).
  */
 
-import { spawnSync } from 'node:child_process';
 import {
   existsSync,
   mkdirSync,
@@ -13,7 +12,8 @@ import {
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../lib/resolve-ast-grep.mjs';
-import { parseScanJson, symbolNameFromMatch } from '../lib/sg-result.mjs';
+import { symbolNameFromMatch } from '../lib/sg-result.mjs';
+import { runBatchedScan } from '../module-map/lib/adapters/sg-scan.mjs';
 import {
   loadCodeMapConfig,
   resolveRepoContainedPath,
@@ -22,6 +22,7 @@ import {
 } from './lib/code-map-config.mjs';
 import { loadPlanProductConfig } from '../module-map/lib/config.mjs';
 import { discoverModules } from '../module-map/lib/discover-modules.mjs';
+import { extractStackGraph } from '../module-map/lib/stack-graph.mjs';
 import { extractFileHeaderComment } from './lib/file-header-comment.mjs';
 import { extractSignature } from './lib/signature-extractor.mjs';
 import { extractDocComment } from './lib/comment-extractor.mjs';
@@ -31,7 +32,7 @@ import {
   isExcludedGoFile,
   isInSkippedDir,
   isLanguageEnabled,
-  sourceFilesInRoots,
+  sourceInventory,
 } from './lib/source-files.mjs';
 import { createSourceFileCache } from './lib/source-lines.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
@@ -151,10 +152,10 @@ Environment:
 }
 
 /**
- * @param {readonly string[]} roots
- * @returns {import('node:child_process').SpawnSyncReturns<string>}
+ * @param {readonly string[]} files Explicit shared inventory, independent of ignore files.
+ * @returns {Array<Record<string, unknown>>}
  */
-function runAstGrepScan(roots) {
+function runAstGrepScan(files) {
   const binary = resolveAstGrepBinary({
     toolkitDir: TOOLKIT_DIR,
     projectRoot: REPO_ROOT,
@@ -163,24 +164,8 @@ function runAstGrepScan(roots) {
     throw new Error(`ast-grep binary not found at ${binary}`);
   }
 
-  const scanPaths = roots.map((root) => path.join(REPO_ROOT, root));
-
-  return spawnSync(
-    binary,
-    [
-      'scan',
-      ...scanPaths,
-      '--config',
-      SG_CONFIG_PATH,
-      '--json',
-      '--include-metadata',
-    ],
-    {
-      cwd: REPO_ROOT,
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    }
-  );
+  return runBatchedScan(binary, REPO_ROOT, files.map(file => path.join(REPO_ROOT, file)),
+    ['--config', SG_CONFIG_PATH, '--include-metadata']);
 }
 
 /**
@@ -278,7 +263,7 @@ function collectSymbols(matches, languages) {
  * @param {CodeMapOptions} options
  * @returns {object}
  */
-function buildCodeMapDocument(symbols, options) {
+function buildCodeMapDocument(symbols, options, inventory) {
   const entries = [...symbols.values()].sort((a, b) => {
     if (a.file !== b.file) {
       return a.file.localeCompare(b.file);
@@ -287,8 +272,7 @@ function buildCodeMapDocument(symbols, options) {
   });
 
   /** @type {Map<string, { path: string, symbols: Array<{ name: string, kind: string, line: number }>, comment?: string }>} */
-  const byFile = new Map();
-  const enabledLanguages = new Set(options.languages);
+  const byFile = new Map(inventory.files.map(file => [file, { path: file, symbols: [] }]));
   const readCachedSource = createSourceFileCache();
   /** @type {Map<string, { content: string, lines: readonly string[] } | null>} */
   const sources = new Map();
@@ -358,19 +342,12 @@ function buildCodeMapDocument(symbols, options) {
   const files = [...byFile.values()].sort((a, b) =>
     a.path.localeCompare(b.path)
   );
-  const endpointFiles = [
-    ...new Set([
-      ...files.map((file) => file.path),
-      ...sourceFilesInRoots(REPO_ROOT, options.scanRoots),
-    ]),
-  ]
-    .filter((file) => isLanguageEnabled(file, enabledLanguages))
-    .sort();
-  const endpoints = extractEndpoints(REPO_ROOT, endpointFiles);
-  const moduleContext = loadModuleContext();
+  const endpoints = extractEndpoints(REPO_ROOT, inventory.files);
+  const stack = extractStackGraph(REPO_ROOT, loadPlanProductConfig(REPO_ROOT), inventory);
+  const moduleContext = loadModuleContext(stack);
 
   const document = {
-    schemaVersion: '1.0',
+    schemaVersion: '2.0',
     generated: new Date().toISOString(),
     roots: [...options.scanRoots],
     languages: [...options.languages],
@@ -379,6 +356,16 @@ function buildCodeMapDocument(symbols, options) {
     endpointCount: endpoints.length,
     files,
     endpoints,
+    fileDependencies: stack.graph.edges,
+    coverage: {
+      scannedFileCount: inventory.files.length,
+      unsupportedFiles: inventory.unsupportedFiles,
+      disabledFiles: inventory.disabledFiles,
+      zeroSymbolFiles: files.filter(file => file.symbols.length === 0).map(file => file.path),
+      adapters: stack.adapters,
+      diagnostics: stack.graph.diagnostics,
+      limitations: 'Static source evidence only. Runtime calls, reflection, generated code, and nonliteral imports may be absent. Dependency edges identify files, not symbol callers.',
+    },
   };
 
   return annotateCodeMapWithModules(document, moduleContext.modules, {
@@ -389,12 +376,12 @@ function buildCodeMapDocument(symbols, options) {
 /**
  * @returns {{ outputDir: string, modules: Array<{ id: string, name?: string, root: string }> }}
  */
-function loadModuleContext() {
+function loadModuleContext(stack) {
   try {
     const config = loadPlanProductConfig(REPO_ROOT);
     return {
       outputDir: config.outputDir,
-      modules: discoverModules(REPO_ROOT, config),
+      modules: discoverModules(REPO_ROOT, config, stack),
     };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
@@ -410,19 +397,12 @@ function loadModuleContext() {
 
 function runCodeMap() {
   const options = parseOptions();
-  const result = runAstGrepScan(options.scanRoots);
-  if (result.error) {
-    throw result.error;
-  }
-  if (result.status !== 0 && !result.stdout?.trim()) {
-    throw new Error(
-      result.stderr?.trim() || `ast-grep scan failed with exit ${result.status}`
-    );
-  }
-
-  const matches = parseScanJson(result.stdout ?? '');
+  const inventory = sourceInventory(REPO_ROOT, { roots: options.scanRoots, languages: options.languages });
+  const matches = runAstGrepScan(inventory.files);
   const symbols = collectSymbols(matches, new Set(options.languages));
-  const document = buildCodeMapDocument(symbols, options);
+  const allowed = new Set(inventory.files);
+  for (const [key, symbol] of symbols) if (!allowed.has(symbol.file)) symbols.delete(key);
+  const document = buildCodeMapDocument(symbols, options, inventory);
 
   mkdirSync(path.dirname(options.outputPath), { recursive: true });
   const written = writeArtifactIfChanged(
