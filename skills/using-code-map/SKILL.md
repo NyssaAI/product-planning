@@ -76,7 +76,7 @@ Before relying on existing maps, run the shared content check:
 node "${PLUGIN_ROOT}/scripts/map-code/check-freshness.mjs"
 ```
 
-Exit 0 means the core symbol index, module graph, index and module docs match the last completed scan. Exit 1 reports missing or stale context. The fingerprint includes source contents and inventory, configuration, resolver metadata, planning docs and generator identity; file modification times do not determine freshness.
+Exit 0 means the core symbol index, module graph, index and module docs match the last completed scan. Exit 1 reports missing or stale context. The fingerprint includes source contents and inventory, configuration, resolver metadata, planning docs and generator identity; file modification times do not determine freshness. CRLF and LF line endings are equivalent in UTF-8 text; other content changes still invalidate the scan.
 
 If maps would help and are stale, run `map-code`. Otherwise continue with targeted source reading and state that map evidence was unavailable or stale. Do not block implementation merely because a map is absent.
 

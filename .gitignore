@@ -8,4 +8,4 @@ obj/
 inspo
 triage/
 .temp/
-.plan-product/usage/*.jsonl
+.plan-product/usage/

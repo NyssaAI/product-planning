@@ -1,11 +1,11 @@
 {
-  "schemaVersion": 1,
-  "fingerprint": "e0c4627c4e3cc4a6c0b7bc270eb6876f6c4ee40e39ad64d9c2ae78be8339679f",
+  "schemaVersion": 2,
+  "fingerprint": "503b586d1ad406d215261a25e38af9a217dfc8505895703e0de866ece5f5f5ab",
   "sourceFileCount": 69,
   "artifacts": [
     [
       "docs/code-map/code-map.json",
-      "71e0bce8e6d06107c0f25389c96cd74669bd70dcf0949c48b5d8a35e9d203656"
+      "adaeda96f1ae7a8b921717e7b7ca64933517c292059dea6a9047d9ce5f7ef2a4"
     ],
     [
       "docs/code-map/index.md",

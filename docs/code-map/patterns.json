@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.2",
-  "generated": "2026-10-12T01:44:22.938Z",
+  "generated": "2026-10-12T14:21:35.107Z",
   "interpretation": "Matches locate code that may use known patterns. Confidence describes detector evidence, not design correctness. Coverage is descriptive, not a quality score; no match does not establish that a pattern is absent.",
   "project": {
     "name": "plan-product"
@@ -16,7 +16,7 @@
     },
     "sourceFiles": 69,
     "eligibleFiles": 69,
-    "eligibleLines": 15792,
+    "eligibleLines": 15801,
     "excludedFiles": [],
     "languages": [
       "JavaScript",
@@ -784,11 +784,11 @@
       "root": "scripts/lib",
       "planningModule": "docs/code-map/modules/lib.md",
       "eligibleFiles": 12,
-      "eligibleLines": 2362,
+      "eligibleLines": 2371,
       "coveredFiles": 6,
       "coveragePercent": 50,
       "patternLines": 57,
-      "patternLinePercent": 2.41,
+      "patternLinePercent": 2.4,
       "languages": {
         "JavaScript": 12
       },
@@ -862,18 +862,18 @@
           "examples": [
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 88,
-              "endLine": 88
+              "line": 97,
+              "endLine": 97
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 89,
-              "endLine": 89
+              "line": 98,
+              "endLine": 98
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 94,
-              "endLine": 94
+              "line": 103,
+              "endLine": 103
             },
             {
               "file": "scripts/lib/usage.mjs",
@@ -917,8 +917,8 @@
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 39,
-              "endLine": 39
+              "line": 48,
+              "endLine": 48
             },
             {
               "file": "scripts/lib/repo-paths.mjs",
@@ -1018,18 +1018,18 @@
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 103,
-              "endLine": 103
+              "line": 112,
+              "endLine": 112
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 107,
-              "endLine": 107
+              "line": 116,
+              "endLine": 116
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 130,
-              "endLine": 130
+              "line": 139,
+              "endLine": 139
             },
             {
               "file": "scripts/lib/repo-paths.mjs",
@@ -1204,13 +1204,13 @@
           "examples": [
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 90,
-              "endLine": 90
+              "line": 99,
+              "endLine": 99
             },
             {
               "file": "scripts/lib/map-freshness.mjs",
-              "line": 118,
-              "endLine": 118
+              "line": 127,
+              "endLine": 127
             },
             {
               "file": "scripts/lib/plugin-root.mjs",
@@ -4058,20 +4058,20 @@
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 88,
-          "endLine": 88,
+          "line": 97,
+          "endLine": 97,
           "moduleId": "lib"
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 89,
-          "endLine": 89,
+          "line": 98,
+          "endLine": 98,
           "moduleId": "lib"
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 94,
-          "endLine": 94,
+          "line": 103,
+          "endLine": 103,
           "moduleId": "lib"
         },
         {
@@ -6258,20 +6258,20 @@
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 103,
-          "endLine": 103,
+          "line": 112,
+          "endLine": 112,
           "moduleId": "lib"
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 107,
-          "endLine": 107,
+          "line": 116,
+          "endLine": 116,
           "moduleId": "lib"
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 130,
-          "endLine": 130,
+          "line": 139,
+          "endLine": 139,
           "moduleId": "lib"
         },
         {
@@ -6803,8 +6803,8 @@
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 29,
-          "endLine": 29,
+          "line": 38,
+          "endLine": 38,
           "moduleId": "lib"
         },
         {
@@ -8028,8 +8028,8 @@
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 39,
-          "endLine": 39,
+          "line": 48,
+          "endLine": 48,
           "moduleId": "lib"
         },
         {
@@ -8436,14 +8436,14 @@
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 90,
-          "endLine": 90,
+          "line": 99,
+          "endLine": 99,
           "moduleId": "lib"
         },
         {
           "file": "scripts/lib/map-freshness.mjs",
-          "line": 118,
-          "endLine": 118,
+          "line": 127,
+          "endLine": 127,
           "moduleId": "lib"
         },
         {
