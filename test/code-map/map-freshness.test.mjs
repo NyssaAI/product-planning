@@ -51,6 +51,39 @@ test('freshness detects added/deleted sources and configuration and resolver cha
   }
 });
 
+test('checkout line-ending conversion preserves freshness without hiding content changes', (t) => {
+  const repo = fixture(t);
+  const pluginRoot = path.join(repo, '.temp/plugin');
+  mkdirSync(path.join(pluginRoot, 'scripts'), { recursive: true });
+  writeFileSync(path.join(pluginRoot, 'package.json'), '{"version":"1"}\n');
+  const generator = path.join(pluginRoot, 'scripts/helper.mjs');
+  writeFileSync(generator, 'export const label = "caf\u00e9";\n');
+  writeFileSync(path.join(repo, 'tsconfig.json'), '{"extends":"./compiler.json"}\n');
+  writeFileSync(path.join(repo, 'compiler.json'), '{"compilerOptions":{"baseUrl":"."}}\n');
+  const options = { pluginRoot };
+  completeMapScan(repo, beginMapScan(repo, options), options);
+  for (const file of [
+    'src/index.js', 'tsconfig.json', 'compiler.json',
+    'docs/code-map/code-map.json', 'docs/code-map/module-map.json',
+    'docs/code-map/index.md', 'docs/code-map/modules/src.md',
+    '.temp/plugin/package.json', '.temp/plugin/scripts/helper.mjs',
+  ]) {
+    const absolute = path.join(repo, file);
+    writeFileSync(absolute, readFileSync(absolute, 'utf8').replace(/\n/g, '\r\n'));
+  }
+  assert.equal(checkMapFreshness(repo, options).fresh, true);
+  writeFileSync(generator, 'export const label = "changed";\r\n');
+  assert.equal(checkMapFreshness(repo, options).fresh, false);
+
+  const binary = path.join(pluginRoot, 'scripts/runtime.bin');
+  for (const prefix of [0, 255]) {
+    writeFileSync(binary, Buffer.from([prefix, 13, 10]));
+    completeMapScan(repo, beginMapScan(repo, options), options);
+    writeFileSync(binary, Buffer.from([prefix, 10]));
+    assert.equal(checkMapFreshness(repo, options).fresh, false, 'binary bytes remain significant');
+  }
+});
+
 test('unfinished scans and edits during a scan cannot leave a fresh stamp', (t) => {
   const repo = fixture(t);
   completeMapScan(repo, beginMapScan(repo));

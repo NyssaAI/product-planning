@@ -10,11 +10,20 @@ import { resolveRepoContainedPath } from './repo-paths.mjs';
 import { writeArtifactIfChanged } from './write-artifact.mjs';
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const STATE_VERSION = 1;
+const STATE_VERSION = 2;
 const RESOLVER_INPUT = /^(?:package\.json|(?:ts|js)config(?:\.[^.]+)*\.json|go\.(?:mod|work)|pyproject\.toml|setup\.(?:py|cfg)|Cargo\.toml|(?:pnpm-workspace|lerna)\.(?:yaml|json)|Directory\.(?:Build|Packages)\.(?:props|targets)|.+\.(?:csproj|sln|slnx))$/;
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
+}
+
+function fileDigest(file) {
+  const contents = readFileSync(file);
+  const text = contents.toString('utf8');
+  // Git can change text line endings on checkout without changing the source.
+  // Keep NUL-containing or non-UTF-8 inputs byte-exact.
+  const isText = !contents.includes(0) && Buffer.from(text, 'utf8').equals(contents);
+  return sha256(isText ? text.replace(/\r\n/g, '\n') : contents);
 }
 
 function slash(value) {
@@ -37,7 +46,7 @@ function walkFiles(root, relative = '') {
 function fileHashes(root, files) {
   return [...new Set(files)].sort().map((rel) => {
     const full = resolveRepoContainedPath(root, rel, 'scan input');
-    return [slash(rel), existsSync(full) ? sha256(readFileSync(full)) : null];
+    return [slash(rel), existsSync(full) ? fileDigest(full) : null];
   });
 }
 
@@ -67,7 +76,7 @@ export function captureMapInputs(repoRoot, { pluginRoot = PLUGIN_ROOT } = {}) {
   // The adapter can read an inherited config outside the repository. Hash those
   // exact files without persisting their paths or contents in the scan state.
   const inheritedConfigs = tsConfigInputs(repoRoot).map((file) => [
-    slash(path.relative(repoRoot, file)), sha256(readFileSync(file)),
+    slash(path.relative(repoRoot, file)), fileDigest(file),
   ]);
   return {
     fingerprint: sha256(JSON.stringify({ roots: codeConfig.roots, languages: codeConfig.languages, inputs, inheritedConfigs, generators })),

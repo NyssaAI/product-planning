@@ -1,6 +1,6 @@
 # plan-product Known Code Patterns
 
-Generated: 2026-10-12T01:44:22.938Z. Regenerate with `find-code-patterns`.
+Generated: 2026-10-12T14:21:35.107Z. Regenerate with `find-code-patterns`.
 
 Use this report to find code that may use known patterns and inspect the cited source before reusing or changing it.
 
@@ -123,13 +123,13 @@ Root: `scripts/lib`.
   Detector: `markdown-lines-renderer` (JavaScript). Markdown output is assembled by pushing strings into a lines array.
   24 further occurrences are available under this detector in patterns.json.
 
-- **Configuration Boundary** — `intent-only`, 2 files, 26 occurrences. [scripts/lib/map-freshness.mjs:88](../../scripts/lib/map-freshness.mjs#L88), [scripts/lib/map-freshness.mjs:89](../../scripts/lib/map-freshness.mjs#L89), [scripts/lib/map-freshness.mjs:94](../../scripts/lib/map-freshness.mjs#L94)
+- **Configuration Boundary** — `intent-only`, 2 files, 26 occurrences. [scripts/lib/map-freshness.mjs:97](../../scripts/lib/map-freshness.mjs#L97), [scripts/lib/map-freshness.mjs:98](../../scripts/lib/map-freshness.mjs#L98), [scripts/lib/map-freshness.mjs:103](../../scripts/lib/map-freshness.mjs#L103)
   Detector: `configuration-boundary-config-access-javascript` (JavaScript). Code reads environment or configuration values.
   Limit: Identifier names suggest this family; verify the listed relationships in source before claiming the pattern is implemented.
   Verify in source: config access is centralized; callers receive typed settings; defaults and validation are visible.
   23 further occurrences are available under this detector in patterns.json.
 
-- **Repository** — `intent-only`, 3 files, 23 occurrences. [scripts/lib/map-freshness.mjs:9](../../scripts/lib/map-freshness.mjs#L9), [scripts/lib/map-freshness.mjs:39](../../scripts/lib/map-freshness.mjs#L39), [scripts/lib/repo-paths.mjs:28](../../scripts/lib/repo-paths.mjs#L28)
+- **Repository** — `intent-only`, 3 files, 23 occurrences. [scripts/lib/map-freshness.mjs:9](../../scripts/lib/map-freshness.mjs#L9), [scripts/lib/map-freshness.mjs:48](../../scripts/lib/map-freshness.mjs#L48), [scripts/lib/repo-paths.mjs:28](../../scripts/lib/repo-paths.mjs#L28)
   Detector: `repository-named-repository-javascript` (JavaScript). Names indicate repository, store, DAO, persistence, or data access boundaries.
   Limit: Identifier names suggest this family; verify the listed relationships in source before claiming the pattern is implemented.
   Verify in source: data access is centralized; domain/application code avoids raw database calls; queries are named and testable.
@@ -141,7 +141,7 @@ Root: `scripts/lib`.
   Verify in source: action is named and testable; execution contract is consistent; side effects are contained.
   13 further occurrences are available under this detector in patterns.json.
 
-- **Error Handling Policy** — `intent-only`, 6 files, 14 occurrences. [scripts/lib/endpoint-syntax.mjs:68](../../scripts/lib/endpoint-syntax.mjs#L68), [scripts/lib/map-freshness.mjs:103](../../scripts/lib/map-freshness.mjs#L103), [scripts/lib/map-freshness.mjs:107](../../scripts/lib/map-freshness.mjs#L107)
+- **Error Handling Policy** — `intent-only`, 6 files, 14 occurrences. [scripts/lib/endpoint-syntax.mjs:68](../../scripts/lib/endpoint-syntax.mjs#L68), [scripts/lib/map-freshness.mjs:112](../../scripts/lib/map-freshness.mjs#L112), [scripts/lib/map-freshness.mjs:116](../../scripts/lib/map-freshness.mjs#L116)
   Detector: `error-handling-policy-error-policy-language-javascript` (JavaScript). Names indicate error classes, result wrappers, exception mapping, or failure policy.
   Limit: Identifier names suggest this family; verify the listed relationships in source before claiming the pattern is implemented.
   Verify in source: errors are typed or classified; transport mapping is consistent; retries and fallbacks are explicit.
@@ -165,7 +165,7 @@ Root: `scripts/lib`.
   Verify in source: stable abstraction; multiple implementations; caller depends on abstraction; selection logic is isolated.
   4 further occurrences are available under this detector in patterns.json.
 
-- **JSON config loader** — `high`, 4 files, 5 occurrences. [scripts/lib/map-freshness.mjs:90](../../scripts/lib/map-freshness.mjs#L90), [scripts/lib/map-freshness.mjs:118](../../scripts/lib/map-freshness.mjs#L118), [scripts/lib/plugin-root.mjs:17](../../scripts/lib/plugin-root.mjs#L17)
+- **JSON config loader** — `high`, 4 files, 5 occurrences. [scripts/lib/map-freshness.mjs:99](../../scripts/lib/map-freshness.mjs#L99), [scripts/lib/map-freshness.mjs:127](../../scripts/lib/map-freshness.mjs#L127), [scripts/lib/plugin-root.mjs:17](../../scripts/lib/plugin-root.mjs#L17)
   Detector: `node-json-config-loader` (JavaScript). Runtime configuration is loaded by parsing JSON read from disk.
   2 further occurrences are available under this detector in patterns.json.
 
@@ -309,4 +309,4 @@ Catalog: `.plan-product/patterns/library.json`.
 Configured review expectations: `.plan-product/patterns/expectations.json`.
 Use language-specific structural rules when a relationship can be detected. Keep name clues tentative. Inspect source responsibilities and dependency direction before claiming a design pattern or recommending a refactor.
 
-<!-- plan-product:patterns generated 2026-10-12T01:44:22.938Z -->
+<!-- plan-product:patterns generated 2026-10-12T14:21:35.107Z -->

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0",
-  "generated": "2026-10-12T01:44:22.153Z",
+  "generated": "2026-10-12T14:21:10.780Z",
   "roots": [
     "scripts",
     "skills"
@@ -351,28 +351,28 @@
         {
           "name": "captureMapInputs",
           "kind": "function",
-          "line": 49,
+          "line": 58,
           "signature": "export function captureMapInputs(repoRoot, { pluginRoot = PLUGIN_ROOT } = {})",
           "summary": "Capture content, inventory, configuration, resolver metadata and generator identity."
         },
         {
           "name": "beginMapScan",
           "kind": "function",
-          "line": 79,
+          "line": 88,
           "signature": "export function beginMapScan(repoRoot, options)",
           "summary": "Invalidate the previous success before either generator can write partial outputs."
         },
         {
           "name": "completeMapScan",
           "kind": "function",
-          "line": 100,
+          "line": 109,
           "signature": "export function completeMapScan(repoRoot, before, options)",
           "summary": "Call only after both core generators succeed."
         },
         {
           "name": "checkMapFreshness",
           "kind": "function",
-          "line": 114,
+          "line": 123,
           "signature": "export function checkMapFreshness(repoRoot, options)",
           "summary": "Shared freshness result for the CLI, doctor and regeneration hooks."
         }
