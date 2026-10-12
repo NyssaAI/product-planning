@@ -1,6 +1,6 @@
 # code-map (`code-map`) — module
 
-**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map.
+**Optional module context.** Use this when it helps orient the task; targeted source reading is also sufficient. Add a directly coupled module only when the work crosses its boundary. Use bounded queries for detailed evidence and verify relevant source.
 
 **What this module does:** ast-grep-based symbol and endpoint indexer that feeds the module graph.
 
@@ -20,11 +20,11 @@
 | `loadCodeMapConfig` |  |
 | `extractDocComment` | Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `"""`) and extracts |
 | `extractFileHeaderComment` |  |
-| `annotateCodeMapWithModules` | Add module ownership to a code-map document and expose a flat symbol index. |
+| `annotateCodeMapWithModules` | Store ownership once per file; files[].symbols is the canonical symbol index. |
 | `loadPatternCatalogs` |  |
 | `loadJsonArtifact` |  |
 | `buildPatternReport` |  |
-| `renderPatternsMarkdown` |  |
+| `renderPatternsMarkdown` | Render a bounded reading guide; patterns.json retains the complete evidence. |
 | `loadPatternRuntimeConfig` |  |
 | `partitionPatternEligibleFiles` |  |
 | `runPatternScan` |  |
@@ -33,10 +33,10 @@
 | `extractSignature` | Extracts the declaration signature starting at the given line. |
 | `isInSkippedDir` | Whether a repo-relative path sits under a directory the source walkers skip. |
 | `sourceFilesInRoots` |  |
+| `sourceInventory` | Shared source boundary for symbols, endpoints, patterns, and dependency adapters. |
 | `languageForFile` |  |
 | `isLanguageEnabled` | True when the file maps to a configured language. |
 | `isKnownSourceFile` |  |
-| `splitSourceLines` | Split file content the way every extractor expects it: on `\n` only, so line numbers stay 1:1 with ast-grep's and a trai |
 
 ## Boundaries
 
@@ -44,7 +44,8 @@
 |--|------|
 | Root | `scripts/code-map/` |
 | Depends on modules | lib, module-map |
-| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/module-map/, scripts/lib/ |
+| Used by | lib, map-code, module-map |
+| Out of scope | node_modules/, .git/, dist/, build/, .next/, scripts/map-code/, scripts/module-map/, scripts/lib/ |
 
 ## Flows
 
@@ -75,6 +76,5 @@
 
 ## After planning
 
-- **Code-map slice:** filter [`code-map.json`](../code-map.json) by `moduleId: code-map` to get this module's files, symbols, and endpoints
+- **Code-map slice:** query `module code-map` (`moduleId: code-map`) in [code-map.json](../code-map.json) for files, symbols, endpoints, and file dependencies. Symbols above are a sample (26 total); absence of a symbol is not absence of code.
 - Open only files your plan names
-

@@ -20,6 +20,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { checkMapFreshness } from '../lib/map-freshness.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REGEN_SCRIPT = path.join(__dirname, 'regen-if-source-changed.mjs');
@@ -127,19 +128,24 @@ function main() {
   }
 
   const pathConfig = readJsonIfPresent(repoRoot, PATH_CONFIG);
-  const artifactTargets = generatedArtifactTargets(generatorConfig, pathConfig);
+  const artifactTargets = [
+    ...generatedArtifactTargets(generatorConfig, pathConfig),
+    ...['AGENTS.md', 'CLAUDE.md'].filter((file) => existsSync(path.join(repoRoot, file))),
+  ];
 
-  const regen = spawnSync(process.execPath, [REGEN_SCRIPT, '--run'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    timeout: 250_000,
-  });
-  if (regen.status !== 0) {
-    const detail = (regen.stderr || regen.error?.message || '').trim();
-    warn(
-      `plan-product: pre-push code-map regeneration failed; push continues with existing artifacts${detail ? `\n${detail}` : ''}`
-    );
-    return;
+  if (!checkMapFreshness(repoRoot).fresh) {
+    const regen = spawnSync(process.execPath, [REGEN_SCRIPT, '--run'], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      timeout: 250_000,
+    });
+    if (regen.status !== 0) {
+      const detail = (regen.stderr || regen.error?.message || '').trim();
+      warn(
+        `plan-product: pre-push code-map regeneration failed; push continues with existing artifacts${detail ? `\n${detail}` : ''}`
+      );
+      return;
+    }
   }
 
   const dirtyTargets = dirtyArtifactTargets(repoRoot, artifactTargets);

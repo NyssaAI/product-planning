@@ -84,12 +84,15 @@ export function buildPatternReport(input) {
   );
 
   return {
-    schemaVersion: '1.1',
+    schemaVersion: '1.2',
     generated,
+    interpretation: 'Matches locate code that may use known patterns. Confidence describes detector evidence, not design correctness. Coverage is descriptive, not a quality score; no match does not establish that a pattern is absent.',
     project: { name: input.runtime.projectName },
     source: {
       codeMap: input.runtime.codeMapPath,
       moduleMap: input.runtime.moduleMapPath,
+      outputDir: input.runtime.outputDir,
+      freshness: input.runtime.freshness,
       sourceFiles: input.sourceFiles.length,
       eligibleFiles: input.eligibleFiles.length,
       eligibleLines: totalEligibleLines(moduleEvidence),
@@ -111,7 +114,6 @@ export function buildPatternReport(input) {
         totalEligibleLines(moduleEvidence)
       ),
       coverageByConfidence,
-      moduleSignals: countModuleSignals(moduleSummary),
       modulesWithPatternEvidence: moduleSummary.filter(
         (mod) => mod.coveredFiles > 0
       ).length,
@@ -158,9 +160,10 @@ function normalizeModules(moduleMap) {
  */
 function createModuleResolver(codeMap, modules) {
   const byFile = new Map();
+  const byId = new Map(modules.map((mod) => [mod.id, mod]));
   for (const file of Array.isArray(codeMap?.files) ? codeMap.files : []) {
     if (typeof file?.path === 'string' && typeof file?.moduleId === 'string') {
-      byFile.set(normalizeRel(file.path), {
+      byFile.set(normalizeRel(file.path), byId.get(file.moduleId) ?? {
         id: file.moduleId,
         name: typeof file.moduleName === 'string' ? file.moduleName : file.moduleId,
         root: typeof file.moduleRoot === 'string' ? normalizeRel(file.moduleRoot) : '',
@@ -284,6 +287,8 @@ function buildPatternEntries(
         confidence: pattern.confidence,
         includeInHeadline: pattern.includeInHeadline,
         description: pattern.description,
+        notes: pattern.notes,
+        reviewChecks: pattern.reviewChecks ?? [],
         source: pattern.source,
         occurrenceCount: patternMatches.length,
         fileCount: fileSet.size,
@@ -293,6 +298,12 @@ function buildPatternEntries(
         undetectedModuleCount: undetectedModules.length,
         modules: moduleEntries,
         undetectedModules,
+        occurrences: patternMatches.map((match) => ({
+          file: match.file,
+          line: match.line,
+          endLine: match.endLine ?? match.line,
+          moduleId: resolveModule(match.file).id,
+        })),
         examples: patternMatches.slice(0, 5).map((match) => ({
           file: match.file,
           line: match.line,
@@ -431,7 +442,6 @@ function modulePatternSummary(moduleEvidence, patterns, expectations) {
         coveragePercent,
         patternLines,
         patternLinePercent,
-        signal: modulePatternSignal(entry.eligibleFiles, coveredFiles, coveragePercent),
         languages: Object.fromEntries([...entry.languages.entries()].sort()),
         detectedPatternTypes: patternsUsed.length,
         applicablePatternTypes: applicableHeadlinePatterns.length,
@@ -444,7 +454,7 @@ function modulePatternSummary(moduleEvidence, patterns, expectations) {
           .slice(0, 10),
       };
     })
-    .sort((a, b) => moduleSignalRank(a.signal) - moduleSignalRank(b.signal) || a.id.localeCompare(b.id));
+    .sort((a, b) => a.id.localeCompare(b.id));
 }
 
 /**
@@ -708,52 +718,6 @@ function moduleTextMatchesAny(mod, terms) {
     const normalizedTag = tag.toLowerCase().replace(/-/g, ' ');
     return haystack.includes(normalizedTag) || haystack.includes(tag.toLowerCase());
   });
-}
-
-/**
- * @param {number} eligibleFiles
- * @param {number} coveredFiles
- * @param {number} coveragePercent
- * @returns {string}
- */
-function modulePatternSignal(eligibleFiles, coveredFiles, coveragePercent) {
-  if (eligibleFiles === 0) {
-    return 'not-scored';
-  }
-  if (coveredFiles === 0) {
-    return 'no-pattern-evidence';
-  }
-  if (coveragePercent < 40) {
-    return 'sparse-pattern-evidence';
-  }
-  if (coveragePercent < 75) {
-    return 'mixed-pattern-evidence';
-  }
-  return 'broad-pattern-evidence';
-}
-
-/**
- * @param {string} signal
- * @returns {number}
- */
-function moduleSignalRank(signal) {
-  return {
-    'no-pattern-evidence': 0,
-    'sparse-pattern-evidence': 1,
-    'mixed-pattern-evidence': 2,
-    'broad-pattern-evidence': 3,
-    'not-scored': 4,
-  }[signal] ?? 5;
-}
-
-/**
- * @param {Array<{ signal?: string }>} modules
- */
-function countModuleSignals(modules) {
-  return modules.reduce((counts, mod) => {
-    counts[mod.signal] = (counts[mod.signal] ?? 0) + 1;
-    return counts;
-  }, {});
 }
 
 /**

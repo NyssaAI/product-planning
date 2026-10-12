@@ -65,7 +65,7 @@ const csharpAdapter = {
       log.warn('csharp adapter extract failed; returning empty graph', {
         error: errorMessage(error),
       });
-      return { files: [], edges: [] };
+      return { files: [], edges: [], diagnostics: [{ kind: 'extraction-failed', message: errorMessage(error) }] };
     }
   },
 };
@@ -506,6 +506,7 @@ function extractDeclarationsByFile(repoRoot, csFiles) {
     }
   } catch (error) {
     log.warn('C# declaration extraction failed', { error: errorMessage(error) });
+    throw error;
   }
 
   return byFile;

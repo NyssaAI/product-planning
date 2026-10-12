@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * PostToolUse hook wrapper: regenerates the code map and module graph in the
- * background when a source file changes. Never blocks the agent — the hook
- * invocation only performs cheap checks, then respawns itself detached with
+ * background when scan inputs change. The hook invocation checks freshness,
+ * then respawns itself detached with
  * --run to do the actual regeneration.
  *
  * Input (hook mode): Claude Code PostToolUse JSON on stdin
@@ -28,10 +28,10 @@ import {
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { checkMapFreshness } from '../lib/map-freshness.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SELF = fileURLToPath(import.meta.url);
-const DEFAULT_SOURCE_ROOTS = ['src', 'app', 'lib', 'native', 'scripts', 'test'];
 const LOG_DIR = '.temp';
 const LOG_FILE = 'regen.log';
 
@@ -104,34 +104,30 @@ function readModifiedFilePath() {
  */
 function runRegeneration() {
   const repoRoot = process.cwd();
-  const codeMapScript = path.join(
-    __dirname,
-    '../code-map/generate-code-map.mjs'
-  );
-  const planProductScript = path.join(__dirname, 'generate-module-map.mjs');
-
-  for (const script of [codeMapScript, planProductScript]) {
-    const result = spawnSync(process.execPath, [script], {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      timeout: 120_000,
-    });
-    if (result.status !== 0) {
-      const detail = (result.stderr || result.error?.message || 'unknown')
-        .trim()
-        .slice(0, 500);
-      const name = path.basename(script);
-      appendLog(repoRoot, `ERROR ${name}: ${detail}`);
-      process.stderr.write(
-        `plan-product: ${name} failed (exit ${result.status ?? 'signal'}); see ${path.join(LOG_DIR, LOG_FILE)}\n${detail}\n`
-      );
-      process.exit(1);
-    }
+  if (checkMapFreshness(repoRoot).fresh) {
+    return;
+  }
+  const script = path.join(__dirname, '../map-code/generate.mjs');
+  const result = spawnSync(process.execPath, [script], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    timeout: 240_000,
+  });
+  if (result.status !== 0) {
+    const detail = (result.stderr || result.error?.message || 'unknown')
+      .trim()
+      .slice(0, 500);
+    const name = path.basename(script);
+    appendLog(repoRoot, `ERROR ${name}: ${detail}`);
+    process.stderr.write(
+      `plan-product: ${name} failed (exit ${result.status ?? 'signal'}); see ${path.join(LOG_DIR, LOG_FILE)}\n${detail}\n`
+    );
+    process.exit(1);
   }
   appendLog(repoRoot, 'REGEN complete');
 }
 
-/** Hook mode: cheap checks, then detach a background regeneration. */
+/** Hook mode: check shared freshness, then detach a background regeneration. */
 function handleHook() {
   const repoRoot = process.cwd();
 
@@ -145,19 +141,10 @@ function handleHook() {
     process.exit(0);
   }
 
-  const sourceRoots = Array.isArray(planProductConfig.sourceRoots)
-    ? planProductConfig.sourceRoots
-    : Array.isArray(planProductConfig.roots)
-      ? planProductConfig.roots
-      : DEFAULT_SOURCE_ROOTS;
-
   const rel = path
     .relative(repoRoot, path.resolve(modifiedFile))
     .replace(/\\/g, '/');
-  const isSourceFile =
-    !rel.startsWith('..') &&
-    sourceRoots.some((root) => rel === root || rel.startsWith(`${root}/`));
-  if (!isSourceFile) {
+  if (rel.startsWith('../') || path.isAbsolute(rel) || checkMapFreshness(repoRoot).fresh) {
     process.exit(0);
   }
 

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "fingerprint": "e0c4627c4e3cc4a6c0b7bc270eb6876f6c4ee40e39ad64d9c2ae78be8339679f",
+  "sourceFileCount": 69,
+  "artifacts": [
+    [
+      "docs/code-map/code-map.json",
+      "71e0bce8e6d06107c0f25389c96cd74669bd70dcf0949c48b5d8a35e9d203656"
+    ],
+    [
+      "docs/code-map/index.md",
+      "caab27686c2bd7884b1bbd8ef7be1d48074a9c4cabd0d1fb850e2f2a52f82c42"
+    ],
+    [
+      "docs/code-map/module-map.json",
+      "641af1e6726fe74afe6f99f0ac65b9f94e90de819c0fc858dffa6bd419fc52e3"
+    ],
+    [
+      "docs/code-map/modules/code-map.md",
+      "fc46cf0982162f15c47572e98f7ec9dd54d779fe8e85aa12488059e387fb7b7b"
+    ],
+    [
+      "docs/code-map/modules/lib.md",
+      "ed596ca3bf8328e763e1ee5994cf21ee33d4aed7de7cd1e5683cf8f41d7962ff"
+    ],
+    [
+      "docs/code-map/modules/map-code.md",
+      "ae8ba09d2e7e8cbfed7cdb97f252c500e5c00ae803c047d64539fbe51291f2c6"
+    ],
+    [
+      "docs/code-map/modules/module-map.md",
+      "635ab2d481fdc883d9cbf16c53fd66e373063ae092764a6396fcae28630b465f"
+    ]
+  ]
+}

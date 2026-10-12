@@ -20,7 +20,7 @@ Doc and template paths belong in `.plan-product/config.json`; generator roots, m
 
 1. If `using-code-map` is not already loaded, read `../using-code-map/SKILL.md` first for staleness rules and planning-context rules.
 2. Work from the target project root, not from the plugin root. If the user does not provide a target path, use the current workspace root.
-3. Confirm the target project has the configured product docs, usually `docs/product.md`, `docs/features.md`, and `docs/tech-stack.md`, or has explicit doc paths in `plan-product.config.json`.
+3. Read configured source roots and output paths when present. Product docs add planning context but are optional for code mapping.
 4. Resolve the installed plugin root. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill. No harness sets a bare `PLUGIN_ROOT`, so substitute the resolved absolute path for `${PLUGIN_ROOT}` in the commands below before running them.
 5. Run the public generator from the target project root:
 
@@ -34,7 +34,7 @@ Use `scripts/module-map/generate-module-map.mjs` directly only for module-map-on
 
 Report the generated files, warnings, and errors. Generated artifacts must live under the configured output directory.
 
-Runs append local usage events when usage capture is enabled. If the user asks whether plan-product is working well, run:
+Runs append local usage events when usage capture is enabled. For command execution health, run the report below. It does not measure agent task outcomes or map usefulness:
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness

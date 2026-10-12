@@ -14,6 +14,7 @@ import { recordUsageEvent } from '../lib/usage.mjs';
 import { findProjectRoot } from '../module-map/lib/project-root.mjs';
 import { loadPlanProductConfig } from '../module-map/lib/config.mjs';
 import { loadCodeMapConfig } from '../code-map/lib/code-map-config.mjs';
+import { beginMapScan, completeMapScan } from '../lib/map-freshness.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PLUGIN_ROOT = path.resolve(__dirname, '../..');
@@ -63,8 +64,10 @@ if (
 function main() {
   try {
     const outputs = mapCodeOutputs(REPO_ROOT);
+    const scan = beginMapScan(REPO_ROOT);
     runStep('code-map', CODE_MAP_SCRIPT, codeMapArgs);
     runStep('module-map', MODULE_MAP_SCRIPT, moduleMapArgs);
+    completeMapScan(REPO_ROOT, scan);
     recordUsageEvent(REPO_ROOT, {
       command: 'map-code',
       status: 'ok',

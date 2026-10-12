@@ -118,16 +118,13 @@ test('renderPatternsMarkdown emits summary, tiers, excluded files, and limitatio
     ],
   });
 
-  assert.match(markdown, /# Fixture Code Patterns/);
-  assert.match(markdown, /Pattern-eligible files \| 2/);
-  assert.match(markdown, /Pattern-eligible source lines \| 20/);
-  assert.match(markdown, /Pattern line coverage \| 20\.00%/);
-  assert.match(markdown, /Modules with pattern evidence \| 1/);
-  assert.match(markdown, /Module Pattern Signals/);
-  assert.match(markdown, /Pattern line coverage: 20\.00% \(4\/20 lines\)/);
-  assert.match(markdown, /Expected headline patterns not detected/);
-  assert.match(markdown, /`intent-only` \| 0 \| 0\.00% \| no/);
+  assert.match(markdown, /# Fixture Known Code Patterns/);
+  assert.match(markdown, /Eligible files \| 2/);
+  assert.match(markdown, /not a quality score/);
+  assert.match(markdown, /## Module Evidence/);
+  assert.doesNotMatch(markdown, /mixed-pattern-evidence|Expected headline|Pattern line coverage/);
   assert.match(markdown, /`\.rb` \| - \| 1 \| no supported language/);
   assert.match(markdown, /Node CLI argument parser/);
-  assert.match(markdown, /Pattern matches are structural evidence/);
+  assert.match(markdown, /src\/cli\.mjs:1/);
+  assert.match(markdown, /high.*specific syntax/);
 });

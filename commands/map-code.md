@@ -26,7 +26,7 @@ The public map-code script runs the code-map generator and then the module-map g
 
 ## Usage Capture
 
-Runs append local usage events to `.plan-product/usage/events.jsonl` unless disabled with `"usage": { "enabled": false }` in `plan-product.config.json` or `PLAN_PRODUCT_USAGE=0`. To analyze effectiveness, run:
+Runs append local usage events to `.plan-product/usage/events.jsonl` unless disabled with `"usage": { "enabled": false }` in `plan-product.config.json` or `PLAN_PRODUCT_USAGE=0`. To inspect command execution health, run:
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness

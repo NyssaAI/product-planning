@@ -23,22 +23,6 @@ export const DEFAULT_DOC_CANDIDATES = {
 };
 
 /** @type {readonly string[]} */
-const CODE_ROOT_CANDIDATES = [
-  'src',
-  'lib',
-  'app',
-  'apps',
-  'packages',
-  'services',
-  'cmd',
-  'internal',
-  'api',
-  'server',
-  'client',
-  'core',
-  'test',
-];
-
 /** @type {readonly { root: string, routeFile?: string, pathPrefix: string, router?: 'app' | 'pages' }[]} */
 const API_ROUTE_CANDIDATES = [
   { root: 'src/app/api', pathPrefix: 'src/app', router: 'app' },
@@ -82,20 +66,9 @@ export function readProjectName(repoRoot) {
  * @returns {string[]}
  */
 export function detectCodeMapRoots(repoRoot) {
-  const roots = CODE_ROOT_CANDIDATES.filter((dir) => {
-    const full = path.join(repoRoot, dir);
-    return existsSync(full) && hasSourceFiles(full);
-  });
-
-  if (roots.length > 0) {
-    return roots;
-  }
-
-  if (hasSourceFiles(repoRoot)) {
-    return ['.'];
-  }
-
-  return ['src'];
+  // A guessed directory list silently omits source beside familiar roots.
+  // The shared inventory applies exclusions; explicit roots opt into a scope.
+  return ['.'];
 }
 
 /**

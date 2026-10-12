@@ -1,303 +1,109 @@
-/**
- * @param {import('./model.mjs').PatternReport} report
- * @returns {string}
- */
+import path from 'node:path';
+
+const MAX_PATTERNS_PER_MODULE = 12;
+const MAX_EXAMPLES = 3;
+
+/** Render a bounded reading guide; patterns.json retains the complete evidence. */
 export function renderPatternsMarkdown(report) {
-  const lines = [];
-  lines.push(`# ${report.project.name} Code Patterns`);
-  lines.push('');
-  lines.push(
-    `Generated: ${report.generated}. Regenerate with \`find-code-patterns\`.`
-  );
-  lines.push('');
-  lines.push('## Use This When');
-  lines.push('');
-  lines.push('- Use for module-rooted architecture and coding-practice review.');
-  lines.push(
-    '- Treat missing patterns as a quality signal to inspect, not proof that the code is wrong.'
-  );
-  lines.push(
-    '- For routine implementation planning, start with the generated index and the minimum relevant module files.'
-  );
-  lines.push('');
-  lines.push('## Coverage Summary');
-  lines.push('');
-  lines.push(
-    'Headline coverage counts unique pattern-eligible files matched by `high` or `medium` confidence patterns. `intent-only` signals and unsupported files are excluded from the headline denominator.'
-  );
-  lines.push('');
-  lines.push('| Metric | Value |');
-  lines.push('|--------|-------|');
-  lines.push(`| Source files | ${report.source.sourceFiles} |`);
-  lines.push(`| Pattern-eligible files | ${report.source.eligibleFiles} |`);
-  if (report.source.eligibleLines !== undefined) {
-    lines.push(`| Pattern-eligible source lines | ${report.source.eligibleLines} |`);
+  const lines = [
+    `# ${report.project.name} Known Code Patterns`,
+    '',
+    `Generated: ${report.generated}. Regenerate with \`find-code-patterns\`.`,
+    '',
+    'Use this report to find code that may use known patterns and inspect the cited source before reusing or changing it.',
+    '',
+    'Matches describe detector evidence, not a quality score. A name match suggests intent; it does not establish the relationships that define a design pattern. No match does not establish absence.',
+    '',
+    '## Scan Scope',
+    '',
+    '| Metric | Count |',
+    '|--------|-------|',
+    `| Source files | ${report.source.sourceFiles} |`,
+    `| Eligible files | ${report.source.eligibleFiles} |`,
+    `| Excluded files | ${report.source.excludedFiles.reduce((sum, entry) => sum + entry.count, 0)} |`,
+    `| Detectors evaluated | ${report.summary.patternsEvaluated} |`,
+    `| Detectors matched | ${report.summary.patternsMatched} |`,
+    `| Occurrences | ${report.summary.occurrences} |`,
+    '',
+    `Inputs: \`${report.source.codeMap}\`, \`${report.source.moduleMap}\`.`,
+    `Roots: ${(report.source.roots ?? []).map((root) => `\`${root}\``).join(', ') || '(see code map)'}. Languages: ${report.source.languages.join(', ')}.`,
+    '',
+    '## Confidence and Limits',
+    '',
+    '- `high`: a detector matched specific syntax or an API shape; this confirms that shape, not correct design.',
+    '- `medium`: a structural heuristic matched; inspect its description and surrounding code.',
+    '- `intent-only`: names or other weak clues suggest a pattern; verify responsibilities and relationships in source.',
+    '',
+    'Confidence is catalog-supplied, not a calibrated probability. JSON coverage fields describe matched files or syntax ranges only; they do not measure architecture quality or how much code should use patterns.',
+    '',
+    '## Module Evidence',
+    '',
+    '| Module | Eligible files | Matched detectors | Source examples |',
+    '|--------|----------------|-------------------|-----------------|',
+  ];
+  if (report.source.freshness?.fresh === false) {
+    lines.splice(4, 0, `Warning: ${report.source.freshness.reason} Run \`map-code\` before relying on module attribution.`, '');
   }
-  lines.push(`| Excluded files | ${excludedCount(report.source.excludedFiles)} |`);
-  lines.push(`| Patterns evaluated | ${report.summary.patternsEvaluated} |`);
-  lines.push(`| Patterns matched | ${report.summary.patternsMatched} |`);
-  lines.push(`| Occurrences | ${report.summary.occurrences} |`);
-  lines.push(`| Covered files | ${report.summary.coveredFiles} |`);
-  lines.push(`| Headline coverage | ${formatPercent(report.summary.coveragePercent)} |`);
-  if (report.summary.patternLines !== undefined) {
-    lines.push(`| Pattern lines | ${report.summary.patternLines} |`);
-  }
-  if (report.summary.patternLinePercent !== undefined) {
-    lines.push(`| Pattern line coverage | ${formatPercent(report.summary.patternLinePercent)} |`);
-  }
-  if (report.summary.modulesWithPatternEvidence !== undefined) {
-    lines.push(`| Modules with pattern evidence | ${report.summary.modulesWithPatternEvidence} |`);
-  }
-  if (report.summary.modulesWithoutPatternEvidence !== undefined) {
-    lines.push(`| Modules without pattern evidence | ${report.summary.modulesWithoutPatternEvidence} |`);
-  }
-  lines.push('');
-  if (report.summary.moduleSignals) {
-    lines.push('## Module Signal Summary');
-    lines.push('');
-    lines.push('| Signal | Modules |');
-    lines.push('|--------|---------|');
-    for (const [signal, count] of Object.entries(report.summary.moduleSignals)) {
-      lines.push(`| \`${signal}\` | ${count} |`);
-    }
-    lines.push('');
-  }
-  lines.push('## Inputs');
-  lines.push('');
-  lines.push('| Input | Value |');
-  lines.push('|-------|-------|');
-  lines.push(`| Code map | \`${report.source.codeMap}\` |`);
-  lines.push(`| Module map | \`${report.source.moduleMap}\` |`);
-  if (report.source.patternLibrary) {
-    lines.push(`| Pattern library | \`${report.source.patternLibrary}\` |`);
-  }
-  if (report.source.patternExpectations) {
-    lines.push(`| Pattern expectations | \`${report.source.patternExpectations}\` |`);
-  }
-  if (report.source.roots?.length) {
-    lines.push(`| Source roots | ${report.source.roots.map((entry) => `\`${entry}\``).join(', ')} |`);
-  }
-  lines.push(`| Languages | ${report.source.languages.map((entry) => `\`${entry}\``).join(', ') || '-'} |`);
-  lines.push('');
-  lines.push('## Confidence Tiers');
-  lines.push('');
-  lines.push('| Confidence | Files | Coverage | Included in headline |');
-  lines.push('|------------|-------|----------|----------------------|');
-  for (const confidence of ['high', 'medium', 'intent-only']) {
-    const entry = report.summary.coverageByConfidence[confidence] ?? {
-      files: 0,
-      percent: 0,
-      includedInHeadline: confidence !== 'intent-only',
-    };
-    lines.push(
-      `| \`${confidence}\` | ${entry.files} | ${formatPercent(entry.percent)} | ${entry.includedInHeadline ? 'yes' : 'no'} |`
-    );
-  }
-  lines.push('');
-  lines.push('## Excluded Source Files');
-  lines.push('');
-  if (report.source.excludedFiles.length === 0) {
-    lines.push('No detected source files were excluded from the pattern-eligible denominator.');
-  } else {
-    lines.push('| Extension | Language | Count | Reason |');
-    lines.push('|-----------|----------|-------|--------|');
-    for (const excluded of report.source.excludedFiles) {
-      lines.push(
-        `| \`${excluded.extension}\` | ${excluded.language ? `\`${excluded.language}\`` : '-'} | ${excluded.count} | ${escapeTableCell(excluded.reason)} |`
-      );
-    }
-  }
-  lines.push('');
-  lines.push('## Pattern Summary');
-  lines.push('');
-  lines.push('| Pattern | Family | Confidence | Language | Files | Occurrences | Coverage | Headline |');
-  lines.push('|---------|--------|------------|----------|-------|-------------|----------|----------|');
-  for (const pattern of report.patterns) {
-    lines.push(
-      `| ${escapeTableCell(pattern.name)} | ${pattern.familyName ? escapeTableCell(pattern.familyName) : '-'} | \`${pattern.confidence}\` | \`${pattern.language}\` | ${pattern.fileCount} | ${pattern.occurrenceCount} | ${formatPercent(pattern.coveragePercent)} | ${pattern.includeInHeadline ? 'yes' : 'no'} |`
-    );
-  }
-  lines.push('');
-  lines.push('## Module Pattern Signals');
-  lines.push('');
-  if (report.modules.length === 0) {
-    lines.push('No pattern-eligible files were attributed to modules.');
-  } else {
-    lines.push('| Module | Signal | Eligible files | Covered files | File coverage | Eligible lines | Pattern lines | Pattern line % | Used | Expected not detected | Uncovered examples | Module file |');
-    lines.push('|--------|--------|----------------|---------------|---------------|----------------|---------------|----------------|------|-----------------------|--------------------|-------------|');
-    for (const mod of report.modules) {
-      lines.push(
-        `| ${escapeTableCell(mod.name)} | \`${mod.signal ?? 'unknown'}\` | ${mod.eligibleFiles} | ${mod.coveredFiles} | ${formatPercent(mod.coveragePercent)} | ${mod.eligibleLines ?? '-'} | ${mod.patternLines ?? '-'} | ${formatOptionalPercent(mod.patternLinePercent)} | ${patternNames(mod.patternsUsed)} | ${patternNames(mod.patternsNotDetected)} | ${fileExamples(mod.filesWithoutHeadlinePatterns)} | ${mod.planningModule ? `\`${mod.planningModule}\`` : '-'} |`
-      );
-    }
-  }
-  lines.push('');
-  lines.push('## Module Details');
-  lines.push('');
   for (const mod of report.modules) {
-    lines.push(`### ${mod.name}`);
-    lines.push('');
-    lines.push(
-      `Root: \`${mod.root ?? ''}\`. Signal: \`${mod.signal ?? 'unknown'}\`. Pattern line coverage: ${formatOptionalPercent(mod.patternLinePercent)} (${mod.patternLines ?? 0}/${mod.eligibleLines ?? 0} lines).`
-    );
-    lines.push('');
-    if (mod.patternsUsed?.length) {
-      lines.push('Detected patterns:');
-      lines.push('');
-      lines.push('| Pattern | Family | Confidence | Files | Occurrences | Lines | Line % | Examples |');
-      lines.push('|---------|--------|------------|-------|-------------|-------|--------|----------|');
-      for (const pattern of mod.patternsUsed) {
-        lines.push(
-          `| ${escapeTableCell(pattern.name)} | ${pattern.familyName ? escapeTableCell(pattern.familyName) : '-'} | \`${pattern.confidence}\` | ${pattern.fileCount} | ${pattern.occurrenceCount} | ${pattern.lineCount ?? '-'} | ${formatOptionalPercent(pattern.linePercent)} | ${exampleLocations(pattern.examples)} |`
-        );
-      }
-    } else {
-      lines.push('No configured headline patterns were detected in this module.');
+    const examples = (mod.patternsUsed ?? []).flatMap((pattern) => pattern.examples ?? []);
+    lines.push(`| [${cell(mod.name)}](#${anchor(mod)}) | ${mod.eligibleFiles} | ${mod.patternsUsed?.length ?? 0} | ${locations(examples, report)} |`);
+  }
+  if (report.modules.length === 0) lines.push('| No eligible modules | 0 | 0 | - |');
+  lines.push('', `Each module shows up to ${MAX_PATTERNS_PER_MODULE} matched detectors and ${MAX_EXAMPLES} source examples per detector. [patterns.json](patterns.json) contains every detector and its complete \`occurrences\` list (file, line range, module).`, '');
+
+  const byId = new Map(report.patterns.map((pattern) => [pattern.id, pattern]));
+  for (const mod of report.modules) {
+    lines.push(`<a id="${anchor(mod)}"></a>`, `### ${mod.name}`, '', `Root: \`${mod.root}\`.`, '');
+    if (!mod.patternsUsed?.length) {
+      lines.push('No configured detector matched. This is not a defect or a reason to introduce a pattern.', '');
+      continue;
     }
-    lines.push('');
-    if (mod.patternsNotDetected?.length) {
-      lines.push('Expected headline patterns not detected:');
-      lines.push('');
-      lines.push('| Pattern | Family | Confidence | Language | Tags |');
-      lines.push('|---------|--------|------------|----------|------|');
-      for (const pattern of mod.patternsNotDetected) {
-        lines.push(
-          `| ${escapeTableCell(pattern.name)} | ${pattern.familyName ? escapeTableCell(pattern.familyName) : '-'} | \`${pattern.confidence}\` | \`${pattern.language}\` | ${pattern.tags?.length ? pattern.tags.map((tag) => `\`${tag}\``).join(', ') : '-'} |`
-        );
+    for (const pattern of mod.patternsUsed.slice(0, MAX_PATTERNS_PER_MODULE)) {
+      const definition = byId.get(pattern.id) ?? pattern;
+      const family = pattern.familyName ?? pattern.name;
+      lines.push(`- **${family}** — \`${pattern.confidence}\`, ${pattern.fileCount} files, ${pattern.occurrenceCount} occurrences. ${locations(pattern.examples ?? [], report)}`);
+      lines.push(`  Detector: \`${pattern.id}\` (${pattern.language}). ${definition.description ?? ''}`);
+      if (definition.notes) lines.push(`  Limit: ${definition.notes}`);
+      if (definition.reviewChecks?.length) {
+        lines.push(`  Verify in source: ${definition.reviewChecks.join('; ')}.`);
       }
+      const omitted = Math.max(0, pattern.occurrenceCount - Math.min(MAX_EXAMPLES, pattern.examples?.length ?? 0));
+      if (omitted > 0) lines.push(`  ${omitted} further occurrences are available under this detector in patterns.json.`);
       lines.push('');
     }
-    if (mod.filesWithoutHeadlinePatterns?.length) {
-      lines.push('Files without headline pattern evidence:');
-      lines.push('');
-      for (const file of mod.filesWithoutHeadlinePatterns) {
-        lines.push(`- \`${file}\``);
-      }
-      lines.push('');
+    if (mod.patternsUsed.length > MAX_PATTERNS_PER_MODULE) {
+      lines.push(`${mod.patternsUsed.length - MAX_PATTERNS_PER_MODULE} additional matched detectors for \`${mod.id}\` are available in patterns.json.`, '');
     }
   }
-  lines.push('## Pattern Details');
-  lines.push('');
-  for (const pattern of report.patterns.filter((entry) => entry.occurrenceCount > 0)) {
-    lines.push(`### ${pattern.name}`);
-    lines.push('');
-    lines.push(pattern.description);
-    lines.push('');
-    lines.push(
-      `Confidence: \`${pattern.confidence}\`. Headline coverage: ${pattern.includeInHeadline ? 'included' : 'excluded'}.`
-    );
-    lines.push('');
-    lines.push('| Module | Files | Occurrences | Coverage |');
-    lines.push('|--------|-------|-------------|----------|');
-    for (const mod of pattern.modules) {
-      lines.push(
-        `| ${escapeTableCell(mod.name)} | ${mod.fileCount} | ${mod.occurrenceCount} | ${formatPercent(mod.coveragePercent)} |`
-      );
-    }
-    lines.push('');
-    lines.push('Examples:');
-    lines.push('');
-    for (const example of pattern.examples) {
-      lines.push(`- \`${example.file}:${example.line}\` (${example.moduleId})`);
-    }
-    lines.push('');
-    if (pattern.undetectedModules?.length) {
-      lines.push('Modules where this headline pattern was not detected:');
-      lines.push('');
-      for (const mod of pattern.undetectedModules.slice(0, 10)) {
-        lines.push(`- ${mod.name} (\`${mod.root}\`)`);
-      }
-      if (pattern.undetectedModules.length > 10) {
-        lines.push(`- ...and ${pattern.undetectedModules.length - 10} more`);
-      }
-      lines.push('');
+
+  lines.push('## Excluded Source Files', '');
+  if (report.source.excludedFiles.length === 0) {
+    lines.push('No detected source files were excluded from the enabled catalogs.');
+  } else {
+    lines.push('| Extension | Language | Count | Reason |', '|-----------|----------|-------|--------|');
+    for (const entry of report.source.excludedFiles) {
+      lines.push(`| \`${entry.extension}\` | ${entry.language ? `\`${entry.language}\`` : '-'} | ${entry.count} | ${cell(entry.reason)} |`);
     }
   }
-  if (report.patterns.every((entry) => entry.occurrenceCount === 0)) {
-    lines.push('No patterns matched the eligible source files.');
-    lines.push('');
-  }
-  lines.push('## Limitations');
-  lines.push('');
-  lines.push(
-    'Pattern matches are structural evidence, not proof of author intent. Pattern absence is a review signal, not a defect by itself. Inspect the cited examples and module responsibilities before changing code.'
-  );
-  lines.push(
-    '`intent-only` signals are reported separately and excluded from headline coverage.'
-  );
-  lines.push('');
-  lines.push(`<!-- plan-product:patterns generated ${report.generated} -->`);
+  lines.push('', '## Configuration', '');
+  if (report.source.patternLibrary) lines.push(`Catalog: \`${report.source.patternLibrary}\`.`);
+  if (report.source.patternExpectations) lines.push(`Configured review expectations: \`${report.source.patternExpectations}\`.`);
+  lines.push('Use language-specific structural rules when a relationship can be detected. Keep name clues tentative. Inspect source responsibilities and dependency direction before claiming a design pattern or recommending a refactor.', '', `<!-- plan-product:patterns generated ${report.generated} -->`);
   return `${lines.join('\n')}\n`;
 }
 
-/**
- * @param {Array<{ name?: string }> | undefined} patterns
- * @returns {string}
- */
-function patternNames(patterns) {
-  if (!patterns?.length) {
-    return '-';
-  }
-  const names = patterns.slice(0, 4).map((pattern) => escapeTableCell(pattern.name));
-  const suffix = patterns.length > 4 ? `, +${patterns.length - 4} more` : '';
-  return `${names.join(', ')}${suffix}`;
+function locations(examples, report) {
+  const outputDir = report.source.outputDir ?? path.posix.dirname(report.source.codeMap);
+  return examples.slice(0, MAX_EXAMPLES).map((example) => {
+    const target = path.posix.relative(outputDir, example.file).split('/').map(encodeURIComponent).join('/');
+    return `[${cell(example.file)}:${example.line}](${target}#L${example.line})`;
+  }).join(', ') || '-';
 }
 
-/**
- * @param {string[] | undefined} files
- * @returns {string}
- */
-function fileExamples(files) {
-  if (!files?.length) {
-    return '-';
-  }
-  const examples = files.slice(0, 3).map((file) => `\`${file}\``);
-  const suffix = files.length > 3 ? `, +${files.length - 3} more` : '';
-  return `${examples.join(', ')}${suffix}`;
+function anchor(mod) {
+  return `module-${String(mod.id).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 }
 
-/**
- * @param {Array<{ file?: string, line?: number }> | undefined} examples
- * @returns {string}
- */
-function exampleLocations(examples) {
-  if (!examples?.length) {
-    return '-';
-  }
-  return examples
-    .slice(0, 3)
-    .map((example) => `\`${example.file}:${example.line}\``)
-    .join(', ');
-}
-
-/**
- * @param {Array<{ count: number }>} excludedFiles
- * @returns {number}
- */
-function excludedCount(excludedFiles) {
-  return excludedFiles.reduce((sum, entry) => sum + entry.count, 0);
-}
-
-/**
- * @param {number} value
- * @returns {string}
- */
-function formatPercent(value) {
-  return `${Number(value).toFixed(2)}%`;
-}
-
-/**
- * @param {number | undefined} value
- * @returns {string}
- */
-function formatOptionalPercent(value) {
-  return typeof value === 'number' ? formatPercent(value) : '-';
-}
-
-/**
- * @param {string} value
- * @returns {string}
- */
-function escapeTableCell(value) {
+function cell(value) {
   return String(value ?? '').replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
 }

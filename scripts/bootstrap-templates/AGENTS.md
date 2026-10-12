@@ -1,6 +1,6 @@
 # Agent Context
 
-Use plan-product context before implementation planning.
+Use plan-product context when it helps implementation planning; targeted search and source reading are also valid evidence.
 
 ## Required Product Docs
 
@@ -17,21 +17,21 @@ Feature guides live under `docs/features/f-nxx/feature.md`. Use cases live besid
 | Level | Inject | When |
 |-------|--------|------|
 | L0 | Task, feature guide, use case, or bug prompt | Always |
-| L1 | Minimum module set from `docs/code-map/modules/<module>.md` | During planning |
+| L1 | Minimum module set from `docs/code-map/modules/<module>.md` | When useful for orientation |
 | L2 | `docs/product.md`, `docs/features.md`, or `docs/tech-stack.md` | When product or stack context matters |
-| L3 | `docs/code-map/code-map.json` | After the plan names symbols or files |
+| L3 | Bounded queries from `scripts/map-code/query.mjs` in the plugin | After the plan names symbols or files |
 
 Never inject every module file or the full code map during planning.
 
 ## Regenerate Code Map
 
-Regenerate only when needed: if `docs/code-map/index.md` is missing, a needed module file is missing, or source files are newer than the generated index.
+Before relying on maps, run `node "<PLUGIN_ROOT>/scripts/map-code/check-freshness.mjs"`. It checks content, inventory, configuration and generator fingerprints, including missing core artifacts. Exit 1 means stale or unavailable context. Regenerate when maps would help, or use targeted source reading instead. Modification times are not a freshness signal. Optional architecture and pattern reports require their own regeneration.
 
 Pre-flight checks:
 
 1. `"autoRegenerate": false` in `plan-product.config.json` means skip regeneration; the team manages it manually.
-2. Node 18+ must be available.
-3. Required docs present: `docs/product.md`, `docs/features.md`, and `docs/tech-stack.md`, or explicit doc paths in `plan-product.config.json`.
+2. Node 22+ must be available.
+3. Product docs are useful when planning needs product context. Mapping still works when these docs are absent.
 4. ast-grep is bundled by the plugin and installs into the plugin root on first use.
 
 From the project root, replace `<PLUGIN_ROOT>` with the installed plan-product plugin directory:

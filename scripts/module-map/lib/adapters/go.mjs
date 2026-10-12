@@ -156,7 +156,7 @@ function extract(repoRoot, files) {
     log.warn('go extract failed; returning empty graph', {
       error: errorMessage(error),
     });
-    return { files: [], edges: [] };
+    return { files: [], edges: [], diagnostics: [{ kind: 'extraction-failed', message: errorMessage(error) }] };
   }
 }
 
@@ -391,6 +391,7 @@ function extractSymbols(repoRoot, candidateFiles) {
     }
   } catch (error) {
     log.warn('symbol extraction failed', { error: errorMessage(error) });
+    throw error;
   }
 
   return symbols;

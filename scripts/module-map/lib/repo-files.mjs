@@ -1,24 +1,13 @@
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
+import { BASE_SKIP_DIRS } from '../../lib/skip-dirs.mjs';
 
 /**
  * @type {Set<string>} dirs the repo file walk never descends into. Includes
  * test-fixture trees (`fixtures`, `__fixtures__`) so that sample sub-repos used
  * as test data are not detected as the parent project's own modules.
  */
-const WALK_SKIP = new Set([
-  'bin',
-  'obj',
-  'node_modules',
-  '.git',
-  '.vs',
-  '.worktrees',
-  'dist',
-  'build',
-  '.next',
-  'fixtures',
-  '__fixtures__',
-]);
+const WALK_SKIP = BASE_SKIP_DIRS;
 
 /**
  * Repo-relative file list for adapter walks (build/IDE dirs skipped). Paths use
@@ -28,17 +17,17 @@ const WALK_SKIP = new Set([
  * @param {number} [limit]
  * @returns {string[]}
  */
-export function listRepoFiles(repoRoot, limit = 20000) {
+export function listRepoFiles(repoRoot, limit = Infinity) {
   /** @type {string[]} */
   const out = [];
   const stack = [repoRoot];
-  while (stack.length > 0 && out.length < limit) {
+  while (stack.length > 0) {
     const dir = stack.pop();
     let entries;
     try {
       entries = readdirSync(dir, { withFileTypes: true });
-    } catch {
-      continue;
+    } catch (error) {
+      throw new Error(`Cannot inventory ${path.relative(repoRoot, dir)}: ${error.message}`);
     }
     for (const entry of entries) {
       if (WALK_SKIP.has(entry.name)) {
@@ -47,7 +36,8 @@ export function listRepoFiles(repoRoot, limit = 20000) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         stack.push(full);
-      } else {
+      } else if (entry.isFile()) {
+        if (out.length >= limit) throw new Error(`Repository inventory exceeded limit ${limit}`);
         out.push(path.relative(repoRoot, full).replace(/\\/g, '/'));
       }
     }

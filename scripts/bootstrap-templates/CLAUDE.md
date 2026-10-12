@@ -1,8 +1,8 @@
 # CLAUDE.md - Repository Agent Instructions
 
-Follow `AGENTS.md` in this repo for plan-product progressive disclosure, regenerate commands, and required product docs.
+Follow `AGENTS.md` in this repo for plan-product progressive disclosure, regenerate commands, and optional product context.
 
-With the plan-product plugin installed, invoke `plan-product:using-code-map` for scoped module context before implementation planning.
+With the plan-product plugin installed, invoke `plan-product:using-code-map` when scoped module context would help implementation planning. Targeted search and source reading are sufficient when they answer the task.
 
 ## Project Structure
 

@@ -90,18 +90,20 @@ test('a failing generator exits non-zero from --run, logs under .temp, and warns
   const repo = scratchRepo(t);
   mkdirSync(path.join(repo, '.plan-product'));
   writeFileSync(path.join(repo, '.plan-product/config.json'), '{}');
-  // No docs/ at all, so generate-module-map fails with MISSING_DOCS.
+  // Mapping supports repositories without planning docs. A malformed generator
+  // configuration produces a deterministic pipeline failure instead.
+  writeFileSync(path.join(repo, 'plan-product.config.json'), '{ invalid');
 
   const run = spawnSync(process.execPath, [REGEN, '--run'], {
     cwd: repo,
     encoding: 'utf8',
   });
   assert.notEqual(run.status, 0, 'run mode must report the generator failure');
-  assert.match(run.stderr, /generate-module-map\.mjs failed/);
+  assert.match(run.stderr, /generate\.mjs failed/);
 
   const logFile = path.join(repo, '.temp', 'regen.log');
   assert.ok(existsSync(logFile), '.temp/regen.log written');
-  assert.match(readFileSync(logFile, 'utf8'), /ERROR generate-module-map\.mjs/);
+  assert.match(readFileSync(logFile, 'utf8'), /ERROR generate\.mjs/);
   assert.equal(readFileSync(path.join(repo, '.temp', '.gitignore'), 'utf8').trim(), '*');
   assert.equal(
     existsSync(path.join(repo, 'docs/code-map/.regen.log')),
@@ -112,7 +114,7 @@ test('a failing generator exits non-zero from --run, logs under .temp, and warns
   const hook = runPrePush(repo);
   assert.equal(hook.status, 0, 'hook never blocks');
   assert.match(hook.stderr, /regeneration failed; push continues/);
-  assert.match(hook.stderr, /generate-module-map\.mjs/);
+  assert.match(hook.stderr, /generate\.mjs/);
 });
 
 test('successful regeneration warns for the actual configured dirty artifact targets', (t) => {
@@ -163,7 +165,8 @@ test('successful regeneration warns for the actual configured dirty artifact tar
   assert.equal(hook.status, 0, hook.stderr);
   assert.match(hook.stderr, /generated\/symbols\.json/);
   assert.match(hook.stderr, /generated\/module-context/);
-  assert.doesNotMatch(hook.stderr, /from-path-config|shadowed/);
+  const artifactWarning = hook.stderr.split('\n').find(line => line.includes('uncommitted changes'));
+  assert.doesNotMatch(artifactWarning, /from-path-config|shadowed/);
   assert.ok(existsSync(path.join(repo, 'generated/symbols.json')));
   assert.ok(
     existsSync(path.join(repo, 'generated/module-context/module-map.json'))

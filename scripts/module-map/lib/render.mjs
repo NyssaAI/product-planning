@@ -1,5 +1,6 @@
 import { summarizeDescription } from './summarize.mjs';
 import { classifyNodeOrganization } from './node-organization.mjs';
+import path from 'node:path';
 
 /**
  * @param {ReturnType<import('./build.mjs').buildPlanProductModel>} model
@@ -20,11 +21,11 @@ export function renderIndex(model, config) {
   lines.push('| Level | Inject | When |');
   lines.push('|-------|--------|------|');
   for (const level of model.progressiveDisclosure.levels) {
-    const when = level.when ?? 'Always for feature planning';
+    const when = level.when ?? 'When relevant to the task';
     lines.push(`| L${level.level} ${level.name} | ${level.inject} | ${when} |`);
   }
   lines.push('');
-  lines.push('**Default for a feature:** L0 task + the minimum in-scope L1 module set — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module\'s boundary. Never inject all module files or the full code map. Add L2 only if product/stack context is unclear.');
+  lines.push('**Maps are optional orientation.** Targeted search and source reading are sufficient when they answer the task. When maps help, read the minimum in-scope module set and add a directly coupled module only when the work crosses its boundary. Use bounded queries for detailed evidence; verify relevant source before making changes.');
   lines.push('');
   lines.push('## Module files (pick the in-scope set)');
   lines.push('');
@@ -44,7 +45,10 @@ export function renderIndex(model, config) {
   lines.push('## Artifacts');
   lines.push('');
   lines.push(`- **Module graph:** [module-map.json](./module-map.json)`);
-  lines.push(`- **Symbol index:** [\`code-map.json\`](./code-map.json)`);
+  lines.push(`- **Symbols and file dependencies:** [code-map.json](${path.posix.relative(out, model.codeMap ?? config.codeMapOutput ?? `${out}/code-map.json`)})`);
+  const coverage = model.coverage ?? {};
+  lines.push(`- **Coverage:** ${coverage.scannedFileCount ?? 'unknown'} scanned files; ${coverage.unownedFiles?.length ?? 0} unowned; ${coverage.unsupportedFiles?.length ?? 0} unsupported; ${coverage.diagnostics?.length ?? 0} dependency diagnostics.`);
+  lines.push('- Query bounded evidence: `node <PLUGIN_ROOT>/scripts/map-code/query.mjs module <id> --limit 20` (also `symbol`, `callers`, `coverage`). File dependencies are static references, not a call graph.');
   // Emit "read directly" pointers only for product docs that actually resolved
   // (docs.mjs silently skips missing ones); flag unresolved docs instead of
   // pointing at a path that does not exist.
@@ -81,7 +85,7 @@ export function renderIndex(model, config) {
   lines.push('- Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --init` (plan-product plugin)');
   lines.push('- Validate: `node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --doctor`');
   lines.push('');
-  return `${lines.join('\n')}\n`;
+  return `${lines.join('\n').trimEnd()}\n`;
 }
 
 /**
@@ -145,7 +149,7 @@ export function renderModuleScope(model, mod) {
   lines.push(`# ${mod.name} (\`${mod.id}\`) — module`);
   lines.push('');
   lines.push(
-    '**Inject with your task doc.** Read the minimum in-scope module set for the spec — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module\'s boundary. Never inject all module files or the full code map.'
+    '**Optional module context.** Use this when it helps orient the task; targeted source reading is also sufficient. Add a directly coupled module only when the work crosses its boundary. Use bounded queries for detailed evidence and verify relevant source.'
   );
   lines.push('');
 
@@ -252,7 +256,7 @@ export function renderModuleScope(model, mod) {
     for (const route of mod.httpRoutes) {
       const methods =
         route.methods.length > 0 ? route.methods.join(', ') : '?';
-      lines.push(`- \`${methods}\` \`${route.path}\` -> \`${route.file}\``);
+      lines.push(`- \`${methods}\` \`${route.path ?? route.pathExpression ?? '?'}\` -> \`${route.file}:${route.line ?? '?'}\`${endpointEvidence(route)}`);
     }
     lines.push('');
   }
@@ -276,19 +280,20 @@ export function renderModuleScope(model, mod) {
 
   lines.push('## After planning');
   lines.push('');
-  if ((mod.symbolCount ?? 0) > 0) {
+  const mapLink = path.posix.relative(`${model.outputDir ?? 'docs/code-map'}/modules`, model.codeMap ?? 'docs/code-map/code-map.json');
+  if ((mod.fileCount ?? mod.symbolCount ?? 0) > 0) {
     lines.push(
-      `- **Code-map slice:** filter [\`code-map.json\`](../code-map.json) by \`moduleId: ${mod.id}\` to get this module's files, symbols, and endpoints`
+      `- **Code-map slice:** query \`module ${mod.id}\` (\`moduleId: ${mod.id}\`) in [code-map.json](${mapLink}) for files, symbols, endpoints, and file dependencies. Symbols above are a sample (${mod.symbolCount ?? 0} total); absence of a symbol is not absence of code.`
     );
   } else {
     lines.push(
-      `- **No code-map coverage** for \`moduleId: ${mod.id}\` — its root is outside the code-map scan roots or fully delegated to child modules, so [\`code-map.json\`](../code-map.json) has no slice for it`
+      `- **No code-map coverage** for \`moduleId: ${mod.id}\`; inspect [code-map.json](${mapLink}) coverage diagnostics and source roots before inferring absence of code.`
     );
   }
   lines.push('- Open only files your plan names');
   lines.push('');
 
-  return `${lines.join('\n')}\n`;
+  return `${lines.join('\n').trimEnd()}\n`;
 }
 
 /**
@@ -323,8 +328,8 @@ function renderNamedEndpointSection(lines, title, endpoints) {
   for (const endpoint of endpoints) {
     const label = endpoint.path
       ? `${endpoint.name ?? '?'} (${endpoint.path})`
-      : endpoint.name ?? '?';
-    lines.push(`- \`${label}\` -> \`${endpoint.file}\``);
+      : endpoint.name ?? endpoint.nameExpression ?? '?';
+    lines.push(`- \`${label}\` -> \`${endpoint.file}:${endpoint.line ?? '?'}\`${endpointEvidence(endpoint)}`);
   }
   lines.push('');
 }
@@ -341,7 +346,11 @@ function renderPathEndpointSection(lines, title, endpoints) {
   lines.push(`## ${title}`);
   lines.push('');
   for (const endpoint of endpoints) {
-    lines.push(`- \`${endpoint.path ?? '?'}\` -> \`${endpoint.file}\``);
+    lines.push(`- \`${endpoint.path ?? endpoint.pathExpression ?? '?'}\` -> \`${endpoint.file}:${endpoint.line ?? '?'}\`${endpointEvidence(endpoint)}`);
   }
   lines.push('');
+}
+
+function endpointEvidence(endpoint) {
+  return ` (${endpoint.confidence ?? 'unrated'} confidence; ${endpoint.pathResolution ?? 'resolution not recorded'})`;
 }

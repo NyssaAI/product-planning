@@ -138,6 +138,7 @@ function extract(repoRoot, files) {
     const symbolsByFile = extractSymbols(repoRoot, candidateFiles);
     const specifiersByFile = extractModuleSpecifiers(repoRoot, candidateFiles);
     const edgeWeights = new Map();
+    const diagnostics = [];
 
     for (const source of candidateFiles) {
       for (const specifier of specifiersByFile.get(source) ?? []) {
@@ -146,7 +147,11 @@ function extract(repoRoot, files) {
           tsconfig,
           workspacePackages,
         });
-        if (!target || target === source) {
+        if (!target) {
+          if (!specifier.startsWith('node:')) diagnostics.push({ kind: specifier.startsWith('.') ? 'unresolved-local-import' : 'external-or-unresolved-import', file: source, specifier });
+          continue;
+        }
+        if (target === source) {
           continue;
         }
         const key = `${source}\0${target}`;
@@ -175,12 +180,12 @@ function extract(repoRoot, files) {
       files: graphFiles.length,
       edges: edges.length,
     });
-    return { files: graphFiles, edges };
+    return { files: graphFiles, edges, diagnostics };
   } catch (error) {
     log.warn('typescript extract failed; returning empty graph', {
       error: errorMessage(error),
     });
-    return { files: [], edges: [] };
+    return { files: [], edges: [], diagnostics: [{ kind: 'extraction-failed', message: errorMessage(error) }] };
   }
 }
 
@@ -263,6 +268,7 @@ function extractModuleSpecifiers(repoRoot, candidateFiles) {
     log.warn('module specifier extraction failed', {
       error: errorMessage(error),
     });
+    throw error;
   }
 
   return byFile;
@@ -392,6 +398,17 @@ function loadTsConfig(repoRoot) {
     log.debug('failed to load tsconfig', { error: errorMessage(error) });
     return { baseUrl: null, pathRules: [] };
   }
+}
+
+/** Exact config files consulted by the adapter, including inherited package configs. */
+export function tsConfigInputs(repoRoot) {
+  const seen = new Set();
+  try {
+    readTsConfig(path.join(repoRoot, 'tsconfig.json'), seen);
+  } catch {
+    // The adapter falls back on parse errors; the invalid file still affects its result.
+  }
+  return [...seen].sort();
 }
 
 /**
@@ -701,6 +718,7 @@ function extractSymbols(repoRoot, candidateFiles) {
     }
   } catch (error) {
     log.warn('symbol extraction failed', { error: errorMessage(error) });
+    throw error;
   }
 
   return symbols;

@@ -12,28 +12,25 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { scanEndpointSyntax } from './endpoint-syntax.mjs';
 
 // Express-style registrations. The path must start with `/` so settings
 // lookups (`app.get('env')`) are not reported as routes; the handler is the
 // last call argument, after any middleware.
-const JS_HTTP_RE =
-  /\b(?:app|router|server)\.(get|post|put|delete|patch|head|options)\(\s*['"`](\/[^'"`]*)['"`]/g;
 const JS_IDENTIFIER_RE = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/;
 // Next.js App Router route handlers: a `route.{js,ts,…}` file anywhere under an
 // `app/` directory, exporting one function per HTTP method.
 const NEXT_ROUTE_FILE_RE =
-  /(?:^|\/)app\/(?:.*\/)?route\.(?:js|jsx|ts|tsx|mjs|cjs)$/;
+  /(?:^|\/)app\/(?:.*\/)?route\.(?:js|jsx|ts|tsx|mjs|cjs|mts|cts)$/;
 const NEXT_METHOD_EXPORT_RE =
   /export\s+(?:async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s*\(|export\s+const\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\s*=/g;
-const JS_MCP_RE =
-  /\b(?:server|mcp)\.(tool|resource|prompt)\(\s*['"`]([^'"`]+)['"`]\s*(?:,\s*['"`]([^'"`]+)['"`])?/g;
 // FastAPI/Flask method decorators on any receiver (app, router, bp, api).
 const PY_HTTP_RE =
   /^[ \t]*@([A-Za-z_]\w*)\.(get|post|put|delete|patch|head|options)\(/gm;
 // Flask `@<name>.route(path, methods=[...])`; GET when `methods` is omitted.
 const PY_ROUTE_RE = /^[ \t]*@([A-Za-z_]\w*)\.route\(/gm;
 const PY_METHODS_KWARG_RE = /^methods\s*=\s*[[(]([^\])]*)[\])]/;
-const PY_FLASK_IMPORT_RE = /^[ \t]*(?:from|import)\s+flask\b/m;
+const PY_FLASK_IMPORT_RE = /^[ \t]*(?:from|import)\s+flask\b/gm;
 // FastMCP decorators, with or without a call. The registration name is the
 // explicit positional or `name=` string, else the decorated function's name.
 const PY_MCP_RE = /^[ \t]*@(?:mcp|server)\.(tool|resource|prompt)\b/gm;
@@ -92,6 +89,10 @@ const GO_HTTP_METHOD_PATTERN_RE =
  * @property {string} [handler]
  * @property {string} [framework]
  * @property {'high' | 'medium' | 'low'} confidence
+ * @property {'resolved' | 'partial' | 'unresolved'} [pathResolution]
+ * @property {string} [pathExpression] Source expression when the path is unresolved
+ * @property {string} [nameExpression] Source expression when an MCP name is unresolved
+ * @property {string} [evidence] Bounded registration source for inspection
  */
 
 /**
@@ -103,13 +104,23 @@ export function extractEndpoints(repoRoot, files) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
-  for (const file of [...new Set(files.map(normalizePath))].sort()) {
+  const candidates = [...new Set(files.map(normalizePath))].sort().filter((file) =>
+    /\.(?:[cm]?[jt]s|jsx|tsx|py|cs|go)$/i.test(file) && existsSync(path.join(repoRoot, file))
+  );
+  const syntaxByFile = scanEndpointSyntax(repoRoot, candidates);
+  for (const file of candidates) {
     const absPath = path.join(repoRoot, file);
     if (!existsSync(absPath)) {
       continue;
     }
     const text = readFileSync(absPath, 'utf8');
-    endpoints.push(...extractEndpointsFromText(file, text));
+    const syntax = syntaxByFile.get(file) ?? { calls: [], exports: [], noncode: [], imports: [] };
+    const sourceLines = text.split('\n');
+    endpoints.push(...extractEndpointsFromText(file, text, syntax).map((endpoint) => ({
+      ...endpoint,
+      ...(endpoint.path && !endpoint.pathResolution ? { pathResolution: 'resolved' } : {}),
+      evidence: endpoint.evidence ?? sourceLines[endpoint.line - 1]?.trim().slice(0, 240),
+    })));
   }
 
   return dedupeEndpoints(endpoints).sort(compareEndpoints);
@@ -120,23 +131,29 @@ export function extractEndpoints(repoRoot, files) {
  * @param {string} text
  * @returns {Endpoint[]}
  */
-function extractEndpointsFromText(file, text) {
+function extractEndpointsFromText(file, text, syntax) {
   const ext = path.extname(file).toLowerCase();
   const lineAt = createLineLookup(text);
-  if (['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(ext)) {
+  if (['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'].includes(ext)) {
     return [
-      ...extractJavaScriptEndpoints(file, text, lineAt),
-      ...extractNextAppRouterEndpoints(file, text, lineAt),
+      ...extractJavaScriptEndpoints(file, syntax.calls),
+      ...extractNextAppRouterEndpoints(file, syntax.exports),
     ];
   }
+  const isCode = (index) => {
+    const offset = Buffer.byteLength(text.slice(0, index));
+    return !syntax.noncode.some(({ range }) =>
+      offset >= range.byteOffset.start && offset < range.byteOffset.end
+    );
+  };
   if (ext === '.py') {
-    return extractPythonEndpoints(file, text, lineAt);
+    return extractPythonEndpoints(file, text, lineAt, isCode);
   }
   if (ext === '.cs') {
-    return extractCSharpEndpoints(file, text, lineAt);
+    return extractCSharpEndpoints(file, text, lineAt, isCode);
   }
   if (ext === '.go') {
-    return extractGoEndpoints(file, text, lineAt);
+    return extractGoEndpoints(file, text, lineAt, isCode, syntax.imports);
   }
   return [];
 }
@@ -147,16 +164,16 @@ function extractEndpointsFromText(file, text) {
  * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractGoEndpoints(file, text, lineAt) {
+function extractGoEndpoints(file, text, lineAt, isCode, imports) {
   /** @type {Endpoint[]} */
   const endpoints = [];
-  const importsGin = text.includes('github.com/gin-gonic/gin');
-  const importsEcho = text.includes('github.com/labstack/echo');
-  const importsChi = text.includes('github.com/go-chi/chi');
-  const groupPrefixes = collectGoGroupPrefixes(text);
-  const hasUnresolvableGrouping = /\.(Route|Mount)\(\s*"/.test(text);
+  const importsGin = imports.some((match) => match.text.includes('github.com/gin-gonic/gin'));
+  const importsEcho = imports.some((match) => match.text.includes('github.com/labstack/echo'));
+  const importsChi = imports.some((match) => match.text.includes('github.com/go-chi/chi'));
+  const groupPrefixes = collectGoGroupPrefixes(text, isCode);
+  const hasUnresolvableGrouping = [...matchesInCode(text, /\.(Route|Mount)\(\s*"/g, isCode)].length > 0;
 
-  for (const match of text.matchAll(GO_NET_HTTP_RE)) {
+  for (const match of matchesInCode(text, GO_NET_HTTP_RE, isCode)) {
     const pattern = parseGoHttpPattern(match[1]);
     if (!pattern) {
       continue;
@@ -170,11 +187,12 @@ function extractGoEndpoints(file, text, lineAt) {
       handler: match[2],
       framework: 'net-http',
       confidence: 'high',
+      ...unresolvedLiteralPath(text, match),
     });
   }
 
   if (importsGin || importsEcho) {
-    for (const match of text.matchAll(GO_UPPER_ROUTE_RE)) {
+    for (const match of matchesInCode(text, GO_UPPER_ROUTE_RE, isCode)) {
       if (!match[3].startsWith('/')) {
         continue;
       }
@@ -188,12 +206,14 @@ function extractGoEndpoints(file, text, lineAt) {
         handler: match[4],
         framework: importsGin ? 'gin' : 'echo',
         confidence: resolved.resolved ? 'high' : 'medium',
+        pathResolution: resolved.resolved ? 'resolved' : 'partial',
+        ...unresolvedLiteralPath(text, match),
       });
     }
   }
 
   if (importsChi) {
-    for (const match of text.matchAll(GO_TITLE_ROUTE_RE)) {
+    for (const match of matchesInCode(text, GO_TITLE_ROUTE_RE, isCode)) {
       if (!match[3].startsWith('/')) {
         continue;
       }
@@ -208,9 +228,11 @@ function extractGoEndpoints(file, text, lineAt) {
         // Routes inside chi Route/Mount closures carry sub-paths this
         // file-scoped pass cannot prefix; mark the whole file medium.
         confidence: hasUnresolvableGrouping ? 'medium' : 'high',
+        pathResolution: hasUnresolvableGrouping ? 'partial' : 'resolved',
+        ...unresolvedLiteralPath(text, match),
       });
     }
-    for (const match of text.matchAll(GO_CHI_METHOD_RE)) {
+    for (const match of matchesInCode(text, GO_CHI_METHOD_RE, isCode)) {
       if (!match[2].startsWith('/')) {
         continue;
       }
@@ -223,11 +245,13 @@ function extractGoEndpoints(file, text, lineAt) {
         handler: match[3],
         framework: 'chi',
         confidence: hasUnresolvableGrouping ? 'medium' : 'high',
+        pathResolution: hasUnresolvableGrouping ? 'partial' : 'resolved',
+        ...unresolvedLiteralPath(text, match, 1),
       });
     }
   }
 
-  for (const match of text.matchAll(GO_MCP_MARK3LABS_RE)) {
+  for (const match of matchesInCode(text, GO_MCP_MARK3LABS_RE, isCode)) {
     endpoints.push({
       kind: 'mcp-tool',
       name: match[1],
@@ -237,7 +261,7 @@ function extractGoEndpoints(file, text, lineAt) {
       confidence: 'high',
     });
   }
-  for (const match of text.matchAll(GO_MCP_OFFICIAL_RE)) {
+  for (const match of matchesInCode(text, GO_MCP_OFFICIAL_RE, isCode)) {
     endpoints.push({
       kind: 'mcp-tool',
       name: match[1],
@@ -277,13 +301,13 @@ function parseGoHttpPattern(literal) {
  * @param {string} text
  * @returns {Map<string, string | null>} var -> full prefix, or null
  */
-function collectGoGroupPrefixes(text) {
+function collectGoGroupPrefixes(text, isCode) {
   const POISONED = Symbol('poisoned');
   /** @type {Map<string, { parent: string, prefix: string } | typeof POISONED>} */
   const bindings = new Map();
-  for (const match of text.matchAll(GO_GROUP_BINDING_RE)) {
+  for (const match of matchesInCode(text, GO_GROUP_BINDING_RE, isCode)) {
     let prefix = match[3];
-    let chainResolved = true;
+    let chainResolved = !unresolvedLiteralPath(text, match).pathResolution;
     // Accumulate chained .Group("...") links on the same expression. Each
     // link may carry middleware arguments after its prefix string; a link
     // whose prefix is not a string literal makes the chain unresolvable.
@@ -311,7 +335,7 @@ function collectGoGroupPrefixes(text) {
       bindings.set(match[1], { parent: match[2], prefix });
     }
   }
-  for (const match of text.matchAll(GO_GROUP_PARAM_RE)) {
+  for (const match of matchesInCode(text, GO_GROUP_PARAM_RE, isCode)) {
     if (!bindings.has(match[1])) {
       bindings.set(match[1], POISONED);
     }
@@ -369,33 +393,51 @@ function resolveGoGroupPath(receiver, subPath, groupPrefixes) {
  * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractJavaScriptEndpoints(file, text, lineAt) {
+function extractJavaScriptEndpoints(file, calls) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
-  for (const match of text.matchAll(JS_HTTP_RE)) {
-    const call = scanCallArguments(text, match.index + match[0].indexOf('('));
+  for (const match of calls) {
+    const receiver = match.metaVariables.single.RECEIVER.text;
+    const method = match.metaVariables.single.METHOD.text;
+    const args = match.metaVariables.multi.ARGS.map((arg) => arg.text)
+      .filter((arg) => arg !== ',' && !/^(?:\/\*|\/\/)/.test(arg));
+    const evidence = match.text.replace(/\s+/g, ' ').slice(0, 240);
+    const firstLiteral = staticJavaScriptString(args[0]);
+    if (/^(get|post|put|delete|patch|head|options)$/.test(method)) {
+      if (!['app', 'router', 'server'].includes(receiver) || args.length < 2) continue;
+      // A literal without a leading slash is an Express setting, not a route.
+      if (firstLiteral !== undefined && !firstLiteral.startsWith('/')) continue;
+      endpoints.push({
+        kind: 'http',
+        method: method.toUpperCase(),
+        path: firstLiteral,
+        pathResolution: firstLiteral === undefined ? 'unresolved' : 'resolved',
+        pathExpression: firstLiteral === undefined ? args[0] : undefined,
+        file,
+        line: match.range.start.line + 1,
+        handler: lastIdentifierArgument({ args }),
+        framework: 'node',
+        confidence: firstLiteral === undefined ? 'low' : 'high',
+        evidence,
+      });
+      continue;
+    }
+    if (!['server', 'mcp'].includes(receiver) || args.length === 0) continue;
+    const resourcePath = method === 'resource' ? staticJavaScriptString(args[1]) : undefined;
+    const unresolvedPath = method === 'resource' && resourcePath === undefined;
     endpoints.push({
-      kind: 'http',
-      method: match[1].toUpperCase(),
-      path: match[2],
+      kind: mcpKind(method),
+      name: firstLiteral,
+      nameExpression: firstLiteral === undefined ? args[0] : undefined,
+      path: resourcePath,
+      pathResolution: method === 'resource' ? (unresolvedPath ? 'unresolved' : 'resolved') : undefined,
+      pathExpression: unresolvedPath ? args[1] : undefined,
       file,
-      line: lineAt(match.index ?? 0),
-      handler: lastIdentifierArgument(call),
-      framework: 'node',
-      confidence: 'high',
-    });
-  }
-
-  for (const match of text.matchAll(JS_MCP_RE)) {
-    endpoints.push({
-      kind: mcpKind(match[1]),
-      name: match[2],
-      path: match[1] === 'resource' ? match[3] : undefined,
-      file,
-      line: lineAt(match.index ?? 0),
+      line: match.range.start.line + 1,
       framework: 'mcp',
-      confidence: 'high',
+      confidence: firstLiteral === undefined || unresolvedPath ? 'low' : 'high',
+      evidence,
     });
   }
 
@@ -412,23 +454,28 @@ function extractJavaScriptEndpoints(file, text, lineAt) {
  * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractNextAppRouterEndpoints(file, text, lineAt) {
+function extractNextAppRouterEndpoints(file, exports) {
   if (!NEXT_ROUTE_FILE_RE.test(file)) {
     return [];
   }
   const routePath = nextRoutePath(file);
   /** @type {Endpoint[]} */
   const endpoints = [];
-  for (const match of text.matchAll(NEXT_METHOD_EXPORT_RE)) {
+  for (const statement of exports) {
+    const match = [...statement.text.matchAll(NEXT_METHOD_EXPORT_RE)]
+      .find((candidate) => candidate.index === 0);
+    if (!match) continue;
     const method = match[1] ?? match[2];
     endpoints.push({
       kind: 'http',
       method,
       path: routePath,
       file,
-      line: lineAt(match.index ?? 0),
+      line: statement.range.start.line + 1,
       framework: 'nextjs-app-router',
       confidence: 'high',
+      pathResolution: 'resolved',
+      evidence: statement.text.split('\n')[0].slice(0, 240),
     });
   }
   return endpoints;
@@ -481,12 +528,12 @@ export function nextRouteSegment(seg) {
  * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractPythonEndpoints(file, text, lineAt) {
+function extractPythonEndpoints(file, text, lineAt, isCode) {
   /** @type {Endpoint[]} */
   const endpoints = [];
-  const httpFramework = PY_FLASK_IMPORT_RE.test(text) ? 'flask' : 'fastapi';
+  const httpFramework = [...matchesInCode(text, PY_FLASK_IMPORT_RE, isCode)].length ? 'flask' : 'fastapi';
 
-  for (const match of text.matchAll(PY_HTTP_RE)) {
+  for (const match of matchesInCode(text, PY_HTTP_RE, isCode)) {
     const routePath = pythonRoutePath(text, match);
     if (!routePath) {
       continue;
@@ -502,7 +549,7 @@ function extractPythonEndpoints(file, text, lineAt) {
     });
   }
 
-  for (const match of text.matchAll(PY_ROUTE_RE)) {
+  for (const match of matchesInCode(text, PY_ROUTE_RE, isCode)) {
     const routePath = pythonRoutePath(text, match);
     if (!routePath) {
       continue;
@@ -521,7 +568,7 @@ function extractPythonEndpoints(file, text, lineAt) {
     }
   }
 
-  for (const match of text.matchAll(PY_MCP_RE)) {
+  for (const match of matchesInCode(text, PY_MCP_RE, isCode)) {
     const type = match[1];
     let end = match.index + match[0].length;
     /** @type {string[]} */
@@ -597,11 +644,11 @@ function pythonRouteMethods(args) {
  * @param {(index: number) => number} lineAt
  * @returns {Endpoint[]}
  */
-function extractCSharpEndpoints(file, text, lineAt) {
+function extractCSharpEndpoints(file, text, lineAt, isCode) {
   /** @type {Endpoint[]} */
   const endpoints = [];
 
-  for (const match of text.matchAll(CSHARP_HTTP_RE)) {
+  for (const match of matchesInCode(text, CSHARP_HTTP_RE, isCode)) {
     endpoints.push({
       kind: 'http',
       method: match[1].toUpperCase(),
@@ -611,10 +658,11 @@ function extractCSharpEndpoints(file, text, lineAt) {
       handler: match[3],
       framework: 'aspnet-minimal-api',
       confidence: 'high',
+      ...unresolvedLiteralPath(text, match),
     });
   }
 
-  for (const match of text.matchAll(CSHARP_MCP_TRANSPORT_RE)) {
+  for (const match of matchesInCode(text, CSHARP_MCP_TRANSPORT_RE, isCode)) {
     endpoints.push({
       kind: 'mcp-transport',
       path: match[1],
@@ -622,10 +670,11 @@ function extractCSharpEndpoints(file, text, lineAt) {
       line: lineAt(match.index ?? 0),
       framework: 'aspnet-mcp',
       confidence: 'high',
+      ...unresolvedLiteralPath(text, match),
     });
   }
 
-  for (const match of text.matchAll(CSHARP_MCP_ATTRIBUTE_RE)) {
+  for (const match of matchesInCode(text, CSHARP_MCP_ATTRIBUTE_RE, isCode)) {
     endpoints.push({
       kind: csharpMcpKind(match[1]),
       name: match[2],
@@ -665,6 +714,50 @@ function csharpMcpKind(attribute) {
     return 'mcp-prompt';
   }
   return 'mcp-tool';
+}
+
+/** Match source constructs only when their first token is executable syntax. */
+function* matchesInCode(text, pattern, isCode) {
+  for (const match of text.matchAll(pattern)) {
+    const firstToken = match.index + match[0].search(/\S/);
+    if (isCode(firstToken)) yield match;
+  }
+}
+
+/** A regex literal prefix is not proof that the whole argument is literal. */
+function unresolvedLiteralPath(text, match, argumentIndex = 0) {
+  const call = scanCallArguments(text, match.index + match[0].indexOf('('));
+  const expression = call?.args[argumentIndex];
+  if (expression?.startsWith('"') && staticJavaScriptString(expression) !== undefined) return {};
+  return { path: undefined, pathExpression: expression, pathResolution: 'unresolved', confidence: 'low' };
+}
+
+/**
+ * Decode only literal strings, never evaluate source. Interpolation, joined
+ * expressions and uncommon escape forms stay explicit unresolved expressions.
+ */
+function staticJavaScriptString(expression) {
+  if (!expression || !['"', "'", '`'].includes(expression[0])) return undefined;
+  const quote = expression[0];
+  if (expression.at(-1) !== quote) return undefined;
+  const body = expression.slice(1, -1);
+  let value = '';
+  const escapes = { n: '\n', r: '\r', t: '\t', b: '\b', f: '\f', v: '\v', '0': '\0' };
+  for (let index = 0; index < body.length; index += 1) {
+    const char = body[index];
+    if (char === quote || (quote === '`' && char === '$' && body[index + 1] === '{')) return undefined;
+    if (char !== '\\') {
+      value += char;
+      continue;
+    }
+    const escaped = body[++index];
+    if (escaped === undefined) return undefined;
+    if (escaped === '\n') continue;
+    if (escaped === '\r' && body[index + 1] === '\n') { index += 1; continue; }
+    if (escaped === 'x' || escaped === 'u' || /[1-9]/.test(escaped)) return undefined;
+    value += escapes[escaped] ?? escaped;
+  }
+  return value;
 }
 
 /**
@@ -743,6 +836,8 @@ function dedupeEndpoints(endpoints) {
       endpoint.method ?? '',
       endpoint.path ?? '',
       endpoint.name ?? '',
+      endpoint.pathExpression ?? '',
+      endpoint.nameExpression ?? '',
       endpoint.file,
       endpoint.line,
     ].join('\0');
@@ -764,7 +859,9 @@ function compareEndpoints(a, b) {
     a.line - b.line ||
     a.kind.localeCompare(b.kind) ||
     (a.method ?? '').localeCompare(b.method ?? '') ||
-    (a.path ?? a.name ?? '').localeCompare(b.path ?? b.name ?? '')
+    (a.path ?? a.name ?? a.pathExpression ?? a.nameExpression ?? '').localeCompare(
+      b.path ?? b.name ?? b.pathExpression ?? b.nameExpression ?? ''
+    )
   );
 }
 

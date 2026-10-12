@@ -53,7 +53,12 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
   // Extract the adapter stack graph once; module discovery and module-edge
   // derivation both consume it, so this avoids re-walking and re-parsing the
   // whole repo a second time.
-  const stack = extractStackGraph(repoRoot, config);
+  const stack = Array.isArray(codeMap.fileDependencies)
+    ? {
+        adapter: { id: (codeMap.coverage?.adapters ?? []).join('+') },
+        graph: { files: codeMap.files, edges: codeMap.fileDependencies, diagnostics: codeMap.coverage?.diagnostics ?? [] },
+      }
+    : extractStackGraph(repoRoot, config);
   const modules = discoverModules(repoRoot, config, stack);
   log.debug('buildPlanProductModel discovered modules', {
     count: modules.length,
@@ -103,42 +108,11 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
     const modRoutes = routes.filter((r) => r.moduleId === mod.id);
     return {
       ...mod,
-      httpRoutes: modRoutes
-        .filter((r) => r.kind === 'http')
-        .map((r) => ({
-          path: r.path,
-          methods: r.methods,
-          file: r.file,
-        })),
-      mcpTools: modRoutes
-        .filter((r) => r.kind === 'mcp-tool')
-        .map((r) => ({
-          name: r.name,
-          file: r.file,
-          line: r.line,
-        })),
-      mcpResources: modRoutes
-        .filter((r) => r.kind === 'mcp-resource')
-        .map((r) => ({
-          name: r.name,
-          path: r.path,
-          file: r.file,
-          line: r.line,
-        })),
-      mcpPrompts: modRoutes
-        .filter((r) => r.kind === 'mcp-prompt')
-        .map((r) => ({
-          name: r.name,
-          file: r.file,
-          line: r.line,
-        })),
-      mcpTransports: modRoutes
-        .filter((r) => r.kind === 'mcp-transport')
-        .map((r) => ({
-          path: r.path,
-          file: r.file,
-          line: r.line,
-        })),
+      httpRoutes: modRoutes.filter(r => r.kind === 'http'),
+      mcpTools: modRoutes.filter(r => r.kind === 'mcp-tool'),
+      mcpResources: modRoutes.filter(r => r.kind === 'mcp-resource'),
+      mcpPrompts: modRoutes.filter(r => r.kind === 'mcp-prompt'),
+      mcpTransports: modRoutes.filter(r => r.kind === 'mcp-transport'),
     };
   });
 
@@ -186,6 +160,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
       nav: navById.get(mod.id) ?? null,
       symbolsSample: symbols.slice(0, 60),
       symbolCount: symbols.length,
+      fileCount: codeMapFiles.filter(file => ownsFile(mod.root, file.path, allModuleRoots)).length,
       dependsOn,
       usedBy: [...new Set(dependents)].sort(),
       planningModule: scopeRel,
@@ -204,7 +179,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
   });
 
   return {
-    schemaVersion: '1.0',
+    schemaVersion: '2.0',
     generated: new Date().toISOString(),
     project: {
       name: config.projectName,
@@ -220,11 +195,13 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
           level: 0,
           name: 'task',
           inject: 'Your feature/bug doc and acceptance criteria',
+          when: 'Always',
         },
         {
           level: 1,
           name: 'module-scope',
           inject: `${config.outputDir}/modules/<module-id>.md (one file)`,
+          when: 'Module orientation helps the task',
         },
         {
           level: 2,
@@ -235,7 +212,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
         {
           level: 3,
           name: 'code-map',
-          inject: config.codeMapOutput,
+          inject: 'A bounded query via <PLUGIN_ROOT>/scripts/map-code/query.mjs (symbol, module, callers, or coverage)',
           when: 'Plan lists symbols; need line numbers',
         },
       ],
@@ -244,6 +221,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
     brief: brief.excerpts,
     modules: enrichedModules,
     moduleGraph: { edges },
+    coverage: codeMap.coverage ?? {},
     outputDir: config.outputDir.replace(/\\/g, '/').replace(/\/$/, ''),
     codeMap: config.codeMapOutput.replace(/\\/g, '/'),
     conventions: [
@@ -298,6 +276,7 @@ function normalizeCodeMap(input) {
     return { files: input, endpoints: [] };
   }
   return {
+    ...input,
     files: Array.isArray(input?.files) ? input.files : [],
     endpoints: Array.isArray(input?.endpoints) ? input.endpoints : [],
   };

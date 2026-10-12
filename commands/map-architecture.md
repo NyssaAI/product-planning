@@ -25,7 +25,7 @@ node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --arch --json
 
 ## Effectiveness Report
 
-Architecture runs are included in the local usage ledger. Generate the effectiveness report with:
+Architecture runs are included in the local usage ledger. Generate the command health report with:
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --effectiveness

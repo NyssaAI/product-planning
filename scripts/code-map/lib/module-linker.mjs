@@ -10,7 +10,7 @@ import { ownerRoot, normalizeRoot } from '../../module-map/lib/module-ownership.
  */
 
 /**
- * Add module ownership to a code-map document and expose a flat symbol index.
+ * Store ownership once per file; files[].symbols is the canonical symbol index.
  *
  * @param {{ files?: Array<{ path: string, symbols?: Array<Record<string, unknown>> }>, endpoints?: Array<Record<string, unknown>> }} codeMap
  * @param {Array<{ id: string, name?: string, root: string }>} modules
@@ -36,33 +36,25 @@ export function annotateCodeMapWithModules(codeMap, modules, options) {
     }
 
     const symbols = (file.symbols ?? []).map((symbol) => {
-      const annotated = owner ? addModuleFields(symbol, owner) : { ...symbol };
       if (owner) {
         moduleStats.get(owner.id).symbolCount += 1;
       }
-      return annotated;
+      return { ...symbol };
     });
 
     return {
       ...file,
-      ...(owner ? moduleFields(owner) : {}),
+      ...(owner ? { moduleId: owner.id } : {}),
       symbols,
     };
   });
-
-  const symbols = files.flatMap((file) =>
-    (file.symbols ?? []).map((symbol) => ({
-      file: file.path,
-      ...symbol,
-    }))
-  );
 
   const endpoints = (codeMap.endpoints ?? []).map((endpoint) => {
     const file = typeof endpoint.file === 'string' ? endpoint.file : '';
     const owner = findOwner(file, roots, linkByRoot);
     if (owner) {
       moduleStats.get(owner.id).endpointCount += 1;
-      return addModuleFields(endpoint, owner);
+      return { ...endpoint, moduleId: owner.id };
     }
     return { ...endpoint };
   });
@@ -83,8 +75,11 @@ export function annotateCodeMapWithModules(codeMap, modules, options) {
       };
     }),
     files,
-    symbols,
     endpoints,
+    coverage: {
+      ...(codeMap.coverage ?? {}),
+      unownedFiles: files.filter(file => !file.moduleId).map(file => file.path),
+    },
   };
 }
 
@@ -114,29 +109,4 @@ function toModuleLink(mod, outputDir) {
 function findOwner(filePath, roots, linkByRoot) {
   const root = ownerRoot(filePath, roots);
   return root === null ? null : linkByRoot.get(normalizeRoot(root)) ?? null;
-}
-
-/**
- * @param {ModuleLink} mod
- */
-function moduleFields(mod) {
-  return {
-    moduleId: mod.id,
-    moduleName: mod.name,
-    moduleRoot: mod.root,
-    planningModule: mod.planningModule,
-  };
-}
-
-/**
- * @template {Record<string, unknown>} T
- * @param {T} item
- * @param {ModuleLink} mod
- * @returns {T & ReturnType<typeof moduleFields>}
- */
-function addModuleFields(item, mod) {
-  return {
-    ...item,
-    ...moduleFields(mod),
-  };
 }

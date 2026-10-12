@@ -8,6 +8,12 @@
     "discover": "manual",
     "manual": [
       {
+        "id": "map-code",
+        "root": "scripts/map-code",
+        "name": "map-code",
+        "description": "Public mapping workflow, freshness checks, and bounded evidence queries."
+      },
+      {
         "id": "module-map",
         "root": "scripts/module-map",
         "name": "module-map",

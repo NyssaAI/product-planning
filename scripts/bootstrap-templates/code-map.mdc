@@ -8,4 +8,4 @@ alwaysApply: false
 
 Canonical rules: `AGENTS.md` in this repo plus `plan-product:using-code-map`.
 
-When planning: use the task or feature guide first, then one minimum module doc from `docs/code-map/modules/<module>.md`. Regenerate with `npm run map-code`. Start at `docs/code-map/index.md`.
+When planning, use the task or feature guide first. When maps help, check `node "<PLUGIN_ROOT>/scripts/map-code/check-freshness.mjs"`, then read the minimum relevant module context or use a bounded map query. Regenerate stale maps with `npm run map-code` if configured, or `node "<PLUGIN_ROOT>/scripts/map-code/generate.mjs"`. Targeted source search and reading remain sufficient evidence.

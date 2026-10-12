@@ -25,4 +25,4 @@ Use `--arch --json` when the caller needs a machine-readable result.
 
 This writes `system-architecture.md` beside the configured module graph. The component tree lists modules by ascending direct dependency count, with module id as the stable tie-breaker, and preserves agent-authored content between system overview markers.
 
-Architecture runs are included in the local usage ledger when usage capture is enabled. Use `--effectiveness` on `generate-module-map.mjs` for the effectiveness report.
+Architecture runs are included in the local usage ledger when usage capture is enabled. Use `--effectiveness` on `generate-module-map.mjs` for command health; it does not measure agent outcomes or map usefulness.

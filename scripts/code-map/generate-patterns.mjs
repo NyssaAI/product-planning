@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Generate docs/code-map/patterns.json and patterns.md from structural
- * ast-grep pattern catalogs and module-rooted practice signals.
+ * ast-grep catalogs locating possible uses of known code patterns.
  */
 
 import { mkdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { findProjectRoot } from '../module-map/lib/project-root.mjs';
-import { sourceFilesInRoots } from './lib/source-files.mjs';
+import { sourceInventory } from './lib/source-files.mjs';
 import { loadPatternRuntimeConfig } from './lib/patterns/runtime-config.mjs';
 import { loadPatternCatalogs } from './lib/patterns/catalog.mjs';
 import {
@@ -21,6 +21,7 @@ import {
 import { renderPatternsMarkdown } from './lib/patterns/render.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
 import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
+import { checkMapFreshness } from '../lib/map-freshness.mjs';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
@@ -47,8 +48,8 @@ function printHelp() {
   process.stdout.write(`Usage: find-code-patterns [options]
        node scripts/code-map/generate-patterns.mjs [options]
 
-Generate docs/code-map/patterns.json and patterns.md from bundled and
-repo-defined structural pattern catalogs, rooted in application modules.
+Find source examples of known code patterns using bundled and repo-defined
+catalogs. Reports include detector confidence and evidence limits by module.
 
 Options:
   --json                 Emit parseable JSON result
@@ -80,13 +81,22 @@ function runPatterns() {
   );
   const catalogResult = loadPatternCatalogs(REPO_ROOT, runtime);
   warnings.push(...catalogResult.warnings);
+  const freshness = checkMapFreshness(REPO_ROOT);
+  if (!freshness.fresh) warnings.push(`MAP_FRESHNESS: ${freshness.reason} Run map-code before relying on module attribution.`);
+  const persistedInventory = String(codeMap.schemaVersion).startsWith('2.');
+  const languages = persistedInventory ? codeMap.languages : runtime.languages;
   const patterns = catalogResult.patterns.filter((pattern) =>
-    runtime.languages.includes(pattern.language)
+    languages.includes(pattern.language)
   );
   const sourceRoots = Array.isArray(codeMap.roots) && codeMap.roots.length > 0
     ? codeMap.roots
     : runtime.roots;
-  const sourceFiles = sourceFilesInRoots(REPO_ROOT, sourceRoots);
+  const inventory = persistedInventory
+    ? { files: codeMap.files.map((file) => file.path),
+        unsupportedFiles: codeMap.coverage?.unsupportedFiles ?? [],
+        disabledFiles: codeMap.coverage?.disabledFiles ?? [] }
+    : sourceInventory(REPO_ROOT, { roots: sourceRoots, languages });
+  const sourceFiles = [...new Set([...inventory.files, ...inventory.unsupportedFiles, ...inventory.disabledFiles])].sort();
   if (sourceFiles.length === 0) {
     throw resultError(
       'NO_SOURCE_FILES: configured roots contain no source files',
@@ -96,7 +106,7 @@ function runPatterns() {
   const { eligibleFiles, excludedFiles } = partitionPatternEligibleFiles(
     sourceFiles,
     patterns,
-    runtime.languages
+    languages
   );
   if (eligibleFiles.length === 0) {
     const err = resultError(
@@ -117,6 +127,8 @@ function runPatterns() {
       ...runtime,
       outputDir,
       roots: sourceRoots,
+      languages,
+      freshness,
     },
     codeMap,
     moduleMap,

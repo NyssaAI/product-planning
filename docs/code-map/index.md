@@ -1,22 +1,23 @@
 # plan-product Code Map
 
-Generated: 2026-07-31T23:18:06.861Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
+Generated: 2026-10-12T01:45:30.716Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
 
 ## Progressive disclosure (for planning agents)
 
 | Level | Inject | When |
 |-------|--------|------|
-| L0 task | Your feature/bug doc and acceptance criteria | Always for feature planning |
-| L1 module-scope | docs/code-map/modules/<module-id>.md (one file) | Always for feature planning |
+| L0 task | Your feature/bug doc and acceptance criteria | Always |
+| L1 module-scope | docs/code-map/modules/<module-id>.md (one file) | Module orientation helps the task |
 | L2 product-docs | docs/product.md, docs/features.md, and/or docs/tech-stack.md | Product intent or stack constraints matter |
-| L3 code-map | docs/code-map/code-map.json | Plan lists symbols; need line numbers |
+| L3 code-map | A bounded query via <PLUGIN_ROOT>/scripts/map-code/query.mjs (symbol, module, callers, or coverage) | Plan lists symbols; need line numbers |
 
-**Default for a feature:** L0 task + the minimum in-scope L1 module set — usually one module file; add a directly-coupled module (via its dependsOn/usedBy edges) only when the feature crosses that module's boundary. Never inject all module files or the full code map. Add L2 only if product/stack context is unclear.
+**Maps are optional orientation.** Targeted search and source reading are sufficient when they answer the task. When maps help, read the minimum in-scope module set and add a directly coupled module only when the work crosses its boundary. Use bounded queries for detailed evidence; verify relevant source before making changes.
 
 ## Module files (pick the in-scope set)
 
 | Module | What it does | Owns | Module file |
 |--------|--------------|------|-------------|
+| map-code (`map-code`) | Public mapping workflow, freshness checks, and bounded evidence queries. | Feature code and services under `scripts/map-code/` | [modules/map-code.md](./modules/map-code.md) |
 | module-map (`module-map`) | Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap. | Feature code and services under `scripts/module-map/` | [modules/module-map.md](./modules/module-map.md) |
 | code-map (`code-map`) | ast-grep-based symbol and endpoint indexer that feeds the module graph. | Feature code and services under `scripts/code-map/` | [modules/code-map.md](./modules/code-map.md) |
 | lib (`lib`) | Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and<br>endpoint extraction. | Feature code and services under `scripts/lib/` | [modules/lib.md](./modules/lib.md) |
@@ -31,13 +32,21 @@ Read the module doc for the role you are touching; filter `code-map.json` by `mo
 
 ### Other modules
 
+- **map-code** (`moduleId: map-code`) — `scripts/map-code/` — [module doc](./modules/map-code.md)
 - **module-map** (`moduleId: module-map`) — `scripts/module-map/` — [module doc](./modules/module-map.md)
 - **code-map** (`moduleId: code-map`) — `scripts/code-map/` — [module doc](./modules/code-map.md)
+
+### Public entry points
+
+- `map-code`: `scripts/map-code/generate.mjs`
+- `module-map`: `scripts/module-map/lib/stack-profiles/index.mjs`, `scripts/module-map/lib/adapters/index.mjs`
 
 ## Artifacts
 
 - **Module graph:** [module-map.json](./module-map.json)
-- **Symbol index:** [`code-map.json`](./code-map.json)
+- **Symbols and file dependencies:** [code-map.json](code-map.json)
+- **Coverage:** 69 scanned files; 0 unowned; 0 unsupported; 0 dependency diagnostics.
+- Query bounded evidence: `node <PLUGIN_ROOT>/scripts/map-code/query.mjs module <id> --limit 20` (also `symbol`, `callers`, `coverage`). File dependencies are static references, not a call graph.
 - **Product docs:** `docs/product.md`, `docs/features.md`, `docs/tech-stack.md` (read directly — do not duplicate in BRIEF)
 
 ## Conventions
@@ -55,4 +64,3 @@ Read the module doc for the role you are touching; filter `code-map.json` by `mo
 
 - Bootstrap: `node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --init` (plan-product plugin)
 - Validate: `node <PLUGIN_ROOT>/scripts/module-map/generate-module-map.mjs --doctor`
-

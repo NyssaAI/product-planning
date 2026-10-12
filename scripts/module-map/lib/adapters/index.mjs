@@ -13,8 +13,6 @@ import { createLogger } from '../logger.mjs';
 
 const log = createLogger({ module: 'adapters' });
 
-// Selection is first-match-wins in this order. Go is appended after the
-// original three so polyglot repos keep their existing adapter selection.
 /** @type {import('../detection/types.mjs').StackGraphAdapter[]} */
 const ADAPTERS = [
   csharpAdapter,
@@ -22,6 +20,22 @@ const ADAPTERS = [
   typescriptAdapter,
   goAdapter,
 ];
+
+/** Select every adapter represented in the configured inventory, including markerless source. */
+export function selectAdapters(files, forcedId) {
+  if (forcedId) {
+    const adapter = ADAPTERS.find(a => a.id === forcedId);
+    if (!adapter) throw new Error(`Unknown stack-graph adapter: ${forcedId}`);
+    return [adapter];
+  }
+  const extensions = {
+    csharp: /\.cs$/i,
+    python: /\.py$/i,
+    typescript: /\.(?:[cm]?[jt]sx?)$/i,
+    go: /\.go$/i,
+  };
+  return ADAPTERS.filter(adapter => files.some(file => extensions[adapter.id].test(file)));
+}
 
 /**
  * Select an adapter for the repo. `forcedId` (from config) wins; otherwise the

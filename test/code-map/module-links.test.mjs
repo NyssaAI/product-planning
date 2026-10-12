@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { annotateCodeMapWithModules } from '../../scripts/code-map/lib/module-linker.mjs';
 
-test('annotateCodeMapWithModules links files and symbols to their plan-product modules', () => {
+test('annotateCodeMapWithModules links canonical files and endpoints to module metadata', () => {
   const codeMap = {
     files: [
       {
@@ -37,13 +37,8 @@ test('annotateCodeMapWithModules links files and symbols to their plan-product m
     (file) => file.path === 'src/orders/service.ts'
   );
   assert.equal(ordersFile.moduleId, 'orders');
-  assert.equal(ordersFile.moduleName, 'Orders');
-  assert.equal(ordersFile.moduleRoot, 'src/orders');
-  assert.equal(
-    ordersFile.planningModule,
-    'docs/code-map/modules/orders.md'
-  );
-  assert.equal(ordersFile.symbols[0].moduleId, 'orders');
+  assert.equal(ordersFile.symbols[0].moduleId, undefined);
+  assert.equal(annotated.symbols, undefined);
 
   assert.deepEqual(annotated.modules, [
     {
@@ -66,22 +61,9 @@ test('annotateCodeMapWithModules links files and symbols to their plan-product m
     },
   ]);
 
-  const createOrder = annotated.symbols.find(
-    (symbol) =>
-      symbol.file === 'src/orders/service.ts' &&
-      symbol.name === 'createOrder'
-  );
-  assert.equal(createOrder.moduleId, 'orders');
-  assert.equal(
-    createOrder.planningModule,
-    'docs/code-map/modules/orders.md'
-  );
-
+  assert.equal(ordersFile.symbols[0].name, 'createOrder');
   assert.equal(annotated.endpoints[0].moduleId, 'orders');
-  assert.equal(
-    annotated.endpoints[0].planningModule,
-    'docs/code-map/modules/orders.md'
-  );
+
 });
 
 test('annotateCodeMapWithModules honors a project-configured output dir', () => {
@@ -116,15 +98,8 @@ test('annotateCodeMapWithModules honors a project-configured output dir', () => 
   );
   const file = annotated.files[0];
   assert.equal(file.moduleId, 'orders');
-  assert.equal(file.planningModule, 'build/index-out/modules/orders.md');
-  assert.equal(file.symbols[0].planningModule, 'build/index-out/modules/orders.md');
-  assert.equal(
-    annotated.endpoints[0].planningModule,
-    'build/index-out/modules/orders.md'
-  );
-  // Flat symbol index is present and carries module metadata for search.
-  assert.equal(annotated.symbols[0].moduleId, 'orders');
-  assert.equal(annotated.symbols[0].file, 'app/api/orders/route.ts');
+  assert.equal(annotated.endpoints[0].moduleId, 'orders');
+  assert.equal(annotated.symbols, undefined);
 });
 
 test('annotateCodeMapWithModules leaves unowned files unlinked but indexed', () => {
@@ -145,10 +120,8 @@ test('annotateCodeMapWithModules leaves unowned files unlinked but indexed', () 
 
   const file = annotated.files[0];
   assert.equal(file.moduleId, undefined);
-  // Still appears in the flat symbol index so agents can search it.
-  assert.equal(annotated.symbols.length, 1);
-  assert.equal(annotated.symbols[0].name, 'run');
-  assert.equal(annotated.symbols[0].moduleId, undefined);
+  assert.equal(file.symbols[0].name, 'run');
+  assert.deepEqual(annotated.coverage.unownedFiles, ['scripts/tooling.ts']);
   // Module summary counts reflect zero owned files.
   assert.equal(annotated.modules[0].fileCount, 0);
 });

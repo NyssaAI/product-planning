@@ -8,6 +8,9 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import childProcess from 'node:child_process';
+import { syncBuiltinESMExports } from 'node:module';
+import { loadPatternCatalogs } from '../../scripts/code-map/lib/patterns/catalog.mjs';
 import {
   partitionPatternEligibleFiles,
   runPatternScan,
@@ -137,4 +140,41 @@ test('runPatternScan supports regex-only catalog detectors', () => {
   assert.equal(matches.length, 1);
   assert.equal(matches[0].patternId, 'named-service');
   assert.equal(matches[0].file, 'src/service.mjs');
+});
+
+test('name detectors match identifiers, not enclosing bodies, comments, or string examples', () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-pattern-names-'));
+  tempDirs.push(dir);
+  writeFileSync(path.join(dir, 'names.json'), JSON.stringify({ patterns: [{
+    id: 'named-factory', name: 'Factory name', language: 'JavaScript',
+    confidence: 'intent-only', description: 'A possible factory.',
+    rule: { regex: 'Factory' },
+  }] }));
+  writeFileSync(path.join(dir, 'source.mjs'), [
+    'function example() {',
+    '  // FakeFactory is documentation.',
+    '  const text = "FakeFactory";',
+    '  return text;',
+    '}',
+    'function OrderFactory() { return {}; }',
+  ].join('\n'));
+  const patterns = loadPatternCatalogs(dir, { catalogs: ['names.json'] }).patterns
+    .filter((pattern) => pattern.id === 'named-factory');
+  const matches = runPatternScan(dir, patterns, ['source.mjs']);
+  assert.deepEqual(matches.map(({ line, endLine }) => ({ line, endLine })), [{ line: 6, endLine: 6 }]);
+});
+
+test('scanner failure rejects partial JSON instead of treating it as a complete report', (t) => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'plan-product-pattern-failure-'));
+  tempDirs.push(dir);
+  writeFileSync(path.join(dir, 'source.mjs'), 'const value = 1;');
+  const patterns = [{ id: 'values', name: 'Values', language: 'JavaScript', confidence: 'high', rule: { kind: 'lexical_declaration' } }];
+  const mocked = t.mock.method(childProcess, 'spawnSync', () => ({ status: 2, stdout: '[]', stderr: 'injected scanner failure' }));
+  syncBuiltinESMExports();
+  try {
+    assert.throws(() => runPatternScan(dir, patterns, ['source.mjs']), /AST_GREP_FAILED.*injected scanner failure/);
+  } finally {
+    mocked.mock.restore();
+    syncBuiltinESMExports();
+  }
 });

@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.0",
-  "generated": "2026-09-03T02:11:02.495Z",
+  "schemaVersion": "2.0",
+  "generated": "2026-10-12T01:44:22.153Z",
   "roots": [
     "scripts",
     "skills"
@@ -12,47 +12,42 @@
     "Python",
     "Go"
   ],
-  "fileCount": 52,
-  "symbolCount": 113,
+  "fileCount": 69,
+  "symbolCount": 122,
   "endpointCount": 0,
   "files": [
+    {
+      "path": "scripts/code-map/generate-code-map.mjs",
+      "symbols": [],
+      "moduleId": "code-map"
+    },
+    {
+      "path": "scripts/code-map/generate-patterns.mjs",
+      "symbols": [],
+      "moduleId": "code-map"
+    },
     {
       "path": "scripts/code-map/lib/code-map-config.mjs",
       "symbols": [
         {
           "name": "SUPPORTED_LANGUAGES",
           "kind": "const",
-          "line": 21,
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "line": 21
         },
         {
           "name": "SOURCE_EXTENSIONS",
           "kind": "const",
           "line": 34,
-          "summary": "Extensions that drive file detection.",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Extensions that drive file detection."
         },
         {
           "name": "loadCodeMapConfig",
           "kind": "function",
           "line": 93,
-          "signature": "export function loadCodeMapConfig(repoRoot)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function loadCodeMapConfig(repoRoot)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/comment-extractor.mjs",
@@ -62,17 +57,10 @@
           "kind": "function",
           "line": 68,
           "signature": "export function extractDocComment(source, lineNumber)",
-          "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/file-header-comment.mjs",
@@ -81,17 +69,10 @@
           "name": "extractFileHeaderComment",
           "kind": "function",
           "line": 117,
-          "signature": "export function extractFileHeaderComment(content)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function extractFileHeaderComment(content)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/module-linker.mjs",
@@ -101,17 +82,10 @@
           "kind": "function",
           "line": 19,
           "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
-          "summary": "Add module ownership to a code-map document and expose a flat symbol index.",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Store ownership once per file; files[].symbols is the canonical symbol index."
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/patterns/catalog.mjs",
@@ -119,18 +93,11 @@
         {
           "name": "loadPatternCatalogs",
           "kind": "function",
-          "line": 76,
-          "signature": "export function loadPatternCatalogs(repoRoot, config = {})",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "line": 57,
+          "signature": "export function loadPatternCatalogs(repoRoot, config = {})"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/patterns/model.mjs",
@@ -139,27 +106,16 @@
           "name": "loadJsonArtifact",
           "kind": "function",
           "line": 23,
-          "signature": "export function loadJsonArtifact(repoRoot, relPath, code)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function loadJsonArtifact(repoRoot, relPath, code)"
         },
         {
           "name": "buildPatternReport",
           "kind": "function",
           "line": 56,
-          "signature": "export function buildPatternReport(input)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function buildPatternReport(input)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/patterns/render.mjs",
@@ -167,18 +123,12 @@
         {
           "name": "renderPatternsMarkdown",
           "kind": "function",
-          "line": 5,
+          "line": 7,
           "signature": "export function renderPatternsMarkdown(report)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Render a bounded reading guide; patterns.json retains the complete evidence."
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/patterns/runtime-config.mjs",
@@ -187,17 +137,10 @@
           "name": "loadPatternRuntimeConfig",
           "kind": "function",
           "line": 25,
-          "signature": "export function loadPatternRuntimeConfig(repoRoot)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function loadPatternRuntimeConfig(repoRoot)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/patterns/scanner.mjs",
@@ -206,27 +149,16 @@
           "name": "partitionPatternEligibleFiles",
           "kind": "function",
           "line": 38,
-          "signature": "export function partitionPatternEligibleFiles(sourceFiles, patterns, languages)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function partitionPatternEligibleFiles(sourceFiles, patterns, languages)"
         },
         {
           "name": "runPatternScan",
           "kind": "function",
           "line": 86,
-          "signature": "export function runPatternScan(repoRoot, patterns, eligibleFiles)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function runPatternScan(repoRoot, patterns, eligibleFiles)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/patterns/temp-rules.mjs",
@@ -235,27 +167,16 @@
           "name": "writeTempAstGrepConfig",
           "kind": "function",
           "line": 22,
-          "signature": "export function writeTempAstGrepConfig(patterns)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function writeTempAstGrepConfig(patterns)"
         },
         {
           "name": "cleanupTempAstGrepConfig",
           "kind": "function",
           "line": 58,
-          "signature": "export function cleanupTempAstGrepConfig(tempConfig)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function cleanupTempAstGrepConfig(tempConfig)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/signature-extractor.mjs",
@@ -265,17 +186,10 @@
           "kind": "function",
           "line": 63,
           "signature": "export function extractSignature(source, lineNumber)",
-          "summary": "Extracts the declaration signature starting at the given line.",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Extracts the declaration signature starting at the given line."
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/source-files.mjs",
@@ -283,71 +197,50 @@
         {
           "name": "SOURCE_SCAN_SKIP_DIRS",
           "kind": "const",
-          "line": 9,
-          "signature": "export const SOURCE_SCAN_SKIP_DIRS = new Set([ ...BASE_SKIP_DIRS, '.venv', 'venv', '__pycache__', ]);",
-          "summary": "Shared base infra/test-output dirs (includes fixtures/__fixtures__ so scans no longer leak fixture endpoints) plus Pytho",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "line": 7,
+          "signature": "export const SOURCE_SCAN_SKIP_DIRS = new Set(BASE_SKIP_DIRS);"
         },
         {
           "name": "isInSkippedDir",
           "kind": "function",
-          "line": 47,
+          "line": 40,
           "signature": "export function isInSkippedDir(repoRelativePath)",
-          "summary": "Whether a repo-relative path sits under a directory the source walkers skip.",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Whether a repo-relative path sits under a directory the source walkers skip."
         },
         {
           "name": "sourceFilesInRoots",
           "kind": "function",
-          "line": 59,
-          "signature": "export function sourceFilesInRoots(repoRoot, roots)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "line": 52,
+          "signature": "export function sourceFilesInRoots(repoRoot, roots)"
+        },
+        {
+          "name": "sourceInventory",
+          "kind": "function",
+          "line": 71,
+          "signature": "export function sourceInventory(repoRoot, { roots, languages })",
+          "summary": "Shared source boundary for symbols, endpoints, patterns, and dependency adapters."
         },
         {
           "name": "languageForFile",
           "kind": "function",
-          "line": 81,
-          "signature": "export function languageForFile(filePath)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "line": 87,
+          "signature": "export function languageForFile(filePath)"
         },
         {
           "name": "isLanguageEnabled",
           "kind": "function",
-          "line": 94,
+          "line": 100,
           "signature": "export function isLanguageEnabled(filePath, languages)",
-          "summary": "True when the file maps to a configured language.",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "True when the file maps to a configured language."
         },
         {
           "name": "isKnownSourceFile",
           "kind": "function",
-          "line": 103,
-          "signature": "export function isKnownSourceFile(filePath)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "line": 109,
+          "signature": "export function isKnownSourceFile(filePath)"
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/code-map/lib/source-lines.mjs",
@@ -357,38 +250,23 @@
           "kind": "function",
           "line": 24,
           "signature": "export function splitSourceLines(content)",
-          "summary": "Split file content the way every extractor expects it: on `\\n` only, so line numbers stay 1:1 with ast-grep's and a trai",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Split file content the way every extractor expects it: on `\\n` only, so line numbers stay 1:1 with ast-grep's and a trai"
         },
         {
           "name": "resolveSourceLines",
           "kind": "function",
           "line": 32,
-          "signature": "export function resolveSourceLines(source)",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "signature": "export function resolveSourceLines(source)"
         },
         {
           "name": "createSourceFileCache",
           "kind": "function",
           "line": 46,
           "signature": "export function createSourceFileCache( readSource = (filePath) => readFileSync(filePath, 'utf8') )",
-          "summary": "Create a per-build source reader.",
-          "moduleId": "code-map",
-          "moduleName": "code-map",
-          "moduleRoot": "scripts/code-map",
-          "planningModule": "docs/code-map/modules/code-map.md"
+          "summary": "Create a per-build source reader."
         }
       ],
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
+      "moduleId": "code-map"
     },
     {
       "path": "scripts/lib/code-map-output.mjs",
@@ -398,28 +276,17 @@
           "kind": "const",
           "line": 4,
           "signature": "export const DEFAULT_CODE_MAP_OUTPUT = 'docs/code-map/code-map.json'; /** * Resolve the shared code-map output contract used by both generators. * * @param",
-          "summary": "Fallback code-map location when neither config file names one.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Fallback code-map location when neither config file names one."
         },
         {
           "name": "resolveCodeMapOutput",
           "kind": "function",
           "line": 14,
           "signature": "export function resolveCodeMapOutput(raw, planProductPaths, options = {})",
-          "summary": "Resolve the shared code-map output contract used by both generators.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Resolve the shared code-map output contract used by both generators."
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/endpoint-extractor.mjs",
@@ -427,28 +294,30 @@
         {
           "name": "extractEndpoints",
           "kind": "function",
-          "line": 102,
-          "signature": "export function extractEndpoints(repoRoot, files)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "line": 103,
+          "signature": "export function extractEndpoints(repoRoot, files)"
         },
         {
           "name": "nextRouteSegment",
           "kind": "function",
-          "line": 462,
-          "signature": "export function nextRouteSegment(seg)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "line": 509,
+          "signature": "export function nextRouteSegment(seg)"
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
+    },
+    {
+      "path": "scripts/lib/endpoint-syntax.mjs",
+      "symbols": [
+        {
+          "name": "scanEndpointSyntax",
+          "kind": "function",
+          "line": 47,
+          "signature": "export function scanEndpointSyntax(repoRoot, files)",
+          "summary": "Parse the explicit endpoint source inventory once, in bounded batches."
+        }
+      ],
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/go-mod.mjs",
@@ -458,38 +327,57 @@
           "kind": "function",
           "line": 23,
           "signature": "export function isExcludedGoFile(repoRelPath)",
-          "summary": "The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e"
         },
         {
           "name": "readGoWorkMembers",
           "kind": "function",
           "line": 42,
           "signature": "export function readGoWorkMembers(repoRoot)",
-          "summary": "Parses `use` directives from a root go.work file: every block form (`use ( ...",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Parses `use` directives from a root go.work file: every block form (`use ( ..."
         },
         {
           "name": "readGoModulePath",
           "kind": "function",
           "line": 78,
-          "signature": "export function readGoModulePath(repoRoot, dir)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function readGoModulePath(repoRoot, dir)"
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
+    },
+    {
+      "path": "scripts/lib/map-freshness.mjs",
+      "symbols": [
+        {
+          "name": "captureMapInputs",
+          "kind": "function",
+          "line": 49,
+          "signature": "export function captureMapInputs(repoRoot, { pluginRoot = PLUGIN_ROOT } = {})",
+          "summary": "Capture content, inventory, configuration, resolver metadata and generator identity."
+        },
+        {
+          "name": "beginMapScan",
+          "kind": "function",
+          "line": 79,
+          "signature": "export function beginMapScan(repoRoot, options)",
+          "summary": "Invalidate the previous success before either generator can write partial outputs."
+        },
+        {
+          "name": "completeMapScan",
+          "kind": "function",
+          "line": 100,
+          "signature": "export function completeMapScan(repoRoot, before, options)",
+          "summary": "Call only after both core generators succeed."
+        },
+        {
+          "name": "checkMapFreshness",
+          "kind": "function",
+          "line": 114,
+          "signature": "export function checkMapFreshness(repoRoot, options)",
+          "summary": "Shared freshness result for the CLI, doctor and regeneration hooks."
+        }
+      ],
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/plugin-root.mjs",
@@ -499,27 +387,16 @@
           "kind": "function",
           "line": 33,
           "signature": "export function isPlanProductPluginRoot(dir)",
-          "summary": "True when an environment-provided directory is a plan-product plugin root: it carries Claude's plugin manifest or a pack",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "True when an environment-provided directory is a plan-product plugin root: it carries Claude's plugin manifest or a pack"
         },
         {
           "name": "findPluginRoot",
           "kind": "function",
           "line": 62,
-          "signature": "export function findPluginRoot(startDir)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function findPluginRoot(startDir)"
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/repo-paths.mjs",
@@ -528,39 +405,24 @@
           "name": "isPathContained",
           "kind": "function",
           "line": 9,
-          "signature": "export function isPathContained(root, candidate)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function isPathContained(root, candidate)"
         },
         {
           "name": "resolveRepoContainedPath",
           "kind": "function",
           "line": 28,
           "signature": "export function resolveRepoContainedPath(repoRoot, configuredPath, label)",
-          "summary": "Resolve a configured path and reject escapes from the repository.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Resolve a configured path and reject escapes from the repository."
         },
         {
           "name": "resolveRepoRelativePath",
           "kind": "function",
           "line": 65,
           "signature": "export function resolveRepoRelativePath(repoRoot, configuredPath, label)",
-          "summary": "Validate a configured path and return its normalized repo-relative form.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Validate a configured path and return its normalized repo-relative form."
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/resolve-ast-grep.mjs",
@@ -570,28 +432,17 @@
           "kind": "function",
           "line": 25,
           "signature": "export function astGrepPlatformPackage()",
-          "summary": "The @ast-grep/cli optionalDependency holding this platform's prebuilt binary.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "The @ast-grep/cli optionalDependency holding this platform's prebuilt binary."
         },
         {
           "name": "resolveAstGrepBinary",
           "kind": "function",
           "line": 130,
           "signature": "export function resolveAstGrepBinary(options)",
-          "summary": "Resolve ast-grep binary shipped with the plan-product plugin.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Resolve ast-grep binary shipped with the plan-product plugin."
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/sg-result.mjs",
@@ -600,27 +451,16 @@
           "name": "parseScanJson",
           "kind": "function",
           "line": 24,
-          "signature": "export function parseScanJson(stdout)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function parseScanJson(stdout)"
         },
         {
           "name": "symbolNameFromMatch",
           "kind": "function",
           "line": 37,
-          "signature": "export function symbolNameFromMatch(match)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function symbolNameFromMatch(match)"
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/skip-dirs.mjs",
@@ -628,17 +468,10 @@
         {
           "name": "BASE_SKIP_DIRS",
           "kind": "const",
-          "line": 16,
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "line": 16
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/usage.mjs",
@@ -647,67 +480,40 @@
           "name": "loadUsageSettings",
           "kind": "function",
           "line": 25,
-          "signature": "export function loadUsageSettings(repoRoot, env = process.env)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function loadUsageSettings(repoRoot, env = process.env)"
         },
         {
           "name": "recordUsageEvent",
           "kind": "function",
           "line": 103,
-          "signature": "export function recordUsageEvent(repoRoot, event, options = {})",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function recordUsageEvent(repoRoot, event, options = {})"
         },
         {
           "name": "readUsageEvents",
           "kind": "function",
           "line": 133,
-          "signature": "export function readUsageEvents(repoRoot, options = {})",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function readUsageEvents(repoRoot, options = {})"
         },
         {
           "name": "writeEffectivenessReport",
           "kind": "function",
           "line": 166,
-          "signature": "export function writeEffectivenessReport(repoRoot, options = {})",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function writeEffectivenessReport(repoRoot, options = {})"
         },
         {
           "name": "buildEffectivenessModel",
           "kind": "function",
           "line": 195,
-          "signature": "export function buildEffectivenessModel(repoRoot, input)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function buildEffectivenessModel(repoRoot, input)"
         },
         {
           "name": "renderEffectivenessMarkdown",
           "kind": "function",
           "line": 254,
-          "signature": "export function renderEffectivenessMarkdown(model)",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "signature": "export function renderEffectivenessMarkdown(model)"
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
     },
     {
       "path": "scripts/lib/write-artifact.mjs",
@@ -717,17 +523,15 @@
           "kind": "function",
           "line": 176,
           "signature": "export function writeArtifactIfChanged(filePath, content)",
-          "summary": "Write `content` to `filePath` unless the only difference from what is already there is a generation timestamp.",
-          "moduleId": "lib",
-          "moduleName": "lib",
-          "moduleRoot": "scripts/lib",
-          "planningModule": "docs/code-map/modules/lib.md"
+          "summary": "Write `content` to `filePath` unless the only difference from what is already there is a generation timestamp."
         }
       ],
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
+      "moduleId": "lib"
+    },
+    {
+      "path": "scripts/map-code/check-freshness.mjs",
+      "symbols": [],
+      "moduleId": "map-code"
     },
     {
       "path": "scripts/map-code/generate.mjs",
@@ -735,30 +539,69 @@
         {
           "name": "mapCodeOutputs",
           "kind": "function",
-          "line": 98,
+          "line": 101,
           "signature": "export function mapCodeOutputs(repoRoot)"
         }
-      ]
+      ],
+      "moduleId": "map-code"
+    },
+    {
+      "path": "scripts/map-code/query.mjs",
+      "symbols": [
+        {
+          "name": "queryCodeMap",
+          "kind": "function",
+          "line": 10,
+          "signature": "export function queryCodeMap(map, mode, term = '', limit = 20, offset = 0)",
+          "summary": "Bounded queries over canonical file records; callers means file dependents, not runtime calls."
+        }
+      ],
+      "moduleId": "map-code"
+    },
+    {
+      "path": "scripts/module-map/generate-module-map.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/install-git-hook.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/adapters/csharp.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/adapters/go.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/adapters/index.mjs",
       "symbols": [
         {
+          "name": "selectAdapters",
+          "kind": "function",
+          "line": 25,
+          "signature": "export function selectAdapters(files, forcedId)",
+          "summary": "Select every adapter represented in the configured inventory, including markerless source."
+        },
+        {
           "name": "selectAdapter",
           "kind": "function",
-          "line": 34,
+          "line": 48,
           "signature": "export function selectAdapter(repoRoot, forcedId)",
-          "summary": "Select an adapter for the repo.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Select an adapter for the repo."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/adapters/python.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/adapters/sg-scan.mjs",
@@ -766,30 +609,32 @@
         {
           "name": "runBatchedScan",
           "kind": "function",
-          "line": 39,
+          "line": 36,
           "signature": "export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs)",
-          "summary": "Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command"
         },
         {
           "name": "batchByArgLength",
           "kind": "function",
-          "line": 67,
+          "line": 61,
           "signature": "export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH)",
-          "summary": "Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/adapters/typescript.mjs",
+      "symbols": [
+        {
+          "name": "tsConfigInputs",
+          "kind": "function",
+          "line": 404,
+          "signature": "export function tsConfigInputs(repoRoot)",
+          "summary": "Exact config files consulted by the adapter, including inherited package configs."
+        }
+      ],
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/architecture.mjs",
@@ -798,67 +643,40 @@
           "name": "loadArchitectureModel",
           "kind": "function",
           "line": 35,
-          "signature": "export function loadArchitectureModel(repoRoot, config)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function loadArchitectureModel(repoRoot, config)"
         },
         {
           "name": "normalizeArchitectureModel",
           "kind": "function",
           "line": 64,
-          "signature": "export function normalizeArchitectureModel(raw)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function normalizeArchitectureModel(raw)"
         },
         {
           "name": "renderSystemArchitecture",
           "kind": "function",
           "line": 114,
-          "signature": "export function renderSystemArchitecture(model, options = {})",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function renderSystemArchitecture(model, options = {})"
         },
         {
           "name": "renderArchitectureTree",
           "kind": "function",
           "line": 181,
-          "signature": "export function renderArchitectureTree(model)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function renderArchitectureTree(model)"
         },
         {
           "name": "sortModulesByDependencyCount",
           "kind": "function",
           "line": 211,
-          "signature": "export function sortModulesByDependencyCount(modules)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function sortModulesByDependencyCount(modules)"
         },
         {
           "name": "preserveMarkedRegion",
           "kind": "function",
           "line": 267,
-          "signature": "export function preserveMarkedRegion( existingMarkdown, regionName, fallbackMarkdown, options = {} )",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function preserveMarkedRegion( existingMarkdown, regionName, fallbackMarkdown, options = {} )"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/auto-detect.mjs",
@@ -867,66 +685,39 @@
           "name": "DEFAULT_DOC_CANDIDATES",
           "kind": "const",
           "line": 5,
-          "signature": "export const DEFAULT_DOC_CANDIDATES",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export const DEFAULT_DOC_CANDIDATES"
         },
         {
           "name": "MODULE_GLOB_CANDIDATES",
           "kind": "const",
-          "line": 53,
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 37
         },
         {
           "name": "readProjectName",
           "kind": "function",
-          "line": 64,
-          "signature": "export function readProjectName(repoRoot)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 48,
+          "signature": "export function readProjectName(repoRoot)"
         },
         {
           "name": "detectCodeMapRoots",
           "kind": "function",
-          "line": 84,
-          "signature": "export function detectCodeMapRoots(repoRoot)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 68,
+          "signature": "export function detectCodeMapRoots(repoRoot)"
         },
         {
           "name": "detectApiRoutes",
           "kind": "function",
-          "line": 104,
-          "signature": "export function detectApiRoutes(repoRoot)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 77,
+          "signature": "export function detectApiRoutes(repoRoot)"
         },
         {
           "name": "detectSrcChildModules",
           "kind": "function",
-          "line": 186,
-          "signature": "export function detectSrcChildModules(repoRoot)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 159,
+          "signature": "export function detectSrcChildModules(repoRoot)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/bootstrap.mjs",
@@ -935,17 +726,10 @@
           "name": "bootstrapRepo",
           "kind": "function",
           "line": 118,
-          "signature": "export function bootstrapRepo(repoRoot, options = {})",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function bootstrapRepo(repoRoot, options = {})"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/build.mjs",
@@ -954,17 +738,10 @@
           "name": "buildPlanProductModel",
           "kind": "function",
           "line": 48,
-          "signature": "export function buildPlanProductModel(repoRoot, config, codeMapInput)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function buildPlanProductModel(repoRoot, config, codeMapInput)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/config.mjs",
@@ -973,47 +750,28 @@
           "name": "loadPlanProductConfig",
           "kind": "function",
           "line": 49,
-          "signature": "export function loadPlanProductConfig(repoRoot, opts = {})",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function loadPlanProductConfig(repoRoot, opts = {})"
         },
         {
           "name": "validateRequiredDocs",
           "kind": "function",
           "line": 153,
-          "signature": "export function validateRequiredDocs(repoRoot, config)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function validateRequiredDocs(repoRoot, config)"
         },
         {
           "name": "resolveDocPath",
           "kind": "function",
           "line": 175,
-          "signature": "export function resolveDocPath(repoRoot, candidates)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function resolveDocPath(repoRoot, candidates)"
         },
         {
           "name": "writeStarterConfigs",
           "kind": "function",
           "line": 188,
-          "signature": "export function writeStarterConfigs(repoRoot)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function writeStarterConfigs(repoRoot)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/detection/derive-modules.mjs",
@@ -1022,17 +780,15 @@
           "name": "deriveModules",
           "kind": "function",
           "line": 55,
-          "signature": "export function deriveModules(repoRoot, fileGraph, options = {})",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function deriveModules(repoRoot, fileGraph, options = {})"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/detection/derive-modules.test.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/detection/metrics.mjs",
@@ -1042,50 +798,36 @@
           "kind": "function",
           "line": 43,
           "signature": "export function internalExternalRatio(edges, assign)",
-          "summary": "internal / (internal + external).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "internal / (internal + external)."
         },
         {
           "name": "modularity",
           "kind": "function",
           "line": 56,
           "signature": "export function modularity(edges, assign)",
-          "summary": "Newman modularity Q for an assignment (weighted, undirected).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Newman modularity Q for an assignment (weighted, undirected)."
         },
         {
           "name": "cohesion",
           "kind": "function",
           "line": 97,
           "signature": "export function cohesion(edges, assign, moduleId)",
-          "summary": "Cohesion of one module: internal weight / (internal + boundary).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Cohesion of one module: internal weight / (internal + boundary)."
         },
         {
           "name": "coupling",
           "kind": "function",
           "line": 121,
           "signature": "export function coupling(edges, assign, modA, modB)",
-          "summary": "Coupling between two modules: total cross-edge weight between them.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Coupling between two modules: total cross-edge weight between them."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/detection/metrics.test.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/detection/partitions.mjs",
@@ -1094,72 +836,50 @@
           "name": "DEFAULT_EXCLUDE",
           "kind": "const",
           "line": 8,
-          "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);"
         },
         {
           "name": "topLevelAreas",
           "kind": "function",
           "line": 24,
           "signature": "export function topLevelAreas(files, exclude = DEFAULT_EXCLUDE)",
-          "summary": "Immediate child directories of the repo root that contain a file (e.g.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Immediate child directories of the repo root that contain a file (e.g."
         },
         {
           "name": "filesInArea",
           "kind": "function",
           "line": 43,
           "signature": "export function filesInArea(files, area, exclude = DEFAULT_EXCLUDE)",
-          "summary": "Files under `area`, dropping any whose path crosses an excluded directory.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Files under `area`, dropping any whose path crosses an excluded directory."
         },
         {
           "name": "maxDepth",
           "kind": "function",
           "line": 55,
           "signature": "export function maxDepth(areaFiles)",
-          "summary": "Deepest directory nesting below the area (excluding the filename).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Deepest directory nesting below the area (excluding the filename)."
         },
         {
           "name": "partitionAtDepth",
           "kind": "function",
           "line": 71,
           "signature": "export function partitionAtDepth(areaFiles, area, depth)",
-          "summary": "Assign each area file to the module rooted `depth` segments below the area.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Assign each area file to the module rooted `depth` segments below the area."
         },
         {
           "name": "sizeByModule",
           "kind": "function",
           "line": 87,
           "signature": "export function sizeByModule(partition)",
-          "summary": "File count per module root for an assignment.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "File count per module root for an assignment."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/detection/types.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/discover-modules.mjs",
@@ -1169,60 +889,37 @@
           "kind": "function",
           "line": 30,
           "signature": "export function discoverModules(repoRoot, config, stack)",
-          "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted."
         },
         {
           "name": "applyPins",
           "kind": "function",
           "line": 91,
           "signature": "export function applyPins(discovered, config)",
-          "summary": "Apply `modules.pinned[]` to a discovered module list from any discovery path.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Apply `modules.pinned[]` to a discovered module list from any discovery path."
         },
         {
           "name": "packageIdCandidates",
           "kind": "function",
           "line": 487,
           "signature": "export function packageIdCandidates(packageName, relDir)",
-          "summary": "Candidate module ids for one package, most preferred first: the unscoped package name, then `scope-name` for a scoped pa",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Candidate module ids for one package, most preferred first: the unscoped package name, then `scope-name` for a scoped pa"
         },
         {
           "name": "assignUniquePackageIds",
           "kind": "function",
           "line": 518,
           "signature": "export function assignUniquePackageIds(entries, config)",
-          "summary": "Give every package a distinct id.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Give every package a distinct id."
         },
         {
           "name": "parseNavEntries",
           "kind": "function",
           "line": 603,
-          "signature": "export function parseNavEntries(navPath)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function parseNavEntries(navPath)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/docs.mjs",
@@ -1231,28 +928,17 @@
           "name": "loadProjectBrief",
           "kind": "function",
           "line": 9,
-          "signature": "export function loadProjectBrief(repoRoot, config)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function loadProjectBrief(repoRoot, config)"
         },
         {
           "name": "extractConventionsFromTechStack",
           "kind": "function",
           "line": 49,
           "signature": "export function extractConventionsFromTechStack(techStackExcerpt)",
-          "summary": "Pull bullet lines from tech-stack excerpt for planner conventions.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Pull bullet lines from tech-stack excerpt for planner conventions."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/doctor.mjs",
@@ -1261,27 +947,16 @@
           "name": "runDoctor",
           "kind": "function",
           "line": 193,
-          "signature": "export function runDoctor(repoRoot, options = {})",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function runDoctor(repoRoot, options = {})"
         },
         {
           "name": "formatDoctorReport",
           "kind": "function",
-          "line": 264,
-          "signature": "export function formatDoctorReport(report)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 260,
+          "signature": "export function formatDoctorReport(report)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/embed.mjs",
@@ -1290,39 +965,24 @@
           "name": "renderModuleMapTable",
           "kind": "function",
           "line": 17,
-          "signature": "export function renderModuleMapTable(modules)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function renderModuleMapTable(modules)"
         },
         {
           "name": "describeMarkerDamage",
           "kind": "function",
           "line": 59,
           "signature": "export function describeMarkerDamage(original)",
-          "summary": "Describes why a file's markers cannot be rewritten safely, or null when the markers are either absent (append) or a sing",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Describes why a file's markers cannot be rewritten safely, or null when the markers are either absent (append) or a sing"
         },
         {
           "name": "embedModuleMap",
           "kind": "function",
           "line": 174,
           "signature": "export function embedModuleMap(repoRoot, tableMarkdown, generated, options = {})",
-          "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root)."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/logger.mjs",
@@ -1331,17 +991,10 @@
           "name": "createLogger",
           "kind": "function",
           "line": 57,
-          "signature": "export function createLogger(bindings = {})",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function createLogger(bindings = {})"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/migrate.mjs",
@@ -1351,27 +1004,16 @@
           "kind": "function",
           "line": 222,
           "signature": "export function runMigrate(repoRoot, options = {})",
-          "summary": "Normalize generated code-map artifact names under the configured output dir (default docs/code-map/).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Normalize generated code-map artifact names under the configured output dir (default docs/code-map/)."
         },
         {
           "name": "formatMigrateReport",
           "kind": "function",
           "line": 266,
-          "signature": "export function formatMigrateReport(actions)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function formatMigrateReport(actions)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/module-deps.mjs",
@@ -1379,19 +1021,12 @@
         {
           "name": "buildModuleEdges",
           "kind": "function",
-          "line": 13,
+          "line": 11,
           "signature": "export function buildModuleEdges(repoRoot, modules, config, stack)",
-          "summary": "adapter graph; falls back to a fresh extraction when omitted.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "adapter graph; falls back to a fresh extraction when omitted."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/module-enrichment.mjs",
@@ -1399,18 +1034,11 @@
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 351,
-          "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 354,
+          "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/module-ownership.mjs",
@@ -1419,39 +1047,24 @@
           "name": "normalizeRoot",
           "kind": "function",
           "line": 15,
-          "signature": "export function normalizeRoot(root)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function normalizeRoot(root)"
         },
         {
           "name": "ownerRoot",
           "kind": "function",
           "line": 40,
           "signature": "export function ownerRoot(filePath, roots)",
-          "summary": "The most-specific (longest) root that contains `filePath`, or null.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "The most-specific (longest) root that contains `filePath`, or null."
         },
         {
           "name": "ownsFile",
           "kind": "function",
           "line": 65,
           "signature": "export function ownsFile(moduleRoot, filePath, allRoots)",
-          "summary": "Whether `moduleRoot` is the disjoint owner of `filePath` among `allRoots`.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Whether `moduleRoot` is the disjoint owner of `filePath` among `allRoots`."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/node-organization.mjs",
@@ -1461,17 +1074,10 @@
           "kind": "function",
           "line": 95,
           "signature": "export function classifyNodeOrganization(modules)",
-          "summary": "Group modules by their Node/TypeScript role in canonical display order, omitting roles with no modules.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Group modules by their Node/TypeScript role in canonical display order, omitting roles with no modules."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/pin.mjs",
@@ -1481,28 +1087,17 @@
           "kind": "function",
           "line": 37,
           "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
-          "summary": "Eject a derived module into `modules.pinned[]`.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Eject a derived module into `modules.pinned[]`."
         },
         {
           "name": "unpinModule",
           "kind": "function",
           "line": 74,
           "signature": "export function unpinModule(repoRoot, moduleId)",
-          "summary": "Remove a pin by id or root, returning its subtree to auto-derivation.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Remove a pin by id or root, returning its subtree to auto-derivation."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/project-root.mjs",
@@ -1511,17 +1106,10 @@
           "name": "findProjectRoot",
           "kind": "function",
           "line": 8,
-          "signature": "export function findProjectRoot(startDir = process.cwd())",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function findProjectRoot(startDir = process.cwd())"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/render.mjs",
@@ -1529,28 +1117,17 @@
         {
           "name": "renderIndex",
           "kind": "function",
-          "line": 8,
-          "signature": "export function renderIndex(model, config)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 9,
+          "signature": "export function renderIndex(model, config)"
         },
         {
           "name": "renderModuleScope",
           "kind": "function",
-          "line": 143,
-          "signature": "export function renderModuleScope(model, mod)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 147,
+          "signature": "export function renderModuleScope(model, mod)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/repo-files.mjs",
@@ -1558,19 +1135,12 @@
         {
           "name": "listRepoFiles",
           "kind": "function",
-          "line": 31,
-          "signature": "export function listRepoFiles(repoRoot, limit = 20000)",
-          "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped).",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 20,
+          "signature": "export function listRepoFiles(repoRoot, limit = Infinity)",
+          "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped)."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/routes.mjs",
@@ -1579,17 +1149,10 @@
           "name": "discoverHttpRoutes",
           "kind": "function",
           "line": 29,
-          "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/stack-graph.mjs",
@@ -1597,19 +1160,12 @@
         {
           "name": "extractStackGraph",
           "kind": "function",
-          "line": 20,
-          "signature": "export function extractStackGraph(repoRoot, config)",
-          "summary": "Select the stack-graph adapter for the repo and run a single extraction.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "line": 22,
+          "signature": "export function extractStackGraph(repoRoot, config, inventory = sourceInventory(repoRoot, loadCodeMapConfig(repoRoot)))",
+          "summary": "Run each enabled adapter over the shared source inventory."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/stack-profiles/index.mjs",
@@ -1618,17 +1174,10 @@
           "name": "detectStackModules",
           "kind": "function",
           "line": 324,
-          "signature": "export function detectStackModules(repoRoot, config)",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "signature": "export function detectStackModules(repoRoot, config)"
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
     },
     {
       "path": "scripts/module-map/lib/summarize.mjs",
@@ -1638,29 +1187,1005 @@
           "kind": "function",
           "line": 15,
           "signature": "export function summarizeDescription(description, fallbackId, lineLen = 120, maxLines = 2)",
-          "summary": "Builds the module summary shown in the index and embedded module-map tables.",
-          "moduleId": "module-map",
-          "moduleName": "module-map",
-          "moduleRoot": "scripts/module-map",
-          "planningModule": "docs/code-map/modules/module-map.md"
+          "summary": "Builds the module summary shown in the index and embedded module-map tables."
         }
       ],
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/pre-push-regen.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/regen-if-source-changed.mjs",
+      "symbols": [],
+      "moduleId": "module-map"
     }
   ],
   "endpoints": [],
-  "moduleCount": 3,
+  "fileDependencies": [
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/comment-extractor.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/file-header-comment.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/module-linker.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/signature-extractor.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/source-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/code-map/lib/source-lines.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/lib/endpoint-extractor.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/lib/usage.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/lib/write-artifact.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/module-map/lib/adapters/sg-scan.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/module-map/lib/discover-modules.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/module-map/lib/stack-graph.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/code-map/lib/patterns/catalog.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/code-map/lib/patterns/model.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/code-map/lib/patterns/render.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/code-map/lib/patterns/runtime-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/code-map/lib/patterns/scanner.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/code-map/lib/source-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/lib/usage.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/lib/write-artifact.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/module-map/lib/project-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/code-map-config.mjs",
+      "to": "scripts/lib/code-map-output.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/code-map-config.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/code-map-config.mjs",
+      "to": "scripts/module-map/lib/auto-detect.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/comment-extractor.mjs",
+      "to": "scripts/code-map/lib/source-lines.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/module-linker.mjs",
+      "to": "scripts/module-map/lib/module-ownership.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/catalog.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/model.mjs",
+      "to": "scripts/code-map/lib/source-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/model.mjs",
+      "to": "scripts/module-map/lib/module-ownership.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/runtime-config.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/runtime-config.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/scanner.mjs",
+      "to": "scripts/code-map/lib/patterns/temp-rules.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/scanner.mjs",
+      "to": "scripts/code-map/lib/source-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/scanner.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/scanner.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/signature-extractor.mjs",
+      "to": "scripts/code-map/lib/source-lines.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/source-files.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/source-files.mjs",
+      "to": "scripts/lib/go-mod.mjs",
+      "weight": 2,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/source-files.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/source-files.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/endpoint-extractor.mjs",
+      "to": "scripts/lib/endpoint-syntax.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/endpoint-syntax.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/endpoint-syntax.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/map-freshness.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/map-freshness.mjs",
+      "to": "scripts/code-map/lib/source-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/map-freshness.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/map-freshness.mjs",
+      "to": "scripts/lib/write-artifact.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/map-freshness.mjs",
+      "to": "scripts/module-map/lib/adapters/typescript.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/map-freshness.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/resolve-ast-grep.mjs",
+      "to": "scripts/lib/plugin-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/check-freshness.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/check-freshness.mjs",
+      "to": "scripts/module-map/lib/project-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/generate.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/generate.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/generate.mjs",
+      "to": "scripts/lib/usage.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/generate.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/generate.mjs",
+      "to": "scripts/module-map/lib/project-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/query.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/query.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/map-code/query.mjs",
+      "to": "scripts/module-map/lib/project-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/lib/usage.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/lib/write-artifact.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/architecture.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/bootstrap.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/build.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/discover-modules.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/doctor.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/embed.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/migrate.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/pin.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/project-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/module-map/lib/render.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/csharp.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/csharp.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/csharp.mjs",
+      "to": "scripts/module-map/lib/adapters/sg-scan.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/csharp.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/go.mjs",
+      "to": "scripts/lib/go-mod.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/go.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/go.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/go.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/go.mjs",
+      "to": "scripts/module-map/lib/adapters/sg-scan.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/go.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/index.mjs",
+      "to": "scripts/module-map/lib/adapters/csharp.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/index.mjs",
+      "to": "scripts/module-map/lib/adapters/go.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/index.mjs",
+      "to": "scripts/module-map/lib/adapters/python.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/index.mjs",
+      "to": "scripts/module-map/lib/adapters/typescript.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/index.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/python.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/python.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/python.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/python.mjs",
+      "to": "scripts/module-map/lib/adapters/sg-scan.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/python.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/sg-scan.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/typescript.mjs",
+      "to": "scripts/lib/resolve-ast-grep.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/typescript.mjs",
+      "to": "scripts/lib/sg-result.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/typescript.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/typescript.mjs",
+      "to": "scripts/module-map/lib/adapters/sg-scan.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/adapters/typescript.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/architecture.mjs",
+      "to": "scripts/module-map/lib/summarize.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/bootstrap.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/bootstrap.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/discover-modules.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/docs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/module-deps.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/module-enrichment.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/module-ownership.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/routes.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/stack-graph.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/config.mjs",
+      "to": "scripts/lib/code-map-output.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/config.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/config.mjs",
+      "to": "scripts/module-map/lib/auto-detect.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/config.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/detection/derive-modules.mjs",
+      "to": "scripts/module-map/lib/detection/metrics.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/detection/derive-modules.mjs",
+      "to": "scripts/module-map/lib/detection/partitions.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/detection/derive-modules.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/detection/derive-modules.test.mjs",
+      "to": "scripts/module-map/lib/detection/derive-modules.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/detection/metrics.test.mjs",
+      "to": "scripts/module-map/lib/detection/metrics.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/discover-modules.mjs",
+      "to": "scripts/module-map/lib/auto-detect.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/discover-modules.mjs",
+      "to": "scripts/module-map/lib/detection/derive-modules.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/discover-modules.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/discover-modules.mjs",
+      "to": "scripts/module-map/lib/stack-graph.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/discover-modules.mjs",
+      "to": "scripts/module-map/lib/stack-profiles/index.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/docs.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/doctor.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/doctor.mjs",
+      "to": "scripts/module-map/lib/config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/doctor.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/embed.mjs",
+      "to": "scripts/lib/write-artifact.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/embed.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/embed.mjs",
+      "to": "scripts/module-map/lib/summarize.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/migrate.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/migrate.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/module-deps.mjs",
+      "to": "scripts/module-map/lib/stack-graph.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/module-enrichment.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/module-enrichment.mjs",
+      "to": "scripts/module-map/lib/module-ownership.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/pin.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/render.mjs",
+      "to": "scripts/module-map/lib/node-organization.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/render.mjs",
+      "to": "scripts/module-map/lib/summarize.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/repo-files.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/routes.mjs",
+      "to": "scripts/lib/endpoint-extractor.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-graph.mjs",
+      "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-graph.mjs",
+      "to": "scripts/code-map/lib/source-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-graph.mjs",
+      "to": "scripts/module-map/lib/adapters/index.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-graph.mjs",
+      "to": "scripts/module-map/lib/repo-files.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-profiles/index.mjs",
+      "to": "scripts/lib/go-mod.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-profiles/index.mjs",
+      "to": "scripts/lib/skip-dirs.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/stack-profiles/index.mjs",
+      "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/pre-push-regen.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/regen-if-source-changed.mjs",
+      "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    }
+  ],
+  "coverage": {
+    "scannedFileCount": 69,
+    "unsupportedFiles": [],
+    "disabledFiles": [],
+    "zeroSymbolFiles": [
+      "scripts/code-map/generate-code-map.mjs",
+      "scripts/code-map/generate-patterns.mjs",
+      "scripts/map-code/check-freshness.mjs",
+      "scripts/module-map/generate-module-map.mjs",
+      "scripts/module-map/install-git-hook.mjs",
+      "scripts/module-map/lib/adapters/csharp.mjs",
+      "scripts/module-map/lib/adapters/go.mjs",
+      "scripts/module-map/lib/adapters/python.mjs",
+      "scripts/module-map/lib/detection/derive-modules.test.mjs",
+      "scripts/module-map/lib/detection/metrics.test.mjs",
+      "scripts/module-map/lib/detection/types.mjs",
+      "scripts/module-map/pre-push-regen.mjs",
+      "scripts/module-map/regen-if-source-changed.mjs"
+    ],
+    "adapters": [
+      "typescript"
+    ],
+    "diagnostics": [],
+    "limitations": "Static source evidence only. Runtime calls, reflection, generated code, and nonliteral imports may be absent. Dependency edges identify files, not symbol callers.",
+    "unownedFiles": []
+  },
+  "moduleCount": 4,
   "modules": [
+    {
+      "id": "map-code",
+      "name": "map-code",
+      "root": "scripts/map-code",
+      "planningModule": "docs/code-map/modules/map-code.md",
+      "fileCount": 3,
+      "symbolCount": 2,
+      "endpointCount": 0
+    },
     {
       "id": "module-map",
       "name": "module-map",
       "root": "scripts/module-map",
       "planningModule": "docs/code-map/modules/module-map.md",
-      "fileCount": 28,
-      "symbolCount": 63,
+      "fileCount": 39,
+      "symbolCount": 65,
       "endpointCount": 0
     },
     {
@@ -1668,8 +2193,8 @@
       "name": "code-map",
       "root": "scripts/code-map",
       "planningModule": "docs/code-map/modules/code-map.md",
-      "fileCount": 13,
-      "symbolCount": 25,
+      "fileCount": 15,
+      "symbolCount": 26,
       "endpointCount": 0
     },
     {
@@ -1677,1294 +2202,9 @@
       "name": "lib",
       "root": "scripts/lib",
       "planningModule": "docs/code-map/modules/lib.md",
-      "fileCount": 10,
-      "symbolCount": 24,
+      "fileCount": 12,
+      "symbolCount": 29,
       "endpointCount": 0
-    }
-  ],
-  "symbols": [
-    {
-      "file": "scripts/code-map/lib/code-map-config.mjs",
-      "name": "SUPPORTED_LANGUAGES",
-      "kind": "const",
-      "line": 21,
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/code-map-config.mjs",
-      "name": "SOURCE_EXTENSIONS",
-      "kind": "const",
-      "line": 34,
-      "summary": "Extensions that drive file detection.",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/code-map-config.mjs",
-      "name": "loadCodeMapConfig",
-      "kind": "function",
-      "line": 93,
-      "signature": "export function loadCodeMapConfig(repoRoot)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/comment-extractor.mjs",
-      "name": "extractDocComment",
-      "kind": "function",
-      "line": 68,
-      "signature": "export function extractDocComment(source, lineNumber)",
-      "summary": "Scans backwards from a symbol's declaration line for a leading comment block (`//`, `/* … *​/`, `#`, `\"\"\"`) and extracts",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/file-header-comment.mjs",
-      "name": "extractFileHeaderComment",
-      "kind": "function",
-      "line": 117,
-      "signature": "export function extractFileHeaderComment(content)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/module-linker.mjs",
-      "name": "annotateCodeMapWithModules",
-      "kind": "function",
-      "line": 19,
-      "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
-      "summary": "Add module ownership to a code-map document and expose a flat symbol index.",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/catalog.mjs",
-      "name": "loadPatternCatalogs",
-      "kind": "function",
-      "line": 76,
-      "signature": "export function loadPatternCatalogs(repoRoot, config = {})",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/model.mjs",
-      "name": "loadJsonArtifact",
-      "kind": "function",
-      "line": 23,
-      "signature": "export function loadJsonArtifact(repoRoot, relPath, code)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/model.mjs",
-      "name": "buildPatternReport",
-      "kind": "function",
-      "line": 56,
-      "signature": "export function buildPatternReport(input)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/render.mjs",
-      "name": "renderPatternsMarkdown",
-      "kind": "function",
-      "line": 5,
-      "signature": "export function renderPatternsMarkdown(report)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/runtime-config.mjs",
-      "name": "loadPatternRuntimeConfig",
-      "kind": "function",
-      "line": 25,
-      "signature": "export function loadPatternRuntimeConfig(repoRoot)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/scanner.mjs",
-      "name": "partitionPatternEligibleFiles",
-      "kind": "function",
-      "line": 38,
-      "signature": "export function partitionPatternEligibleFiles(sourceFiles, patterns, languages)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/scanner.mjs",
-      "name": "runPatternScan",
-      "kind": "function",
-      "line": 86,
-      "signature": "export function runPatternScan(repoRoot, patterns, eligibleFiles)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/temp-rules.mjs",
-      "name": "writeTempAstGrepConfig",
-      "kind": "function",
-      "line": 22,
-      "signature": "export function writeTempAstGrepConfig(patterns)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/patterns/temp-rules.mjs",
-      "name": "cleanupTempAstGrepConfig",
-      "kind": "function",
-      "line": 58,
-      "signature": "export function cleanupTempAstGrepConfig(tempConfig)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/signature-extractor.mjs",
-      "name": "extractSignature",
-      "kind": "function",
-      "line": 63,
-      "signature": "export function extractSignature(source, lineNumber)",
-      "summary": "Extracts the declaration signature starting at the given line.",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-files.mjs",
-      "name": "SOURCE_SCAN_SKIP_DIRS",
-      "kind": "const",
-      "line": 9,
-      "signature": "export const SOURCE_SCAN_SKIP_DIRS = new Set([ ...BASE_SKIP_DIRS, '.venv', 'venv', '__pycache__', ]);",
-      "summary": "Shared base infra/test-output dirs (includes fixtures/__fixtures__ so scans no longer leak fixture endpoints) plus Pytho",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-files.mjs",
-      "name": "isInSkippedDir",
-      "kind": "function",
-      "line": 47,
-      "signature": "export function isInSkippedDir(repoRelativePath)",
-      "summary": "Whether a repo-relative path sits under a directory the source walkers skip.",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-files.mjs",
-      "name": "sourceFilesInRoots",
-      "kind": "function",
-      "line": 59,
-      "signature": "export function sourceFilesInRoots(repoRoot, roots)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-files.mjs",
-      "name": "languageForFile",
-      "kind": "function",
-      "line": 81,
-      "signature": "export function languageForFile(filePath)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-files.mjs",
-      "name": "isLanguageEnabled",
-      "kind": "function",
-      "line": 94,
-      "signature": "export function isLanguageEnabled(filePath, languages)",
-      "summary": "True when the file maps to a configured language.",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-files.mjs",
-      "name": "isKnownSourceFile",
-      "kind": "function",
-      "line": 103,
-      "signature": "export function isKnownSourceFile(filePath)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-lines.mjs",
-      "name": "splitSourceLines",
-      "kind": "function",
-      "line": 24,
-      "signature": "export function splitSourceLines(content)",
-      "summary": "Split file content the way every extractor expects it: on `\\n` only, so line numbers stay 1:1 with ast-grep's and a trai",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-lines.mjs",
-      "name": "resolveSourceLines",
-      "kind": "function",
-      "line": 32,
-      "signature": "export function resolveSourceLines(source)",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/code-map/lib/source-lines.mjs",
-      "name": "createSourceFileCache",
-      "kind": "function",
-      "line": 46,
-      "signature": "export function createSourceFileCache( readSource = (filePath) => readFileSync(filePath, 'utf8') )",
-      "summary": "Create a per-build source reader.",
-      "moduleId": "code-map",
-      "moduleName": "code-map",
-      "moduleRoot": "scripts/code-map",
-      "planningModule": "docs/code-map/modules/code-map.md"
-    },
-    {
-      "file": "scripts/lib/code-map-output.mjs",
-      "name": "DEFAULT_CODE_MAP_OUTPUT",
-      "kind": "const",
-      "line": 4,
-      "signature": "export const DEFAULT_CODE_MAP_OUTPUT = 'docs/code-map/code-map.json'; /** * Resolve the shared code-map output contract used by both generators. * * @param",
-      "summary": "Fallback code-map location when neither config file names one.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/code-map-output.mjs",
-      "name": "resolveCodeMapOutput",
-      "kind": "function",
-      "line": 14,
-      "signature": "export function resolveCodeMapOutput(raw, planProductPaths, options = {})",
-      "summary": "Resolve the shared code-map output contract used by both generators.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/endpoint-extractor.mjs",
-      "name": "extractEndpoints",
-      "kind": "function",
-      "line": 102,
-      "signature": "export function extractEndpoints(repoRoot, files)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/endpoint-extractor.mjs",
-      "name": "nextRouteSegment",
-      "kind": "function",
-      "line": 462,
-      "signature": "export function nextRouteSegment(seg)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/go-mod.mjs",
-      "name": "isExcludedGoFile",
-      "kind": "function",
-      "line": 23,
-      "signature": "export function isExcludedGoFile(repoRelPath)",
-      "summary": "The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/go-mod.mjs",
-      "name": "readGoWorkMembers",
-      "kind": "function",
-      "line": 42,
-      "signature": "export function readGoWorkMembers(repoRoot)",
-      "summary": "Parses `use` directives from a root go.work file: every block form (`use ( ...",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/go-mod.mjs",
-      "name": "readGoModulePath",
-      "kind": "function",
-      "line": 78,
-      "signature": "export function readGoModulePath(repoRoot, dir)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/plugin-root.mjs",
-      "name": "isPlanProductPluginRoot",
-      "kind": "function",
-      "line": 33,
-      "signature": "export function isPlanProductPluginRoot(dir)",
-      "summary": "True when an environment-provided directory is a plan-product plugin root: it carries Claude's plugin manifest or a pack",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/plugin-root.mjs",
-      "name": "findPluginRoot",
-      "kind": "function",
-      "line": 62,
-      "signature": "export function findPluginRoot(startDir)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/repo-paths.mjs",
-      "name": "isPathContained",
-      "kind": "function",
-      "line": 9,
-      "signature": "export function isPathContained(root, candidate)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/repo-paths.mjs",
-      "name": "resolveRepoContainedPath",
-      "kind": "function",
-      "line": 28,
-      "signature": "export function resolveRepoContainedPath(repoRoot, configuredPath, label)",
-      "summary": "Resolve a configured path and reject escapes from the repository.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/repo-paths.mjs",
-      "name": "resolveRepoRelativePath",
-      "kind": "function",
-      "line": 65,
-      "signature": "export function resolveRepoRelativePath(repoRoot, configuredPath, label)",
-      "summary": "Validate a configured path and return its normalized repo-relative form.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/resolve-ast-grep.mjs",
-      "name": "astGrepPlatformPackage",
-      "kind": "function",
-      "line": 25,
-      "signature": "export function astGrepPlatformPackage()",
-      "summary": "The @ast-grep/cli optionalDependency holding this platform's prebuilt binary.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/resolve-ast-grep.mjs",
-      "name": "resolveAstGrepBinary",
-      "kind": "function",
-      "line": 130,
-      "signature": "export function resolveAstGrepBinary(options)",
-      "summary": "Resolve ast-grep binary shipped with the plan-product plugin.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/sg-result.mjs",
-      "name": "parseScanJson",
-      "kind": "function",
-      "line": 24,
-      "signature": "export function parseScanJson(stdout)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/sg-result.mjs",
-      "name": "symbolNameFromMatch",
-      "kind": "function",
-      "line": 37,
-      "signature": "export function symbolNameFromMatch(match)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/skip-dirs.mjs",
-      "name": "BASE_SKIP_DIRS",
-      "kind": "const",
-      "line": 16,
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/usage.mjs",
-      "name": "loadUsageSettings",
-      "kind": "function",
-      "line": 25,
-      "signature": "export function loadUsageSettings(repoRoot, env = process.env)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/usage.mjs",
-      "name": "recordUsageEvent",
-      "kind": "function",
-      "line": 103,
-      "signature": "export function recordUsageEvent(repoRoot, event, options = {})",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/usage.mjs",
-      "name": "readUsageEvents",
-      "kind": "function",
-      "line": 133,
-      "signature": "export function readUsageEvents(repoRoot, options = {})",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/usage.mjs",
-      "name": "writeEffectivenessReport",
-      "kind": "function",
-      "line": 166,
-      "signature": "export function writeEffectivenessReport(repoRoot, options = {})",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/usage.mjs",
-      "name": "buildEffectivenessModel",
-      "kind": "function",
-      "line": 195,
-      "signature": "export function buildEffectivenessModel(repoRoot, input)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/usage.mjs",
-      "name": "renderEffectivenessMarkdown",
-      "kind": "function",
-      "line": 254,
-      "signature": "export function renderEffectivenessMarkdown(model)",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/lib/write-artifact.mjs",
-      "name": "writeArtifactIfChanged",
-      "kind": "function",
-      "line": 176,
-      "signature": "export function writeArtifactIfChanged(filePath, content)",
-      "summary": "Write `content` to `filePath` unless the only difference from what is already there is a generation timestamp.",
-      "moduleId": "lib",
-      "moduleName": "lib",
-      "moduleRoot": "scripts/lib",
-      "planningModule": "docs/code-map/modules/lib.md"
-    },
-    {
-      "file": "scripts/map-code/generate.mjs",
-      "name": "mapCodeOutputs",
-      "kind": "function",
-      "line": 98,
-      "signature": "export function mapCodeOutputs(repoRoot)"
-    },
-    {
-      "file": "scripts/module-map/lib/adapters/index.mjs",
-      "name": "selectAdapter",
-      "kind": "function",
-      "line": 34,
-      "signature": "export function selectAdapter(repoRoot, forcedId)",
-      "summary": "Select an adapter for the repo.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/adapters/sg-scan.mjs",
-      "name": "runBatchedScan",
-      "kind": "function",
-      "line": 39,
-      "signature": "export function runBatchedScan(binary, repoRoot, absPaths, ruleArgs)",
-      "summary": "Run `ast-grep scan` over the given absolute file paths, batching the argv so no single invocation exceeds the OS command",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/adapters/sg-scan.mjs",
-      "name": "batchByArgLength",
-      "kind": "function",
-      "line": 67,
-      "signature": "export function batchByArgLength(absPaths, maxLen = MAX_SCAN_ARG_LENGTH)",
-      "summary": "Split absolute file paths into batches whose joined length stays under maxLen, so no single spawn exceeds the OS command",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/architecture.mjs",
-      "name": "loadArchitectureModel",
-      "kind": "function",
-      "line": 35,
-      "signature": "export function loadArchitectureModel(repoRoot, config)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/architecture.mjs",
-      "name": "normalizeArchitectureModel",
-      "kind": "function",
-      "line": 64,
-      "signature": "export function normalizeArchitectureModel(raw)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/architecture.mjs",
-      "name": "renderSystemArchitecture",
-      "kind": "function",
-      "line": 114,
-      "signature": "export function renderSystemArchitecture(model, options = {})",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/architecture.mjs",
-      "name": "renderArchitectureTree",
-      "kind": "function",
-      "line": 181,
-      "signature": "export function renderArchitectureTree(model)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/architecture.mjs",
-      "name": "sortModulesByDependencyCount",
-      "kind": "function",
-      "line": 211,
-      "signature": "export function sortModulesByDependencyCount(modules)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/architecture.mjs",
-      "name": "preserveMarkedRegion",
-      "kind": "function",
-      "line": 267,
-      "signature": "export function preserveMarkedRegion( existingMarkdown, regionName, fallbackMarkdown, options = {} )",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/auto-detect.mjs",
-      "name": "DEFAULT_DOC_CANDIDATES",
-      "kind": "const",
-      "line": 5,
-      "signature": "export const DEFAULT_DOC_CANDIDATES",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/auto-detect.mjs",
-      "name": "MODULE_GLOB_CANDIDATES",
-      "kind": "const",
-      "line": 53,
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/auto-detect.mjs",
-      "name": "readProjectName",
-      "kind": "function",
-      "line": 64,
-      "signature": "export function readProjectName(repoRoot)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/auto-detect.mjs",
-      "name": "detectCodeMapRoots",
-      "kind": "function",
-      "line": 84,
-      "signature": "export function detectCodeMapRoots(repoRoot)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/auto-detect.mjs",
-      "name": "detectApiRoutes",
-      "kind": "function",
-      "line": 104,
-      "signature": "export function detectApiRoutes(repoRoot)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/auto-detect.mjs",
-      "name": "detectSrcChildModules",
-      "kind": "function",
-      "line": 186,
-      "signature": "export function detectSrcChildModules(repoRoot)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/bootstrap.mjs",
-      "name": "bootstrapRepo",
-      "kind": "function",
-      "line": 118,
-      "signature": "export function bootstrapRepo(repoRoot, options = {})",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/build.mjs",
-      "name": "buildPlanProductModel",
-      "kind": "function",
-      "line": 48,
-      "signature": "export function buildPlanProductModel(repoRoot, config, codeMapInput)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/config.mjs",
-      "name": "loadPlanProductConfig",
-      "kind": "function",
-      "line": 49,
-      "signature": "export function loadPlanProductConfig(repoRoot, opts = {})",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/config.mjs",
-      "name": "validateRequiredDocs",
-      "kind": "function",
-      "line": 153,
-      "signature": "export function validateRequiredDocs(repoRoot, config)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/config.mjs",
-      "name": "resolveDocPath",
-      "kind": "function",
-      "line": 175,
-      "signature": "export function resolveDocPath(repoRoot, candidates)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/config.mjs",
-      "name": "writeStarterConfigs",
-      "kind": "function",
-      "line": 188,
-      "signature": "export function writeStarterConfigs(repoRoot)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/derive-modules.mjs",
-      "name": "deriveModules",
-      "kind": "function",
-      "line": 55,
-      "signature": "export function deriveModules(repoRoot, fileGraph, options = {})",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/metrics.mjs",
-      "name": "internalExternalRatio",
-      "kind": "function",
-      "line": 43,
-      "signature": "export function internalExternalRatio(edges, assign)",
-      "summary": "internal / (internal + external).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/metrics.mjs",
-      "name": "modularity",
-      "kind": "function",
-      "line": 56,
-      "signature": "export function modularity(edges, assign)",
-      "summary": "Newman modularity Q for an assignment (weighted, undirected).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/metrics.mjs",
-      "name": "cohesion",
-      "kind": "function",
-      "line": 97,
-      "signature": "export function cohesion(edges, assign, moduleId)",
-      "summary": "Cohesion of one module: internal weight / (internal + boundary).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/metrics.mjs",
-      "name": "coupling",
-      "kind": "function",
-      "line": 121,
-      "signature": "export function coupling(edges, assign, modA, modB)",
-      "summary": "Coupling between two modules: total cross-edge weight between them.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/partitions.mjs",
-      "name": "DEFAULT_EXCLUDE",
-      "kind": "const",
-      "line": 8,
-      "signature": "export const DEFAULT_EXCLUDE = new Set([ 'bin', 'obj', 'node_modules', '.git', 'Properties', 'dist', 'build', '.next', 'logs', '.vs', '.worktrees', ]);",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/partitions.mjs",
-      "name": "topLevelAreas",
-      "kind": "function",
-      "line": 24,
-      "signature": "export function topLevelAreas(files, exclude = DEFAULT_EXCLUDE)",
-      "summary": "Immediate child directories of the repo root that contain a file (e.g.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/partitions.mjs",
-      "name": "filesInArea",
-      "kind": "function",
-      "line": 43,
-      "signature": "export function filesInArea(files, area, exclude = DEFAULT_EXCLUDE)",
-      "summary": "Files under `area`, dropping any whose path crosses an excluded directory.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/partitions.mjs",
-      "name": "maxDepth",
-      "kind": "function",
-      "line": 55,
-      "signature": "export function maxDepth(areaFiles)",
-      "summary": "Deepest directory nesting below the area (excluding the filename).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/partitions.mjs",
-      "name": "partitionAtDepth",
-      "kind": "function",
-      "line": 71,
-      "signature": "export function partitionAtDepth(areaFiles, area, depth)",
-      "summary": "Assign each area file to the module rooted `depth` segments below the area.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/detection/partitions.mjs",
-      "name": "sizeByModule",
-      "kind": "function",
-      "line": 87,
-      "signature": "export function sizeByModule(partition)",
-      "summary": "File count per module root for an assignment.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/discover-modules.mjs",
-      "name": "discoverModules",
-      "kind": "function",
-      "line": 30,
-      "signature": "export function discoverModules(repoRoot, config, stack)",
-      "summary": "adapter graph reused by cohesion detection; extracted on demand if omitted.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/discover-modules.mjs",
-      "name": "applyPins",
-      "kind": "function",
-      "line": 91,
-      "signature": "export function applyPins(discovered, config)",
-      "summary": "Apply `modules.pinned[]` to a discovered module list from any discovery path.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/discover-modules.mjs",
-      "name": "packageIdCandidates",
-      "kind": "function",
-      "line": 487,
-      "signature": "export function packageIdCandidates(packageName, relDir)",
-      "summary": "Candidate module ids for one package, most preferred first: the unscoped package name, then `scope-name` for a scoped pa",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/discover-modules.mjs",
-      "name": "assignUniquePackageIds",
-      "kind": "function",
-      "line": 518,
-      "signature": "export function assignUniquePackageIds(entries, config)",
-      "summary": "Give every package a distinct id.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/discover-modules.mjs",
-      "name": "parseNavEntries",
-      "kind": "function",
-      "line": 603,
-      "signature": "export function parseNavEntries(navPath)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/docs.mjs",
-      "name": "loadProjectBrief",
-      "kind": "function",
-      "line": 9,
-      "signature": "export function loadProjectBrief(repoRoot, config)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/docs.mjs",
-      "name": "extractConventionsFromTechStack",
-      "kind": "function",
-      "line": 49,
-      "signature": "export function extractConventionsFromTechStack(techStackExcerpt)",
-      "summary": "Pull bullet lines from tech-stack excerpt for planner conventions.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/doctor.mjs",
-      "name": "runDoctor",
-      "kind": "function",
-      "line": 193,
-      "signature": "export function runDoctor(repoRoot, options = {})",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/doctor.mjs",
-      "name": "formatDoctorReport",
-      "kind": "function",
-      "line": 264,
-      "signature": "export function formatDoctorReport(report)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/embed.mjs",
-      "name": "renderModuleMapTable",
-      "kind": "function",
-      "line": 17,
-      "signature": "export function renderModuleMapTable(modules)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/embed.mjs",
-      "name": "describeMarkerDamage",
-      "kind": "function",
-      "line": 59,
-      "signature": "export function describeMarkerDamage(original)",
-      "summary": "Describes why a file's markers cannot be rewritten safely, or null when the markers are either absent (append) or a sing",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/embed.mjs",
-      "name": "embedModuleMap",
-      "kind": "function",
-      "line": 174,
-      "signature": "export function embedModuleMap(repoRoot, tableMarkdown, generated, options = {})",
-      "summary": "Embeds the current module capability table into CLAUDE.md and AGENTS.md (whichever exist at the repo root).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/logger.mjs",
-      "name": "createLogger",
-      "kind": "function",
-      "line": 57,
-      "signature": "export function createLogger(bindings = {})",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/migrate.mjs",
-      "name": "runMigrate",
-      "kind": "function",
-      "line": 222,
-      "signature": "export function runMigrate(repoRoot, options = {})",
-      "summary": "Normalize generated code-map artifact names under the configured output dir (default docs/code-map/).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/migrate.mjs",
-      "name": "formatMigrateReport",
-      "kind": "function",
-      "line": 266,
-      "signature": "export function formatMigrateReport(actions)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/module-deps.mjs",
-      "name": "buildModuleEdges",
-      "kind": "function",
-      "line": 13,
-      "signature": "export function buildModuleEdges(repoRoot, modules, config, stack)",
-      "summary": "adapter graph; falls back to a fresh extraction when omitted.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/module-enrichment.mjs",
-      "name": "enrichModule",
-      "kind": "function",
-      "line": 351,
-      "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/module-ownership.mjs",
-      "name": "normalizeRoot",
-      "kind": "function",
-      "line": 15,
-      "signature": "export function normalizeRoot(root)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/module-ownership.mjs",
-      "name": "ownerRoot",
-      "kind": "function",
-      "line": 40,
-      "signature": "export function ownerRoot(filePath, roots)",
-      "summary": "The most-specific (longest) root that contains `filePath`, or null.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/module-ownership.mjs",
-      "name": "ownsFile",
-      "kind": "function",
-      "line": 65,
-      "signature": "export function ownsFile(moduleRoot, filePath, allRoots)",
-      "summary": "Whether `moduleRoot` is the disjoint owner of `filePath` among `allRoots`.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/node-organization.mjs",
-      "name": "classifyNodeOrganization",
-      "kind": "function",
-      "line": 95,
-      "signature": "export function classifyNodeOrganization(modules)",
-      "summary": "Group modules by their Node/TypeScript role in canonical display order, omitting roles with no modules.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/pin.mjs",
-      "name": "pinModule",
-      "kind": "function",
-      "line": 37,
-      "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
-      "summary": "Eject a derived module into `modules.pinned[]`.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/pin.mjs",
-      "name": "unpinModule",
-      "kind": "function",
-      "line": 74,
-      "signature": "export function unpinModule(repoRoot, moduleId)",
-      "summary": "Remove a pin by id or root, returning its subtree to auto-derivation.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/project-root.mjs",
-      "name": "findProjectRoot",
-      "kind": "function",
-      "line": 8,
-      "signature": "export function findProjectRoot(startDir = process.cwd())",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/render.mjs",
-      "name": "renderIndex",
-      "kind": "function",
-      "line": 8,
-      "signature": "export function renderIndex(model, config)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/render.mjs",
-      "name": "renderModuleScope",
-      "kind": "function",
-      "line": 143,
-      "signature": "export function renderModuleScope(model, mod)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/repo-files.mjs",
-      "name": "listRepoFiles",
-      "kind": "function",
-      "line": 31,
-      "signature": "export function listRepoFiles(repoRoot, limit = 20000)",
-      "summary": "Repo-relative file list for adapter walks (build/IDE dirs skipped).",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/routes.mjs",
-      "name": "discoverHttpRoutes",
-      "kind": "function",
-      "line": 29,
-      "signature": "export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/stack-graph.mjs",
-      "name": "extractStackGraph",
-      "kind": "function",
-      "line": 20,
-      "signature": "export function extractStackGraph(repoRoot, config)",
-      "summary": "Select the stack-graph adapter for the repo and run a single extraction.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/stack-profiles/index.mjs",
-      "name": "detectStackModules",
-      "kind": "function",
-      "line": 324,
-      "signature": "export function detectStackModules(repoRoot, config)",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
-    },
-    {
-      "file": "scripts/module-map/lib/summarize.mjs",
-      "name": "summarizeDescription",
-      "kind": "function",
-      "line": 15,
-      "signature": "export function summarizeDescription(description, fallbackId, lineLen = 120, maxLines = 2)",
-      "summary": "Builds the module summary shown in the index and embedded module-map tables.",
-      "moduleId": "module-map",
-      "moduleName": "module-map",
-      "moduleRoot": "scripts/module-map",
-      "planningModule": "docs/code-map/modules/module-map.md"
     }
   ]
 }

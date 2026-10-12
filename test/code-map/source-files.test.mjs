@@ -64,8 +64,8 @@ test('sourceFilesInRoots and isInSkippedDir agree on the same tree', () => {
   }
 });
 
-test('Java is not a code-map language', () => {
-  assert.equal(languageForFile('Main.java'), null);
+test('file extensions identify supported languages', () => {
+  assert.equal(languageForFile('notes.txt'), null);
   assert.equal(languageForFile('main.go'), 'Go');
   assert.equal(languageForFile('app.tsx'), 'TypeScript');
 });

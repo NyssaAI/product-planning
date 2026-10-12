@@ -54,6 +54,13 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
   const routeFileName = config.apiRoutes.routeFile;
   const routeFiles = [];
   walkFiles(apiRoot, routeFileName, config.apiRoutes.root, routeFiles);
+  // A generated inventory is authoritative; route fallback must not expand it.
+  if (!Array.isArray(codeMapInput) && codeMapInput.schemaVersion === '2.0') {
+    const allowed = new Set(codeMapFiles.map(file => file.path));
+    for (let i = routeFiles.length - 1; i >= 0; i--) {
+      if (!allowed.has(path.relative(repoRoot, routeFiles[i]).replace(/\\/g, '/'))) routeFiles.splice(i, 1);
+    }
+  }
 
   const methodsByFile = new Map();
   const routeFilePaths = new Set(
@@ -91,6 +98,12 @@ export function discoverHttpRoutes(repoRoot, config, modules, codeMapInput) {
         moduleId: attributeRoute(rel, apiPath, modules, moduleIds),
       };
     })
+    .flatMap(route => {
+      const covered = endpointRoutes.filter(endpoint => endpoint.kind === route.kind && endpoint.file === route.file && endpoint.path === route.path);
+      if (covered.length === 0) return [route];
+      const methods = route.methods.filter(method => !covered.some(endpoint => endpoint.methods.includes(method)));
+      return methods.length > 0 ? [{ ...route, methods }] : [];
+    })
     .sort((a, b) => a.path.localeCompare(b.path));
 
   return dedupeRoutes([...endpointRoutes, ...fileRoutes]);
@@ -111,6 +124,7 @@ function discoverEndpointRoutes(modules, endpoints) {
       continue;
     }
     normalized.push({
+      ...item,
       kind: item.kind,
       path: item.path,
       methods: item.method ? [item.method] : [],
@@ -143,7 +157,10 @@ function dedupeRoutes(routes) {
       route.methods.join(','),
       route.path ?? '',
       route.name ?? '',
+      route.pathExpression ?? '',
+      route.nameExpression ?? '',
       route.file,
+      route.line ?? '',
     ].join('\0');
     if (!byKey.has(key)) {
       byKey.set(key, route);

@@ -34,6 +34,17 @@ test('loadPatternCatalogs loads bundled JSON catalogs', () => {
   assert.equal(result.patterns.every((pattern) => pattern.source.endsWith('.json')), true);
 });
 
+test('shipped and bootstrap family catalogs load and label name evidence as intent-only', () => {
+  for (const catalog of ['.plan-product/patterns/library.json', '.plan-product/templates/pattern-library.json']) {
+    const result = loadPatternCatalogs(process.cwd(), { catalogs: [catalog] });
+    const families = result.patterns.filter((pattern) => pattern.familyId);
+    assert.ok(families.length > 0);
+    assert.equal(families.every((pattern) => pattern.confidence === 'intent-only'), true);
+    assert.equal(families.every((pattern) => !pattern.includeInHeadline), true);
+    assert.ok(families.find((pattern) => pattern.familyId === 'strategy').reviewChecks.length > 0);
+  }
+});
+
 test('loadPatternCatalogs merges repo-defined catalogs without overriding ids', () => {
   const dir = tempProject();
   writeFileSync(

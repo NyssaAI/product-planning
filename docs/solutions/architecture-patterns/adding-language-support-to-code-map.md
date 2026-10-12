@@ -101,7 +101,7 @@ Following the recipe in order avoids re-discovering these the hard way on the ne
 ## When to Apply
 
 - Adding support for a new language in `scripts/module-map/lib/adapters/`.
-- Adding new ast-grep symbol rules under `scripts/code-map/rules/` for a language that doesn't yet have adapter/profile support (Java currently ships rules with no adapter — see the comment in `adapters/index.mjs`).
+- Adding new ast-grep symbol rules under `scripts/code-map/rules/` for a language that doesn't yet have adapter/profile support.
 - Adding a new framework's endpoint regex to an existing language branch in `endpoint-extractor.mjs`.
 - Reviewing a PR that claims to "add a language" — check it hit all seven touchpoints, especially the shared exclusion predicate (step 3) and direct profile tests (step 5), since both are easy to silently skip.
 

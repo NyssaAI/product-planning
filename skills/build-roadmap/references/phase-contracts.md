@@ -44,7 +44,8 @@ Plan this unit:
 Read the feature guide at <feature guide path> and, when it exists, the roadmap's Verify: line;
 the plan's verification contract must make that checkpoint demonstrable. Record the applicable
 dev-standards categories in the technical design. Prefer the in-scope module docs under the
-configured code-map root (<code-map root>/modules/) for repo context before reading source.
+configured code-map root (<code-map root>/modules/) when they help orient the task. Use targeted
+source reading directly when sufficient; maps are optional evidence, not a prerequisite.
 <when revising: Deepen the existing plan at <plan path>. Resolve these blocking review findings:
 <findings>>
 

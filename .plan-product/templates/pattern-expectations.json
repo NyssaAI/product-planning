@@ -5,49 +5,42 @@
       "id": "integration-boundary",
       "moduleTags": ["integration", "external-api", "sdk", "client", "gateway"],
       "expectedPatterns": ["adapter", "facade", "error-handling-policy", "configuration-boundary"],
-      "reviewSignals": ["direct-external-api-leak"],
       "why": "External services should be isolated behind local boundaries."
     },
     {
       "id": "data-boundary",
       "moduleTags": ["data", "database", "persistence", "storage", "repository"],
       "expectedPatterns": ["repository", "dto-mapper", "error-handling-policy"],
-      "reviewSignals": ["direct-database-leak"],
       "why": "Persistence modules should make data access explicit and keep raw storage details contained."
     },
     {
       "id": "business-rule-module",
       "moduleTags": ["business-rules", "policy", "pricing", "rules", "domain"],
       "expectedPatterns": ["strategy", "validation-boundary", "error-handling-policy"],
-      "reviewSignals": ["large-conditional-dispatch"],
       "why": "Business rule modules often benefit from named policies and replaceable strategies."
     },
     {
       "id": "workflow-module",
       "moduleTags": ["workflow", "pipeline", "orchestration", "handler", "task"],
       "expectedPatterns": ["chain-of-responsibility", "command", "service-layer", "error-handling-policy"],
-      "reviewSignals": ["large-conditional-dispatch"],
       "why": "Workflow modules should make execution steps and action boundaries visible."
     },
     {
       "id": "transport-boundary",
       "moduleTags": ["controller", "route", "api", "http", "cli", "mcp"],
       "expectedPatterns": ["service-layer", "validation-boundary", "dto-mapper", "error-handling-policy"],
-      "reviewSignals": ["mixed-transport-and-domain"],
       "why": "Transport modules should validate and delegate rather than owning business logic."
     },
     {
       "id": "bootstrap-composition",
       "moduleTags": ["bootstrap", "config", "composition", "provider", "container"],
       "expectedPatterns": ["dependency-injection", "configuration-boundary", "factory"],
-      "reviewSignals": ["scattered-config-access"],
       "why": "Bootstrap modules should centralize construction, dependencies, and runtime configuration."
     },
     {
       "id": "observability-module",
       "moduleTags": ["logging", "observability", "metrics", "tracing", "diagnostics"],
       "expectedPatterns": ["logging-observability-boundary", "decorator", "facade"],
-      "reviewSignals": [],
       "why": "Observability modules should make cross-cutting diagnostics consistent and reusable."
     }
   ]
