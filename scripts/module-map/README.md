@@ -9,9 +9,9 @@ Maintainer reference for the code-map and module-map generator scripts bundled w
 
 The implementation still lives under `scripts/code-map/` and `scripts/module-map/`.
 
-## Required Product Docs
+## Optional Product Docs
 
-Defaults prefer docs-based plan-product files:
+Mapping works from source without planning documents. When present, these documents add product context:
 
 | Document | Default candidates |
 |----------|--------------------|
@@ -52,8 +52,9 @@ Feature context should use `docs/features.md`.
 | `outputDir` | Directory for module-map artifacts. |
 | `codeMapOutput` / `output` | Code-map JSON path. |
 | `roots` | Source roots scanned by the code-map generator. |
-| `sourceRoots` | Source roots watched by auto-regeneration. |
-| `autoRegenerate` | Set to `false` to disable the generated hook. |
+| `sourceRoots` | Legacy setting, no longer read. Use `roots` for both scanning and freshness checks. |
+| `autoRegenerate` | Set to `false` to disable the legacy background regeneration wrapper. |
+| `prePushRegenerate` | Set to `false` to disable regeneration by an installed Git pre-push hook. |
 | `docs.product`, `docs.features`, `docs.techStack` | Candidate product-document paths. |
 | `briefMaxCharsPerDoc` | Maximum excerpt size per product document. |
 | `modules.discover` | `auto`, `workspaces`, `glob`, or `manual`. |
@@ -77,7 +78,6 @@ Replace `${PLUGIN_ROOT}` with `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE
 
 ```bash
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --init --write-scripts
-node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" -i --with-project-manifest
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --doctor
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --doctor --runtimes
 node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --migrate
@@ -94,6 +94,8 @@ node "${PLUGIN_ROOT}/scripts/module-map/generate-module-map.mjs" --unpin <module
 ```
 
 `--init --write-scripts` adds npm scripts named `map-code`, `map-architecture`, and `find-code-patterns` to consumer repos.
+
+The optional `--with-project-manifest` flag requires an additional project-manifest template that this plugin does not bundle. Ordinary initialization does not use it.
 
 Environment controls: `CODE_MAP_INCLUDE_COMMENTS=1` includes file headers; `LOG_LEVEL=debug` or `DEBUG_PLAN_PRODUCT=1` enables verbose generator logs; `JAMAYNOR_HOME` participates in bundled ast-grep resolution. Plugin roots can be supplied through `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, or `CURSOR_PLUGIN_ROOT`.
 

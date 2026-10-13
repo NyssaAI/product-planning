@@ -45,8 +45,8 @@ export function discoverModules(repoRoot, config, stack) {
   }
 
   if (discover === 'glob') {
-    const pattern = config.modules.globs?.[0] ?? 'packages/*';
-    return mergeManual(discoverFromGlob(repoRoot, pattern, config), config);
+    const patterns = config.modules.globs?.length ? config.modules.globs : ['packages/*'];
+    return mergeManual(discoverFromGlob(repoRoot, patterns, config), config);
   }
 
   return mergeManual(discoverAuto(repoRoot, config, stack), config);
@@ -397,11 +397,12 @@ function discoverFromWorkspaces(repoRoot, config) {
 
 /**
  * @param {string} repoRoot
- * @param {string} pattern
+ * @param {string | string[]} pattern
  * @param {import('./config.mjs').PlanProductConfig} config
  */
 function discoverFromGlob(repoRoot, pattern, config) {
-  const dirs = expandWorkspacePattern(repoRoot, pattern);
+  const patterns = Array.isArray(pattern) ? pattern : [pattern];
+  const dirs = [...new Set(patterns.flatMap(item => expandWorkspacePattern(repoRoot, item)))];
   const entries = dirs
     .filter((dir) => existsSync(path.join(dir, 'package.json')))
     .map((dir) =>

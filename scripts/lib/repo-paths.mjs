@@ -1,4 +1,4 @@
-import { existsSync, realpathSync } from 'node:fs';
+import { lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 
 /**
@@ -36,14 +36,21 @@ export function resolveRepoContainedPath(repoRoot, configuredPath, label) {
   }
   const realRoot = realpathSync(root);
   let existingAncestor = resolved;
-  while (!existsSync(existingAncestor)) {
+  // lstat sees dangling links. Treating them as absent lets later writes follow
+  // the link and create its missing target outside the repository.
+  while (!lstatSync(existingAncestor, { throwIfNoEntry: false })) {
     const parent = path.dirname(existingAncestor);
     if (parent === existingAncestor) {
       break;
     }
     existingAncestor = parent;
   }
-  const realAncestor = realpathSync(existingAncestor);
+  let realAncestor;
+  try {
+    realAncestor = realpathSync(existingAncestor);
+  } catch (error) {
+    throw new Error(`${label} cannot resolve a path within the project root: ${configuredPath}`, { cause: error });
+  }
   const realTarget = path.resolve(
     realAncestor,
     path.relative(existingAncestor, resolved)

@@ -5,7 +5,6 @@
   "codeMapOutput": "docs/code-map/code-map.json",
   "projectName": "Example product",
   "roots": ["src"],
-  "sourceRoots": ["src", "app", "packages"],
   "autoRegenerate": true,
   "docs": {
     "product": ["docs/product.md"],

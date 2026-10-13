@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0",
-  "generated": "2026-10-12T01:45:30.716Z",
+  "generated": "2026-10-13T20:44:17.909Z",
   "project": {
     "name": "plan-product",
     "docs": {
@@ -73,7 +73,7 @@
         "map-code"
       ],
       "routeCount": 0,
-      "symbolCount": 65,
+      "symbolCount": 66,
       "planningModule": "docs/code-map/modules/module-map.md",
       "description": "Module-graph generator: module discovery, enrichment, rendering, doctor, and bootstrap.",
       "capabilities": [
@@ -168,7 +168,7 @@
     "field": "fileDependencies"
   },
   "coverage": {
-    "scannedFileCount": 69,
+    "scannedFileCount": 70,
     "unsupportedFiles": [],
     "disabledFiles": [],
     "zeroSymbolFiles": [
@@ -197,6 +197,6 @@
   "stats": {
     "moduleCount": 4,
     "routeCount": 0,
-    "codeMapSymbols": 122
+    "codeMapSymbols": 123
   }
 }

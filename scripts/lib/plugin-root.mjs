@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const PLUGIN_NAME = 'plan-product';
@@ -23,15 +23,17 @@ function readJsonQuietly(file) {
 
 /**
  * True when an environment-provided directory is a plan-product plugin root:
- * it carries Claude's plugin manifest or a package.json whose `name` is
- * plan-product. Other plugin manifests are not enough for an environment
- * override because they may belong to the invoking foreign plugin.
+ * a supported plugin manifest or package.json must identify plan-product.
+ * A manifest's presence alone is insufficient: shared environment variables
+ * may point at the invoking foreign plugin.
  *
  * @param {string} dir
  * @returns {boolean}
  */
 export function isPlanProductPluginRoot(dir) {
-  if (existsSync(path.join(dir, '.claude-plugin', 'plugin.json'))) {
+  if (MANIFEST_DIRS.some(manifestDir =>
+    readJsonQuietly(path.join(dir, manifestDir, 'plugin.json'))?.name === PLUGIN_NAME
+  )) {
     return true;
   }
   const pkg = readJsonQuietly(path.join(dir, 'package.json'));
@@ -50,7 +52,7 @@ function warnIgnoredEnvRoot(key, raw) {
   warnedEnvRoots.add(marker);
   process.stderr.write(
     `plan-product: ignoring ${key}=${raw} — no plan-product plugin manifest ` +
-      '(.claude-plugin/plugin.json or package.json named plan-product) found there; ' +
+      '(supported plugin manifest or package.json named plan-product) found there; ' +
       'falling back to the script location\n'
   );
 }
@@ -79,11 +81,7 @@ export function findPluginRoot(startDir) {
 
   let dir = path.resolve(startDir ?? process.cwd());
   for (;;) {
-    if (
-      MANIFEST_DIRS.some((manifestDir) =>
-        existsSync(path.join(dir, manifestDir, 'plugin.json'))
-      )
-    ) {
+    if (isPlanProductPluginRoot(dir)) {
       return dir;
     }
     const parent = path.dirname(dir);

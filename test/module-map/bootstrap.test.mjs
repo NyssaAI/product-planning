@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   existsSync,
+  cpSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -10,6 +12,8 @@ import {
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { bootstrapRepo } from '../../scripts/module-map/lib/bootstrap.mjs';
 
 /** @type {string[]} */
@@ -126,6 +130,8 @@ test('bootstrap fails clearly instead of creating an empty project manifest', ()
   );
 
   assert.equal(existsSync(path.join(root, 'jamaynor.project.json')), false);
+  assert.equal(existsSync(path.join(root, 'plan-product.config.json')), false);
+  assert.equal(existsSync(path.join(root, '.plan-product')), false);
 });
 
 test('map-architecture package script resolves plugin root and forwards arguments', () => {
@@ -177,4 +183,38 @@ test('map-architecture package script resolves plugin root and forwards argument
       { stdio: 'inherit' },
     ],
   ]);
+});
+
+test('Claude hook treats shell substitutions and apostrophes in plugin paths literally', async () => {
+  const root = tempRepo();
+  const plugin = path.join(root, "plugin $(touch dollar-marker) `touch tick-marker` it's here");
+  const source = fileURLToPath(new URL('../../', import.meta.url));
+  for (const rel of ['scripts/module-map/lib', 'scripts/lib', 'scripts/bootstrap-templates', '.plan-product']) {
+    cpSync(path.join(source, rel), path.join(plugin, rel), { recursive: true });
+  }
+  const target = path.join(root, 'target');
+  mkdirSync(target);
+  mkdirSync(path.join(target, '.claude'));
+  const foreignHook = { matcher: 'Read', hooks: [{ type: 'command', command: 'echo foreign' }] };
+  const settingsPath = path.join(target, '.claude/settings.json');
+  writeFileSync(settingsPath, JSON.stringify({ hooks: { PostToolUse: [foreignHook] } }));
+  const { bootstrapRepo: copiedBootstrap } = await import(pathToFileURL(path.join(plugin, 'scripts/module-map/lib/bootstrap.mjs')));
+  copiedBootstrap(target, { writeScripts: true });
+  writeFileSync(path.join(plugin, 'scripts/module-map/regen-if-source-changed.mjs'),
+    "import { writeFileSync } from 'node:fs'; writeFileSync('hook-ran', 'yes');");
+  const settingsText = readFileSync(settingsPath, 'utf8');
+  const settings = JSON.parse(settingsText);
+  assert.equal(settings.hooks.PostToolUse.length, 2);
+  assert.deepEqual(settings.hooks.PostToolUse[0], foreignHook);
+  copiedBootstrap(target, { writeScripts: true });
+  assert.equal(readFileSync(settingsPath, 'utf8'), settingsText);
+  const hook = settings.hooks.PostToolUse[1].hooks[0];
+  assert.equal(hook.command, 'node');
+  assert.deepEqual(hook.args, [path.join(plugin, 'scripts/module-map/regen-if-source-changed.mjs').replace(/\\/g, '/')]);
+  const result = spawnSync(hook.command, hook.args, { cwd: target, encoding: 'utf8' });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(readFileSync(path.join(target, 'hook-ran'), 'utf8'), 'yes');
+  assert.equal(existsSync(path.join(target, 'dollar-marker')), false);
+  assert.equal(existsSync(path.join(target, 'tick-marker')), false);
 });

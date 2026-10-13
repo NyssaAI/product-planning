@@ -13,7 +13,7 @@
  * to a nested module and are excluded, matching Go semantics.
  */
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveAstGrepBinary } from '../../../lib/resolve-ast-grep.mjs';
@@ -109,6 +109,7 @@ function extract(repoRoot, files) {
     const packageIndex = buildPackageIndex(candidateFiles, moduleRoots);
     const filesByDir = groupByDir(candidateFiles);
     const symbolsByFile = extractSymbols(repoRoot, candidateFiles);
+    const importsByFile = extractImports(repoRoot, candidateFiles);
     const edgeWeights = new Map();
 
     for (const source of candidateFiles) {
@@ -117,8 +118,7 @@ function extract(repoRoot, files) {
         continue;
       }
       const sourceDir = dirOf(source);
-      const text = readFileSync(absSource, 'utf8');
-      for (const importPath of readImportPaths(text)) {
+      for (const importPath of importsByFile.get(source) ?? []) {
         const targetDir = packageIndex.get(importPath);
         if (targetDir === undefined || targetDir === sourceDir) {
           continue;
@@ -279,39 +279,24 @@ function buildPackageIndex(candidateFiles, moduleRoots) {
 }
 
 /**
- * Line-based Go import parser: single imports (`import "x"`, with optional
- * alias, `.`, or `_`) and import blocks. Blank and dot imports count as
- * dependencies — blank imports are real side-effect edges (db drivers).
- * @param {string} text
- * @returns {string[]}
+ * Extract actual import specifications, excluding comments and raw strings.
+ * Blank and dot imports remain dependencies (including side-effect drivers).
  */
-function readImportPaths(text) {
-  /** @type {string[]} */
-  const paths = [];
-  let inBlock = false;
-  for (const rawLine of text.split('\n')) {
-    const line = rawLine.trim();
-    if (inBlock) {
-      if (line.startsWith(')')) {
-        inBlock = false;
-        continue;
-      }
-      const match = line.match(/^(?:[\w.]+\s+|_\s+|\.\s+)?"([^"]+)"/);
-      if (match) {
-        paths.push(match[1]);
-      }
-      continue;
-    }
-    if (/^import\s*\($/.test(line)) {
-      inBlock = true;
-      continue;
-    }
-    const single = line.match(/^import\s+(?:[\w.]+\s+|_\s+|\.\s+)?"([^"]+)"/);
-    if (single) {
-      paths.push(single[1]);
-    }
+function extractImports(repoRoot, candidateFiles) {
+  const byFile = new Map(candidateFiles.map(file => [file, []]));
+  if (candidateFiles.length === 0) return byFile;
+  const binary = resolveAstGrepBinary({ toolkitDir: CODE_MAP_DIR, projectRoot: repoRoot });
+  const rule = JSON.stringify({ id: 'go-dependency-import', language: 'Go',
+    rule: { kind: 'import_spec', has: { field: 'path', pattern: '$PATH' } } });
+  const matches = runBatchedScan(binary, repoRoot,
+    candidateFiles.map(file => path.join(repoRoot, file)), ['--inline-rules', rule]);
+  for (const match of matches) {
+    const file = normalizePath(path.relative(repoRoot, String(match.file ?? '')));
+    const literal = match.metaVariables?.single?.PATH?.text;
+    if (!byFile.has(file) || typeof literal !== 'string') continue;
+    byFile.get(file).push(literal.slice(1, -1));
   }
-  return paths;
+  return byFile;
 }
 
 /**

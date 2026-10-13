@@ -22,6 +22,7 @@ import { renderPatternsMarkdown } from './lib/patterns/render.mjs';
 import { recordUsageEvent } from '../lib/usage.mjs';
 import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
 import { checkMapFreshness } from '../lib/map-freshness.mjs';
+import { resolveRepoContainedPath } from '../lib/repo-paths.mjs';
 
 const args = process.argv.slice(2);
 const jsonMode = args.includes('--json');
@@ -141,9 +142,12 @@ function runPatterns() {
   });
 
   const outDir = path.join(REPO_ROOT, outputDir);
-  const normalizedRoot = path.resolve(REPO_ROOT);
-  const normalizedOut = path.resolve(outDir);
-  if (normalizedOut !== normalizedRoot && !normalizedOut.startsWith(normalizedRoot + path.sep)) {
+  try {
+    resolveRepoContainedPath(REPO_ROOT, outputDir, 'pattern output directory');
+    for (const name of ['patterns.json', 'patterns.md']) {
+      resolveRepoContainedPath(REPO_ROOT, path.join(outDir, name), 'pattern output');
+    }
+  } catch {
     throw resultError(
       'INVALID_OUTPUT_DIR: --output-dir must be within the project root',
       'INVALID_OUTPUT_DIR'

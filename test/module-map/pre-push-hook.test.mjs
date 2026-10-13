@@ -188,7 +188,7 @@ test('install-git-hook installs an idempotent warn-only pre-push block', (t) => 
   assert.equal(install.status, 0, install.stderr);
   const text = readFileSync(hookFile, 'utf8');
   assert.match(text, />>> plan-product pre-push hook >>>/);
-  assert.match(text, /pre-push-regen\.mjs" --git-hook \|\| true/);
+  assert.match(text, /pre-push-regen\.mjs' --git-hook \|\| true/);
 
   const reinstall = spawnSync(process.execPath, [INSTALLER], {
     cwd: repo,

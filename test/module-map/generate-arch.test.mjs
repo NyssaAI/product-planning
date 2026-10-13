@@ -5,6 +5,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -174,4 +175,20 @@ test('--arch --json fails with parseable JSON when module-map.json is missing', 
   assert.equal(payload.ok, false);
   assert.deepEqual(payload.wrote, []);
   assert.match(payload.errors[0], /MISSING_MODULE_MAP/);
+});
+
+test('--arch --json reports unsafe output paths as structured failures', () => {
+  const dir = tempProject();
+  const outside = tempProject();
+  writeModuleMap(dir);
+  writeFileSync(path.join(outside, 'sentinel'), 'unchanged');
+  symlinkSync(outside, path.join(dir, 'docs/code-map/system-architecture.md'),
+    process.platform === 'win32' ? 'junction' : 'dir');
+  const result = runArch(dir);
+  assert.equal(result.status, 1);
+  const payload = JSON.parse(result.stdout);
+  assert.equal(payload.ok, false);
+  assert.deepEqual(payload.wrote, []);
+  assert.match(payload.errors[0], /ARCH_WRITE_FAILED.*within the project root/);
+  assert.equal(readFileSync(path.join(outside, 'sentinel'), 'utf8'), 'unchanged');
 });

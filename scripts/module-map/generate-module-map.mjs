@@ -21,6 +21,7 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { writeArtifactIfChanged } from '../lib/write-artifact.mjs';
+import { resolveRepoContainedPath } from '../lib/repo-paths.mjs';
 import { buildPlanProductModel } from './lib/build.mjs';
 import { bootstrapRepo } from './lib/bootstrap.mjs';
 import {
@@ -247,6 +248,11 @@ function runGenerate() {
 
   const outDir = path.join(REPO_ROOT, config.outputDir);
   const modulesDir = path.join(outDir, 'modules');
+  // Preflight all destinations before any generated artifact is changed.
+  for (const target of [modulesDir, path.join(outDir, 'index.md'), path.join(outDir, 'module-map.json'),
+    ...model.modules.map(mod => path.join(modulesDir, `${mod.id}.md`))]) {
+    resolveRepoContainedPath(REPO_ROOT, target, 'module-map output');
+  }
   mkdirSync(modulesDir, { recursive: true });
 
   writeArtifactIfChanged(
@@ -412,11 +418,12 @@ function runArchitecture() {
 
   const outDir = path.join(REPO_ROOT, config.outputDir);
   const archPath = path.join(outDir, 'system-architecture.md');
-  const existingMarkdown = existsSync(archPath)
-    ? readFileSync(archPath, 'utf8')
-    : '';
 
   try {
+    resolveRepoContainedPath(REPO_ROOT, archPath, 'architecture output');
+    const existingMarkdown = existsSync(archPath)
+      ? readFileSync(archPath, 'utf8')
+      : '';
     mkdirSync(outDir, { recursive: true });
     const moduleMapPath = path.join(config.outputDir, 'module-map.json');
     writeArtifactIfChanged(

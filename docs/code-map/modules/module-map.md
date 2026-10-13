@@ -81,5 +81,5 @@
 
 ## After planning
 
-- **Code-map slice:** query `module module-map` (`moduleId: module-map`) in [code-map.json](../code-map.json) for files, symbols, endpoints, and file dependencies. Symbols above are a sample (65 total); absence of a symbol is not absence of code.
+- **Code-map slice:** query `module module-map` (`moduleId: module-map`) in [code-map.json](../code-map.json) for files, symbols, endpoints, and file dependencies. Symbols above are a sample (66 total); absence of a symbol is not absence of code.
 - Open only files your plan names

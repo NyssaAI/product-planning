@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0",
-  "generated": "2026-10-12T14:21:10.780Z",
+  "generated": "2026-10-13T20:44:16.911Z",
   "roots": [
     "scripts",
     "skills"
@@ -12,8 +12,8 @@
     "Python",
     "Go"
   ],
-  "fileCount": 69,
-  "symbolCount": 122,
+  "fileCount": 70,
+  "symbolCount": 123,
   "endpointCount": 0,
   "files": [
     {
@@ -80,7 +80,7 @@
         {
           "name": "annotateCodeMapWithModules",
           "kind": "function",
-          "line": 19,
+          "line": 20,
           "signature": "export function annotateCodeMapWithModules(codeMap, modules, options)",
           "summary": "Store ownership once per file; files[].symbols is the canonical symbol index."
         }
@@ -387,12 +387,12 @@
           "kind": "function",
           "line": 33,
           "signature": "export function isPlanProductPluginRoot(dir)",
-          "summary": "True when an environment-provided directory is a plan-product plugin root: it carries Claude's plugin manifest or a pack"
+          "summary": "True when an environment-provided directory is a plan-product plugin root: a supported plugin manifest or package.json m"
         },
         {
           "name": "findPluginRoot",
           "kind": "function",
-          "line": 62,
+          "line": 64,
           "signature": "export function findPluginRoot(startDir)"
         }
       ],
@@ -417,7 +417,7 @@
         {
           "name": "resolveRepoRelativePath",
           "kind": "function",
-          "line": 65,
+          "line": 72,
           "signature": "export function resolveRepoRelativePath(repoRoot, configuredPath, label)",
           "summary": "Validate a configured path and return its normalized repo-relative form."
         }
@@ -479,37 +479,37 @@
         {
           "name": "loadUsageSettings",
           "kind": "function",
-          "line": 25,
+          "line": 26,
           "signature": "export function loadUsageSettings(repoRoot, env = process.env)"
         },
         {
           "name": "recordUsageEvent",
           "kind": "function",
-          "line": 103,
+          "line": 105,
           "signature": "export function recordUsageEvent(repoRoot, event, options = {})"
         },
         {
           "name": "readUsageEvents",
           "kind": "function",
-          "line": 133,
+          "line": 135,
           "signature": "export function readUsageEvents(repoRoot, options = {})"
         },
         {
           "name": "writeEffectivenessReport",
           "kind": "function",
-          "line": 166,
+          "line": 168,
           "signature": "export function writeEffectivenessReport(repoRoot, options = {})"
         },
         {
           "name": "buildEffectivenessModel",
           "kind": "function",
-          "line": 195,
+          "line": 197,
           "signature": "export function buildEffectivenessModel(repoRoot, input)"
         },
         {
           "name": "renderEffectivenessMarkdown",
           "kind": "function",
-          "line": 254,
+          "line": 256,
           "signature": "export function renderEffectivenessMarkdown(model)"
         }
       ],
@@ -725,7 +725,7 @@
         {
           "name": "bootstrapRepo",
           "kind": "function",
-          "line": 118,
+          "line": 119,
           "signature": "export function bootstrapRepo(repoRoot, options = {})"
         }
       ],
@@ -737,7 +737,7 @@
         {
           "name": "buildPlanProductModel",
           "kind": "function",
-          "line": 48,
+          "line": 49,
           "signature": "export function buildPlanProductModel(repoRoot, config, codeMapInput)"
         }
       ],
@@ -901,21 +901,21 @@
         {
           "name": "packageIdCandidates",
           "kind": "function",
-          "line": 487,
+          "line": 488,
           "signature": "export function packageIdCandidates(packageName, relDir)",
           "summary": "Candidate module ids for one package, most preferred first: the unscoped package name, then `scope-name` for a scoped pa"
         },
         {
           "name": "assignUniquePackageIds",
           "kind": "function",
-          "line": 518,
+          "line": 519,
           "signature": "export function assignUniquePackageIds(entries, config)",
           "summary": "Give every package a distinct id."
         },
         {
           "name": "parseNavEntries",
           "kind": "function",
-          "line": 603,
+          "line": 604,
           "signature": "export function parseNavEntries(navPath)"
         }
       ],
@@ -1002,14 +1002,14 @@
         {
           "name": "runMigrate",
           "kind": "function",
-          "line": 222,
+          "line": 237,
           "signature": "export function runMigrate(repoRoot, options = {})",
           "summary": "Normalize generated code-map artifact names under the configured output dir (default docs/code-map/)."
         },
         {
           "name": "formatMigrateReport",
           "kind": "function",
-          "line": 266,
+          "line": 287,
           "signature": "export function formatMigrateReport(actions)"
         }
       ],
@@ -1036,6 +1036,19 @@
           "kind": "function",
           "line": 354,
           "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)"
+        }
+      ],
+      "moduleId": "module-map"
+    },
+    {
+      "path": "scripts/module-map/lib/module-ids.mjs",
+      "symbols": [
+        {
+          "name": "validateModuleIds",
+          "kind": "function",
+          "line": 2,
+          "signature": "export function validateModuleIds(modules)",
+          "summary": "Module IDs become filenames on every supported platform."
         }
       ],
       "moduleId": "module-map"
@@ -1085,14 +1098,14 @@
         {
           "name": "pinModule",
           "kind": "function",
-          "line": 37,
+          "line": 39,
           "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
           "summary": "Eject a derived module into `modules.pinned[]`."
         },
         {
           "name": "unpinModule",
           "kind": "function",
-          "line": 74,
+          "line": 76,
           "signature": "export function unpinModule(repoRoot, moduleId)",
           "summary": "Remove a pin by id or root, returning its subtree to auto-derivation."
         }
@@ -1345,6 +1358,12 @@
     },
     {
       "from": "scripts/code-map/generate-patterns.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-patterns.mjs",
       "to": "scripts/lib/usage.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -1382,6 +1401,12 @@
     {
       "from": "scripts/code-map/lib/comment-extractor.mjs",
       "to": "scripts/code-map/lib/source-lines.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/module-linker.mjs",
+      "to": "scripts/module-map/lib/module-ids.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -1536,6 +1561,12 @@
       "adapter": "typescript"
     },
     {
+      "from": "scripts/lib/usage.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
       "from": "scripts/map-code/check-freshness.mjs",
       "to": "scripts/lib/map-freshness.mjs",
       "weight": 1,
@@ -1592,6 +1623,12 @@
     {
       "from": "scripts/map-code/query.mjs",
       "to": "scripts/module-map/lib/project-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/generate-module-map.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -1843,6 +1880,12 @@
     },
     {
       "from": "scripts/module-map/lib/bootstrap.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/bootstrap.mjs",
       "to": "scripts/module-map/lib/config.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -1880,6 +1923,12 @@
     {
       "from": "scripts/module-map/lib/build.mjs",
       "to": "scripts/module-map/lib/module-enrichment.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/build.mjs",
+      "to": "scripts/module-map/lib/module-ids.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -2059,6 +2108,12 @@
     },
     {
       "from": "scripts/module-map/lib/pin.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/pin.mjs",
       "to": "scripts/module-map/lib/logger.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -2143,7 +2198,7 @@
     }
   ],
   "coverage": {
-    "scannedFileCount": 69,
+    "scannedFileCount": 70,
     "unsupportedFiles": [],
     "disabledFiles": [],
     "zeroSymbolFiles": [
@@ -2184,8 +2239,8 @@
       "name": "module-map",
       "root": "scripts/module-map",
       "planningModule": "docs/code-map/modules/module-map.md",
-      "fileCount": 39,
-      "symbolCount": 65,
+      "fileCount": 40,
+      "symbolCount": 66,
       "endpointCount": 0
     },
     {

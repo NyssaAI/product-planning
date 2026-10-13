@@ -179,3 +179,20 @@ test('absolute imports resolve from the deepest shared plausible Python root', (
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('Python dependency evidence excludes comments and strings but keeps real multiline imports', t => {
+  const root = mkdtempSync(path.join(tmpdir(), 'python-structural-import-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  writeFileSync(path.join(root, 'a.py'), [
+    '"""Example:', 'import fake', 'from fake import Thing', 'importlib.import_module("fake")', '"""',
+    '# import fake', '# importlib.import_module("fake")',
+    'example = \'importlib.import_module("fake")\'',
+    'from real import (', '    Thing, # comment', ')',
+    'def nested():', '    import real as actual', '    return importlib.import_module("real")',
+  ].join('\n'));
+  writeFileSync(path.join(root, 'fake.py'), 'class Thing: pass\n');
+  writeFileSync(path.join(root, 'real.py'), 'class Thing: pass\n');
+  const graph = pythonAdapter.extract(root, ['a.py', 'fake.py', 'real.py']);
+  assert.deepEqual(graph.edges, [{ from: 'a.py', to: 'real.py', weight: 3 }]);
+  assert.deepEqual(graph.diagnostics, []);
+});
