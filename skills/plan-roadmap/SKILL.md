@@ -1,6 +1,6 @@
 ---
 name: plan-roadmap
-description: Interview the user to create or update the dependency-ordered implementation roadmap, including work slices with stable R-NNN IDs, human-readable statement lines with descriptive sub-bullets, user-verifiable Verify checkpoints with test instructions and demo data, parent feature links, plan-document links, after: dependencies, completion status, and tie-out validation against the feature inventory. Use when the user wants to create or update docs/roadmap.md, sequence features by technical dependency, slice a feature into ordered work items, or check roadmap consistency with docs/features.md.
+description: "Interview the user to create or update the dependency-ordered implementation roadmap, including work slices with stable R-NNN IDs, human-readable statement lines with descriptive sub-bullets, user-verifiable Verify checkpoints with test instructions and demo data, parent feature links, plan-document links, after: dependencies, completion status, and tie-out validation against the feature inventory. Use when the user wants to create or update docs/roadmap.md, sequence features by technical dependency, slice a feature into ordered work items, or check roadmap consistency with docs/features.md."
 ---
 
 # Plan Roadmap

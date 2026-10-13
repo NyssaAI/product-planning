@@ -1,0 +1,77 @@
+{
+  "routing": [
+    {"skill":"plan-product","positive":"Help me define the product, audience and high-level feature inventory for a new volunteer scheduling service.","ambiguous":"Our product direction changed. Help refresh the foundational planning docs before we revisit individual features.","negative":"Write three advertising taglines for our volunteer scheduling product."},
+    {"skill":"plan-feature","positive":"Interview me to specify the recurring-shift feature and create its feature guide.","ambiguous":"We have a product plan, but the recurring-shift capability needs clearer boundaries and acceptance criteria.","negative":"Implement the already specified recurring-shift endpoint in Python."},
+    {"skill":"plan-use-case","positive":"Document the use case where a coordinator cancels one occurrence of a recurring shift, including failures and alternate flows.","ambiguous":"The feature guide is finished; now capture exactly what happens when a volunteer swaps a shift with someone else.","negative":"Explain what the phrase use case means in ordinary English."},
+    {"skill":"plan-roadmap","positive":"Turn our approved feature guides into a dependency-ordered implementation roadmap with stable slice IDs.","ambiguous":"Several capabilities are ready to build. Help decide which deliverable comes first and what depends on it.","negative":"Make a two-day tourist itinerary for Chicago."},
+    {"skill":"build-roadmap","positive":"Implement the next open slice in docs/roadmap.md and complete the required development review loop.","ambiguous":"The roadmap is approved. Take the first unfinished slice all the way through implementation and verification.","negative":"Proofread the wording of this roadmap paragraph without changing files."},
+    {"skill":"map-code","positive":"Regenerate this repository's symbol index, endpoint index, module graph and module documentation.","ambiguous":"The source layout changed and the generated code-map context is stale. Refresh it.","negative":"Draw a map of public parks near my apartment."},
+    {"skill":"map-architecture","positive":"Generate the system architecture handoff from the repository's persisted module graph.","ambiguous":"We have a current code map. Turn it into an architecture overview for a new engineer.","negative":"Design a greenfield architecture for an app that has no repository or source code yet."},
+    {"skill":"find-code-patterns","positive":"Find existing uses of dependency injection and repositories in this codebase, with source evidence.","ambiguous":"Before introducing a strategy pattern, show whether we already use that pattern in any module.","negative":"Teach me the strategy pattern using a made-up example; do not inspect a repository."},
+    {"skill":"install-code-map-hook","positive":"Install the opt-in Git pre-push hook that refreshes the code map without blocking a push on generator failure.","ambiguous":"Check whether this repo already has the warn-only code-map regeneration hook, and repair it if needed.","negative":"Install a Git hook that blocks commits containing secrets."},
+    {"skill":"using-code-map","positive":"Use the existing code-map index to load just the modules needed to plan a billing cancellation change.","ambiguous":"I need implementation context for one endpoint, and this repo already has generated module docs. Keep the context scoped.","negative":"Summarize a greenfield product idea; there are no source files or generated maps."}
+  ],
+  "content": [
+    {
+      "id":"dirty-mechanical-repair",
+      "task":"Review this implementation runner's next action; do not change files. Before selecting a slice it notices the feature inventory status differs from two feature guides. One guide belongs to a feature that will not be selected. Git status already shows user edits in that guide and in the inventory. The runner proposes normalizing their statuses immediately because this is mechanical bookkeeping, then checking dirty files only for the selected slice. Should it proceed, and what exact scope should its safety check cover?",
+      "criteria":[
+        {"name":"Pre-write collision protection","description":"Stops the proposed repairs before any write because their target set intersects pre-existing dirty files; reports the colliding inventory and unselected guide.","weight":60},
+        {"name":"Complete repair write set","description":"Includes every document that mechanical status or link repair might write, not just documents belonging to the selected slice, without discarding or staging user edits.","weight":40}
+      ]
+    },
+    {
+      "id":"document-relative-plan-links",
+      "task":"Review this runner's path resolution; do not change files. Config sets the roadmap to planning/releases/roadmap.md and feature root to planning/features. In that roadmap the plan link is ../../implementation/R-012-plan.md and the feature link is ../features/f-n03/feature.md. Git status reports implementation/R-012-plan.md modified before the run. The runner resolves all links from the repository root and concludes the selected plan is clean. Identify the actual target paths, whether the dirty gate applies, and how new links should be written.",
+      "criteria":[
+        {"name":"Document link resolution","description":"Resolves the Markdown plan link to implementation/R-012-plan.md and feature link to planning/features/f-n03/feature.md using the containing document directory.","weight":40},
+        {"name":"Dirty collision consequence","description":"Recognizes that the normalized plan target is dirty and prevents overwriting it rather than treating the malformed repo-root resolution as evidence of cleanliness.","weight":35},
+        {"name":"Configuration and output distinction","description":"Keeps configured paths repo-relative while writing new Markdown links relative to the roadmap document.","weight":25}
+      ]
+    },
+    {
+      "id":"required-behavior-test-failure",
+      "task":"Classify two failing tests for a roadmap implementation fix packet. The approved plan requires expired invitations to be rejected, and test A asserts that requirement; the implementation currently accepts expired invitations. Test B expects invitations never to expire, directly contradicting the same approved decision. The runner calls both failures divergent and proposes deferring both while completing the slice. Explain the correction and what must remain unchanged in the tests or plan.",
+      "criteria":[
+        {"name":"Required behavior remediation","description":"Keeps test A in the fix-and-rerun loop and corrects the implementation; does not mark the slice complete while its required behavior is failing.","weight":60},
+        {"name":"Contradictory assertion handling","description":"Identifies B as genuinely conflicting with the approved decision, reports the conflict with evidence, and avoids silently weakening assertions or changing the settled plan merely to obtain passing tests.","weight":40}
+      ]
+    },
+    {
+      "id":"preserve-custom-product",
+      "task":"Review this proposed product-doc update and give the corrected next action; do not modify files. Config maps product to planning/vision.md and productTemplate to templates/vision.md. The existing vision has an Audience section containing 'Volunteer coordinators' and an unmatched Local notes section containing a signed-off accessibility decision. The user says 'Update the audience to include team leads; skip the market-size question.' A proposed agent writes docs/product.md, replaces all sections from its built-in format, and fills every unanswered field with 'To be defined.' The configured template exists but has not been read. What should happen next, and what content should be retained?",
+      "criteria":[
+        {"name":"Configured destination and shape","description":"Rejects the default destination and built-in shape; resolves the configured destination and reads the configured current template before writing.","weight":35},
+        {"name":"Merge semantics","description":"Preserves the existing audience while adding the new audience and retains unmatched local notes and the accessibility decision rather than overwriting the document.","weight":40},
+        {"name":"Unknown handling","description":"Explains that skipped input fills only empty target sections with an unknown marker and cannot replace non-empty content.","weight":25}
+      ]
+    },
+    {
+      "id":"duplicate-use-case-boundary",
+      "task":"Review the proposed planning action; give a concrete recommendation without writing files. Feature F-N04 owns shift swaps. UC-002 already covers a volunteer proposing a swap, the other volunteer accepting, and coordinator approval. A stakeholder asks for a new use case called 'Trade my shift' with the same actor, trigger, acceptance and approval steps, but adds an expired-offer failure. Another feature F-N07 owns reminder delivery. The proposed document duplicates UC-002 and puts reminder retry rules in F-N04. How should this request be reconciled, and what clarification, if any, is needed?",
+      "criteria":[
+        {"name":"Duplicate reconciliation","description":"Identifies semantic duplication despite different titles and recommends updating the existing use case with the expired-offer alternate/failure flow instead of assigning a duplicate identity.","weight":45},
+        {"name":"Ownership boundary","description":"Keeps reminder delivery and retries owned by the reminder feature and represents the cross-feature relationship without competing ownership.","weight":35},
+        {"name":"Focused clarification","description":"Asks only for materially missing expiry behavior or labels it unresolved; does not fabricate timeout values or approval rules.","weight":20}
+      ]
+    },
+    {
+      "id":"roadmap-evidence-status",
+      "task":"Assess the next safe action for an implementation runner; do not execute code. The roadmap lists R-003 authentication as done, R-007 protected exports as open depending on R-003, and R-009 export audit as open depending on R-007. R-003 has code merged but its acceptance test is currently failing. R-007 has a plan file whose title matches but whose frontmatter names R-009. The runner proposes marking R-007 complete after adding its endpoint without tests, then starting R-009. Explain the concrete corrections and what evidence is needed before progressing.",
+      "criteria":[
+        {"name":"Dependency readiness","description":"Flags the failing prerequisite and resolves or records that blocker rather than relying on the done label or silently starting dependent work.","weight":35},
+        {"name":"Plan identity","description":"Detects mismatched plan identity and requires resolving its ownership/linkage before treating it as the R-007 implementation plan.","weight":25},
+        {"name":"Completion evidence","description":"Requires applicable acceptance verification and review evidence before completion and before progressing to dependent R-009; does not equate endpoint existence with delivery.","weight":40}
+      ]
+    },
+    {
+      "id":"bounded-map-evidence",
+      "task":"Review an implementation-planning response without running commands. A repository index lists billing, accounts and analytics modules. A cancellation endpoint is owned by billing and calls an accounts authorization function. The module graph has no outgoing analytics edge. Generated maps predate a recent source move. A proposed response loads every symbol and every module doc, claims no analytics dependency exists because the graph lacks an edge, and names old source paths as verified edit targets. Describe a better evidence-gathering sequence and how to state uncertainty.",
+      "criteria":[
+        {"name":"Scoped context","description":"Starts with the index and billing module, adds directly coupled accounts context, and uses bounded symbol/dependency queries rather than loading all generated artifacts.","weight":35},
+        {"name":"Freshness and source confirmation","description":"Checks freshness and verifies current source evidence or refreshes appropriately before presenting moved paths as verified edit targets.","weight":40},
+        {"name":"Negative evidence limits","description":"Distinguishes no recorded graph edge from proof of no dependency, expressing the analytics relationship as unverified until supported by source evidence.","weight":25}
+      ]
+    }
+  ]
+}

@@ -69,7 +69,7 @@ If neither file exists, or the inventory holds only template placeholder feature
 1. Read `.plan-product/config.json` and resolve every path above. If the config is missing, stop and route the user to `plan-product`; this skill never bootstraps a repo.
 2. Read the configured roadmap, feature inventory, and tech-stack doc. Decide the work source.
 3. Confirm `git` is available and the working tree is a repository. Record every path from `git status --short --untracked-files=all` as the pre-run dirty set (both old and new paths for a rename, with Git quoting decoded) and `git branch --show-current` as the starting branch.
-4. Resolve the default branch name first (`origin/HEAD`, else an existing local `main` or `master`) and canonicalize local branch spellings by removing `refs/heads/` or `refs/remotes/origin/`. If the canonical `branch:<name>` equals the canonical default branch name, stop before switching branches or making any working-tree write and tell the user to choose a non-default branch. Compare names, not tip commit SHAs: a new work branch may legitimately start at the same commit as the default branch. Otherwise use `branch:<name>` when given. Without it, if the current branch is the default branch, create and switch to `build-roadmap/<yyyy.mm.dd>`; if the branch already exists, switch to it. If the current branch is not the default, stay on it.
+4. Resolve the default branch name first (`origin/HEAD`, else an existing local `main` or `master`) and stop before switching branches or making any working-tree write if neither source identifies the default branch; report that the repository must establish its default branch before retrying. Then canonicalize local branch spellings by removing `refs/heads/` or `refs/remotes/origin/`. If the canonical `branch:<name>` equals the canonical default branch name, stop before switching branches or making any working-tree write and tell the user to choose a non-default branch. Compare names, not tip commit SHAs: a new work branch may legitimately start at the same commit as the default branch. Otherwise use `branch:<name>` when given. Without it, if the current branch is the default branch, create and switch to `build-roadmap/<yyyy.mm.dd>`; if the branch already exists, switch to it. If the current branch is not the default, stay on it.
 5. Resolve the plugin root for the code-map rebuild. Prefer `PLAN_PRODUCT_PLUGIN_ROOT`, then `PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then `CURSOR_PLUGIN_ROOT`; otherwise use the installed plugin directory containing this skill. Substitute that absolute path for `${PLUGIN_ROOT}` before running any command.
 6. Resolve the test-suite command (see Test Suite).
 7. Load the `dev-standards` skill in the main context and read its required baseline. Keep a two-to-five-line summary of the applicable constraints for this repo; every subagent packet carries it.
@@ -84,6 +84,8 @@ Run this review in the main agent, before every iteration, so drift is caught be
 - **Reference integrity:** every `after:` entry resolves; no cycles, self-references, or duplicate IDs.
 - **Plan links:** every `Plan:` sub-bullet reads `none yet` or links to a file that exists.
 - **Status sync:** a feature whose slices are all checked but which is unchecked in the inventory; a checked feature with an open slice.
+
+Before any mechanical drift repair, collect every path the repair would write, including the inventory, every affected feature guide (even outside the selected unit), and the roadmap for link repairs. Normalize these paths and intersect them with the pre-run dirty set. If any collide, stop before all repair writes and report the colliding paths; the later selected-unit guard does not replace this check.
 
 Fix only mechanical drift yourself: a feature whose slices are all complete gets checked in the inventory, its guide gets `status: complete`, and the progress table is recomputed. A `Plan:` link pointing at a file that was renamed to the configured pattern gets repointed. Every other violation stops the loop with the violation named and the user routed to `plan-roadmap` or `plan-feature`; in interactive mode, offer to open that skill. Never build on a roadmap that fails ordering or reference integrity.
 
@@ -109,7 +111,7 @@ Before normalizing any artifact or dispatching any phase, discover the selected 
 - the selected feature guide, resolved from the selected parent/feature ID and `structure.features.featurePathPattern`; and
 - the resolving existing `Plan:` path when this run will reuse that plan.
 
-Resolve links relative to the repo root, normalize every target to a repo-relative path, and compare exact file paths (a directory target also covers descendants). If the intersection is non-empty, stop before plan normalization or subagent dispatch. Report every colliding path and tell the user to commit, stash, or move those changes, then rerun. This is a recovery stop, not an excluded-file exception: the loop cannot safely complete while one of its mandatory writes was dirty before the run.
+Resolve Markdown links relative to the directory containing the source document (for example, `plans/example.md` in `docs/roadmap.md` resolves to `docs/plans/example.md`). Resolve configured paths relative to the repo root. Normalize every resolved target to a repo-relative path, and compare exact file paths (a directory target also covers descendants). If the intersection is non-empty, stop before plan normalization or subagent dispatch. Report every colliding path and tell the user to commit, stash, or move those changes, then rerun. This is a recovery stop, not an excluded-file exception: the loop cannot safely complete while one of its mandatory writes was dirty before the run.
 
 ### 3. Plan
 
@@ -120,7 +122,7 @@ GATE. Only a return that names a written plan file advances. A `status: blocked`
 Then normalize the artifact:
 
 1. Move the written plan to the configured plans directory and rename it to the configured plan-name pattern for this unit (`R-NNN-yyyy.mm.dd-step-slug.md`, dated today; inventory mode uses `F-Nxx` in place of the slice ID). Use `git mv` when the file is tracked.
-2. Roadmap mode: write the new path into the unit's `Plan:` sub-bullet, replacing `none yet`. Inventory mode has no roadmap line; keep the path in loop state and name it in the completion report.
+2. Roadmap mode: write a Markdown link relative to the roadmap document's directory into the unit's `Plan:` sub-bullet, replacing `none yet`. Inventory mode has no roadmap line; keep the path in loop state and name it in the completion report.
 3. Ensure every autonomous planning decision returned by `ce-plan` is recorded in an `## Autonomous decisions` section in the plan. Each entry names the blocker, chosen decision, rationale, and evidence. Do not duplicate entries the planner already wrote.
 4. Record the path and autonomous decision summaries in loop state for every later phase and the completion commit.
 

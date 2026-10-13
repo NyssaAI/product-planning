@@ -112,8 +112,9 @@ Gate: `exit_code: 0` advances. A non-zero exit enters the fix loop. `none detect
 <standards preamble>
 Invoke the `ce-debug` skill with `mode:pipeline`. The orchestrator's envelope allows fix and commit
 on the current branch and excludes push; report `fixed-not-pushed`, never push. The plan for this
-work is at <plan path>; a "failing" test that asserts the plan's intended behavior is divergent and
-must be deferred, not edited to pass.
+work is at <plan path>. When a failing test asserts the plan's intended behavior, fix the
+implementation to satisfy it. A test that contradicts a settled plan decision requires reporting
+the conflict and deferring that decision, not weakening or editing the assertion merely to pass.
 
 Failing suite output:
 <failures block from the test packet>
@@ -121,7 +122,7 @@ Failing suite output:
 Return the pipeline-mode structured return verbatim.
 ```
 
-Gate: `fixed-not-pushed` or `fixed-and-pushed` reruns the test packet. `needs-human`, `diagnosed-no-fix`, or `flaky-infra` stops the loop with the return's residuals and `decision_context` reported. Three rounds without a passing suite stops.
+Gate: only `fixed-not-pushed` reruns the test packet. `fixed-and-pushed` violates the no-push envelope: stop and report the unexpected external action; do not continue the loop or attempt to undo the push automatically. `needs-human`, `diagnosed-no-fix`, or `flaky-infra` stops the loop with the return's residuals and `decision_context` reported. Three rounds without a passing suite stops.
 
 ## code-review
 
