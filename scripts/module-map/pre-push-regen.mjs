@@ -12,10 +12,11 @@
  * `--git-hook` is accepted for compatibility with already-installed hook blocks
  * and changes nothing.
  *
- * Opt-out: "prePushRegenerate": false in plan-product.config.json.
+ * Opt-out: "prePushRegenerate": false in .jamaynor/plan-product/config.json.
  * Dry run (tests): PLAN_PRODUCT_HOOK_DRY_RUN=1 prints intent and exits.
  */
 
+import { resolveGeneratorConfigPath } from '../lib/generator-config.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -117,7 +118,7 @@ function main() {
     return; // Not a plan-product repo.
   }
 
-  const generatorConfig = readJsonIfPresent(repoRoot, 'plan-product.config.json');
+  const generatorConfig = readJsonIfPresent(repoRoot, path.relative(repoRoot, resolveGeneratorConfigPath(repoRoot)));
   if (generatorConfig.prePushRegenerate === false) {
     return;
   }

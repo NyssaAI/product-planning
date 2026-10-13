@@ -1,6 +1,6 @@
 # plan-product Code Map
 
-Generated: 2026-10-13T20:44:17.909Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
+Generated: 2026-10-13T22:19:09.269Z. Regenerate with `node <PLUGIN_ROOT>/scripts/map-code/generate.mjs`, or `npm run map-code` when package scripts were installed.
 
 ## Progressive disclosure (for planning agents)
 
@@ -45,7 +45,7 @@ Read the module doc for the role you are touching; filter `code-map.json` by `mo
 
 - **Module graph:** [module-map.json](./module-map.json)
 - **Symbols and file dependencies:** [code-map.json](code-map.json)
-- **Coverage:** 70 scanned files; 0 unowned; 0 unsupported; 0 dependency diagnostics.
+- **Coverage:** 71 scanned files; 0 unowned; 0 unsupported; 0 dependency diagnostics.
 - Query bounded evidence: `node <PLUGIN_ROOT>/scripts/map-code/query.mjs module <id> --limit 20` (also `symbol`, `callers`, `coverage`). File dependencies are static references, not a call graph.
 - **Product docs:** `docs/product.md`, `docs/features.md`, `docs/tech-stack.md` (read directly — do not duplicate in BRIEF)
 

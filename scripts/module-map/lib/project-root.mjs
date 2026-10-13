@@ -1,3 +1,4 @@
+import { hasGeneratorConfig } from '../../lib/generator-config.mjs';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
@@ -11,7 +12,7 @@ export function findProjectRoot(startDir = process.cwd()) {
     if (existsSync(path.join(dir, '.plan-product', 'config.json'))) {
       return dir;
     }
-    if (existsSync(path.join(dir, 'plan-product.config.json'))) {
+    if (hasGeneratorConfig(dir)) {
       return dir;
     }
     if (existsSync(path.join(dir, '.git'))) {

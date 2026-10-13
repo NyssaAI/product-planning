@@ -64,6 +64,7 @@ export function captureMapInputs(repoRoot, { pluginRoot = PLUGIN_ROOT } = {}) {
   const inputs = fileHashes(repoRoot, [
     ...sourceFiles,
     ...metadata,
+    '.jamaynor/plan-product/config.json',
     'plan-product.config.json',
     '.plan-product/config.json',
     ...Object.values(moduleConfig.docs).flat(),

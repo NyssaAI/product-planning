@@ -42,4 +42,4 @@ node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 - A generator failure is reported as a failure on stderr, naming the generator; details land in `.temp/regen.log` in the target repo. That directory ignores itself through a generated `.temp/.gitignore`.
 - After a successful regeneration, if the configured code-map directory (`paths.codeMap`, usually `docs/code-map`) has uncommitted changes, the hook warns so the user can commit the refreshed artifacts.
 - The installer writes a marker-delimited block, is idempotent, preserves any existing pre-push hook content outside its markers, and `--uninstall` removes only the block.
-- Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`.
+- Opt out per repo with `"prePushRegenerate": false` in `.jamaynor/plan-product/config.json`.

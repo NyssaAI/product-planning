@@ -1,20 +1,21 @@
 /**
  * Pin / eject support for module detection. A pin is an authoritative module
- * declaration stored in plan-product.config.json under `modules.pinned[]`; the
+ * declaration stored in .jamaynor/plan-product/config.json under `modules.pinned[]`; the
  * detection core treats pinned roots as fixed and excludes them from
  * re-derivation. `pinModule` "ejects" a currently-derived module into config
  * so the user can freeze and adjust it; `unpinModule` returns it to
  * auto-derivation. Result-style returns.
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { resolveGeneratorConfigPath } from '../../lib/generator-config.mjs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { createLogger } from './logger.mjs';
 import { resolveRepoContainedPath } from '../../lib/repo-paths.mjs';
 
 const log = createLogger({ module: 'pin' });
 
-const configPath = (repoRoot) => path.join(repoRoot, 'plan-product.config.json');
+const configPath = (repoRoot) => resolveGeneratorConfigPath(repoRoot);
 
 /** @param {string} repoRoot */
 function readRaw(repoRoot) {
@@ -25,6 +26,7 @@ function readRaw(repoRoot) {
 /** @param {string} repoRoot @param {object} raw */
 function writeRaw(repoRoot, raw) {
   const target = resolveRepoContainedPath(repoRoot, configPath(repoRoot), 'module pin config');
+  mkdirSync(path.dirname(target), { recursive: true });
   writeFileSync(target, `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
 }
 

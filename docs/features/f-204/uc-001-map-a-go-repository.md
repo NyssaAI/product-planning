@@ -17,7 +17,7 @@ Generate complete code-map context for a Go repository: symbol index, endpoint i
 ## Starting Context
 
 - The target repo contains Go sources with at least one `go.mod` (optionally a `go.work` with members).
-- Product docs exist or explicit doc paths are configured in `plan-product.config.json`.
+- Product docs exist or explicit doc paths are configured in `.jamaynor/plan-product/config.json`.
 - The plan-product plugin is installed and Node.js is available.
 
 ## Entry Route
@@ -35,7 +35,7 @@ Agent generates Go code-map context
 +-- Starting context: Go repo with go.mod and configured product docs
 +-- Entry route: user invokes map-code
 +-- Trigger: user asks to map the repo
-+-- Step 1: resolve the plugin root and read plan-product.config.json source roots
++-- Step 1: resolve the plugin root and read .jamaynor/plan-product/config.json source roots
 +-- Step 2: run scripts/map-code/generate.mjs from the repo root
 |   +-- Scan Go sources with ast-grep symbol rules (functions, methods, structs, interfaces)
 |   +-- Extract endpoints: net/http, gin, echo, chi registrations, and MCP tool declarations

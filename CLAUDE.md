@@ -30,7 +30,7 @@ Committed plan-product paths stay relative to the repo root. Installation-specif
 |-- STRATEGY.md             Optional upstream strategy context.
 |-- CONCEPTS.md             Optional shared vocabulary.
 |-- AGENTS.md               Agent instructions and repo conventions.
-|-- plan-product.config.json  Generator config: source roots, module discovery, output dir, usage capture.
+|-- .jamaynor/plan-product/config.json  Generator config: source roots, module discovery, output dir, usage capture.
 |
 |-- docs/
 |   |-- product.md          Product purpose, audience, problem, solution.

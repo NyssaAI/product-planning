@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { resolveGeneratorConfigPath } from '../../lib/generator-config.mjs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { resolveCodeMapOutput } from '../../lib/code-map-output.mjs';
 import { resolveRepoContainedPath, resolveRepoRelativePath } from '../../lib/repo-paths.mjs';
@@ -47,7 +48,7 @@ const log = createLogger({ module: 'config' });
  * @returns {PlanProductConfig}
  */
 export function loadPlanProductConfig(repoRoot, opts = {}) {
-  const configPath = resolveRepoContainedPath(repoRoot, 'plan-product.config.json', 'generator config');
+  const configPath = resolveGeneratorConfigPath(repoRoot);
   const configFilePresent = existsSync(configPath);
   const raw = configFilePresent
     ? JSON.parse(readFileSync(configPath, 'utf8'))
@@ -187,8 +188,9 @@ export function resolveDocPath(repoRoot, candidates) {
  */
 export function writeStarterConfigs(repoRoot) {
   const roots = detectCodeMapRoots(repoRoot);
-  const configPath = resolveRepoContainedPath(repoRoot, 'plan-product.config.json', 'generator config');
+  const configPath = resolveGeneratorConfigPath(repoRoot);
   if (!existsSync(configPath)) {
+    mkdirSync(path.dirname(configPath), { recursive: true });
     writeFileSync(
       configPath,
       `${JSON.stringify(

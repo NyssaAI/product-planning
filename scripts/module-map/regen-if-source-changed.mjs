@@ -12,12 +12,13 @@
  * failing generator's stderr to this process's stderr when either generator
  * fails, so a caller such as pre-push-regen.mjs can tell success from failure.
  *
- * Opt-out: "autoRegenerate": false in plan-product.config.json.
+ * Opt-out: "autoRegenerate": false in .jamaynor/plan-product/config.json.
  * Log: .temp/regen.log in the project repo. The directory self-ignores through
  * a generated .temp/.gitignore so the log never shows up as an uncommitted
  * change beside the code-map artifacts.
  */
 
+import { resolveGeneratorConfigPath } from '../lib/generator-config.mjs';
 import {
   appendFileSync,
   existsSync,
@@ -136,7 +137,7 @@ function handleHook() {
     process.exit(0);
   }
 
-  const planProductConfig = readJsonIfPresent(repoRoot, 'plan-product.config.json');
+  const planProductConfig = readJsonIfPresent(repoRoot, path.relative(repoRoot, resolveGeneratorConfigPath(repoRoot)));
   if (planProductConfig.autoRegenerate === false) {
     process.exit(0);
   }

@@ -27,4 +27,4 @@ node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 
 ## Behavior
 
-Warn-only: the plan-product block regenerates code-map artifacts before the push, reports a failed generator by name, and warns when the configured code-map directory has uncommitted changes without blocking the push. Existing hook content retains its own behavior. Regeneration logs to `.temp/regen.log`. Opt out with `"prePushRegenerate": false` in `plan-product.config.json`.
+Warn-only: the plan-product block regenerates code-map artifacts before the push, reports a failed generator by name, and warns when the configured code-map directory has uncommitted changes without blocking the push. Existing hook content retains its own behavior. Regeneration logs to `.temp/regen.log`. Opt out with `"prePushRegenerate": false` in `.jamaynor/plan-product/config.json`.

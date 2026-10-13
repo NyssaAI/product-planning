@@ -24,6 +24,7 @@ plan-product stores its path contract in `.plan-product/config.json`.
 Core product files:
 
 ```text
+.jamaynor/plan-product/config.json
 docs/product.md
 docs/features.md
 docs/tech-stack.md
@@ -41,7 +42,7 @@ docs/code-map/
 
 ## Pattern Library
 
-`find-code-patterns` uses `.plan-product/patterns/library.json` for canonical pattern families and language detectors, then uses `.plan-product/patterns/expectations.json` to decide which families should appear in matching modules. Starter name-based detectors identify candidate code using known patterns; they do not prove the relationships that define each pattern. Reports include source locations, confidence, and verification checks. Matched-line coverage is descriptive and must not be used as a quality score. The report writes generated evidence to `docs/code-map/patterns.md` and `docs/code-map/patterns.json`; do not edit those generated files as the source of truth.
+The pattern files support `find-code-patterns`: `.plan-product/patterns/library.json` defines candidate patterns and detection rules, while `expectations.json` selects relevant families to inspect based on module tags. For example, a persistence module may prompt a search for Repository examples. Results go to `docs/code-map/patterns.md` and `patterns.json`. They are source-navigation aids, not architecture grades or instructions to add a pattern; candidate matches need source verification. Edit the library or expectations to tune detection; generated reports are not the source of truth.
 
 ## Codex Usage
 
@@ -83,6 +84,8 @@ Generator options: `generate-code-map.mjs` accepts `--include-comments` (or `COD
 
 ## Mapping Evidence and Limits
 
+Generator settings live in `.jamaynor/plan-product/config.json`. New initialization uses this location; existing root-level `plan-product.config.json` files remain supported. Move an existing file into the new directory to migrate, keeping its repo-relative path values unchanged. When both exist, the namespaced file wins. Planning-document paths and templates are configured separately in `.plan-product/config.json`.
+
 Mapping works without product-planning documents. With no explicit `roots`, it inventories the repository with shared exclusions for dependencies, generated output and fixtures. All configured supported source files are retained, including files without recognized symbols; enabled language adapters contribute to one dependency graph. Scanners receive the explicit shared inventory: configure `roots` and `languages` to bound it; `.gitignore` and external ignore rules do not change that boundary.
 
 Code-map schema `2.0` stores symbols once in `files[].symbols`. Ownership is `files[].moduleId`; join it to `modules[]` for names, roots and module-doc paths. The old top-level `symbols[]` and repeated per-symbol module fields are removed. `fileDependencies[]` preserves resolved source-file edges. Coverage lists unsupported, disabled, unowned and zero-symbol files plus unresolved dependency evidence. These are static references, not a runtime call graph.
@@ -110,11 +113,11 @@ node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs"
 node "${PLUGIN_ROOT}/scripts/module-map/install-git-hook.mjs" --uninstall
 ```
 
-Opt out per repo with `"prePushRegenerate": false` in `plan-product.config.json`. Regeneration logs to `.temp/regen.log` in the target repo; the directory ignores itself through a generated `.temp/.gitignore`.
+Opt out per repo with `"prePushRegenerate": false` in `.jamaynor/plan-product/config.json`. Regeneration logs to `.temp/regen.log` in the target repo; the directory ignores itself through a generated `.temp/.gitignore`.
 
 ## Command Health
 
-Generator commands append local usage events to `.plan-product/usage/events.jsonl` by default. The raw JSONL ledger is ignored by git; set `"usage": { "enabled": false }` in `plan-product.config.json` or `PLAN_PRODUCT_USAGE=0` to disable capture.
+Generator commands append local usage events to `.plan-product/usage/events.jsonl` by default. The raw JSONL ledger is ignored by git; set `"usage": { "enabled": false }` in `.jamaynor/plan-product/config.json` or `PLAN_PRODUCT_USAGE=0` to disable capture.
 
 Run `generate-module-map.mjs --effectiveness` to write `docs/code-map/effectiveness.md`, which summarizes command success rates, warnings, current artifact health, doctor checks, and recent runs. This is command health, not evidence of agent accuracy, time savings, or map usefulness. The historical flag and filename remain supported; `--usage-report` is an alias.
 

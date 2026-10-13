@@ -29,7 +29,7 @@ Before relying on maps, run `node "<PLUGIN_ROOT>/scripts/map-code/check-freshnes
 
 Pre-flight checks:
 
-1. `"autoRegenerate": false` in `plan-product.config.json` means skip regeneration; the team manages it manually.
+1. `"autoRegenerate": false` in `.jamaynor/plan-product/config.json` means skip regeneration; the team manages it manually.
 2. Node 22+ must be available.
 3. Product docs are useful when planning needs product context. Mapping still works when these docs are absent.
 4. ast-grep is bundled by the plugin and installs into the plugin root on first use.

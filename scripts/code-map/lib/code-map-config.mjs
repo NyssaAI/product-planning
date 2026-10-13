@@ -1,3 +1,4 @@
+import { resolveGeneratorConfigPath } from '../../lib/generator-config.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { detectCodeMapRoots } from '../../module-map/lib/auto-detect.mjs';
@@ -91,7 +92,7 @@ function readPlanProductPaths(repoRoot) {
  * @returns {CodeMapConfig}
  */
 export function loadCodeMapConfig(repoRoot) {
-  const configPath = path.join(repoRoot, 'plan-product.config.json');
+  const configPath = resolveGeneratorConfigPath(repoRoot);
   const planProductPaths = readPlanProductPaths(repoRoot);
 
   if (!existsSync(configPath)) {
@@ -110,7 +111,7 @@ export function loadCodeMapConfig(repoRoot) {
     raw = JSON.parse(readFileSync(configPath, 'utf8'));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    throw new Error(`plan-product.config.json is not valid JSON: ${message}`);
+    throw new Error(`${configPath} is not valid JSON: ${message}`);
   }
   const config = {
     output: resolveCodeMapOutput(raw, planProductPaths),

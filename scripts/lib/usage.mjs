@@ -1,3 +1,4 @@
+import { resolveGeneratorConfigPath } from './generator-config.mjs';
 import {
   appendFileSync,
   existsSync,
@@ -24,7 +25,7 @@ const DEFAULT_REPORT_PATH = 'docs/code-map/effectiveness.md';
  * @returns {UsageSettings}
  */
 export function loadUsageSettings(repoRoot, env = process.env) {
-  const raw = readJsonIfPresent(path.join(repoRoot, 'plan-product.config.json'));
+  const raw = readJsonIfPresent(resolveGeneratorConfigPath(repoRoot));
   const pathConfig = readJsonIfPresent(
     path.join(repoRoot, '.plan-product', 'config.json')
   );
@@ -195,7 +196,7 @@ export function writeEffectivenessReport(repoRoot, options = {}) {
  * @returns {Record<string, any>}
  */
 export function buildEffectivenessModel(repoRoot, input) {
-  const config = readJsonIfPresent(path.join(repoRoot, 'plan-product.config.json'));
+  const config = readJsonIfPresent(resolveGeneratorConfigPath(repoRoot));
   const pathConfig = readJsonIfPresent(
     path.join(repoRoot, '.plan-product', 'config.json')
   );

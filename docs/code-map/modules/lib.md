@@ -21,6 +21,8 @@
 | `extractEndpoints` |  |
 | `nextRouteSegment` |  |
 | `scanEndpointSyntax` | Parse the explicit endpoint source inventory once, in bounded batches. |
+| `resolveGeneratorConfigPath` | New repositories use the namespaced file. |
+| `hasGeneratorConfig` |  |
 | `isExcludedGoFile` | The single Go file-exclusion policy: vendored, fixture, generated, and test Go files stay out of the symbol index, the e |
 | `readGoWorkMembers` | Parses `use` directives from a root go.work file: every block form (`use ( ... |
 | `readGoModulePath` |  |
@@ -35,8 +37,6 @@
 | `resolveRepoRelativePath` | Validate a configured path and return its normalized repo-relative form. |
 | `astGrepPlatformPackage` | The @ast-grep/cli optionalDependency holding this platform's prebuilt binary. |
 | `resolveAstGrepBinary` | Resolve ast-grep binary shipped with the plan-product plugin. |
-| `parseScanJson` |  |
-| `symbolNameFromMatch` |  |
 
 ## Boundaries
 
@@ -58,22 +58,22 @@
 ## Configuration
 
 - `package.json`
-- `plan-product.config.json`
+- `.jamaynor/plan-product/config.json`
 
 ## Key symbols (sample)
 
 - `scripts/lib/code-map-output.mjs`: DEFAULT_CODE_MAP_OUTPUT, resolveCodeMapOutput
 - `scripts/lib/endpoint-extractor.mjs`: extractEndpoints, nextRouteSegment
 - `scripts/lib/endpoint-syntax.mjs`: scanEndpointSyntax
+- `scripts/lib/generator-config.mjs`: GENERATOR_CONFIG, LEGACY_GENERATOR_CONFIG, resolveGeneratorConfigPath, hasGeneratorConfig
 - `scripts/lib/go-mod.mjs`: isExcludedGoFile, readGoWorkMembers, readGoModulePath
 - `scripts/lib/map-freshness.mjs`: captureMapInputs, beginMapScan, completeMapScan, checkMapFreshness
 - `scripts/lib/plugin-root.mjs`: isPlanProductPluginRoot, findPluginRoot
 - `scripts/lib/repo-paths.mjs`: isPathContained, resolveRepoContainedPath, resolveRepoRelativePath
 - `scripts/lib/resolve-ast-grep.mjs`: astGrepPlatformPackage, resolveAstGrepBinary
 - `scripts/lib/sg-result.mjs`: parseScanJson, symbolNameFromMatch
-- `scripts/lib/skip-dirs.mjs`: BASE_SKIP_DIRS
 
 ## After planning
 
-- **Code-map slice:** query `module lib` (`moduleId: lib`) in [code-map.json](../code-map.json) for files, symbols, endpoints, and file dependencies. Symbols above are a sample (29 total); absence of a symbol is not absence of code.
+- **Code-map slice:** query `module lib` (`moduleId: lib`) in [code-map.json](../code-map.json) for files, symbols, endpoints, and file dependencies. Symbols above are a sample (33 total); absence of a symbol is not absence of code.
 - Open only files your plan names

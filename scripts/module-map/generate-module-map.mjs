@@ -191,7 +191,7 @@ Options:
   --effectiveness        Write command-health report (legacy flag)
   --usage-report         Alias for --effectiveness
   --json                 Emit machine-readable JSON where supported
-  --pin <module-id>      Freeze a derived module into plan-product.config.json
+  --pin <module-id>      Freeze a derived module into .jamaynor/plan-product/config.json
   --unpin <module-id>    Return a pinned module to auto-derivation
   --help, -h             Show this help
 `);
@@ -344,7 +344,7 @@ function runGenerate() {
 
   if (model.modules.length === 0) {
     errors.push(
-      'NO_MODULES_FOUND: module discovery produced zero modules — check plan-product.config.json → modules'
+      'NO_MODULES_FOUND: module discovery produced zero modules — check .jamaynor/plan-product/config.json → modules'
     );
   }
 
@@ -526,7 +526,7 @@ function runPinCommand(id, remove) {
   const result = pinModule(REPO_ROOT, id, modules);
   if (result.ok) {
     process.stdout.write(
-      `plan-product: pinned ${id} (root ${result.pin.root}) — edit plan-product.config.json → modules.pinned to adjust\n`
+      `plan-product: pinned ${id} (root ${result.pin.root}) — edit .jamaynor/plan-product/config.json → modules.pinned to adjust\n`
     );
   } else {
     process.stderr.write(`plan-product: cannot pin — ${result.error}\n`);

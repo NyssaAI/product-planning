@@ -42,7 +42,11 @@ Feature context should use `docs/features.md`.
 | `.plan-product/patterns/library.json` | Canonical pattern families and language detectors. |
 | `.plan-product/patterns/expectations.json` | Module-tag rules for expected pattern families. |
 
-`plan-product.config.json` is the optional generator settings file for module discovery, scan roots, output paths, API routes, and extra pattern catalogs.
+`.jamaynor/plan-product/config.json` is the optional generator settings file for module discovery, scan roots, output paths, API routes, and extra pattern catalogs.
+
+New initialization creates the namespaced file. Existing root-level `plan-product.config.json` files remain supported until moved; initialization preserves them rather than shadowing their settings with defaults. If both files exist, the namespaced file takes precedence without merging the two. To migrate, move the existing file to `.jamaynor/plan-product/config.json`. All paths inside it remain relative to the repository root, so their values do not change. Pin/unpin edits the active file and creates the namespaced file when neither exists.
+
+The separate `.plan-product/config.json` still controls planning-document paths and templates.
 
 ### Generator keys
 

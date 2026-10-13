@@ -59,7 +59,7 @@
 ## Configuration
 
 - `package.json`
-- `plan-product.config.json`
+- `.jamaynor/plan-product/config.json`
 
 ## Key symbols (sample)
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0",
-  "generated": "2026-10-13T20:44:17.909Z",
+  "generated": "2026-10-13T22:19:09.269Z",
   "project": {
     "name": "plan-product",
     "docs": {
@@ -117,7 +117,7 @@
         "module-map"
       ],
       "routeCount": 0,
-      "symbolCount": 29,
+      "symbolCount": 33,
       "planningModule": "docs/code-map/modules/lib.md",
       "description": "Shared utilities for both generators: plugin-root resolution, ast-grep resolution, skip-dirs, scan parsing, and endpoint extraction.",
       "capabilities": [
@@ -168,7 +168,7 @@
     "field": "fileDependencies"
   },
   "coverage": {
-    "scannedFileCount": 70,
+    "scannedFileCount": 71,
     "unsupportedFiles": [],
     "disabledFiles": [],
     "zeroSymbolFiles": [
@@ -197,6 +197,6 @@
   "stats": {
     "moduleCount": 4,
     "routeCount": 0,
-    "codeMapSymbols": 123
+    "codeMapSymbols": 127
   }
 }

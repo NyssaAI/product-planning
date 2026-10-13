@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0",
-  "generated": "2026-10-13T20:44:16.911Z",
+  "generated": "2026-10-13T22:19:08.805Z",
   "roots": [
     "scripts",
     "skills"
@@ -12,8 +12,8 @@
     "Python",
     "Go"
   ],
-  "fileCount": 70,
-  "symbolCount": 123,
+  "fileCount": 71,
+  "symbolCount": 127,
   "endpointCount": 0,
   "files": [
     {
@@ -32,18 +32,18 @@
         {
           "name": "SUPPORTED_LANGUAGES",
           "kind": "const",
-          "line": 21
+          "line": 22
         },
         {
           "name": "SOURCE_EXTENSIONS",
           "kind": "const",
-          "line": 34,
+          "line": 35,
           "summary": "Extensions that drive file detection."
         },
         {
           "name": "loadCodeMapConfig",
           "kind": "function",
-          "line": 93,
+          "line": 94,
           "signature": "export function loadCodeMapConfig(repoRoot)"
         }
       ],
@@ -136,7 +136,7 @@
         {
           "name": "loadPatternRuntimeConfig",
           "kind": "function",
-          "line": 25,
+          "line": 26,
           "signature": "export function loadPatternRuntimeConfig(repoRoot)"
         }
       ],
@@ -320,6 +320,36 @@
       "moduleId": "lib"
     },
     {
+      "path": "scripts/lib/generator-config.mjs",
+      "symbols": [
+        {
+          "name": "GENERATOR_CONFIG",
+          "kind": "const",
+          "line": 5
+        },
+        {
+          "name": "LEGACY_GENERATOR_CONFIG",
+          "kind": "const",
+          "line": 6,
+          "signature": "export const LEGACY_GENERATOR_CONFIG = 'plan-product.config.json'; // New repositories use the namespaced file. Existing root configs remain readable // and editable until moved; a namespaced config always takes precedence. export function resolveGeneratorConfigPath(repoRoot)"
+        },
+        {
+          "name": "resolveGeneratorConfigPath",
+          "kind": "function",
+          "line": 10,
+          "signature": "export function resolveGeneratorConfigPath(repoRoot)",
+          "summary": "New repositories use the namespaced file."
+        },
+        {
+          "name": "hasGeneratorConfig",
+          "kind": "function",
+          "line": 17,
+          "signature": "export function hasGeneratorConfig(repoRoot)"
+        }
+      ],
+      "moduleId": "lib"
+    },
+    {
       "path": "scripts/lib/go-mod.mjs",
       "symbols": [
         {
@@ -358,21 +388,21 @@
         {
           "name": "beginMapScan",
           "kind": "function",
-          "line": 88,
+          "line": 89,
           "signature": "export function beginMapScan(repoRoot, options)",
           "summary": "Invalidate the previous success before either generator can write partial outputs."
         },
         {
           "name": "completeMapScan",
           "kind": "function",
-          "line": 109,
+          "line": 110,
           "signature": "export function completeMapScan(repoRoot, before, options)",
           "summary": "Call only after both core generators succeed."
         },
         {
           "name": "checkMapFreshness",
           "kind": "function",
-          "line": 123,
+          "line": 124,
           "signature": "export function checkMapFreshness(repoRoot, options)",
           "summary": "Shared freshness result for the CLI, doctor and regeneration hooks."
         }
@@ -479,37 +509,37 @@
         {
           "name": "loadUsageSettings",
           "kind": "function",
-          "line": 26,
+          "line": 27,
           "signature": "export function loadUsageSettings(repoRoot, env = process.env)"
         },
         {
           "name": "recordUsageEvent",
           "kind": "function",
-          "line": 105,
+          "line": 106,
           "signature": "export function recordUsageEvent(repoRoot, event, options = {})"
         },
         {
           "name": "readUsageEvents",
           "kind": "function",
-          "line": 135,
+          "line": 136,
           "signature": "export function readUsageEvents(repoRoot, options = {})"
         },
         {
           "name": "writeEffectivenessReport",
           "kind": "function",
-          "line": 168,
+          "line": 169,
           "signature": "export function writeEffectivenessReport(repoRoot, options = {})"
         },
         {
           "name": "buildEffectivenessModel",
           "kind": "function",
-          "line": 197,
+          "line": 198,
           "signature": "export function buildEffectivenessModel(repoRoot, input)"
         },
         {
           "name": "renderEffectivenessMarkdown",
           "kind": "function",
-          "line": 256,
+          "line": 257,
           "signature": "export function renderEffectivenessMarkdown(model)"
         }
       ],
@@ -725,7 +755,7 @@
         {
           "name": "bootstrapRepo",
           "kind": "function",
-          "line": 119,
+          "line": 120,
           "signature": "export function bootstrapRepo(repoRoot, options = {})"
         }
       ],
@@ -749,25 +779,25 @@
         {
           "name": "loadPlanProductConfig",
           "kind": "function",
-          "line": 49,
+          "line": 50,
           "signature": "export function loadPlanProductConfig(repoRoot, opts = {})"
         },
         {
           "name": "validateRequiredDocs",
           "kind": "function",
-          "line": 153,
+          "line": 154,
           "signature": "export function validateRequiredDocs(repoRoot, config)"
         },
         {
           "name": "resolveDocPath",
           "kind": "function",
-          "line": 175,
+          "line": 176,
           "signature": "export function resolveDocPath(repoRoot, candidates)"
         },
         {
           "name": "writeStarterConfigs",
           "kind": "function",
-          "line": 188,
+          "line": 189,
           "signature": "export function writeStarterConfigs(repoRoot)"
         }
       ],
@@ -1034,7 +1064,7 @@
         {
           "name": "enrichModule",
           "kind": "function",
-          "line": 354,
+          "line": 355,
           "signature": "export function enrichModule(repoRoot, allModules, mod, codeMapFiles)"
         }
       ],
@@ -1098,14 +1128,14 @@
         {
           "name": "pinModule",
           "kind": "function",
-          "line": 39,
+          "line": 41,
           "signature": "export function pinModule(repoRoot, moduleId, derivedModules)",
           "summary": "Eject a derived module into `modules.pinned[]`."
         },
         {
           "name": "unpinModule",
           "kind": "function",
-          "line": 76,
+          "line": 78,
           "signature": "export function unpinModule(repoRoot, moduleId)",
           "summary": "Remove a pin by id or root, returning its subtree to auto-derivation."
         }
@@ -1118,7 +1148,7 @@
         {
           "name": "findProjectRoot",
           "kind": "function",
-          "line": 8,
+          "line": 9,
           "signature": "export function findProjectRoot(startDir = process.cwd())"
         }
       ],
@@ -1268,6 +1298,12 @@
     },
     {
       "from": "scripts/code-map/generate-code-map.mjs",
+      "to": "scripts/lib/generator-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/generate-code-map.mjs",
       "to": "scripts/lib/resolve-ast-grep.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -1388,6 +1424,12 @@
     },
     {
       "from": "scripts/code-map/lib/code-map-config.mjs",
+      "to": "scripts/lib/generator-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/code-map-config.mjs",
       "to": "scripts/lib/repo-paths.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -1437,6 +1479,12 @@
     {
       "from": "scripts/code-map/lib/patterns/runtime-config.mjs",
       "to": "scripts/code-map/lib/code-map-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/code-map/lib/patterns/runtime-config.mjs",
+      "to": "scripts/lib/generator-config.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -1519,6 +1567,12 @@
       "adapter": "typescript"
     },
     {
+      "from": "scripts/lib/generator-config.mjs",
+      "to": "scripts/lib/repo-paths.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
       "from": "scripts/lib/map-freshness.mjs",
       "to": "scripts/code-map/lib/code-map-config.mjs",
       "weight": 1,
@@ -1557,6 +1611,12 @@
     {
       "from": "scripts/lib/resolve-ast-grep.mjs",
       "to": "scripts/lib/plugin-root.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/lib/usage.mjs",
+      "to": "scripts/lib/generator-config.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -1880,6 +1940,12 @@
     },
     {
       "from": "scripts/module-map/lib/bootstrap.mjs",
+      "to": "scripts/lib/generator-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/bootstrap.mjs",
       "to": "scripts/lib/repo-paths.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -1953,6 +2019,12 @@
     {
       "from": "scripts/module-map/lib/config.mjs",
       "to": "scripts/lib/code-map-output.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/config.mjs",
+      "to": "scripts/lib/generator-config.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -2108,6 +2180,12 @@
     },
     {
       "from": "scripts/module-map/lib/pin.mjs",
+      "to": "scripts/lib/generator-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/pin.mjs",
       "to": "scripts/lib/repo-paths.mjs",
       "weight": 1,
       "adapter": "typescript"
@@ -2115,6 +2193,12 @@
     {
       "from": "scripts/module-map/lib/pin.mjs",
       "to": "scripts/module-map/lib/logger.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/lib/project-root.mjs",
+      "to": "scripts/lib/generator-config.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -2186,7 +2270,19 @@
     },
     {
       "from": "scripts/module-map/pre-push-regen.mjs",
+      "to": "scripts/lib/generator-config.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/pre-push-regen.mjs",
       "to": "scripts/lib/map-freshness.mjs",
+      "weight": 1,
+      "adapter": "typescript"
+    },
+    {
+      "from": "scripts/module-map/regen-if-source-changed.mjs",
+      "to": "scripts/lib/generator-config.mjs",
       "weight": 1,
       "adapter": "typescript"
     },
@@ -2198,7 +2294,7 @@
     }
   ],
   "coverage": {
-    "scannedFileCount": 70,
+    "scannedFileCount": 71,
     "unsupportedFiles": [],
     "disabledFiles": [],
     "zeroSymbolFiles": [
@@ -2257,8 +2353,8 @@
       "name": "lib",
       "root": "scripts/lib",
       "planningModule": "docs/code-map/modules/lib.md",
-      "fileCount": 12,
-      "symbolCount": 29,
+      "fileCount": 13,
+      "symbolCount": 33,
       "endpointCount": 0
     }
   ]

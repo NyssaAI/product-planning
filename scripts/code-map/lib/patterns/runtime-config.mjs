@@ -1,3 +1,4 @@
+import { resolveGeneratorConfigPath } from '../../../lib/generator-config.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { loadCodeMapConfig } from '../code-map-config.mjs';
@@ -67,7 +68,7 @@ export function loadPatternRuntimeConfig(repoRoot) {
  * @returns {Record<string, any>}
  */
 function readRawConfig(repoRoot) {
-  const configPath = path.join(repoRoot, 'plan-product.config.json');
+  const configPath = resolveGeneratorConfigPath(repoRoot);
   if (!existsSync(configPath)) {
     return {};
   }

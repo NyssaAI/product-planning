@@ -55,7 +55,7 @@ function checkCodeMap(repoRoot, codeMapOutput) {
         id: 'code-map',
         status: 'warn',
         message: 'CODE_MAP has zero files and zero endpoints',
-        hint: 'Verify plan-product.config.json roots',
+        hint: 'Verify .jamaynor/plan-product/config.json roots',
       }];
     }
 
@@ -111,7 +111,7 @@ function checkModuleMap(repoRoot, config) {
       id: 'module-discovery',
       status: 'warn',
       message: 'All modules use fallback discovery',
-      hint: 'Add plan-product.config.json manual modules or improve stack detection',
+      hint: 'Add .jamaynor/plan-product/config.json manual modules or improve stack detection',
     });
   }
 

@@ -45,7 +45,7 @@
 - `npm test` for the JavaScript test suite.
 - `rg` for path and artifact audits.
 - `.plan-product/config.json` for plan-product path resolution.
-- `plan-product.config.json` is the optional generator settings file for roots, module overrides, and scan behavior.
+- `.jamaynor/plan-product/config.json` is the optional generator settings file for roots, module overrides, and scan behavior.
 - `.plan-product/usage/events.jsonl` for local usage capture; `docs/code-map/effectiveness.md` for generated effectiveness summaries.
 
 ## Constraints

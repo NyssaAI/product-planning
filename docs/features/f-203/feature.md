@@ -24,7 +24,7 @@ None yet.
 - `scripts/module-map/regen-if-source-changed.mjs --run`: the synchronous regeneration pipeline; exits non-zero when a generator fails so the wrapper can report it.
 - `scripts/module-map/install-git-hook.mjs`: idempotent, marker-delimited git pre-push installer and `--uninstall`.
 - The `install-code-map-hook` skill and `commands/install-code-map-hook.md` entry point.
-- Opt-out via `"prePushRegenerate": false` in `plan-product.config.json`.
+- Opt-out via `"prePushRegenerate": false` in `.jamaynor/plan-product/config.json`.
 - The regeneration log at `.temp/regen.log`, self-ignored through `.temp/.gitignore`.
 
 ## Out of Scope
@@ -38,7 +38,7 @@ None yet.
 
 - Git pre-push invocation.
 - `.plan-product/config.json` (presence gate and `paths.codeMap` for the artifact directory).
-- `plan-product.config.json` (`prePushRegenerate` opt-out).
+- `.jamaynor/plan-product/config.json` (`prePushRegenerate` opt-out).
 - The existing code-map and module-map generator scripts.
 
 ## Outputs

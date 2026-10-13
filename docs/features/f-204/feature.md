@@ -39,7 +39,7 @@ Teams with Go repositories get no code-map context today, so implementation plan
 ## Inputs
 
 - Go source files, `go.mod`, and `go.work` in the target repo.
-- `plan-product.config.json` source roots and module discovery settings.
+- `.jamaynor/plan-product/config.json` source roots and module discovery settings.
 - The bundled `@ast-grep/cli` (ships the Go grammar).
 
 ## Outputs

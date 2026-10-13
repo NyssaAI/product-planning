@@ -2,9 +2,10 @@
 /**
  * Generate docs/code-map/code-map.json from ast-grep structural scan rules.
  *
- * Per-repo settings: plan-product.config.json at the project root (discovered from cwd).
+ * Per-repo settings: .jamaynor/plan-product/config.json at the project root (discovered from cwd).
  */
 
+import { hasGeneratorConfig } from '../lib/generator-config.mjs';
 import {
   existsSync,
   mkdirSync,
@@ -57,7 +58,7 @@ const HTTP_METHODS = new Set([
  */
 
 /**
- * Project root: directory with plan-product.config.json, else nearest .git, else cwd.
+ * Project root: directory with .jamaynor/plan-product/config.json, else nearest .git, else cwd.
  * @param {string} [startDir]
  * @returns {string}
  */
@@ -65,7 +66,7 @@ function findProjectRoot(startDir = process.cwd()) {
   let dir = path.resolve(startDir);
   for (;;) {
     if (
-      existsSync(path.join(dir, 'plan-product.config.json')) ||
+      hasGeneratorConfig(dir) ||
       existsSync(path.join(dir, '.plan-product', 'config.json'))
     ) {
       return dir;
@@ -139,7 +140,7 @@ Uses @ast-grep/cli bundled with the plan-product plugin (no project-repo install
 
 Languages: ${SUPPORTED_LANGUAGES.join(', ')}
 Project root: ${REPO_ROOT}
-Scan roots (plan-product.config.json): ${config.roots.join(', ')}
+Scan roots (.jamaynor/plan-product/config.json): ${config.roots.join(', ')}
 
 Options:
   --include-comments     Embed file-level header comments (default: off)

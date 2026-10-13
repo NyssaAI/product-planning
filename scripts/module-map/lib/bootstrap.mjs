@@ -1,3 +1,4 @@
+import { resolveGeneratorConfigPath } from '../../lib/generator-config.mjs';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -128,7 +129,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
     ? readBootstrapTemplate('jamaynor.project.json') : null;
   const templates = ['product.md', 'features.md', 'tech-stack.md', 'feature.md',
     'use-case.md', 'roadmap.md', 'pattern-library.json', 'pattern-expectations.json'];
-  const targets = ['plan-product.config.json', '.plan-product/config.json',
+  const targets = [path.relative(repoRoot, resolveGeneratorConfigPath(repoRoot)), '.plan-product/config.json',
     '.plan-product/schema.json', ...templates.map(name => `.plan-product/templates/${name}`),
     'docs/product.md', 'docs/features.md', 'docs/tech-stack.md', 'docs/features',
     'test/unit', '.plan-product/patterns/library.json', '.plan-product/patterns/expectations.json',
@@ -367,7 +368,7 @@ const REGEN_HOOK_MATCHER = 'Write|Edit';
  * Adds the PostToolUse auto-regeneration hook to the project's
  * .claude/settings.json. Existing hooks are preserved; if a hook entry
  * already references regen-if-source-changed.mjs nothing is written.
- * Opt-out at runtime via "autoRegenerate": false in plan-product.config.json.
+ * Opt-out at runtime via "autoRegenerate": false in .jamaynor/plan-product/config.json.
  *
  * @param {string} repoRoot
  * @param {string[]} created

@@ -37,6 +37,7 @@ const CONFIG_FILE_CANDIDATES = [
   'Cargo.toml',
   'appsettings.json',
   '.env.example',
+  '.jamaynor/plan-product/config.json',
   'plan-product.config.json',
 ];
 
