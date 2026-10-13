@@ -47,13 +47,13 @@ Define one use case under an existing feature folder. Use `.plan-product/config.
    - If failure cases are generic, ask which real input, permission, validation, timeout, missing-data, or invalid-state cases matter.
    - If acceptance checks do not trace back to the actor's goal, tighten them before writing.
 9. Run a final uniqueness and consistency check:
-   - Compare the candidate against every sibling `uc-*.md` file in the parent feature folder and any use cases linked from the parent feature guide.
+   - Compare the candidate against every sibling use-case file matching `structure.features.useCaseFilePattern` in the parent feature folder and any use cases linked from the parent feature guide.
    - Compare actor, goal, starting context, entry route, trigger, process tree, failure cases, and acceptance checks.
    - If another use case already covers the same actor, trigger, goal, and process, stop and ask whether to merge, replace, or narrow the new use case.
    - If another use case partially overlaps, record the closest related use cases and the specific boundary that makes this use case distinct.
    - If the candidate contradicts another use case's preconditions, flow, failure behavior, ownership, or acceptance checks, stop and ask the user to resolve the contradiction before writing.
    - Record the result in `Consistency Check`.
-10. Write or update the use-case file from the configured use-case template. If updating an older use case without `Starting Context`, `Entry Route`, `Process`, `Step Details`, or `Consistency Check`, add those sections in the template order.
+10. Read `paths.useCaseTemplate` immediately before writing, then write or update the use-case file from that template. If updating an older use case without `Starting Context`, `Entry Route`, `Process`, `Step Details`, or `Consistency Check`, add those sections in the template order.
 11. Add or update the use-case link in the parent feature guide. Prefer a `## Use Cases` list of markdown links using this format: `- [UC-nnn: Title](uc-nnn-short-slug.md)`, linking the actual file name. If the guide has `## Use Case` singular, convert it only when adding the first linked use-case list.
 
 Keep the use case focused on behavior. Put broader feature boundaries in `feature.md`.

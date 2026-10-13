@@ -17,7 +17,7 @@ Create or update the dependency-ordered roadmap of work slices. Use `.plan-produ
 - The `Plan:` sub-bullet links the slice's plan document or reads `Plan: none yet`. Plan documents live under `paths.plans` and are named with the configured `structure.roadmap.planNamePattern` (`{R-NNN}-{yyyy.mm.dd}-{step-slug}.md`), dated when the plan is created. Plan documents track their own steps with `[ ]` checkbox task lists. This naming applies to new plans; never rename existing plan documents to match.
 - Completed slices are immutable history. Never uncheck a completed slice; rework on a shipped feature is a new slice. A completed slice sitting above its incomplete `after:` dependency is informational, not a violation.
 - Each slice references exactly one parent feature and links to its configured feature guide path. A slice's `after:` list may name slice IDs or feature IDs; a feature ID means "after all existing slices of that feature," and a slice must not name its own parent feature.
-- Removing a slice is allowed only for open slices; scan for `after:` references to the removed ID and repair them in the same pass.
+- Removing a slice is allowed only for open slices; scan for both `after:` references and `Verify: with R-NNN` deferrals to the removed ID. Repair references in open slices in the same pass with user confirmation under step 7. If a completed slice references the ID, retain the target slice and ask the user to resolve the conflict without changing completed history.
 - Mark inferred items as `[inferred]` and confirm them before writing.
 
 ## Workflow

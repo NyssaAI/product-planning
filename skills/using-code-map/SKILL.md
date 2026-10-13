@@ -56,7 +56,7 @@ node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" callers <term> --limit 20
 node "${PLUGIN_ROOT}/scripts/map-code/query.mjs" coverage --limit 20
 ```
 
-Results include `total`, `omitted`, and `nextOffset`. Continue the same query with `--offset <nextOffset>` until it is null; keep the map unchanged between pages. `callers` means incoming static file dependencies, not symbol calls.
+Results include `total`, `omitted`, and `nextOffset`. Fetch another page with `--offset <nextOffset>` only when more results are needed to answer the task; keep the map unchanged between pages. Stop once relevant evidence is sufficient and disclose omitted results when material. Exhaust pagination only when the user needs a complete inventory. `callers` means incoming static file dependencies, not symbol calls.
 
 ## Generate Or Refresh
 

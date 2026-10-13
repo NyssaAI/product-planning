@@ -8,7 +8,7 @@
     {"skill":"map-code","positive":"Regenerate this repository's symbol index, endpoint index, module graph and module documentation.","ambiguous":"The source layout changed and the generated code-map context is stale. Refresh it.","negative":"Draw a map of public parks near my apartment."},
     {"skill":"map-architecture","positive":"Generate the system architecture handoff from the repository's persisted module graph.","ambiguous":"We have a current code map. Turn it into an architecture overview for a new engineer.","negative":"Design a greenfield architecture for an app that has no repository or source code yet."},
     {"skill":"find-code-patterns","positive":"Find existing uses of dependency injection and repositories in this codebase, with source evidence.","ambiguous":"Before introducing a strategy pattern, show whether we already use that pattern in any module.","negative":"Teach me the strategy pattern using a made-up example; do not inspect a repository."},
-    {"skill":"install-code-map-hook","positive":"Install the opt-in Git pre-push hook that refreshes the code map without blocking a push on generator failure.","ambiguous":"Check whether this repo already has the warn-only code-map regeneration hook, and repair it if needed.","negative":"Install a Git hook that blocks commits containing secrets."},
+    {"skill":"install-code-map-hook","positive":"Install the opt-in Git pre-push hook that refreshes the code map without blocking a push on generator failure.","ambiguous":"Check whether this repo already has the warn-only code-map regeneration hook, and repair it if needed.","negative":"The generated code map is stale after a source move. Refresh it once now; I do not want recurring Git automation."},
     {"skill":"using-code-map","positive":"Use the existing code-map index to load just the modules needed to plan a billing cancellation change.","ambiguous":"I need implementation context for one endpoint, and this repo already has generated module docs. Keep the context scoped.","negative":"Summarize a greenfield product idea; there are no source files or generated maps."}
   ],
   "content": [
@@ -71,6 +71,70 @@
         {"name":"Scoped context","description":"Starts with the index and billing module, adds directly coupled accounts context, and uses bounded symbol/dependency queries rather than loading all generated artifacts.","weight":35},
         {"name":"Freshness and source confirmation","description":"Checks freshness and verifies current source evidence or refreshes appropriately before presenting moved paths as verified edit targets.","weight":40},
         {"name":"Negative evidence limits","description":"Distinguishes no recorded graph edge from proof of no dependency, expressing the analytics relationship as unverified until supported by source evidence.","weight":25}
+      ]
+    },
+    {
+      "id": "configured-use-case-discovery",
+      "task": "Review this planning action without changing files. Configuration sets useCaseFilePattern to journey-{id}.md. The feature directory contains journey-014.md, whose flow covers a volunteer requesting a shift exchange and the recipient accepting. A request titled 'Swap my assignment' has the same actor, trigger and outcome plus a new rejection alternate flow. The agent searched only uc-*.md, found nothing and proposes creating a new identity. What discovery and reconciliation should precede a write?",
+      "criteria": [
+        {
+          "name": "Configured discovery",
+          "description": "Rejects the empty hardcoded-glob result as an absence check and inspects existing files matching the configured naming pattern before deciding whether a use case is new.",
+          "weight": 50
+        },
+        {
+          "name": "Identity reconciliation",
+          "description": "Compares flow meaning rather than titles and proposes extending the existing identity with the rejection flow instead of creating a second use case for the same interaction.",
+          "weight": 50
+        }
+      ]
+    },
+    {
+      "id": "roadmap-removal-verification-links",
+      "task": "Review a roadmap maintenance proposal without editing files. Both R-018 and R-011 are open slices. R-018 supplies a shared integration verification pass. R-011 has no after: entry for R-018, but its Verify: with field names R-018. The user wants to remove R-018 because the verification pass will be reorganized; no replacement has been chosen. The agent searched only after: fields, found no incoming references and proposes deleting R-018 immediately. What must be checked and resolved before this removal is consistent?",
+      "criteria": [
+        {
+          "name": "Incoming verification references",
+          "description": "Treats the incoming Verify: with relationship as a removal constraint despite the absence of an after: edge and includes verification references in the impact check.",
+          "weight": 55
+        },
+        {
+          "name": "Preserved verification obligation",
+          "description": "Requires resolving the affected slice verification arrangement before removing its target, such as obtaining a replacement or explicit revised verification decision; does not silently drop the obligation or invent a replacement.",
+          "weight": 45
+        }
+      ]
+    },
+    {
+      "id": "hook-verification-removal-scope",
+      "task": "Review two independent requests against the same initial repository state; do not execute commands. Its pre-push hook contains a code-map regeneration block followed by a custom release-policy command that rejects noncompliant pushes. The repository no longer has .plan-product/config.json. Request A is 'Check whether code-map regeneration is installed and warn-only.' Request B is 'Remove automatic code-map regeneration.' An assistant proposes running the hook installer for A and deleting the entire hook file for B. Give the appropriate operation and evidence for each request.",
+      "criteria": [
+        {
+          "name": "Noninstalling verification",
+          "description": "For A, inspects the existing hook and generator failure handling to report whether regeneration is present and warn-only, without invoking the installer or rewriting the hook merely to verify it; distinguishes that block from the custom policy command, which may still block a push.",
+          "weight": 55
+        },
+        {
+          "name": "Selective removal",
+          "description": "For B, permits removal despite missing planning configuration and removes only code-map regeneration wiring while preserving the custom release-policy command and its existing behavior; does not delete the shared hook, recreate planning configuration, or reinstall regeneration.",
+          "weight": 45
+        }
+      ]
+    },
+    {
+      "id": "bounded-query-pagination",
+      "task": "Review a context-gathering decision without running commands. The user needs edit targets for one cancellation endpoint, not a repository inventory. A bounded symbol query returns total=640, omitted=620 and nextOffset=20. Its first page identifies the endpoint and authorization helper; inspection of their current source resolves the requested behavior and relevant coupling. The agent says it must fetch every remaining page before it may write the plan. Is that necessary, and how should it report the scope of its evidence?",
+      "criteria": [
+        {
+          "name": "Task-bounded stopping",
+          "description": "Stops pagination once the relevant current-source evidence answers the scoped task; treats a continuation offset as an available next page rather than a requirement to exhaust the query.",
+          "weight": 60
+        },
+        {
+          "name": "Qualified evidence scope",
+          "description": "Reports the inspected scope without claiming a complete inventory or absence of other matches; identifies omitted results when material and reserves exhaustive pagination for a complete-inventory need.",
+          "weight": 40
+        }
       ]
     }
   ]
