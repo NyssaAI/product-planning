@@ -7,6 +7,7 @@ import {
   readFileSync,
   rmSync,
   statSync,
+  symlinkSync,
   utimesSync,
   writeFileSync,
 } from 'node:fs';
@@ -110,6 +111,19 @@ function run(dir, args = ['--json']) {
     encoding: 'utf8',
   });
 }
+
+test('pattern output overrides cannot traverse an external directory junction', () => {
+  const dir = tempProject();
+  const outside = mkdtempSync(path.join(tmpdir(), 'plan-product-pattern-outside-'));
+  tempDirs.push(outside);
+  symlinkSync(outside, path.join(dir, 'linked'), process.platform === 'win32' ? 'junction' : 'dir');
+  writeFileSync(path.join(dir, 'src/cli.mjs'), 'const args = process.argv.slice(2);\n');
+  const result = run(dir, ['--json', '--output-dir', 'linked']);
+  assert.notEqual(result.status, 0, result.stdout);
+  assert.match(result.stdout, /INVALID_OUTPUT_DIR/);
+  assert.equal(existsSync(path.join(outside, 'patterns.json')), false);
+  assert.equal(existsSync(path.join(outside, 'patterns.md')), false);
+});
 
 test('generate-patterns --json writes patterns artifacts', () => {
   const dir = tempProject();

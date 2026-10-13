@@ -10,6 +10,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { createLogger } from './logger.mjs';
+import { resolveRepoContainedPath } from '../../lib/repo-paths.mjs';
 
 const log = createLogger({ module: 'pin' });
 
@@ -23,7 +24,8 @@ function readRaw(repoRoot) {
 
 /** @param {string} repoRoot @param {object} raw */
 function writeRaw(repoRoot, raw) {
-  writeFileSync(configPath(repoRoot), `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
+  const target = resolveRepoContainedPath(repoRoot, configPath(repoRoot), 'module pin config');
+  writeFileSync(target, `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
 }
 
 /**

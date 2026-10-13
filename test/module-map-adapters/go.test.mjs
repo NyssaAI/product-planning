@@ -222,3 +222,17 @@ test('go adapter treats independent go.mod subdirs as module roots when no root 
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+ test('Go dependency evidence excludes comments and raw strings and keeps import specs', async t => {
+  const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const root = mkdtempSync(path.join(tmpdir(), 'go-structural-import-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(path.join(root, 'real')); mkdirSync(path.join(root, 'fake'));
+  writeFileSync(path.join(root, 'go.mod'), 'module example.com/demo\n');
+  writeFileSync(path.join(root, 'a.go'), ['package main', 'import ( // genuine block', ' _ "example.com/demo/real"', ')', '/*', 'import "example.com/demo/fake"', '*/', 'const example = `', 'import "example.com/demo/fake"', '`'].join('\n'));
+  writeFileSync(path.join(root, 'real/b.go'), 'package real\nfunc B() {}\n');
+  writeFileSync(path.join(root, 'fake/b.go'), 'package fake\nfunc B() {}\n');
+  const graph = goAdapter.extract(root, ['a.go', 'real/b.go', 'fake/b.go']);
+  assert.deepEqual(graph.edges, [{ from: 'a.go', to: 'real/b.go', weight: 1 }]);
+});

@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /**
  * Installs a warn-only git pre-push hook that regenerates the code map via
- * pre-push-regen.mjs --git-hook. Intended for runtimes without native hook
- * support (Codex, Gemini, plain terminals); Claude Code already gets the
- * plugin's PreToolUse hook from hooks/hooks.json.
+ * pre-push-regen.mjs --git-hook. This opt-in Git hook works across runtimes.
  *
  * The hook block is marker-delimited: re-running the installer replaces the
  * block in place, foreign hook content outside the markers is preserved, and
@@ -13,6 +11,7 @@
 import {
   chmodSync,
   existsSync,
+  mkdirSync,
   readFileSync,
   writeFileSync,
 } from 'node:fs';
@@ -47,7 +46,7 @@ function hookBlock() {
   return [
     BEGIN_MARKER,
     '# Warn-only: regenerates the code map before push; never blocks the push.',
-    `node "${script}" --git-hook || true`,
+    `node '${script.replace(/'/g, "'\\''")}' --git-hook || true`,
     END_MARKER,
   ].join('\n');
 }
@@ -68,6 +67,16 @@ function removeBlock(text) {
 }
 
 function main() {
+  const args = process.argv.slice(2);
+  if (args.some(arg => !['--help', '-h', '--uninstall'].includes(arg))) {
+    console.error('plan-product: unknown option; use --help');
+    process.exitCode = 1;
+    return;
+  }
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log('Usage: node install-git-hook.mjs [--uninstall]\nInstall or remove the opt-in, warn-only pre-push hook in the current Git repository.');
+    return;
+  }
   const uninstall = process.argv.includes('--uninstall');
   const repoRoot = process.cwd();
 
@@ -110,6 +119,7 @@ function main() {
       action = 'appended to existing';
     }
   }
+  mkdirSync(hooksDir, { recursive: true });
   writeFileSync(hookFile, content, 'utf8');
   try {
     chmodSync(hookFile, 0o755);

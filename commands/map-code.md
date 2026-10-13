@@ -11,8 +11,8 @@ Generate or refresh the target repo's code-map context: symbol index, endpoint i
 
 ## Prerequisites
 
-- Product docs are present, usually `docs/product.md`, `docs/features.md`, and `docs/tech-stack.md`, or explicit doc paths are configured.
-- Node.js and npm are available.
+- Product docs are optional. When present, configured product, feature, and tech-stack docs add planning context; source-only repositories can be mapped directly.
+- Node.js 22 or later and npm are available.
 
 ## Run
 

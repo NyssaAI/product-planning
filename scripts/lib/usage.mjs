@@ -6,6 +6,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
+import { resolveRepoContainedPath } from './repo-paths.mjs';
 
 const DEFAULT_EVENTS_PATH = '.plan-product/usage/events.jsonl';
 const DEFAULT_REPORT_PATH = 'docs/code-map/effectiveness.md';
@@ -79,9 +80,10 @@ export function loadUsageSettings(repoRoot, env = process.env) {
  *
  * @param {string} ledgerPath absolute path to the events file
  */
-function ensureLedgerIgnored(ledgerPath) {
+function ensureLedgerIgnored(repoRoot, ledgerPath) {
   try {
     const ignoreFile = path.join(path.dirname(ledgerPath), '.gitignore');
+    resolveRepoContainedPath(repoRoot, ignoreFile, 'usage ignore file');
     const rule = path.basename(ledgerPath);
     const existing = existsSync(ignoreFile)
       ? readFileSync(ignoreFile, 'utf8')
@@ -109,7 +111,7 @@ export function recordUsageEvent(repoRoot, event, options = {}) {
 
     const fullPath = resolveInsideRepo(repoRoot, settings.eventsPath);
     mkdirSync(path.dirname(fullPath), { recursive: true });
-    ensureLedgerIgnored(fullPath);
+    ensureLedgerIgnored(repoRoot, fullPath);
     const entry = {
       schemaVersion: 'plan-product-usage-event/v1',
       timestamp: (options.now ?? new Date()).toISOString(),
@@ -471,12 +473,7 @@ function truthyEnv(value) {
 }
 
 function resolveInsideRepo(repoRoot, relPath) {
-  const root = path.resolve(repoRoot);
-  const fullPath = path.resolve(root, relPath);
-  if (fullPath !== root && !fullPath.startsWith(`${root}${path.sep}`)) {
-    throw new Error(`usage path must stay inside the project root: ${relPath}`);
-  }
-  return fullPath;
+  return resolveRepoContainedPath(repoRoot, relPath, 'usage path');
 }
 
 function normalizeRel(value) {

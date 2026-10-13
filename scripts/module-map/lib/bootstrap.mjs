@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadPlanProductConfig, writeStarterConfigs } from './config.mjs';
+import { resolveRepoContainedPath } from '../../lib/repo-paths.mjs';
 import { createLogger } from './logger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -77,7 +78,7 @@ function missingBundledAsset(kind, name, filePath) {
  * @param {string[]} skipped
  */
 function writeIfMissing(repoRoot, relPath, content, created, skipped) {
-  const full = path.join(repoRoot, relPath);
+  const full = resolveRepoContainedPath(repoRoot, relPath, 'bootstrap target');
   if (existsSync(full)) {
     log.debug('bootstrap skip existing file', { path: relPath });
     skipped.push(relPath);
@@ -100,7 +101,7 @@ function writeIfMissing(repoRoot, relPath, content, created, skipped) {
  * @param {string[]} skipped
  */
 function ensureDirIfMissing(repoRoot, relDir, created, skipped) {
-  const full = path.join(repoRoot, relDir);
+  const full = resolveRepoContainedPath(repoRoot, relDir, 'bootstrap directory');
   if (existsSync(full)) {
     skipped.push(relDir);
     return;
@@ -122,8 +123,22 @@ export function bootstrapRepo(repoRoot, options = {}) {
   /** @type {string[]} */
   const skipped = [];
 
-  writeStarterConfigs(repoRoot);
+  // Validate all concrete destinations before the first initialization write.
+  const projectManifest = options.withProjectManifest
+    ? readBootstrapTemplate('jamaynor.project.json') : null;
+  const templates = ['product.md', 'features.md', 'tech-stack.md', 'feature.md',
+    'use-case.md', 'roadmap.md', 'pattern-library.json', 'pattern-expectations.json'];
+  const targets = ['plan-product.config.json', '.plan-product/config.json',
+    '.plan-product/schema.json', ...templates.map(name => `.plan-product/templates/${name}`),
+    'docs/product.md', 'docs/features.md', 'docs/tech-stack.md', 'docs/features',
+    'test/unit', '.plan-product/patterns/library.json', '.plan-product/patterns/expectations.json',
+    'AGENTS.md', 'CLAUDE.md', '.cursor/rules/code-map.mdc', 'package.json'];
+  if (options.withProjectManifest) targets.push('jamaynor.project.json');
+  if (options.writeScripts) targets.push('.claude/settings.json');
+  for (const target of targets) resolveRepoContainedPath(repoRoot, target, 'bootstrap target');
   const config = loadPlanProductConfig(repoRoot);
+  resolveRepoContainedPath(repoRoot, path.join(config.outputDir, 'modules'), 'bootstrap modules');
+  writeStarterConfigs(repoRoot);
 
   writeIfMissing(
     repoRoot,
@@ -214,7 +229,6 @@ export function bootstrapRepo(repoRoot, options = {}) {
   );
 
   if (options.withProjectManifest) {
-    const projectManifest = readBootstrapTemplate('jamaynor.project.json');
     writeIfMissing(
       repoRoot,
       'jamaynor.project.json',
@@ -243,7 +257,7 @@ export function bootstrapRepo(repoRoot, options = {}) {
  * @param {string[]} skipped
  */
 function mergePackageScripts(repoRoot, created, skipped) {
-  const pkgPath = path.join(repoRoot, 'package.json');
+  const pkgPath = resolveRepoContainedPath(repoRoot, 'package.json', 'bootstrap package');
   if (!existsSync(pkgPath)) {
     log.debug('bootstrap no package.json for scripts merge');
     return;
@@ -361,7 +375,7 @@ const REGEN_HOOK_MATCHER = 'Write|Edit';
  */
 function writeClaudeHook(repoRoot, created, skipped) {
   const settingsDir = path.join(repoRoot, '.claude');
-  const settingsPath = path.join(settingsDir, 'settings.json');
+  const settingsPath = resolveRepoContainedPath(repoRoot, '.claude/settings.json', 'bootstrap settings');
   const pluginRoot = path.resolve(__dirname, '../../..');
   const hookScript = path
     .join(pluginRoot, 'scripts/module-map/regen-if-source-changed.mjs')
@@ -397,7 +411,9 @@ function writeClaudeHook(repoRoot, created, skipped) {
     hooks: [
       {
         type: 'command',
-        command: `node "${hookScript}"`,
+        // Exec form preserves the script path across POSIX and Windows hosts.
+        command: 'node',
+        args: [hookScript],
       },
     ],
   });

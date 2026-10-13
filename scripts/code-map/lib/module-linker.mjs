@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { ownerRoot, normalizeRoot } from '../../module-map/lib/module-ownership.mjs';
+import { validateModuleIds } from '../../module-map/lib/module-ids.mjs';
 
 /**
  * @typedef {object} ModuleLink
@@ -17,6 +18,7 @@ import { ownerRoot, normalizeRoot } from '../../module-map/lib/module-ownership.
  * @param {{ outputDir: string }} options
  */
 export function annotateCodeMapWithModules(codeMap, modules, options) {
+  validateModuleIds(modules);
   const moduleLinks = modules.map((mod) => toModuleLink(mod, options.outputDir));
   const linkByRoot = new Map(
     moduleLinks.map((mod) => [normalizeRoot(mod.root), mod])

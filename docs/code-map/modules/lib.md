@@ -28,7 +28,7 @@
 | `beginMapScan` | Invalidate the previous success before either generator can write partial outputs. |
 | `completeMapScan` | Call only after both core generators succeed. |
 | `checkMapFreshness` | Shared freshness result for the CLI, doctor and regeneration hooks. |
-| `isPlanProductPluginRoot` | True when an environment-provided directory is a plan-product plugin root: it carries Claude's plugin manifest or a pack |
+| `isPlanProductPluginRoot` | True when an environment-provided directory is a plan-product plugin root: a supported plugin manifest or package.json m |
 | `findPluginRoot` |  |
 | `isPathContained` |  |
 | `resolveRepoContainedPath` | Resolve a configured path and reject escapes from the repository. |

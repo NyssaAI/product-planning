@@ -1,6 +1,7 @@
 import {
   existsSync,
   mkdirSync,
+  realpathSync,
   readdirSync,
   readFileSync,
   renameSync,
@@ -9,7 +10,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
-import { resolveRepoRelativePath } from '../../lib/repo-paths.mjs';
+import { resolveRepoContainedPath, resolveRepoRelativePath } from '../../lib/repo-paths.mjs';
 import { createLogger } from './logger.mjs';
 
 const log = createLogger({ module: 'migrate' });
@@ -58,8 +59,8 @@ One to three sentences: what the feature is, who it serves, and where its bounda
  * @param {string} toRel
  */
 function moveIfPresent(actions, repoRoot, fromRel, toRel) {
-  const from = path.join(repoRoot, fromRel);
-  const to = path.join(repoRoot, toRel);
+  const from = resolveRepoContainedPath(repoRoot, fromRel, 'migration path');
+  const to = resolveRepoContainedPath(repoRoot, toRel, 'migration path');
   const caseOnlyRename = from.toLowerCase() === to.toLowerCase();
 
   if (!existsSync(from)) {
@@ -105,14 +106,14 @@ function moveIfPresent(actions, repoRoot, fromRel, toRel) {
  * @param {boolean} [renameLegacy] map INDEX.md / CODE_MAP.json / scopes → current names
  */
 function moveDirContents(actions, repoRoot, fromDirRel, toDirRel, renameLegacy = true) {
-  const fromDir = path.join(repoRoot, fromDirRel);
-  const toDir = path.join(repoRoot, toDirRel);
+  const fromDir = resolveRepoContainedPath(repoRoot, fromDirRel, 'migration path');
+  const toDir = resolveRepoContainedPath(repoRoot, toDirRel, 'migration path');
   mkdirSync(toDir, { recursive: true });
 
   for (const name of readdirSync(fromDir)) {
     const target = renameLegacy ? LEGACY_NAMES[name] ?? name : name;
-    const from = path.join(fromDir, name);
-    const to = path.join(toDir, target);
+    const from = resolveRepoContainedPath(repoRoot, `${fromDirRel}/${name}`, 'migration source');
+    const to = resolveRepoContainedPath(repoRoot, `${toDirRel}/${target}`, 'migration destination');
     const fromRel = `${fromDirRel}/${name}`;
     const toRel = `${toDirRel}/${target}`;
 
@@ -148,7 +149,7 @@ function moveDirContents(actions, repoRoot, fromDirRel, toDirRel, renameLegacy =
  */
 function flattenLegacyContextDir(actions, repoRoot, outputDir) {
   const legacyRel = `${outputDir}/context`;
-  const legacy = path.join(repoRoot, legacyRel);
+  const legacy = resolveRepoContainedPath(repoRoot, legacyRel, 'migration path');
   if (!existsSync(legacy) || !statSync(legacy).isDirectory()) {
     actions.push({ kind: 'skipped', detail: `${legacyRel} (source not present)` });
     return;
@@ -164,7 +165,7 @@ function flattenLegacyContextDir(actions, repoRoot, outputDir) {
  * @param {string} outputDir
  */
 function patchContextReferences(actions, repoRoot, outputDir) {
-  const moduleMapPath = path.join(repoRoot, outputDir, 'module-map.json');
+  const moduleMapPath = resolveRepoContainedPath(repoRoot, `${outputDir}/module-map.json`, 'migration artifact');
   if (existsSync(moduleMapPath)) {
     let text = readFileSync(moduleMapPath, 'utf8');
     const before = text;
@@ -185,7 +186,7 @@ function patchContextReferences(actions, repoRoot, outputDir) {
     }
   }
 
-  const indexPath = path.join(repoRoot, outputDir, 'index.md');
+  const indexPath = resolveRepoContainedPath(repoRoot, `${outputDir}/index.md`, 'migration artifact');
   if (existsSync(indexPath)) {
     let text = readFileSync(indexPath, 'utf8');
     const before = text;
@@ -210,6 +211,20 @@ function patchContextReferences(actions, repoRoot, outputDir) {
   }
 }
 
+/** Validate legacy trees and their mapped destinations before moving anything. */
+function preflightTree(repoRoot, fromRel, toRel, renameLegacy = false, ancestors = new Set()) {
+  const from = resolveRepoContainedPath(repoRoot, fromRel, 'migration source');
+  resolveRepoContainedPath(repoRoot, toRel, 'migration destination');
+  if (!existsSync(from) || !statSync(from).isDirectory()) return;
+  const real = realpathSync(from);
+  if (ancestors.has(real)) throw new Error(`migration source contains a directory cycle: ${fromRel}`);
+  const next = new Set(ancestors).add(real);
+  for (const name of readdirSync(from)) {
+    const target = renameLegacy ? LEGACY_NAMES[name] ?? name : name;
+    preflightTree(repoRoot, `${fromRel}/${name}`, `${toRel}/${target}`, false, next);
+  }
+}
+
 /**
  * Normalize generated code-map artifact names under the configured output
  * dir (default docs/code-map/). Every step is idempotent — re-running reports
@@ -229,6 +244,12 @@ export function runMigrate(repoRoot, options = {}) {
   /** @type {MigrateAction[]} */
   const actions = [];
 
+  resolveRepoContainedPath(repoRoot, 'docs/features.md', 'migration features');
+  preflightTree(repoRoot, `${outputDir}/context`, outputDir, true);
+  for (const [legacy, current] of Object.entries(LEGACY_NAMES)) {
+    preflightTree(repoRoot, `${outputDir}/${legacy}`, `${outputDir}/${current}`);
+  }
+
   // 1. Flatten <outputDir>/context/ into <outputDir>/ (legacy names mapped).
   flattenLegacyContextDir(actions, repoRoot, outputDir);
   for (const [legacy, current] of Object.entries(LEGACY_NAMES)) {
@@ -239,7 +260,7 @@ export function runMigrate(repoRoot, options = {}) {
   patchContextReferences(actions, repoRoot, outputDir);
 
   // 3. features.md stub
-  const featuresPath = path.join(repoRoot, 'docs/features.md');
+  const featuresPath = resolveRepoContainedPath(repoRoot, 'docs/features.md', 'migration features');
   if (existsSync(featuresPath)) {
     actions.push({ kind: 'skipped', detail: 'docs/features.md (exists)' });
   } else {

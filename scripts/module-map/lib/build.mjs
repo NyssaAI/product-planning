@@ -8,6 +8,7 @@ import { discoverHttpRoutes } from './routes.mjs';
 import { createLogger } from './logger.mjs';
 import { enrichModule } from './module-enrichment.mjs';
 import { ownsFile } from './module-ownership.mjs';
+import { validateModuleIds } from './module-ids.mjs';
 
 const log = createLogger({ module: 'build' });
 
@@ -60,6 +61,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
       }
     : extractStackGraph(repoRoot, config);
   const modules = discoverModules(repoRoot, config, stack);
+  validateModuleIds(modules);
   log.debug('buildPlanProductModel discovered modules', {
     count: modules.length,
     ids: modules.map((m) => m.id),
@@ -100,6 +102,7 @@ export function buildPlanProductModel(repoRoot, config, codeMapInput) {
     }
   }
 
+  validateModuleIds(modules);
   const edges = buildModuleEdges(repoRoot, modules, config, stack);
 
   const navById = new Map(nav.map((n) => [n.id, n]));

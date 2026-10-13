@@ -7,7 +7,6 @@
 
 import {
   existsSync,
-  readFileSync,
   readdirSync,
 } from 'node:fs';
 import path from 'node:path';
@@ -53,6 +52,14 @@ const FROM_IMPORT_RE = /^\s*from\s+([.\w][\w.]*|\.+)\s+import\s+(.+)$/gm;
 const IMPORT_RE = /^\s*import\s+(.+)$/gm;
 const DYNAMIC_IMPORT_RE =
   /\bimportlib\.import_module\(\s*['"]([^'"]+)['"]\s*\)/g;
+const IMPORT_RULE = JSON.stringify({
+  id: 'python-dependency-import', language: 'Python',
+  rule: { any: [
+    { kind: 'import_statement' },
+    { kind: 'import_from_statement' },
+    { pattern: 'importlib.import_module($MODULE)' },
+  ] },
+});
 
 const adapter = {
   id: 'python',
@@ -89,6 +96,7 @@ function extract(repoRoot, files) {
     const candidateSet = new Set(candidateFiles);
     const moduleIndex = buildModuleIndex(repoRoot, candidateFiles);
     const symbolsByFile = extractSymbols(repoRoot, candidateFiles);
+    const importsByFile = extractImports(repoRoot, candidateFiles);
     const edgeWeights = new Map();
     const diagnostics = [];
 
@@ -98,8 +106,7 @@ function extract(repoRoot, files) {
         continue;
       }
 
-      const text = readFileSync(absSource, 'utf8');
-      for (const specifier of readImportSpecifiers(text)) {
+      for (const specifier of importsByFile.get(source) ?? []) {
         const target = resolveImportSpecifier(source, specifier, {
           candidateSet,
           moduleIndex,
@@ -218,6 +225,27 @@ function readImportSpecifiers(text) {
   }
 
   return specifiers;
+}
+
+/** Scan actual import nodes so examples and commented calls cannot create edges. */
+function extractImports(repoRoot, candidateFiles) {
+  const byFile = new Map(candidateFiles.map(file => [file, []]));
+  if (candidateFiles.length === 0) return byFile;
+  const binary = resolveAstGrepBinary({ toolkitDir: CODE_MAP_DIR, projectRoot: repoRoot });
+  const matches = runBatchedScan(binary, repoRoot,
+    candidateFiles.map(file => path.join(repoRoot, file)), ['--inline-rules', IMPORT_RULE]);
+  for (const match of matches) {
+    const file = normalizePath(path.relative(repoRoot, String(match.file ?? '')));
+    if (!byFile.has(file)) continue;
+    const text = String(match.text ?? '');
+    // Import statement nodes can contain parenthesized lines and comments.
+    // Dynamic call strings are left intact for the literal-only matcher.
+    const normalized = /^\s*(?:from|import)\s/.test(text)
+      ? text.replace(/#[^\r\n]*/g, '').replace(/\\\r?\n/g, ' ').replace(/\r?\n/g, ' ')
+      : text;
+    byFile.get(file).push(...readImportSpecifiers(normalized));
+  }
+  return byFile;
 }
 
 /**
