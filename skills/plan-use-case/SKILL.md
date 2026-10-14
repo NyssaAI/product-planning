@@ -9,6 +9,9 @@ Define one use case under an existing feature folder. Use `.plan-product/config.
 
 ## Operating Rules
 
+- Reuse information and approval already supplied by the user. Interview only for missing decisions; do not repeat a confirmation the user has already given.
+- Configured paths are repo-relative. Render Markdown links relative to the document containing the link, and verify each target exists before completion.
+
 - Preserve existing user-authored content unless the user asks to replace it.
 - Ask one blocking question at a time only for missing required information. In Codex, present numbered choices in chat and wait for the user answer. If a runtime provides an AskUserQuestion tool, use that tool.
 - Do not invent a happy path from the feature summary. The user must explain the workflow steps, or explicitly say a step is unknown.
@@ -22,7 +25,7 @@ Define one use case under an existing feature folder. Use `.plan-product/config.
 
 ## Workflow
 
-1. Read `.plan-product/config.json`.
+1. Read `.plan-product/config.json`. If config or a required template is missing, run `node "${PLUGIN_ROOT}/scripts/init.mjs"` from the target repo root and re-read. Resolve `${PLUGIN_ROOT}` from `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed plugin directory containing this skill. If initialization cannot restore the required file, report its configured path before writing.
 2. Read the configured feature inventory, usually `docs/features.md`.
 3. Read the parent feature guide resolved from `structure.features.featurePathPattern`.
 4. If the user named an existing use case, read its file before interviewing. Otherwise, scan sibling use-case files matching `structure.features.useCaseFilePattern`, choose the next `UC-nnn` id, and derive the configured path from `structure.features.useCasePathPattern`.
