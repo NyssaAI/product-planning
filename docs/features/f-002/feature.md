@@ -12,7 +12,7 @@ Make docs-based product files the canonical plan-product entry points.
 
 ## User Need
 
-An agent can load product context from predictable docs files before planning implementation work.
+An agent can load product context from predictable docs files when defining product requirements.
 
 ## Use Cases
 
@@ -22,11 +22,10 @@ None yet.
 
 - Own `docs/product.md`, `docs/features.md`, and `docs/tech-stack.md`.
 - Treat `docs/features.md` as the canonical feature inventory.
-- Read upstream `STRATEGY.md` and `CONCEPTS.md` when present, but do not store those CE-owned paths in plan-product config.
+- Read upstream `STRATEGY.md` and `CONCEPTS.md` when present, but do not store those optional paths in plan-product config.
 
 ## Out of Scope
 
-- Generated code-map artifacts.
 - Tool-specific runtime caches.
 
 ## Inputs

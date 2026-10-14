@@ -7,8 +7,6 @@
     "techStack": "docs/tech-stack.md",
     "featureDocs": "docs/features",
     "roadmap": "docs/roadmap.md",
-    "plans": "docs/plans",
-    "codeMap": "docs/code-map",
     "configSchema": ".plan-product/schema.json",
     "templates": ".plan-product/templates",
     "productTemplate": ".plan-product/templates/product.md",
@@ -16,15 +14,7 @@
     "techStackTemplate": ".plan-product/templates/tech-stack.md",
     "featureTemplate": ".plan-product/templates/feature.md",
     "useCaseTemplate": ".plan-product/templates/use-case.md",
-    "roadmapTemplate": ".plan-product/templates/roadmap.md",
-    "patternLibrary": ".plan-product/patterns/library.json",
-    "patternExpectations": ".plan-product/patterns/expectations.json",
-    "patternLibraryTemplate": ".plan-product/templates/pattern-library.json",
-    "patternExpectationsTemplate": ".plan-product/templates/pattern-expectations.json",
-    "usageEvents": ".plan-product/usage/events.jsonl",
-    "effectivenessReport": "docs/code-map/effectiveness.md",
-    "source": "src",
-    "tests": "test"
+    "roadmapTemplate": ".plan-product/templates/roadmap.md"
   },
   "structure": {
     "features": {
@@ -38,20 +28,9 @@
       "useCaseFilePattern": "uc-nnn-short-slug.md",
       "useCasePathPattern": "docs/features/f-nxx/uc-nnn-short-slug.md"
     },
-    "codeMap": {
-      "root": "docs/code-map"
-    },
     "roadmap": {
       "file": "docs/roadmap.md",
-      "idPattern": "R-NNN",
-      "planNamePattern": "R-NNN-yyyy.mm.dd-step-slug.md"
-    },
-    "patterns": {
-      "root": ".plan-product/patterns",
-      "library": ".plan-product/patterns/library.json",
-      "expectations": ".plan-product/patterns/expectations.json",
-      "libraryTemplate": ".plan-product/templates/pattern-library.json",
-      "expectationsTemplate": ".plan-product/templates/pattern-expectations.json"
+      "idPattern": "R-NNN"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
-  "version": "3.9.2",
-  "description": "plan-product: plans products, features, and use cases, then generates code-map context for implementation planning.",
+  "version": "0.1.0",
+  "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
   "private": true,
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "author": {
@@ -21,7 +21,6 @@
     ".codex/INSTALL.md",
     ".cursor-plugin/",
     ".plan-product/config.json",
-    ".plan-product/patterns/",
     ".plan-product/schema.json",
     ".plan-product/templates/",
     "commands/",
@@ -36,9 +35,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test \"test/module-map/**/*.test.mjs\" \"test/module-map-adapters/**/*.test.mjs\" \"test/module-map-endpoints.test.mjs\" \"test/code-map/**/*.test.mjs\" \"scripts/**/*.test.mjs\""
-  },
-  "dependencies": {
-    "@ast-grep/cli": "^0.42.2"
+    "test": "node --test \"test/*.test.mjs\"",
+    "eval:prepare": "node evals/product-planning/prepare.mjs"
   }
 }

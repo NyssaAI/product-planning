@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "af84147445f94872c28d352a48801bd0f7f16012",
+  "hostedComparison": "Not measured; hosted evaluations waived by user on 2026-10-13. No completed historical scores found for the retained four skills.",
+  "scenarioSha256": {
+    "preserve-custom-product": "31c5072d89f473dfcc453dbe2b69fad951dda609a8a76bb15fa0b710586dd8b7",
+    "duplicate-use-case-boundary": "1016749519e16a570ff4a5cd3109f01c3fd0daa6ff1d8051abe96710015e7f11",
+    "configured-use-case-discovery": "5ab90c3065816c6e8838e7e9138145f15ae378d2640e9258c9e62f61d7924fa2",
+    "roadmap-removal-verification-links": "b7eac6ae3225cf8bbefcd8a08800b2b3c519007c3f4240e8f1064b6bfc3d74f9"
+  }
+}
