@@ -4,15 +4,15 @@ phase: 3
 status: complete
 ---
 
-# F-301 Implementation Roadmap
+# F-301 Product Roadmap
 
 ## Summary
 
-A dependency-ordered roadmap of work slices at `docs/roadmap.md`, authored by the `plan-roadmap` skill, so build order can differ from feature phase order without distorting the feature inventory.
+Sequence product deliverables independently of feature phase numbering.
 
 ## User Need
 
-Product planners and implementation agents need a place to sequence work by technical dependency. Feature IDs encode delivery phases, and real build order interleaves features across phases; the inventory cannot express that without losing its shape.
+Product owners need an ordered view of what becomes usable first, what depends on it, and how each deliverable can be accepted.
 
 ## Use Cases
 
@@ -20,38 +20,28 @@ None yet.
 
 ## Scope
 
-- The roadmap artifact: ordered `R-NNN` slices, each referencing one parent feature guide, with optional `after:` dependencies and completion checkboxes.
-- The `plan-roadmap` skill and `commands/plan-roadmap.md` entry point.
-- The roadmap template at `.plan-product/templates/roadmap.md` and its bootstrap delivery.
-- Config and schema entries: `paths.roadmap`, `paths.roadmapTemplate`, `structure.roadmap`.
-- Tie-out validation: slice resolution, coverage of incomplete features, `after:` ordering, and status cross-check against the feature inventory.
+- Ordered `R-NNN` slices with one parent feature and optional `after:` dependencies.
+- Stable IDs, immutable completion history, coverage checks, and cycle detection.
+- User-observable `Verify:` checkpoints and validated deferral references.
+- Configured roadmap path and template, supplied through initialization.
 
 ## Out of Scope
 
-- Feature definitions, phases, and status ownership — those stay in `docs/features.md` (F-101, F-103).
-- Generated or derived ordering; the roadmap is authored, not computed.
-- A validator script or `--doctor` integration; validation is skill-enforced.
-- Dates, timelines, and milestone framing.
+- Feature definitions and phase ownership, which remain in the inventory and feature guides.
+- Engineering plans and execution.
 
 ## Inputs
 
-- `.plan-product/config.json` roadmap paths and `structure.roadmap`.
-- `docs/features.md` and feature guides under `docs/features/`.
-- `.plan-product/templates/roadmap.md` on first-run creation.
-- User decisions from the `plan-roadmap` interview.
+Planning configuration, approved feature inventory and guides, roadmap template, and user decisions.
 
 ## Outputs
 
-- `docs/roadmap.md` with dependency-ordered slices.
-- With user confirmation, feature inventory checkbox and progress-table updates when slice completion resolves a status conflict.
+The configured roadmap; inventory status corrections only when authorized.
 
 ## Acceptance
 
-- The roadmap template ships in `.plan-product/templates/` and is copied by `--init`.
-- `plan-roadmap` creates `docs/roadmap.md` from `paths.roadmapTemplate` when absent and validates tie-out on every run.
-- Every slice resolves to an existing feature guide; every incomplete feature is covered; declared `after:` dependencies match document order.
-- The path contract matches `.plan-product/config.json`.
+Every slice resolves to one feature. Open features have coverage. Open slices follow declared dependencies. Verification deferrals resolve to later concrete checkpoints. Completed history and stable IDs survive edits.
 
 ## Dependencies
 
-- F-101 (feature inventory), F-102 (feature detail docs), F-103 (feature phase organization).
+F-101, F-102, F-103.

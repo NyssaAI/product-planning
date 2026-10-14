@@ -3,7 +3,11 @@
   "$id": "https://plan-product.local/schema/config.schema.json",
   "title": "plan-product Config",
   "type": "object",
-  "required": ["version", "paths", "structure"],
+  "required": [
+    "version",
+    "paths",
+    "structure"
+  ],
   "additionalProperties": false,
   "properties": {
     "version": {
@@ -17,43 +21,62 @@
         "product",
         "features",
         "techStack",
-        "featureDocs",
-        "codeMap"
+        "featureDocs"
       ],
       "additionalProperties": {
         "type": "string"
       },
       "properties": {
-        "repoRoot": { "type": "string" },
-        "product": { "type": "string" },
-        "features": { "type": "string" },
-        "techStack": { "type": "string" },
-        "featureDocs": { "type": "string" },
-        "roadmap": { "type": "string" },
-        "plans": { "type": "string" },
-        "codeMap": { "type": "string" },
-        "configSchema": { "type": "string" },
-        "templates": { "type": "string" },
-        "productTemplate": { "type": "string" },
-        "featuresTemplate": { "type": "string" },
-        "techStackTemplate": { "type": "string" },
-        "featureTemplate": { "type": "string" },
-        "useCaseTemplate": { "type": "string" },
-        "roadmapTemplate": { "type": "string" },
-        "patternLibrary": { "type": "string" },
-        "patternExpectations": { "type": "string" },
-        "patternLibraryTemplate": { "type": "string" },
-        "patternExpectationsTemplate": { "type": "string" },
-        "usageEvents": { "type": "string" },
-        "effectivenessReport": { "type": "string" },
-        "source": { "type": "string" },
-        "tests": { "type": "string" }
+        "repoRoot": {
+          "type": "string"
+        },
+        "product": {
+          "type": "string"
+        },
+        "features": {
+          "type": "string"
+        },
+        "techStack": {
+          "type": "string"
+        },
+        "featureDocs": {
+          "type": "string"
+        },
+        "roadmap": {
+          "type": "string"
+        },
+        "configSchema": {
+          "type": "string"
+        },
+        "templates": {
+          "type": "string"
+        },
+        "productTemplate": {
+          "type": "string"
+        },
+        "featuresTemplate": {
+          "type": "string"
+        },
+        "techStackTemplate": {
+          "type": "string"
+        },
+        "featureTemplate": {
+          "type": "string"
+        },
+        "useCaseTemplate": {
+          "type": "string"
+        },
+        "roadmapTemplate": {
+          "type": "string"
+        }
       }
     },
     "structure": {
       "type": "object",
-      "required": ["features", "codeMap"],
-      "additionalProperties": false,
+      "required": [
+        "features"
+      ],
+      "additionalProperties": true,
       "properties": {
         "features": {
           "type": "object",
@@ -70,45 +93,49 @@
           ],
           "additionalProperties": false,
           "properties": {
-            "inventory": { "type": "string" },
-            "root": { "type": "string" },
-            "idPattern": { "type": "string" },
-            "folderPattern": { "type": "string" },
-            "featureFile": { "type": "string" },
-            "featurePathPattern": { "type": "string" },
-            "useCaseIdPattern": { "type": "string" },
-            "useCaseFilePattern": { "type": "string" },
-            "useCasePathPattern": { "type": "string" }
-          }
-        },
-        "codeMap": {
-          "type": "object",
-          "required": ["root"],
-          "additionalProperties": false,
-          "properties": {
-            "root": { "type": "string" }
+            "inventory": {
+              "type": "string"
+            },
+            "root": {
+              "type": "string"
+            },
+            "idPattern": {
+              "type": "string"
+            },
+            "folderPattern": {
+              "type": "string"
+            },
+            "featureFile": {
+              "type": "string"
+            },
+            "featurePathPattern": {
+              "type": "string"
+            },
+            "useCaseIdPattern": {
+              "type": "string"
+            },
+            "useCaseFilePattern": {
+              "type": "string"
+            },
+            "useCasePathPattern": {
+              "type": "string"
+            }
           }
         },
         "roadmap": {
           "type": "object",
-          "required": ["file", "idPattern"],
+          "required": [
+            "file",
+            "idPattern"
+          ],
           "additionalProperties": false,
           "properties": {
-            "file": { "type": "string" },
-            "idPattern": { "type": "string" },
-            "planNamePattern": { "type": "string" }
-          }
-        },
-        "patterns": {
-          "type": "object",
-          "required": ["root", "library", "expectations"],
-          "additionalProperties": false,
-          "properties": {
-            "root": { "type": "string" },
-            "library": { "type": "string" },
-            "expectations": { "type": "string" },
-            "libraryTemplate": { "type": "string" },
-            "expectationsTemplate": { "type": "string" }
+            "file": {
+              "type": "string"
+            },
+            "idPattern": {
+              "type": "string"
+            }
           }
         }
       }

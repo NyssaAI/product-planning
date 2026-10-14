@@ -62,7 +62,7 @@ Compare the candidate scope against every other feature guide. If two guides cla
 
 ## Failure Cases
 
-- Missing template: `paths.featureTemplate` does not exist — run `--init` to restore it before writing.
+- Missing template: `paths.featureTemplate` does not exist — run the bundled `scripts/init.mjs` to restore it before writing.
 - Duplicate ownership: the candidate scope overlaps an existing feature — narrow the boundary or merge.
 - ID collision: the chosen ID is already used — select the next unused ID in the correct phase band.
 

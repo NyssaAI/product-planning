@@ -28,9 +28,8 @@ A feature can carry scope, inputs, outputs, acceptance criteria, and dependencie
 
 ## Out of Scope
 
-- Implementation plans under `docs/plans/`; F-301 and F-401 own plan naming and linking there.
-- Generated code-map module docs.
-
+- Product-wide strategy and delivery sequencing.
+- Actor-level process details, which belong in linked use cases.
 ## Inputs
 
 - `docs/features.md`.

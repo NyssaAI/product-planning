@@ -22,7 +22,7 @@ None yet.
 
 - Own `.plan-product/schema.json`.
 - Own `.plan-product/templates/`.
-- Include templates for product, features, tech stack, and feature detail guides.
+- Include templates for product, feature inventory, tech stack, feature guides, use cases, and roadmaps.
 
 ## Out of Scope
 

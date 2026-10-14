@@ -1,182 +1,30 @@
-# plan-product Feature Progress
+# plan-product Feature Inventory
 
 | Delivery Phase | Complete / Total | % Complete |
-|----------------|------------------|------------|
-| Phase 0 - Planning Foundation | 3 / 3 | 100% |
-| Phase 1 - Feature Guide Workflow | 3 / 3 | 100% |
-| Phase 2 - Code Map Workflow | 4 / 4 | 100% |
-| Phase 3 - Roadmap Workflow | 1 / 1 | 100% |
-| Phase 4 - Implementation Loop | 1 / 1 | 100% |
-| Existing Code-Map Capabilities | 15 / 15 | 100% |
-| **Overall** | 27 / 27 | 100% |
+| --- | --- | --- |
+| Phase 0 - Foundation | 3 / 3 | 100% |
+| Phase 1 - Features and use cases | 3 / 3 | 100% |
+| Phase 3 - Product roadmap | 1 / 1 | 100% |
+| **Overall** | **7 / 7** | **100%** |
 
----
+## Conventions
 
-## How to Use This Feature Inventory
-
-This document lists plan-product features in intended build order and retains the existing code-map capability inventory.
-
-* **Feature IDs:** Canonical plan-product features use the `F-Nxx` scheme, where `N` is the delivery phase and `xx` is the two-digit feature number.
-* **Feature folders:** Each plan-product feature owns a folder named with the lowercase feature ID, for example `docs/features/f-001/`.
-* **Feature files:** The main feature guide is always `feature.md` inside that folder. Use cases live beside it as `uc-001-short-slug.md`.
-* **Status:** An item is marked `complete` only when the capability is implemented, documented, and verified against `.plan-product/config.json`.
-* **Phases:** Phase 0 establishes the repo-local planning contract, Phase 1 builds feature guide workflows, Phase 2 connects product planning to code-map artifacts, Phase 3 adds the dependency-ordered implementation roadmap, and Phase 4 builds the roadmap in a Compound Engineering loop.
-* **Code-map capabilities:** The `CM-xxx` entries track the implemented generator capabilities that plan-product keeps alongside product planning workflows.
-
----
+Feature IDs are stable `F-Nxx` identifiers, grouped by delivery phase. Guides live in lowercase feature folders under `docs/features/`, each named `feature.md`; linked use cases live beside them. Completion reflects delivered and verified capability. Existing IDs and phase numbers are preserved across releases.
 
 ## Feature Checklist Summary
 
-* [x] F-001: plan-product path map
-* [x] F-002: Docs product docs
-* [x] F-003: Templates and schema
----
-* [x] F-101: Feature inventory
-* [x] F-102: Feature detail docs
-* [x] F-103: Feature phase organization
----
-* [x] F-201: Product code map
-* [x] F-202: Code map planning handoff
-* [x] F-203: Pre-push code-map regeneration
-* [x] F-204: Go code-map support
----
-* [x] F-301: Implementation roadmap
----
-* [x] F-401: Roadmap build loop
+### Phase 0 - Foundation
 
-## Feature Inventory
+- [x] F-001: [Path map](features/f-001/feature.md) ? Repo-relative planning configuration.
+- [x] F-002: [Core product documents](features/f-002/feature.md) ? Purpose, audience, problem, solution, and technology context.
+- [x] F-003: [Templates and schema](features/f-003/feature.md) ? Customizable starter documents and configuration schema.
 
-### Phase 0 - Planning Foundation
+### Phase 1 - Features and use cases
 
-**F-001: plan-product path map**  
-Repo-relative config that tells agents where plan-product artifacts live.  
-[Feature Guide: plan-product Path Map](features/f-001/feature.md)
+- [x] F-101: [Feature inventory](features/f-101/feature.md) ? Stable feature identities, phases, and status.
+- [x] F-102: [Feature guides and use cases](features/f-102/feature.md) ? Capability boundaries and concrete actor workflows.
+- [x] F-103: [Feature phase organization](features/f-103/feature.md) ? Delivery groups and dependencies.
 
-**F-002: Docs product docs**  
-Canonical docs files for product, features, and stack.  
-[Feature Guide: Docs Product Docs](features/f-002/feature.md)
+### Phase 3 - Product roadmap
 
-**F-003: Templates and schema**  
-Starter templates and JSON schema for repeatable, validated plan-product artifacts.  
-[Feature Guide: Templates and Schema](features/f-003/feature.md)
-
----
-
-### Phase 1 - Feature Guide Workflow
-
-**F-101: Feature inventory**  
-`docs/features.md` explains feature naming, locations, statuses, and phase order.  
-[Feature Guide: Feature Inventory](features/f-101/feature.md)
-
-**F-102: Feature detail docs**  
-Per-feature files under `docs/features/` capture scope, inputs, outputs, and acceptance criteria.  
-[Feature Guide: Feature Detail Docs](features/f-102/feature.md) · [UC-001: Author a feature guide](features/f-102/uc-001-author-feature-guide.md)
-
-**F-103: Feature phase organization**  
-Features are grouped into phases so agents can reason about build order and dependency chains.  
-[Feature Guide: Feature Phase Organization](features/f-103/feature.md)
-
----
-
-### Phase 2 - Code Map Workflow
-
-**F-201: Product code map**  
-Product-oriented code context lives under `docs/code-map/` and supports implementation planning.  
-[Feature Guide: Product Code Map](features/f-201/feature.md)
-
-**F-202: Code map planning handoff**  
-Planning workflows can reference product code-map artifacts alongside feature guides.  
-[Feature Guide: Code Map Planning Handoff](features/f-202/feature.md)
-
-**F-203: Pre-push code-map regeneration**  
-Warn-only hook that refreshes code-map artifacts before `git push`, shipped as a Claude Code plugin hook and installable as a git pre-push hook elsewhere.  
-[Feature Guide: Pre-Push Code-Map Regeneration](features/f-203/feature.md)
-
-**F-204: Go code-map support**  
-Go symbols, endpoints (net/http, gin/echo/chi, MCP), and package-level module discovery at parity with TypeScript, C#, and Python.  
-[Feature Guide: Go Code-Map Support](features/f-204/feature.md) · [UC-001: Map a Go repository](features/f-204/uc-001-map-a-go-repository.md) · [UC-002: Verify Go endpoint detection](features/f-204/uc-002-verify-go-endpoint-detection.md)
-
----
-
-### Phase 3 - Roadmap Workflow
-
-**F-301: Implementation roadmap**  
-Dependency-ordered work slices in `docs/roadmap.md`, authored and validated by the `plan-roadmap` skill.  
-[Feature Guide: Implementation Roadmap](features/f-301/feature.md)
-
----
-
-### Phase 4 - Implementation Loop
-
-**F-401: Roadmap build loop**
-The `build-roadmap` skill implements roadmap slices one at a time through Compound Engineering planning, adversarial review, implementation, testing, fixing, code review, learning capture, and a code-map rebuild, with dev-standards enforced.
-[Feature Guide: Roadmap Build Loop](features/f-401/feature.md)
-
----
-
-## Integrated Code-Map Capabilities
-
-These items list the implemented code-map capabilities that remain part of plan-product.
-
-* [x] CM-001: Code map generation
-* [x] CM-002: Module map generation
-* [x] CM-003: Per-module architecture files
-* [x] CM-004: Progressive-disclosure planning workflow
-* [x] CM-005: Module discovery and pinning
-* [x] CM-006: Endpoint surface detection
-* [x] CM-007: Bootstrap and init
-* [x] CM-008: Module-map embedding
-* [x] CM-009: Doctor and staleness checks
-* [x] CM-010: Generated layout normalization
-* [x] CM-011: Multi-harness packaging
-* [x] CM-012: `map-code` command and skill
-* [x] CM-013: `map-architecture` command and skill
-* [x] CM-014: `find-code-patterns` command and skill
-* [x] CM-015: Usage and effectiveness reporting
-
-## Code-Map Capability Notes
-
-**CM-001: Code map generation**  
-`scripts/code-map/generate-code-map.mjs` scans the repo with `@ast-grep/cli` structural rules and writes a per-file symbol index plus endpoint index. This is L3 context, loaded only after a plan names symbols.
-
-**CM-002: Module map generation**  
-`scripts/module-map/generate-module-map.mjs` writes a module graph with `dependsOn` / `usedBy` edges, route/symbol counts, and per-module metadata. It is consumed for task ordering, not pasted wholesale into context.
-
-**CM-003: Per-module architecture files**  
-One module file describes boundaries, capabilities, does-not-own scope, dependencies, public surface, routes, test roots, and sample symbols.
-
-**CM-004: Progressive-disclosure planning workflow**  
-The `using-code-map` skill defines the L0-L3 disclosure model so agents load only the context needed for the current feature, use case, or implementation task.
-
-**CM-005: Module discovery & pinning**  
-Auto-detection derives module boundaries from dependency graphs, stack profiles, and workspace layouts. `--pin` and `--unpin` preserve or release derived module definitions in config.
-
-**CM-006: Endpoint surface detection**  
-The code map indexes HTTP route handlers and MCP tools, resources, prompts, and transports across supported languages.
-
-**CM-007: Bootstrap & init**  
-`generate-module-map.mjs --init --write-scripts` scaffolds product docs, optional generator config, generated context directories, and project npm scripts.
-
-**CM-008: Module-map embedding**  
-Generation embeds a freshness-stamped module-map table into `CLAUDE.md` and `AGENTS.md` between managed markers.
-
-**CM-009: Doctor & staleness checks**  
-`generate-module-map.mjs --doctor` reports required docs, generated artifacts, runtime readiness, and staleness signals.
-
-**CM-010: Generated layout normalization**  
-`generate-module-map.mjs --migrate` normalizes generated artifact names and module directories under the current `docs/code-map/` structure.
-
-**CM-011: Multi-harness packaging**  
-The same generator scripts support Claude Code, Cursor, Codex, and Gemini through per-harness adapters and plugin manifests.
-
-**CM-012: `map-code` command / skill**  
-Runs code-map plus module-map generation in the current project repo.
-
-**CM-013: `map-architecture` command / skill**  
-Builds a system-architecture handoff from `module-map.json`, preserving an agent-authored overview region.
-
-**CM-014: `find-code-patterns` command / skill**  
-Reviews structurally detectable code patterns by application module, showing where pattern families are used, which expected patterns are not detected, and which files lack headline pattern evidence as a code-quality review signal. Repo-specific detection and expectations live in `.plan-product/patterns/library.json` and `.plan-product/patterns/expectations.json`.
-
-**CM-015: Usage and effectiveness reporting**  
-Generator commands record local JSONL usage events under `.plan-product/usage/events.jsonl` when enabled. `generate-module-map.mjs --effectiveness` writes `docs/code-map/effectiveness.md` with command success, warning, artifact-health, doctor-check, and recent-run signals.
+- [x] F-301: [Product roadmap](features/f-301/feature.md) ? Product deliverables and observable acceptance checkpoints.

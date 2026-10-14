@@ -1,9 +1,0 @@
-id: map-go-func
-message: func
-severity: info
-language: Go
-metadata:
-  mapKind: function
-rule:
-  kind: function_declaration
-  has: { field: name, pattern: $NAME }

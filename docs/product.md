@@ -2,50 +2,32 @@
 
 ## Purpose
 
-plan-product keeps product intent, feature definitions, stack assumptions, and product-oriented code context in a compact repo-local structure that agents can read before planning or implementation work.
+Turn product conversations into consistent, durable Markdown planning documents.
 
 ## Audience
 
-The primary users are repository owners and coding agents that need a stable product planning layer without hunting through scattered docs.
+Product owners, founders, and teams using an agent to clarify a product and its intended behavior.
 
 ## Problem
 
-Product docs often drift across tool-specific folders, generated context, and planning notes. That makes it hard for agents to know which files are canonical and which paths should adapt across installations.
+Product decisions scattered through conversations lose scope boundaries, user needs, dependencies, and acceptance evidence. Rewriting documents from generic formats can also erase existing decisions.
 
 ## Solution
 
-plan-product defines a small `docs/`-first documentation contract and a repo-relative path map in `.plan-product/config.json`.
-
-Canonical product docs live in:
-
-- `docs/product.md`
-- `docs/features.md`
-- `docs/tech-stack.md`
-
-Feature detail files and product-oriented code-map artifacts live under `docs/features/` and `docs/code-map/`.
-
-## Code-Map Foundation
-
-plan-product includes the existing code-map and module-map generators as implementation-planning support. Those generators scan a repository and produce scoped planning context: a symbol and endpoint index, a module graph, and per-module architecture files.
-
-Agents should use the generated code-map context only after selecting the relevant product feature or use case.
+Four guided workflows define the product, deepen individual features, describe concrete use cases, and sequence product delivery. Repo-relative configuration and current templates control every output location and shape.
 
 ## Boundaries
 
-plan-product owns product planning artifacts and product-oriented code mapping. It does not own external plugin installation roots, machine-specific absolute paths, secret storage, or another tool's local runtime cache.
-
-## Features
-
-The feature inventory, build order, carried-forward code-map capabilities, and detailed feature guide links are maintained in `docs/features.md` and `docs/features/`.
-
-## Tech Stack
-
-Runtime, framework, storage, tooling, and environment assumptions are maintained in `docs/tech-stack.md`.
+The plugin owns product requirements and delivery sequencing. Engineering design, source inspection, and execution are outside its scope. Technology documentation records supplied context and unknowns.
 
 ## Success
 
-- Canonical product files are under `docs/`.
-- plan-product paths are repo-relative and portable.
-- Feature details are easy to find from `docs/features.md`.
-- Existing code-map capabilities remain visible while the plan-product workflow is simplified.
-- Code context can be regenerated without hardcoded local paths.
+Documents preserve existing decisions, distinguish feature ownership, avoid duplicate use cases, and expose dependencies and observable acceptance checkpoints without inventing missing requirements.
+
+## Features
+
+See the [feature inventory](features.md) and [feature guides](features/README.md).
+
+## Tech Stack
+
+See [technology context](tech-stack.md).

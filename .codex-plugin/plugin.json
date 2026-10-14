@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
-  "version": "3.9.2",
-  "description": "Plans products, features, and use cases, then generates code-map context for implementation planning.",
+  "version": "0.1.0",
+  "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
   "author": {
     "name": "jamaynor"
   },
@@ -9,19 +9,17 @@
   "repository": "https://github.com/jamaynor/product-planning",
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
-    "plan-product",
-    "planning",
+    "product-planning",
     "features",
     "use-cases",
-    "code-map",
-    "architecture",
+    "roadmaps",
     "skills"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "plan-product",
-    "shortDescription": "Plan products, features, use cases, and code-map context.",
-    "longDescription": "plan-product helps agents define docs-based product docs, feature inventories, feature guides, and use cases, then generate code-map context for implementation planning.",
+    "shortDescription": "Plan products, features, use cases, and roadmaps.",
+    "longDescription": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
     "developerName": "jamaynor",
     "category": "Coding",
     "capabilities": [
@@ -33,8 +31,8 @@
     "defaultPrompt": [
       "Plan this product",
       "Plan a feature",
-      "Build the roadmap",
-      "Map this repo's code"
+      "Document a use case",
+      "Sequence the product roadmap"
     ],
     "brandColor": "#2563EB",
     "screenshots": []

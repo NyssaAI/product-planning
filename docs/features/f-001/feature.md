@@ -22,11 +22,11 @@ None yet.
 
 - Own `.plan-product/config.json`.
 - Keep plan-product artifact paths repo-relative.
-- Point to canonical product, feature, stack, schema, template, source, and test locations.
+- Point to canonical product, feature, stack, schema, and template locations.
 
 ## Out of Scope
 
-- Compound Engineering local config.
+- Other plugins' configuration.
 - User-specific absolute paths.
 - Installed plugin cache paths.
 
