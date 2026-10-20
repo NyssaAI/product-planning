@@ -4,14 +4,16 @@ Version **0.1.0**. Guided product planning in Markdown: define the product, desc
 
 ## Capabilities
 
-| Skill | Purpose |
-| --- | --- |
-| `plan-product` | Define or refresh product purpose, audience, feature inventory, and high-level technology context. |
-| `plan-feature` | Define one capability, its boundaries, inputs, outputs, acceptance checks, and dependencies. |
-| `plan-use-case` | Capture an actor workflow, entry route, process tree, alternatives, failures, and acceptance checks. |
-| `plan-roadmap` | Sequence product deliverables with stable IDs, dependencies, and observable acceptance checkpoints. |
+The plugin operates as an **Encapsulated Facade**: the `plan-product` skill serves as the single conversational entrypoint, delegating to focused internal workflows, accompanied by four direct slash commands:
 
-The skills interview for missing information, preserve existing content, use configured paths and current templates, and check for conflicting or duplicate ownership. Roadmaps describe delivery outcomes; engineering execution belongs to the user's development workflow.
+| Command / Workflow | Purpose | Runbook |
+| :--- | :--- | :--- |
+| `plan-product` | Define or refresh product purpose, audience, feature inventory, and high-level technology context. | `workflows/product.md` |
+| `plan-feature` | Define one capability, its boundaries, inputs, outputs, acceptance checks, and dependencies. | `workflows/feature.md` |
+| `plan-use-case` | Capture an actor workflow, entry route, process tree, alternatives, failures, and acceptance checks. | `workflows/use-case.md` |
+| `plan-roadmap` | Sequence product deliverables with stable IDs, dependencies, and observable acceptance checkpoints. | `workflows/roadmap.md` |
+
+The workflows interview for missing information, preserve existing content, use configured paths and current templates, and check for conflicting or duplicate ownership. Roadmaps describe delivery outcomes; engineering execution belongs to the user's development workflow.
 
 ## Installation
 
@@ -24,18 +26,15 @@ In Claude Code:
 /plugin install plan-product@jamaynor
 ```
 
-Claude Code uses `.claude-plugin/plugin.json` and the four command entrypoints in `commands/`. Cursor uses `.cursor-plugin/plugin.json`, `commands/`, and `skills/`. Gemini uses `gemini-extension.json` and `GEMINI.md`.
+Claude Code uses `.claude-plugin/plugin.json` and the command entrypoints in `commands/`. Cursor uses `.cursor-plugin/plugin.json`, `commands/`, and `skills/`. Gemini uses `gemini-extension.json` and `GEMINI.md`.
 
 ### Codex usage
 
-Install the native plugin from the marketplace and invoke a skill by its displayed name:
+Install the native plugin from the marketplace and invoke the facade skill:
 
 - `plan-product:plan-product`
-- `plan-product:plan-feature`
-- `plan-product:plan-use-case`
-- `plan-product:plan-roadmap`
 
-Codex uses `.codex-plugin/plugin.json` and `skills/`. Bare command aliases are host-specific; use the installed skill entrypoints.
+Codex uses `.codex-plugin/plugin.json` and `skills/`. Direct command aliases are host-specific; use the installed skill entrypoint or specify desired workflows directly.
 
 ## Project setup
 
@@ -82,11 +81,12 @@ From a source checkout:
 
 ```text
 npm test
+npm run assemble
 npm run eval:prepare
 npm pack --dry-run
 ```
 
-Tests exercise fresh setup, custom paths and templates, preservation, safe failure, package contents, and the four planning bundles. The [evaluation suite](https://github.com/jamaynor/product-planning/tree/main/evals/product-planning) retains planning rubrics and adds document-producing tasks for each public skill. Hosted evaluation status is reported separately from local checks.
+Tests exercise fresh setup, custom paths and templates, preservation, safe failure, package contents, and the planning facade. The [evaluation suite](evals/scenarios/product-planning) retains planning rubrics and adds document-producing tasks for each workflow.
 
 ## License
 

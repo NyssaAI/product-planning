@@ -3,11 +3,18 @@ description: Interview the user and create or update one plan-product feature gu
 argument-hint: "[feature id or name, e.g. F-101]"
 ---
 
+> [!IMPORTANT] Scope Directive
+> Entrypoint command for defining individual features. Invokes the `plan-product` facade skill and executes its internal `workflows/feature.md` runbook.
+
 # plan-feature - define a feature
 
-Load the `plan-feature` skill and follow its workflow. The skill owns the boundary-confirmation step, the `[inferred]` marking, the cross-feature uniqueness and contradiction pass, and the legacy-section migration; this command file is only the entry point.
+Load the `plan-product` skill and execute its `workflows/feature.md` runbook. The workflow owns the boundary-confirmation step, the `[inferred]` marking, the cross-feature uniqueness and contradiction pass, and the legacy-section migration; this command file is only the entry point.
 
 Interview the user and create or update one plan-product feature guide. Confirm the feature boundary before writing, then check for duplicate or contradictory ownership across existing feature guides.
+
+## Invocation Context
+
+Target feature: $ARGUMENTS
 
 ## Writes
 

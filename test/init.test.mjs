@@ -111,3 +111,12 @@ test('file/directory conflicts fail before modifying config or creating assets',
     assert.equal(existsSync(path.join(root, '.plan-product/schema.json')), false);
   }
 });
+
+test('traversal characters in sub-path patterns fail before writes', t => {
+  for (const pattern of ['../../escape', 'sub/dir', 'name:bad', '..']) {
+    const root = fixture(t);
+    setConfig(root, { structure: { features: { folderPattern: pattern } } });
+    assert.throws(() => initialize(root), /traversal or separators/);
+    assert.equal(existsSync(path.join(root, '.plan-product/schema.json')), false);
+  }
+});

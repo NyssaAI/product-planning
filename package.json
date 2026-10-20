@@ -18,7 +18,6 @@
   "files": [
     ".claude-plugin/",
     ".codex-plugin/",
-    ".codex/INSTALL.md",
     ".cursor-plugin/",
     ".plan-product/config.json",
     ".plan-product/schema.json",
@@ -27,6 +26,7 @@
     "scripts/",
     "!scripts/**/*.test.mjs",
     "skills/",
+    "plugin.json",
     "AGENTS.md",
     "CLAUDE.md",
     "GEMINI.md",
@@ -36,6 +36,9 @@
   ],
   "scripts": {
     "test": "node --test \"test/*.test.mjs\"",
-    "eval:prepare": "node evals/product-planning/prepare.mjs"
+    "validate": "node scripts/validate.mjs",
+    "assemble": "node scripts/assemble.mjs check",
+    "assemble:write": "node scripts/assemble.mjs write",
+    "eval:prepare": "node evals/scenarios/product-planning/prepare.mjs"
   }
 }

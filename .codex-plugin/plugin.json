@@ -12,8 +12,7 @@
     "product-planning",
     "features",
     "use-cases",
-    "roadmaps",
-    "skills"
+    "roadmaps"
   ],
   "skills": "./skills/",
   "interface": {
@@ -21,7 +20,7 @@
     "shortDescription": "Plan products, features, use cases, and roadmaps.",
     "longDescription": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
     "developerName": "jamaynor",
-    "category": "Coding",
+    "category": "Productivity",
     "capabilities": [
       "Interactive",
       "Read",

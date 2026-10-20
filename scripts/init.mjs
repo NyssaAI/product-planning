@@ -49,6 +49,12 @@ export function initialize(root = process.cwd()) {
   for (const [section, keys] of Object.entries({ features: ['inventory','root','featurePathPattern','useCasePathPattern'], roadmap: ['file'] })) {
     for (const key of keys) relativePath(root, config.structure[section][key], `structure.${section}.${key}`);
   }
+  for (const key of ['folderPattern', 'featureFile', 'useCaseFilePattern']) {
+    const val = config.structure?.features?.[key];
+    if (typeof val !== 'string' || !val.trim() || val.includes('..') || val.includes('/') || val.includes('\\') || val.includes(':')) {
+      throw new Error(`structure.features.${key} must be a single path segment without traversal or separators`);
+    }
+  }
   const assets = [['configSchema', 'schema.json']];
   for (const name of ['product', 'features', 'techStack', 'feature', 'useCase', 'roadmap']) {
     const filename = { techStack: 'tech-stack', useCase: 'use-case' }[name] || name;

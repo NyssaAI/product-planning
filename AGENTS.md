@@ -1,13 +1,15 @@
 # plan-product - Project Notes
 
-Same content as `CLAUDE.md`. This repository owns four product-planning skills and a dependency-free initializer.
+Same content as `CLAUDE.md`. This repository owns the `plan-product` planning facade skill, encapsulated workflows, direct commands, and a dependency-free initializer.
 
 ## Capabilities
 
-- `plan-product`: product definition, feature inventory, and descriptive technology context.
-- `plan-feature`: feature identity, user need, boundaries, acceptance checks, and dependencies.
-- `plan-use-case`: actor workflows, entry routes, process trees, alternatives, and failures.
-- `plan-roadmap`: product delivery order, stable slice IDs, dependencies, and acceptance checkpoints.
+- `plan-product` facade: unified conversational planning entrypoint dispatching to internal workflows.
+  - `workflows/product.md`: product definition, feature inventory, and descriptive technology context.
+  - `workflows/feature.md`: feature identity, user need, boundaries, acceptance checks, and dependencies.
+  - `workflows/use-case.md`: actor workflows, entry routes, process trees, alternatives, and failures.
+  - `workflows/roadmap.md`: product delivery order, stable slice IDs, dependencies, and acceptance checkpoints.
+- Matching slash commands in `commands/`: `plan-product`, `plan-feature`, `plan-use-case`, `plan-roadmap`.
 
 ## Repository contract
 
@@ -18,11 +20,11 @@ Preserve user-authored documents, local notes, custom templates, and stable iden
 ## Structure
 
 - `.plan-product/`: planning config, schema, and six document templates.
-- `skills/`: four public skill bundles.
+- `skills/plan-product/`: unified facade skill (`SKILL.md`) and four encapsulated workflows (`workflows/`).
 - `commands/`: matching command entrypoints.
-- `scripts/init.mjs`: creates missing planning assets from the target repo root.
+- `scripts/`: initializer (`init.mjs`), repo path resolver, and host manifest assembler (`assemble.mjs`).
 - `docs/`: product documentation, feature guides, and product roadmap.
 - `test/`: initialization, packaging, and planning-contract regression checks.
-- `evals/product-planning/`: routing and content evaluations for the four skills.
+- `evals/scenarios/product-planning/`: routing and content evaluations.
 
-Node.js 22 or later runs the initializer and tests. Do not add unnecessary third-party dependencies. Run `npm test`, `npm run eval:prepare`, and `npm pack --dry-run` after relevant changes.
+Node.js 22 or later runs the initializer and tests. Do not add unnecessary third-party dependencies. Run `npm test`, `npm run assemble`, `npm run eval:prepare`, and `npm pack --dry-run` after relevant changes.

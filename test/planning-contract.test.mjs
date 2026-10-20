@@ -7,21 +7,30 @@ import os from 'node:os';
 import path from 'node:path';
 import { initialize } from '../scripts/init.mjs';
 
-const names = ['plan-feature','plan-product','plan-roadmap','plan-use-case'];
+const commandNames = ['plan-feature','plan-product','plan-roadmap','plan-use-case'];
+const workflowNames = ['feature','product','roadmap','use-case'];
 const json = file => JSON.parse(readFileSync(file, 'utf8'));
 const root = path.resolve(import.meta.dirname, '..');
 
-test('all hosts expose the same four planning bundles at version 0.1.0', () => {
-  assert.deepEqual(readdirSync('skills').sort(), names);
-  assert.deepEqual(readdirSync('commands').sort(), names.map(name => `${name}.md`));
-  for (const name of names) {
-    const skill = readFileSync(`skills/${name}/SKILL.md`, 'utf8');
+test('all hosts expose the plan-product facade and matching commands at version 0.1.0', () => {
+  assert.deepEqual(readdirSync('skills').sort(), ['plan-product']);
+  assert.deepEqual(readdirSync('skills/plan-product/workflows').sort(), workflowNames.map(w => `${w}.md`));
+  assert.deepEqual(readdirSync('commands').sort(), commandNames.map(name => `${name}.md`));
+
+  const facade = readFileSync('skills/plan-product/SKILL.md', 'utf8');
+  assert.match(facade, new RegExp('^---\nname: plan-product\ndescription: [\\s\\S]*Use when', 'm'));
+  assert.ok(facade.includes('> [!IMPORTANT] Scope Directive'));
+
+  for (const name of commandNames) {
     const command = readFileSync(`commands/${name}.md`, 'utf8');
-    assert.match(skill, new RegExp(`^---\nname: ${name}\ndescription: .*Use when`, 'm'));
-    assert.ok(command.includes(`\`${name}\` skill`));
-    for (const [, script] of skill.matchAll(/\$\{PLUGIN_ROOT\}\/(scripts\/[\w/.-]+)/g)) assert.ok(existsSync(script), script);
+    assert.ok(command.includes('`plan-product`'));
   }
-  for (const file of ['package.json','.claude-plugin/plugin.json','.codex-plugin/plugin.json','.cursor-plugin/plugin.json','gemini-extension.json']) {
+  for (const w of workflowNames) {
+    const workflow = readFileSync(`skills/plan-product/workflows/${w}.md`, 'utf8');
+    assert.ok(workflow.includes('> [!IMPORTANT] Scope Directive'));
+    for (const [, script] of workflow.matchAll(/\$\{PLUGIN_ROOT\}\/(scripts\/[\w/.-]+)/g)) assert.ok(existsSync(script), script);
+  }
+  for (const file of ['plugin.json', 'package.json','.claude-plugin/plugin.json','.codex-plugin/plugin.json','.cursor-plugin/plugin.json','gemini-extension.json']) {
     const manifest = json(file);
     assert.equal(manifest.version, '0.1.0', file);
     assert.equal(manifest.name, 'plan-product', file);
@@ -58,8 +67,8 @@ test('fresh initialization satisfies the bundled schema and every template resol
 });
 
 test('retained decision rubrics remain byte-equivalent in meaning and weight', () => {
-  const cases = json('evals/product-planning/cases.json');
-  const baseline = json('evals/product-planning/baseline.json');
+  const cases = json('evals/scenarios/product-planning/cases.json');
+  const baseline = json('evals/scenarios/product-planning/baseline.json');
   for (const [id, expected] of Object.entries(baseline.scenarioSha256)) {
     const row = cases.content.find(row => row.id === id);
     assert.ok(row, id);
@@ -72,10 +81,10 @@ test('evaluation preparation packages all scenarios and declares usable local fi
   const temp = mkdtempSync(path.join(os.tmpdir(), 'planning-eval-test-'));
   t.after(() => rmSync(temp, { recursive: true, force: true }));
   const target = path.join(temp, 'prepared');
-  execFileSync(process.execPath, ['evals/product-planning/prepare.mjs', root, target]);
-  assert.equal(readdirSync(path.join(target, 'routing')).length, 12);
+  execFileSync(process.execPath, ['evals/scenarios/product-planning/prepare.mjs', root, target]);
+  assert.equal(readdirSync(path.join(target, 'routing')).length, 32);
   assert.equal(readdirSync(path.join(target, 'content')).length, 8);
-  for (const row of json('evals/product-planning/cases.json').content) {
+  for (const row of json('evals/scenarios/product-planning/cases.json').content) {
     const folder = path.join(target, 'content', row.id);
     assert.equal(json(path.join(folder, 'criteria.json')).checklist.reduce((sum, c) => sum + c.max_score, 0), 100);
     if (row.files) {
@@ -83,7 +92,7 @@ test('evaluation preparation packages all scenarios and declares usable local fi
       for (const [file, content] of Object.entries(row.files)) assert.equal(readFileSync(path.join(folder, 'fixture', file), 'utf8'), content);
     }
   }
-  assert.throws(() => execFileSync(process.execPath, ['evals/product-planning/prepare.mjs', root, target], { stdio: 'pipe' }));
+  assert.throws(() => execFileSync(process.execPath, ['evals/scenarios/product-planning/prepare.mjs', root, target], { stdio: 'pipe' }));
 });
 
 test('release package contains only the planning runtime and initializes without dependencies', t => {
@@ -94,9 +103,12 @@ test('release package contains only the planning runtime and initializes without
   const output = JSON.parse(execFileSync(process.execPath, [npm, 'pack', '--dry-run', '--json', '--ignore-scripts'], { encoding: 'utf8' }));
   const pack = Array.isArray(output) ? output[0] : output['plan-product'];
   const files = pack.files.map(row => row.path).sort();
-  assert.deepEqual(files.filter(file => file.startsWith('scripts/')), ['scripts/init.mjs','scripts/lib/repo-paths.mjs']);
-  assert.deepEqual(files.filter(file => file.startsWith('skills/')), names.map(name => `skills/${name}/SKILL.md`));
-  assert.deepEqual(files.filter(file => file.startsWith('commands/')), names.map(name => `commands/${name}.md`));
+  assert.deepEqual(files.filter(file => file.startsWith('scripts/')), ['scripts/assemble.mjs','scripts/init.mjs','scripts/lib/repo-paths.mjs','scripts/validate.mjs']);
+  assert.deepEqual(files.filter(file => file.startsWith('skills/')), [
+    'skills/plan-product/SKILL.md',
+    ...workflowNames.map(w => `skills/plan-product/workflows/${w}.md`)
+  ]);
+  assert.deepEqual(files.filter(file => file.startsWith('commands/')), commandNames.map(name => `commands/${name}.md`));
   assert.equal(files.some(file => file.startsWith('test/') || file.startsWith('evals/') || file.startsWith('.temp/')), false);
   const installed = path.join(temp, 'installed');
   for (const file of files) {

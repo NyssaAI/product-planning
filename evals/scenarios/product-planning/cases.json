@@ -2,27 +2,59 @@
   "routing": [
     {
       "skill": "plan-product",
-      "positive": "Help me define the product, audience and high-level feature inventory for a new volunteer scheduling service.",
-      "ambiguous": "Our product direction changed. Help refresh the foundational planning docs before we revisit individual features.",
-      "negative": "Write three advertising taglines for our volunteer scheduling product."
+      "workflow": "product",
+      "cases": [
+        { "id": "pos-new-service", "kind": "positive", "prompt": "Help me define the product, audience and high-level feature inventory for a new volunteer scheduling service." },
+        { "id": "pos-saas-dashboard", "kind": "positive", "prompt": "We need to bootstrap the core product documentation for a new SaaS analytics dashboard, including docs/product.md, features.md, and tech-stack.md." },
+        { "id": "pos-cli-tool", "kind": "positive", "prompt": "Interview me to establish the foundational product vision, user personas, non-goals, and success metrics for our CLI developer tool." },
+        { "id": "amb-refresh-direction", "kind": "ambiguous", "prompt": "Our product direction changed. Help refresh the foundational planning docs before we revisit individual features." },
+        { "id": "amb-v1-capabilities", "kind": "ambiguous", "prompt": "Let's review the overall system vision and decide what capabilities belong in version one." },
+        { "id": "neg-route-handler", "kind": "negative", "prompt": "Write a TypeScript interface and express route handler for the volunteer scheduling service." },
+        { "id": "neg-github-board", "kind": "negative", "prompt": "Set up our GitHub project board and sprint backlog with issue labels and milestones." },
+        { "id": "neg-cloud-infra", "kind": "negative", "prompt": "Audit our production AWS deployment architecture for high availability and disaster recovery." }
+      ]
     },
     {
-      "skill": "plan-feature",
-      "positive": "Interview me to specify the recurring-shift feature and create its feature guide.",
-      "ambiguous": "We have a product plan, but the recurring-shift capability needs clearer boundaries and acceptance criteria.",
-      "negative": "Implement the already specified recurring-shift endpoint in Python."
+      "skill": "plan-product",
+      "workflow": "feature",
+      "cases": [
+        { "id": "pos-recurring-shift", "kind": "positive", "prompt": "Interview me to specify the recurring-shift feature and create its feature guide." },
+        { "id": "pos-csv-export", "kind": "positive", "prompt": "We need to define a new capability for CSV bulk export in docs/features/f-104/feature.md with clear scope, boundaries, inputs, and acceptance checks." },
+        { "id": "pos-split-feature", "kind": "positive", "prompt": "Help me break down and split our oversized authentication feature into distinct capability boundaries." },
+        { "id": "amb-clearer-boundaries", "kind": "ambiguous", "prompt": "We have a product plan, but the recurring-shift capability needs clearer boundaries and acceptance criteria." },
+        { "id": "amb-search-scope", "kind": "ambiguous", "prompt": "The search feature scope feels too broad—help me figure out what belongs in it and what should be deferred." },
+        { "id": "neg-unit-tests", "kind": "negative", "prompt": "Write unit tests using pytest for the recurring-shift calculation logic." },
+        { "id": "neg-fix-npe", "kind": "negative", "prompt": "Fix the NullPointerException bug occurring in the CSV export controller." },
+        { "id": "neg-refactor-jwt", "kind": "negative", "prompt": "Refactor the authentication middleware to use JWT bearer tokens instead of session cookies." }
+      ]
     },
     {
-      "skill": "plan-use-case",
-      "positive": "Document the use case where a coordinator cancels one occurrence of a recurring shift, including failures and alternate flows.",
-      "ambiguous": "The feature guide is finished; now capture exactly what happens when a volunteer swaps a shift with someone else.",
-      "negative": "Explain what the phrase use case means in ordinary English."
+      "skill": "plan-product",
+      "workflow": "use-case",
+      "cases": [
+        { "id": "pos-cancel-shift", "kind": "positive", "prompt": "Document the use case where a coordinator cancels one occurrence of a recurring shift, including failures and alternate flows." },
+        { "id": "pos-password-reset", "kind": "positive", "prompt": "Map out the concrete actor workflow for password reset as an ASCII process tree under feature F-102." },
+        { "id": "pos-checkout-flow", "kind": "positive", "prompt": "Detail the step-by-step checkout flow with entry routes, validation branch points, and failure cases in docs/features/f-101/uc-002-checkout.md." },
+        { "id": "amb-volunteer-swap", "kind": "ambiguous", "prompt": "The feature guide is finished; now capture exactly what happens when a volunteer swaps a shift with someone else." },
+        { "id": "amb-expired-invite", "kind": "ambiguous", "prompt": "I need to document the user flow when an invite link has expired." },
+        { "id": "neg-cypress-e2e", "kind": "negative", "prompt": "Write a Cypress end-to-end browser test script for the volunteer shift cancellation flow." },
+        { "id": "neg-figma-mockup", "kind": "negative", "prompt": "Design a Figma UI mockup showing the screens and modal dialogs for shift swapping." },
+        { "id": "neg-db-migration", "kind": "negative", "prompt": "Create a SQL database migration to add an is_cancelled column to the shift_assignments table." }
+      ]
     },
     {
-      "skill": "plan-roadmap",
-      "positive": "Turn our approved feature guides into a dependency-ordered product roadmap with stable slice IDs.",
-      "ambiguous": "Several capabilities are ready to build. Help decide which deliverable comes first and what depends on it.",
-      "negative": "Make a two-day tourist itinerary for Chicago."
+      "skill": "plan-product",
+      "workflow": "roadmap",
+      "cases": [
+        { "id": "pos-sequence-roadmap", "kind": "positive", "prompt": "Turn our approved feature guides into a dependency-ordered product roadmap with stable slice IDs." },
+        { "id": "pos-add-slice", "kind": "positive", "prompt": "Add slice R-012 for role-based permissions to docs/roadmap.md with after dependencies and a user-verifiable Verify checkpoint." },
+        { "id": "pos-audit-roadmap", "kind": "positive", "prompt": "Audit docs/roadmap.md for broken dependency references, cycles, and feature inventory status alignment." },
+        { "id": "amb-order-deliverables", "kind": "ambiguous", "prompt": "Several capabilities are ready to build. Help decide which deliverable comes first and what depends on it." },
+        { "id": "amb-status-check", "kind": "ambiguous", "prompt": "Check if our roadmap slices match what's marked done in docs/features.md." },
+        { "id": "neg-git-release", "kind": "negative", "prompt": "Create a Git release tag v0.2.0 and generate release notes from recent commit messages." },
+        { "id": "neg-ci-deploy", "kind": "negative", "prompt": "Run the CI build and deploy the latest Docker container to our Kubernetes staging cluster." },
+        { "id": "neg-poker-estimation", "kind": "negative", "prompt": "Estimate story points and sprint velocity for our Jira planning poker session." }
+      ]
     }
   ],
   "content": [

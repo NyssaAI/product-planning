@@ -1,6 +1,6 @@
 # Product planning evaluations
 
-Four public skills have one positive, one ambiguous, and one negative routing request each: **12 natural activation cases**. Negative cases cover advertising copy, coding work, a vocabulary question, and travel planning. Observe the skill selected; do not treat forced-context scores as routing evidence.
+Four encapsulated planning workflows each declare three positive, two ambiguous, and three near-neighbor negative routing requests: **32 natural activation cases**. Negative cases test sharp boundaries against adjacent developer tasks: software coding, bug fixes, refactoring, unit tests, E2E browser tests, UI mockups, database migrations, CI deployments, release tagging, and sprint estimation. Observe the workflow selected; do not treat forced-context scores as routing evidence.
 
 The **8 content scenarios** cover four preserved decisions and four document-producing tasks:
 
@@ -22,7 +22,7 @@ Each content rubric totals 100. Criteria judge outcomes rather than exact wordin
 ```text
 npm test
 npm run eval:prepare
-node evals/product-planning/prepare.mjs . <new-temporary-directory>
+node evals/scenarios/product-planning/prepare.mjs . <new-temporary-directory>
 ```
 
 Preparation requires a new output directory, copies the plugin into a private temporary evaluation adapter, and materializes routing and content scenarios with declared fixtures. Local checks validate bundle coverage, criteria totals, fixture safety, package contents, and unchanged retained criteria. They do not measure model task performance or natural activation.

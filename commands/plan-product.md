@@ -3,13 +3,20 @@ description: Interview the user and create or update plan-product's core product
 argument-hint: "[what to define or update]"
 ---
 
+> [!IMPORTANT] Scope Directive
+> Entrypoint command for defining core product docs. Invokes the `plan-product` facade skill and executes its internal `workflows/product.md` runbook.
+
 # plan-product - define product docs
 
-Load the `plan-product` skill and follow its workflow. The skill owns the interview flow, the product-capsule confirmation, feature-ID banding, and the merge-by-heading preservation rules; this command file is only the entry point.
+Load the `plan-product` skill and execute its `workflows/product.md` runbook. The workflow owns the interview flow, product capsule confirmation, feature-ID banding, and merge-by-heading preservation rules; this command file is only the entry point.
 
 Interview the user and create or update plan-product's core product docs.
 Use `.plan-product/config.json` for paths and verify the configured templates
 exist before writing so template refinements are picked up automatically.
+
+## Invocation Context
+
+Target / focus: $ARGUMENTS
 
 ## Writes
 

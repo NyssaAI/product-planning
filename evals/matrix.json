@@ -1,0 +1,40 @@
+{
+  "plugin": "plan-product",
+  "version": "0.1.0",
+  "hosts": [
+    {
+      "name": "claude",
+      "adapter": ".claude-plugin/plugin.json",
+      "command": "claude",
+      "enabled": true
+    },
+    {
+      "name": "codex",
+      "adapter": ".codex-plugin/plugin.json",
+      "command": "codex",
+      "enabled": true
+    },
+    {
+      "name": "cursor",
+      "adapter": ".cursor-plugin/plugin.json",
+      "command": "cursor",
+      "enabled": true
+    },
+    {
+      "name": "gemini",
+      "adapter": "gemini-extension.json",
+      "command": "gemini",
+      "enabled": true
+    }
+  ],
+  "suites": [
+    {
+      "name": "contract-unit-tests",
+      "command": "npm test"
+    },
+    {
+      "name": "eval-preparation",
+      "command": "npm run eval:prepare"
+    }
+  ]
+}

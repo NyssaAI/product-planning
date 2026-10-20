@@ -103,10 +103,12 @@
               "type": "string"
             },
             "folderPattern": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[^/\\\\:]+$"
             },
             "featureFile": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[^/\\\\:]+$"
             },
             "featurePathPattern": {
               "type": "string"
@@ -115,7 +117,8 @@
               "type": "string"
             },
             "useCaseFilePattern": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[^/\\\\:]+$"
             },
             "useCasePathPattern": {
               "type": "string"

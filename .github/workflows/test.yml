@@ -16,5 +16,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: npm run validate
+      - run: npm run assemble
       - run: npm test
       - run: npm run eval:prepare
+      - run: npm pack --dry-run

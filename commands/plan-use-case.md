@@ -3,11 +3,18 @@ description: Interview the user and create or update one use case under a featur
 argument-hint: "[feature id + use-case name]"
 ---
 
+> [!IMPORTANT] Scope Directive
+> Entrypoint command for documenting feature use cases. Invokes the `plan-product` facade skill and executes its internal `workflows/use-case.md` runbook.
+
 # plan-use-case - define a feature use case
 
-Load the `plan-use-case` skill and follow its workflow. The skill owns the entry-route/trigger separation, the ASCII process-tree shape, the sibling-comparison consistency check, and the failure-case rules; this command file is only the entry point.
+Load the `plan-product` skill and execute its `workflows/use-case.md` runbook. The workflow owns the entry-route/trigger separation, the ASCII process-tree shape, the sibling-comparison consistency check, and the failure-case rules; this command file is only the entry point.
 
 Interview the user and create or update one use case under a feature folder.
+
+## Invocation Context
+
+Target use case: $ARGUMENTS
 
 ## Writes
 

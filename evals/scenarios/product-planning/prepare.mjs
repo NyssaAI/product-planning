@@ -5,12 +5,21 @@ import assert from 'node:assert/strict';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cases = JSON.parse(await readFile(join(here, 'cases.json'), 'utf8'));
-const source = resolve(process.argv[2] || join(here, '../..'));
-const skills = (await readdir(join(source, 'skills'), { withFileTypes: true }))
-  .filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
-assert.deepEqual(cases.routing.map(row => row.skill).sort(), skills);
+const source = resolve(process.argv[2] || join(here, '../../..'));
+const workflows = (await readdir(join(source, 'skills/plan-product/workflows'), { withFileTypes: true }))
+  .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
+  .map(entry => entry.name.replace(/\.md$/, ''))
+  .sort();
+assert.deepEqual(cases.routing.map(row => row.workflow).sort(), workflows);
+
+let totalRoutingCases = 0;
 for (const row of cases.routing) {
-  for (const kind of ['positive', 'ambiguous', 'negative']) assert.ok(row[kind]?.trim());
+  assert.ok(Array.isArray(row.cases) && row.cases.length >= 7, `${row.workflow} must have at least 7 test cases`);
+  for (const item of row.cases) {
+    assert.ok(['positive', 'ambiguous', 'negative'].includes(item.kind));
+    assert.ok(item.prompt?.trim());
+    totalRoutingCases++;
+  }
 }
 assert.equal(new Set(cases.content.map(row => row.id)).size, cases.content.length);
 for (const row of cases.content) {
@@ -22,12 +31,12 @@ for (const row of cases.content) {
     assert.equal(typeof contents, 'string');
   }
 }
-console.log(`Validated ${cases.routing.length * 3} routing cases and ${cases.content.length} content cases.`);
+console.log(`Validated ${totalRoutingCases} routing cases and ${cases.content.length} content cases.`);
 if (!process.argv[3]) process.exit(0);
 const output = resolve(process.argv[3]);
 // A fresh destination prevents accidentally replacing another run or source tree.
 await mkdir(output);
-for (const path of ['skills', 'scripts', '.plan-product', 'commands', 'package.json', 'package-lock.json']) {
+for (const path of ['skills', 'scripts', '.plan-product', 'commands', 'package.json', 'package-lock.json', 'plugin.json']) {
   await cp(join(source, path), join(output, path), { recursive: true });
 }
 await mkdir(join(output, '.tessl-plugin'));
@@ -47,8 +56,8 @@ async function scenario(group, id, task, criteria) {
   }, null, 2) + '\n');
 }
 for (const row of cases.routing) {
-  for (const kind of ['positive', 'ambiguous', 'negative']) {
-    await scenario('routing', `${row.skill}-${kind}`, row[kind], [
+  for (const item of row.cases) {
+    await scenario('routing', `${row.workflow}-${item.id}`, item.prompt, [
       { name: 'Routing observation only', description: 'This case is unscored. Inspect natural skill activation against cases.json.', weight: 1 },
     ]);
   }

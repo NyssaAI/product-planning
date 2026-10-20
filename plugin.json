@@ -1,0 +1,48 @@
+{
+  "name": "plan-product",
+  "version": "0.1.0",
+  "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
+  "author": {
+    "name": "jamaynor"
+  },
+  "homepage": "https://github.com/jamaynor/product-planning",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamaynor/product-planning"
+  },
+  "license": "LicenseRef-Jamaynor-Commercial-1.0",
+  "keywords": [
+    "product-planning",
+    "features",
+    "use-cases",
+    "roadmaps"
+  ],
+  "skills": [
+    "skills/plan-product"
+  ],
+  "commands": [
+    "commands/plan-product.md",
+    "commands/plan-feature.md",
+    "commands/plan-use-case.md",
+    "commands/plan-roadmap.md"
+  ],
+  "interface": {
+    "displayName": "plan-product",
+    "shortDescription": "Plan products, features, use cases, and roadmaps.",
+    "longDescription": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
+    "developerName": "jamaynor",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Plan this product",
+      "Plan a feature",
+      "Document a use case",
+      "Sequence the product roadmap"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

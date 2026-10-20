@@ -13,8 +13,7 @@
     "product-planning",
     "features",
     "use-cases",
-    "roadmaps",
-    "skills"
+    "roadmaps"
   ],
   "skills": "./skills/",
   "commands": "./commands/"
