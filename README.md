@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.1.1**. Guided product planning in Markdown: define the product, describe features, capture use cases, and sequence delivery outcomes.
+Version **0.1.2**. Guided product planning in Markdown: define the product, describe features, capture use cases, and sequence delivery outcomes.
 
 ## Capabilities
 
