@@ -1,15 +1,15 @@
 {
   "name": "plan-product",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
   "private": true,
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "author": {
-    "name": "jamaynor"
+    "name": "NyssaAI"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jamaynor/product-planning"
+    "url": "https://github.com/NyssaAI/product-planning"
   },
   "type": "module",
   "engines": {

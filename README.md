@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.1.0**. Guided product planning in Markdown: define the product, describe features, capture use cases, and sequence delivery outcomes.
+Version **0.1.1**. Guided product planning in Markdown: define the product, describe features, capture use cases, and sequence delivery outcomes.
 
 ## Capabilities
 
@@ -17,12 +17,12 @@ The workflows interview for missing information, preserve existing content, use 
 
 ## Installation
 
-The plugin is listed in the [jamaynor marketplace](https://github.com/jamaynor/plugin-marketplace). Install `plan-product` from that marketplace in your host. The release is pinned there by tag and commit.
+The plugin is listed in the [NyssaAI marketplace](https://github.com/NyssaAI/plugin-marketplace). Install `plan-product` from that marketplace in your host. The release is pinned there by tag and commit.
 
 In Claude Code:
 
 ```text
-/plugin marketplace add jamaynor/plugin-marketplace
+/plugin marketplace add NyssaAI/plugin-marketplace
 /plugin install plan-product@jamaynor
 ```
 
