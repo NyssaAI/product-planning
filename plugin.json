@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
   "version": "0.2.0",
-  "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
+  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "author": {
     "name": "NyssaAI"
   },
@@ -15,13 +15,16 @@
     "product-planning",
     "features",
     "use-cases",
-    "roadmaps"
+    "roadmaps",
+    "concepts",
+    "macro-flows"
   ],
   "skills": [
     "skills/plan-product"
   ],
   "commands": [
     "commands/plan-product.md",
+    "commands/plan-concept.md",
     "commands/plan-feature.md",
     "commands/plan-use-case.md",
     "commands/plan-roadmap.md",
@@ -30,7 +33,7 @@
   "interface": {
     "displayName": "plan-product",
     "shortDescription": "Plan products, features, use cases, and roadmaps.",
-    "longDescription": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
+    "longDescription": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
     "developerName": "NyssaAI",
     "category": "Productivity",
     "capabilities": [
@@ -40,9 +43,11 @@
     ],
     "defaultPrompt": [
       "Plan this product",
+      "Define a domain concept",
       "Plan a feature",
       "Document a use case",
-      "Sequence the product roadmap"
+      "Sequence the product roadmap",
+      "Upgrade planning docs to v2"
     ],
     "brandColor": "#2563EB"
   }

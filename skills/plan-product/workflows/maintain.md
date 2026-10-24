@@ -29,7 +29,7 @@
 ## Procedure
 
 ### 1. Version Detection & Scope Inspection
-1. Read `.plan-product/config.json`.
+1. Read `.nyssa-ai/plan-product/config.json`.
 2. Inspect current planning documents:
    - Check if config version is `1` or omitted.
    - Scan `docs/features/` for legacy `f-nxx` folders.
@@ -42,7 +42,7 @@
 ### 2. Migration Execution
 1. Run `node "${PLUGIN_ROOT}/scripts/migrate.mjs"` (resolving `${PLUGIN_ROOT}` in order of precedence: `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, or relative path to installed plugin).
 2. The migrator deterministically:
-   - Updates `.plan-product/config.json` to `version: 2` with v2 patterns.
+   - Updates `.nyssa-ai/plan-product/config.json` to `version: 2` with v2 patterns.
    - Upgrades bundled templates to v2 format.
    - Renames feature directories from `f-nxx` to `f-gg.nn`.
    - Renames use case files from `uc-nnn-*` to `uc-gg.nn.uu-*`.
@@ -60,7 +60,7 @@
 
 ## Verification Checklist
 
-- [ ] `.plan-product/config.json` set to `version: 2` with v2 path patterns.
+- [ ] `.nyssa-ai/plan-product/config.json` set to `version: 2` with v2 path patterns.
 - [ ] All `f-nxx` directories cleanly renamed to `f-gg.nn`.
 - [ ] All use case files renamed to `uc-gg.nn.uu-*` with matching frontmatter IDs.
 - [ ] Feature frontmatter contains `group:` with no legacy `phase:` remaining.

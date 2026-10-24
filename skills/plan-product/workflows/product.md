@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user. Interview only for missing decisions; do not repeat a confirmation already given.
 - Configured paths are repo-relative. Render Markdown links relative to the document containing the link, and verify each target exists before completion.
-- Read `.plan-product/config.json` first. If missing, bootstrap by executing `node "${PLUGIN_ROOT}/scripts/init.mjs"` from the target project root, then re-read config. Resolve `${PLUGIN_ROOT}` from `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, or the relative path to this installed plugin.
+- Read `.nyssa-ai/plan-product/config.json` first. If missing, bootstrap by executing `node "${PLUGIN_ROOT}/scripts/init.mjs"` from the target project root, then re-read config. Resolve `${PLUGIN_ROOT}` from `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, or the relative path to this installed plugin.
 - Resolve every output path from config before interviewing. Do not hardcode `docs/product.md`, `docs/features.md`, or `docs/tech-stack.md` except as examples in user-facing text.
 - Verify configured templates exist before writing:
   - Product doc: `paths.productTemplate`
@@ -36,10 +36,13 @@
 | Tech stack | `paths.techStack` |
 | Feature guide root | `structure.features.root` or `paths.featureDocs` |
 | Feature guide path | `structure.features.featurePathPattern` |
+| Concept root | `structure.concepts.root` or `paths.concepts` |
+| Concept path | `structure.concepts.pathPattern` |
 | Product template | `paths.productTemplate` |
 | Feature inventory template | `paths.featuresTemplate` |
 | Tech stack template | `paths.techStackTemplate` |
 | Feature guide template | `paths.featureTemplate` |
+| Concept template | `paths.conceptTemplate` |
 
 If a config field is missing, fill only the missing field with the default, preserving extra existing config keys.
 
@@ -66,7 +69,7 @@ Would you like to:
 When every existing file is `template only`, proceed as a fresh run without prompting.
 
 ### 2. Gather Product Definition
-Read `paths.productTemplate` immediately before writing. If `STRATEGY.md` exists, summarize relevant direction. If `CONCEPTS.md` exists, reuse its terminology.
+Read `paths.productTemplate` immediately before writing. If `STRATEGY.md` exists, summarize relevant direction. If concepts exist under `docs/concepts/`, reuse their domain terminology.
 
 Interview clusters:
 1. **Product Identity**: Name, category, and one-sentence core value proposition.
@@ -75,6 +78,7 @@ Interview clusters:
 4. **Solution Shape**: Minimal useful version, primary workflow, rejected alternatives.
 5. **Boundaries & Non-Goals**: Adjacent responsibilities explicitly excluded.
 6. **Success Signals**: Measurable outcomes and quality signals.
+7. **Core Concepts & Macro-Flows**: Foundational domain entities, mental models, or cross-feature lifecycles (`C-nn` in `docs/concepts/`) before breaking into features.
 
 Before writing, present the synthesized product capsule for confirmation:
 ```text
@@ -84,6 +88,7 @@ Product capsule:
 - Core problem:
 - Solution shape:
 - First usable version:
+- Core concepts / macro-flows:
 - Boundaries:
 - Success signals:
 
@@ -130,7 +135,7 @@ Execute the verification checklist before completing.
 
 ## Verification Checklist
 
-- [ ] All target paths resolved from `.plan-product/config.json`.
+- [ ] All target paths resolved from `.nyssa-ai/plan-product/config.json`.
 - [ ] Configured templates read immediately prior to write.
 - [ ] Product capsule confirmed by user prior to writing.
 - [ ] Feature IDs assigned according to Feature Groups (`F-gg.nn`) with no renumbering.

@@ -6,6 +6,8 @@ import assert from 'node:assert/strict';
 const here = dirname(fileURLToPath(import.meta.url));
 const cases = JSON.parse(await readFile(join(here, 'cases.json'), 'utf8'));
 const source = resolve(process.argv[2] || join(here, '../../..'));
+const pluginManifest = JSON.parse(await readFile(join(source, 'plugin.json'), 'utf8'));
+
 const workflows = (await readdir(join(source, 'skills/plan-product/workflows'), { withFileTypes: true }))
   .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
   .map(entry => entry.name.replace(/\.md$/, ''))
@@ -36,14 +38,17 @@ if (!process.argv[3]) process.exit(0);
 const output = resolve(process.argv[3]);
 // A fresh destination prevents accidentally replacing another run or source tree.
 await mkdir(output);
-for (const path of ['skills', 'scripts', '.plan-product', 'commands', 'package.json', 'package-lock.json', 'plugin.json']) {
+for (const path of ['skills', 'scripts', 'commands', 'package.json', 'package-lock.json', 'plugin.json']) {
   await cp(join(source, path), join(output, path), { recursive: true });
 }
 await mkdir(join(output, '.tessl-plugin'));
 await writeFile(join(output, '.tessl-plugin/plugin.json'), JSON.stringify({
-  name: 'jamaynor/plan-product-planning', version: '0.1.0',
-  description: 'Temporary evaluation adapter for plan-product', private: true,
+  name: `${pluginManifest.author?.name || 'NyssaAI'}/plan-product`,
+  version: pluginManifest.version,
+  description: pluginManifest.description,
+  private: true,
 }, null, 2));
+
 async function scenario(group, id, task, criteria) {
   const folder = join(output, group, id);
   await mkdir(folder, { recursive: true });

@@ -24,6 +24,12 @@ The product covers product definition, capability scoping, user workflow mapping
 
 Stakeholders can read the product and feature documents without needing technical background, related capabilities stay grouped together as the catalog scales, overlapping or duplicate workflows are caught before work begins, and every delivery step has an observable way to verify completion.
 
+## Core Concepts & Macro-Flows
+
+- [C-01: Canonical Planning Taxonomy & Hierarchy](concepts/c-01-canonical-planning-taxonomy.md) — five-tier model (`Product`, `C-nn`, `F-gg.nn`, `UC-gg.nn.uu`, `R-pp.ss`) separating functional capability grouping from technical delivery order.
+- [C-02: End-to-End Product Planning Lifecycle](concepts/c-02-product-planning-lifecycle.md) — five-stage macro-flow from workspace setup and product discovery through feature boundary hardening, use-case mapping, and roadmap sequencing.
+- [C-03: Path Authority & Non-Destructive Preservation](concepts/c-03-path-authority-and-preservation.md) — repo-relative path resolution, template-only detection, and merge-by-heading preservation of user-authored notes.
+
 ## Features
 
 See the [feature inventory](features.md) and [feature guides](features/README.md).

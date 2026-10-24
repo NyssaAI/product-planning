@@ -14,6 +14,10 @@ Provide editable starter templates so every new product, feature, use-case, and 
 
 Teams want new planning documents to follow a predictable, readable layout without having to format headings by hand—and if they customize a template for their workflow, they need future documents to use their customized layout.
 
+## Conceptual Context
+
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — preserves custom starter templates and restores missing templates at their configured paths.
+
 ## Use Cases
 
 None yet.

@@ -21,6 +21,6 @@ Target feature: $ARGUMENTS
 - the configured feature inventory path, usually `docs/features.md`
 - the configured feature guide path from `structure.features.featurePathPattern`
 
-Use `.plan-product/config.json` for paths and `paths.featureTemplate` for file shape. The feature guide should keep `Summary`, `User Need`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` distinct.
+Use `.nyssa-ai/plan-product/config.json` for paths and `paths.featureTemplate` for file shape. The feature guide should keep `Summary`, `User Need`, `Conceptual Context`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` distinct.
 
 Do not leave placeholder use-case links. List only real `UC-gg.nn.uu` files or write `None yet.`. Use `plan-use-case` only when the user asks to document specific workflows. Write feature guides and inventory entries in plain, non-technical user-outcome language; never leak overly technical decisions or technology selections into features.

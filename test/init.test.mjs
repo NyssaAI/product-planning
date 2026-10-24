@@ -11,7 +11,7 @@ function fixture(t) {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   return root;
 }
-const configPath = root => path.join(root, '.plan-product/config.json');
+const configPath = root => path.join(root, '.nyssa-ai/plan-product/config.json');
 const readConfig = root => JSON.parse(readFileSync(configPath(root), 'utf8'));
 function setConfig(root, config) {
   mkdirSync(path.dirname(configPath(root)), { recursive: true });
@@ -20,8 +20,8 @@ function setConfig(root, config) {
 
 test('fresh install creates only planning assets and is idempotent', t => {
   const root = fixture(t);
-  assert.equal(initialize(root).created.length, 11);
-  assert.deepEqual(readdirSync(root).sort(), ['.plan-product','docs']);
+  assert.equal(initialize(root).created.length, 12);
+  assert.deepEqual(readdirSync(root).sort(), ['.nyssa-ai','docs']);
   assert.deepEqual(readdirSync(path.join(root, 'docs')).sort(), ['features.md','product.md','tech-stack.md']);
   const before = readFileSync(configPath(root));
   assert.deepEqual(initialize(root).created, []);
@@ -42,12 +42,12 @@ test('custom paths, custom templates and documents survive repair byte for byte'
   initialize(root);
   assert.equal(readFileSync(path.join(root, 'planning/vision.md'), 'utf8'), '# My vision\r\nCustom shape\r\n');
   writeFileSync(path.join(root, 'planning/vision.md'), '# Audience\nVolunteer coordinators\n\n# Local notes\nSigned off\n');
-  rmSync(path.join(root, '.plan-product/templates/feature.md'));
+  rmSync(path.join(root, '.nyssa-ai/plan-product/templates/feature.md'));
   const before = readFileSync(path.join(root, 'planning/vision.md'));
   initialize(root);
   assert.deepEqual(readFileSync(path.join(root, 'planning/vision.md')), before);
   assert.equal(readConfig(root).structure.localExtension.keep, true);
-  assert.ok(existsSync(path.join(root, '.plan-product/templates/feature.md')));
+  assert.ok(existsSync(path.join(root, '.nyssa-ai/plan-product/templates/feature.md')));
 });
 
 test('missing configured template is restored at its configured path', t => {
@@ -79,37 +79,41 @@ test('colliding outputs fail before writes', t => {
   const root = fixture(t);
   setConfig(root, { paths: { product: 'same.md', features: 'same.md' } });
   assert.throws(() => initialize(root), /collide/);
-  assert.equal(existsSync(path.join(root, '.plan-product/schema.json')), false);
+  assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/schema.json')), false);
 });
 
 test('external directory junction cannot redirect initialization writes', t => {
   const root = fixture(t);
   const outside = fixture(t);
-  symlinkSync(outside, path.join(root, '.plan-product'), process.platform === 'win32' ? 'junction' : 'dir');
+  mkdirSync(path.join(root, '.nyssa-ai'), { recursive: true });
+  symlinkSync(outside, path.join(root, '.nyssa-ai/plan-product'), process.platform === 'win32' ? 'junction' : 'dir');
   assert.throws(() => initialize(root), /within the project root/);
   assert.deepEqual(readdirSync(outside), []);
 });
 
 test('partial custom feature roots feed naming patterns and inventory aliases', t => {
   const root = fixture(t);
-  setConfig(root, { paths: { features: 'planning/catalog.md', featureDocs: 'planning/capabilities' } });
+  setConfig(root, { paths: { features: 'planning/catalog.md', featureDocs: 'planning/capabilities', concepts: 'planning/domain' } });
   initialize(root);
   const config = readConfig(root);
   assert.equal(config.structure.features.inventory, 'planning/catalog.md');
   assert.equal(config.structure.features.root, 'planning/capabilities');
   assert.equal(config.structure.features.featurePathPattern, 'planning/capabilities/f-gg.nn/feature.md');
   assert.equal(config.structure.features.useCasePathPattern, 'planning/capabilities/f-gg.nn/uc-gg.nn.uu-short-slug.md');
+  assert.equal(config.structure.concepts.root, 'planning/domain');
+  assert.equal(config.structure.concepts.pathPattern, 'planning/domain/c-nn-short-slug.md');
+  assert.ok(existsSync(path.join(root, '.nyssa-ai/plan-product/templates/concept.md')));
 });
 
 test('file/directory conflicts fail before modifying config or creating assets', t => {
-  for (const paths of [{ product: 'nested', features: 'nested/catalog.md' }, { product: 'occupied/vision.md' }, { product: '.plan-product' }]) {
+  for (const paths of [{ product: 'nested', features: 'nested/catalog.md' }, { product: 'occupied/vision.md' }, { product: '.nyssa-ai/plan-product' }]) {
     const root = fixture(t);
     setConfig(root, { paths });
     writeFileSync(path.join(root, 'occupied'), 'user file');
     const before = readFileSync(configPath(root));
     assert.throws(() => initialize(root), /collide|directory|file/);
     assert.deepEqual(readFileSync(configPath(root)), before);
-    assert.equal(existsSync(path.join(root, '.plan-product/schema.json')), false);
+    assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/schema.json')), false);
   }
 });
 
@@ -118,7 +122,7 @@ test('traversal characters in sub-path patterns fail before writes', t => {
     const root = fixture(t);
     setConfig(root, { structure: { features: { folderPattern: pattern } } });
     assert.throws(() => initialize(root), /traversal or separators/);
-    assert.equal(existsSync(path.join(root, '.plan-product/schema.json')), false);
+    assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/schema.json')), false);
   }
 });
 
@@ -152,14 +156,15 @@ test('migrate converts model v1 repositories to model v2 deterministically', t =
       }
     }
   };
-  setConfig(root, v1Config);
+  mkdirSync(path.join(root, '.plan-product'), { recursive: true });
+  writeFileSync(path.join(root, '.plan-product/config.json'), JSON.stringify(v1Config));
   mkdirSync(path.join(root, 'docs/features/f-101'), { recursive: true });
   writeFileSync(path.join(root, 'docs/features/f-101/feature.md'), '---\nid: F-101\nphase: 1\nstatus: planned\n---\n\n# F-101 Auth\n\n## Use Case\n- [UC-001: Login](uc-001-login.md)\n');
   writeFileSync(path.join(root, 'docs/features/f-101/uc-001-login.md'), '---\nfeature: F-101\nid: UC-001\nstatus: planned\n---\n\n# UC-001 Login\n');
   writeFileSync(path.join(root, 'docs/features.md'), '# Features\n\n| Delivery Phase | Complete |\n| --- | --- |\n\n### Phase 1 - Auth\n- [ ] F-101: [Auth](features/f-101/feature.md)\n');
   writeFileSync(path.join(root, 'docs/roadmap.md'), '# Roadmap\n\n## Slices\n- [ ] R-001: First slice — [F-101](features/f-101/feature.md)\n');
 
-  assert.throws(() => initialize(root), /legacy/);
+  assert.throws(() => initialize(root), /legacy/i);
 
   const result = migrate(root);
   assert.equal(result.configUpgraded, true);
@@ -168,6 +173,8 @@ test('migrate converts model v1 repositories to model v2 deterministically', t =
   assert.equal(result.useCasesMigrated.length, 1);
   assert.equal(result.useCasesMigrated[0].newUcId, 'UC-01.01.01');
 
+  assert.ok(existsSync(path.join(root, '.nyssa-ai/plan-product/config.json')));
+  assert.equal(existsSync(path.join(root, '.plan-product')), false);
   assert.ok(existsSync(path.join(root, 'docs/features/f-01.01/feature.md')));
   assert.ok(existsSync(path.join(root, 'docs/features/f-01.01/uc-01.01.01-login.md')));
   assert.equal(existsSync(path.join(root, 'docs/features/f-101')), false);
@@ -189,6 +196,6 @@ test('migrate converts model v1 repositories to model v2 deterministically', t =
   assert.match(rdContent, /F-01\.01/);
 
   const upgraded = initialize(root);
-  assert.ok(upgraded.created.includes('.plan-product/templates/feature.md'));
+  assert.ok(upgraded.created.includes('.nyssa-ai/plan-product/templates/feature.md'));
   assert.deepEqual(initialize(root).created, []);
 });

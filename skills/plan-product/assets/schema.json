@@ -42,6 +42,9 @@
         "featureDocs": {
           "type": "string"
         },
+        "concepts": {
+          "type": "string"
+        },
         "roadmap": {
           "type": "string"
         },
@@ -64,6 +67,9 @@
           "type": "string"
         },
         "useCaseTemplate": {
+          "type": "string"
+        },
+        "conceptTemplate": {
           "type": "string"
         },
         "roadmapTemplate": {
@@ -121,6 +127,31 @@
               "pattern": "^[^/\\\\:]+$"
             },
             "useCasePathPattern": {
+              "type": "string"
+            }
+          }
+        },
+        "concepts": {
+          "type": "object",
+          "required": [
+            "root",
+            "idPattern",
+            "filePattern",
+            "pathPattern"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "root": {
+              "type": "string"
+            },
+            "idPattern": {
+              "type": "string"
+            },
+            "filePattern": {
+              "type": "string",
+              "pattern": "^[^/\\\\:]+$"
+            },
+            "pathPattern": {
               "type": "string"
             }
           }

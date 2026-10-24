@@ -14,6 +14,11 @@ Maintain a single, user-readable catalog of all product capabilities showing how
 
 Product owners and stakeholders need to scan the entire product's capabilities in plain, non-technical language, see which capabilities are planned versus complete, and jump to deeper feature details when needed.
 
+## Conceptual Context
+
+- [C-01: Canonical Planning Taxonomy & Hierarchy](../../concepts/c-01-canonical-planning-taxonomy.md) — indexes `F-gg.nn` capabilities and tracks completion across functional groups.
+- [C-02: End-to-End Product Planning Lifecycle](../../concepts/c-02-product-planning-lifecycle.md) — seeds and synchronizes the capability catalog across Stages 2 through 5.
+
 ## Use Cases
 
 None yet.

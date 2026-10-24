@@ -14,6 +14,10 @@ Allow teams to choose where their product, feature, and roadmap documents live s
 
 Teams want their planning documents stored in the folders they already use for project documentation, and they need those locations to work identically for every teammate without broken links.
 
+## Conceptual Context
+
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — enforces repo-relative path resolution, alias synchronization, and pre-write safety checks.
+
 ## Use Cases
 
 None yet.

@@ -14,6 +14,10 @@ Describe the capability in one or two sentences using plain, user-focused langua
 
 Describe who needs this and what they need to accomplish.
 
+## Conceptual Context
+
+None.
+
 ## Use Cases
 
 None yet.

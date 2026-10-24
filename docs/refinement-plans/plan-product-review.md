@@ -1,31 +1,33 @@
 # Plugin Architectural Review & Refinement Plan: `plan-product`
 
 > [!IMPORTANT] Scope Directive
-> This document records the architectural evaluation and remediation status for `plan-product`. It tracks compliance across canonical plugin authoring standards, filesystem roles, manifest specifications, and evaluation rigor.
+> This document records the architectural evaluation and refinement plan for `plan-product`. It identifies compliance, risks, and concrete remediation steps across the canonical plugin authoring standards.
 
-**Evaluation Date**: `2026-10-20`  
+**Evaluation Date**: `2026-10-24`  
 **Evaluator**: `plugin-builder`  
-**Current Version**: `0.1.0`  
-**Plugin Archetype**: `Hybrid Code` (Markdown Skills + Node.js Initializer / Path Engine)  
-**Current Architectural Style**: `Encapsulated Facade` (Single `plan-product` facade skill + internal workflows + direct slash commands)  
+**Current Version**: `0.2.0`  
+**Plugin Archetype**: `Hybrid Code`  
+**Current Architectural Style**: `Encapsulated Facade`  
 
 ---
 
 ## Executive Summary
 
-`plan-product` has been refactored into a canonical **Encapsulated Facade** with direct slash command shortcuts. The single public skill `plan-product` coordinates product planning lifecycles and dispatches to four encapsulated runbooks under `skills/plan-product/workflows/` (`product.md`, `feature.md`, `use-case.md`, `roadmap.md`), while four slash commands in `commands/` provide direct entrypoints for power users.
+`plan-product` (v0.2.0) is an **Encapsulated Facade** plugin that coordinates six product-planning workflows (`product`, `concept`, `feature`, `use-case`, `roadmap`, and `maintain`) behind a single public skill (`skills/plan-product/SKILL.md`) and six matching slash commands (`commands/plan-*.md`). Its deterministic boundary is well-structured: Node.js scripts (`scripts/init.mjs`, `scripts/migrate.mjs`, `scripts/assemble.mjs`, `scripts/validate.mjs`) handle path resolution, initialization, Model v1-to-v2 migration, host manifest projection, and structural/link verification, while markdown runbooks stay concise (65–145 lines) with explicit Scope Directives and verification checklists.
 
-All 10 dimensions have been remediated:
-1. **Topology & Style**: Migrated from Public Suite to Encapsulated Facade (Option 3), cutting global prompt startup footprint by ~75% while preserving direct command entrypoints.
-2. **Repository Layout**: Eliminated non-canonical `.codex/` (moved to `.codex-plugin/INSTALL.md`); restructured flat evals into canonical `evals/scenarios/product-planning/` satisfying the immediate-child whitelist; verified zero test co-mingling.
-3. **Host Adapters**: Created `scripts/assemble.mjs` to deterministically compile and verify `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, and `gemini-extension.json`.
-4. **Manifests**: Created canonical root `plugin.json` with declared capabilities, skills, and commands.
-5. **Scope Directives**: Added top-of-file `> [!IMPORTANT] Scope Directive` alert blocks to `SKILL.md`, `workflows/*.md`, and `commands/*.md`.
-6. **Context Economics**: All workflow runbooks strictly under 250 lines with externalized template assets.
-7. **Trigger Precision**: Added quoted realistic user prompt phrases and explicit negative boundary exclusions in `plan-product` frontmatter.
-8. **Deterministic Boundary**: Added explicit procedural verification checklists (`- [ ]`) to all workflows.
-9. **Cognitive Mode Formatting**: Structured directives and checklists enforce execution gates.
-10. **Evaluation Suite**: Created `evals/matrix.json` and `evals/LATEST.md` recording release receipts; updated scenario preparation and contract tests.
+Following our zero-trust audit and architectural alignment with the user, four areas require remediation for `0.2.0` release readiness:
+1. **Repository Layout, Asset Placement & NyssaAI State Convention (Dimension 2 — Non-Compliant)**:
+   - As a NyssaAI plugin, project-scoped configuration and initialized templates must live under `./.nyssa-ai/plan-product/` rather than `./.plan-product/`, while the plugin's bundled default config, schema, and starter templates must reside in canonical `skills/plan-product/assets/`.
+   - The loose root `CONCEPTS.md` file (which contains obsolete Model v1 `R-NNN` terminology and is omitted from `package.json` `files`) must be removed.
+2. **Package Organization & Manifest Conformance (Dimension 4 — Needs Remediation)**:
+   - Root `plugin.json` description, keywords, and `defaultPrompt` must be updated for v0.2.0's `concept` (`C-nn`) and `maintain` (`v1 -> v2`) workflows.
+   - `package.json` `files` must ship `skills/plan-product/assets/` instead of `.plan-product/` and exclude `.nyssa-ai/` project state from release tarballs.
+   - `evals/scenarios/product-planning/prepare.mjs` must read `version` and `author.name` dynamically from `plugin.json`.
+3. **Trigger Precision & Frontmatter Design (Dimension 7 — Needs Remediation)**:
+   - `skills/plan-product/SKILL.md` frontmatter must open with third-person imperative phrasing (`"Use this skill when..."`) and include quoted trigger phrases for domain concepts/macro-flows (`C-nn`) and model migration/maintenance (`/plan-maintain`).
+4. **Strict Model v2 Enforcement & v2-Only Evaluation Suite (Dimension 10 — Needs Remediation)**:
+   - The plugin **cannot** operate under Model v1 and Model v2 rules simultaneously. If legacy v1 state (`.plan-product/`, `version < 2`, `F-Nxx`, `UC-nnn`, `R-NNN`) is detected, the agent must alert the user to the version conflict and route to `workflows/maintain.md`.
+   - All Model v1 evaluation fixtures and prompts in `evals/scenarios/product-planning/cases.json` (except `maintain` migration prompts/fixtures that specifically test v1-to-v2 migration) must be upgraded to **Model v2** (`version: 2`, `.nyssa-ai/plan-product/config.json`, `C-nn`, `F-gg.nn`, `UC-gg.nn.uu`, `R-pp.ss`), with new content scenarios added for `concept` and `maintain`, a Waza trigger suite added at `evals/waza/skills/plan-product/eval.yaml`, and `evals/LATEST.md` / `evals/matrix.json` refreshed to `0.2.0`.
 
 ---
 
@@ -35,95 +37,129 @@ All 10 dimensions have been remediated:
 - **Status**: `Compliant`
 - **Observed Style**: `Encapsulated Facade`
 - **Analysis**:
-  - Global system prompt footprint reduced from ~1,500 chars down to ~350 chars (~90 tokens) at session start.
-  - Natural language trigger collisions eliminated at root level.
-  - Power users retain direct command shortcuts via `commands/plan-product.md`, `commands/plan-feature.md`, `commands/plan-use-case.md`, and `commands/plan-roadmap.md`.
-- **Remediation**: Completed.
+  - Global system prompt footprint: Lean. Only `skills/plan-product/SKILL.md` (66 lines) is exposed as a public skill across Claude, Codex, Cursor, and Gemini.
+  - Trigger collision & surface clutter: Zero sibling skill collision. The six domain sub-workflows (`product.md`, `concept.md`, `feature.md`, `use-case.md`, `roadmap.md`, `maintain.md`) reside under `skills/plan-product/workflows/` without YAML trigger frontmatter.
+- **Remediation Steps**:
+  - [x] None required; preserve the Encapsulated Facade topology.
 
 ### 2. Repository Layout & Canonical Directories
-- **Status**: `Compliant`
+- **Status**: `Non-Compliant`
 - **Enumerated Directory & Test Inventory**:
   - **Observed Top-Level Directories**: `.claude`, `.claude-plugin`, `.codex-plugin`, `.cursor-plugin`, `.git`, `.github`, `.plan-product`, `.temp`, `commands`, `docs`, `evals`, `node_modules`, `scripts`, `skills`, `test`
-  - **Unignored Non-Canonical Top-Level Directories**: None (`.codex` removed; `.plan-product` retained for target-repo scaffolding assets)
-  - **Disguised Monorepo / Sub-Package Trees**: None
-  - **Observed Immediate Subdirectories in `evals/`**: `scenarios` (matches allowed whitelist: `suites/`, `evidence/`, `reports/`, `waza/`, `scenarios/`, `results/`, `attempts/`, `tessl/`)
-  - **Flat / Uncategorized Scenario Folders in `evals/` Root**: 0 (grouped under `evals/scenarios/product-planning/`)
-  - **Co-Mingled Test Files Outside `test/`**: None
-- **Remediation**: Completed.
+  - **Unignored Non-Canonical Top-Level Directories**: `.plan-product`
+  - **Disguised Monorepo / Sub-Package Trees**: `None`
+  - **Observed Immediate Subdirectories in `evals/`**: `scenarios`
+  - **Flat / Uncategorized Scenario Folders in `evals/` Root**: `0 (None)`
+  - **Co-Mingled Test Files Outside `test/`**: `None`
+- **Top-Level Directories Check**:
+  - Single plugin root invariant: `Pass`
+  - Canonical top-level directories present (`skills/`, `test/`, `evals/`, `docs/`, `scripts/`, `commands/`, `.temp/`): `Pass`
+  - Zero unignored extraneous top-level folders: `Fail` (`.plan-product/` is tracked at repository root instead of canonical `skills/plan-product/assets/` for bundled defaults and `./.nyssa-ai/plan-product/` for workspace state)
+  - Zero loose scripts or non-canonical files in root: `Fail` (`CONCEPTS.md` is a loose root file with obsolete Model v1 `R-NNN` terminology)
+  - Prohibited locations clean: `Pass`
+  - Clean `evals/` hierarchy: `Pass`
+- **Remediation Steps**:
+  - [ ] Move bundled default `config.json`, `schema.json`, and `templates/*.md` into `skills/plan-product/assets/`.
+  - [ ] Move project-scoped planning state from `.plan-product/` to `.nyssa-ai/plan-product/`, remove root `.plan-product/`, and update `scripts/init.mjs`, `scripts/migrate.mjs`, and `scripts/validate.mjs` to use `.nyssa-ai/plan-product/` for project state and `skills/plan-product/assets/` for bundled defaults.
+  - [ ] Delete loose root `CONCEPTS.md` and update `skills/plan-product/workflows/product.md` and `README.md` to reference `docs/concepts/`.
 
 ### 3. Required Host Adapters
 - **Status**: `Compliant`
 - **Host Adapters Check**:
-  - Host adapters directly at repository root: `Pass` (`.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `gemini-extension.json`)
-  - Automated assembly & validation: `Pass` (`scripts/assemble.mjs` verifies and synchronizes manifests with root `plugin.json`)
-- **Remediation**: Completed.
+  - Host adapters directly at repository root: `Pass`
+  - Claude adapter present and valid (`.claude-plugin/plugin.json`): `Pass`
+  - Codex adapter present and valid (`.codex-plugin/plugin.json`): `Pass`
+  - Cursor adapter present and valid (`.cursor-plugin/plugin.json`): `Pass`
+  - Host adapters cleanly generated/assembled from canonical root source: `Pass`
+- **Remediation Steps**:
+  - [x] None required.
 
 ### 4. Package Organization & Manifest Conformance
-- **Status**: `Compliant`
+- **Status**: `Needs Remediation`
 - **Manifest Checks**:
-  - Root `plugin.json`: `Pass` (Conforms to plugin specifications; declares `skills/plan-product` and matching commands)
-  - Release artifact hygiene: `Pass` (`npm pack --dry-run` confirms zero leakage of `evals/`, `docs/`, `test/`, or `.temp/`)
-- **Remediation**: Completed.
+  - Root `plugin.json` schema conformance and identity: `Pass`
+  - Release artifact hygiene: `Needs Remediation` (`package.json` currently packs root `.plan-product/` instead of `skills/plan-product/assets/`)
+- **Remediation Steps**:
+  - [ ] Update `package.json` `files` array to remove `.plan-product/*` entries (relying on `skills/` to ship `skills/plan-product/assets/` while keeping `.nyssa-ai/` out of release tarballs).
+  - [ ] Update `plugin.json` `description`, `keywords`, and `interface.defaultPrompt` to include `concepts` (`C-nn`) and `maintain` (`v1 -> v2`), then run `npm run assemble:write`.
+  - [ ] Update `evals/scenarios/product-planning/prepare.mjs` to read `version` and `author.name` dynamically from `plugin.json` and omit `.plan-product` from copied plugin runtime paths.
 
 ### 5. Single Responsibility & Scope Directives
 - **Status**: `Compliant`
 - **Scope Directives Check**:
-  - `skills/plan-product/SKILL.md`: `Present`
-  - `skills/plan-product/workflows/*.md`: `Present` across all 4 workflows
-  - `commands/*.md`: `Present` across all 4 commands
-- **Remediation**: Completed.
+  - Top-of-file Scope Directives in all workflows (`workflows/*.md`) and commands (`commands/*.md`): `Present`
+- **Remediation Steps**:
+  - [x] None required.
 
 ### 6. Context Economics & Progressive Disclosure
 - **Status**: `Compliant`
 - **Metrics**:
-  - `skills/plan-product/SKILL.md`: 58 lines (<500 lines limit) — `Pass`
-  - `skills/plan-product/workflows/product.md`: 152 lines — `Pass`
-  - `skills/plan-product/workflows/feature.md`: 78 lines — `Pass`
-  - `skills/plan-product/workflows/use-case.md`: 75 lines — `Pass`
-  - `skills/plan-product/workflows/roadmap.md`: 92 lines — `Pass`
-  - Templates and schemas externalized in `.plan-product/` and read on demand.
-- **Remediation**: Completed.
+  - `SKILL.md` line count: `66` lines (Limit: <500 lines)
+  - Bulky domain schemas/tables offloaded to `skills/plan-product/assets/`: `Yes`
+  - Exclusion of general programming knowledge: `Yes`
+- **Remediation Steps**:
+  - [x] None required.
 
 ### 7. Trigger Precision & Frontmatter Design
-- **Status**: `Compliant`
+- **Status**: `Needs Remediation`
 - **Frontmatter Checks**:
-  - Third-person imperative phrasing: `Pass`
-  - Quoted realistic trigger phrases: `Pass` (`"plan this product"`, `"define product docs"`, `"plan a feature"`, `"create feature guide"`, `"document a use case"`, `"sequence roadmap"`, `"order delivery slices"`)
-  - Explicit negative boundaries: `Pass` (`"Do NOT use this skill for implementing source code, editing repository files directly, or executing engineering delivery work."`)
-- **Remediation**: Completed.
+  - Third-person imperative phrasing (`"Use this skill when..."`): `Fail`
+  - Quoted realistic user trigger phrases: `Needs Remediation` (missing quoted triggers for `concept` and `maintain`)
+  - Explicit negative boundary conditions: `Present`
+- **Remediation Steps**:
+  - [ ] Update `skills/plan-product/SKILL.md` frontmatter `description` to begin with `"Use this skill when..."` and include quoted trigger phrases for all 6 workflows (`"define a domain concept"`, `"capture a macro-flow"`, `"upgrade planning docs"`, `"migrate model v1 to v2"`).
 
 ### 8. Deterministic Boundary
 - **Status**: `Compliant`
 - **Boundary Checks**:
-  - Qualitative planning in markdown vs. code in `scripts/`: `Pass`
-  - Observable verification checklists (`- [ ]`) in procedure instructions: `Pass`
-- **Remediation**: Completed.
+  - Qualitative reasoning in markdown vs. code in `scripts/`: `Compliant`
+  - Observable verification checklist in procedure instructions: `Present`
+  - Parameter sanitization and actionable error diagnostics: `Compliant`
+- **Remediation Steps**:
+  - [x] None required.
 
 ### 9. Cognitive Mode Formatting & Authoring Style (Prose vs. Checklists)
 - **Status**: `Compliant`
 - **Format vs. Cognitive Mode Checks**:
-  - Operating rules formatted as bulleted directives.
-  - Triage Matrix clearly routes intents.
-  - Procedural execution gates formatted as `- [ ]` checklists.
-- **Remediation**: Completed.
+  - Skills, workflows, and commands use structured directives, tables, and checklists: `Compliant`
+- **Remediation Steps**:
+  - [x] None required.
 
 ### 10. Evaluation Suite Quality & Rigor
-- **Status**: `Compliant`
-- **Suite Checks**:
-  - Immediate `evals/` child: `evals/scenarios/` (`Pass`)
-  - Cross-host matrix declared: `evals/matrix.json` (`Pass`)
-  - Release receipts verified: `evals/LATEST.md` (`Pass`)
-  - Preparation and contract tests: `13/13 Pass`
-- **Remediation**: Completed.
+- **Status**: `Needs Remediation`
+- **Trigger Quality & Coverage**:
+  - Positive triggers: `18` positive + `12` ambiguous across 6 workflows: `Pass`
+  - Negative boundaries: `18` near-neighbor negative triggers across 6 workflows: `Pass`
+- **Grader & Assertion Depth**:
+  - **Eliminate Model v1 Evals & Enforce Model v2 Exclusively**: `Needs Remediation`
+    - All 8 existing content scenarios in `evals/scenarios/product-planning/cases.json` and 4 routing prompts (`pos-csv-export`, `pos-password-reset`, `pos-checkout-flow`, `pos-add-slice`) still reference legacy Model v1 (`version: 1`, `.plan-product/`, `F-Nxx`, `UC-nnn`, `R-NNN`).
+    - All non-migration routing and content scenarios must be upgraded to Model v2 (`version: 2`, `.nyssa-ai/plan-product/config.json`, `C-nn`, `F-gg.nn`, `UC-gg.nn.uu`, `R-pp.ss`), and `baseline.json` must be re-baselined to the v2 decision scenarios.
+    - Add 2 new v2 content scenarios covering `workflows/concept.md` (`concept-macro-flow-artifact`) and `workflows/maintain.md` (`maintain-v1-migration-conflict`).
+  - **Waza Trigger Suite (`evals/waza/skills/plan-product/eval.yaml`)**: `Missing`
+- **Matrix & Verification Receipts**:
+  - Cross-host matrix declared (`evals/matrix.json`): `Stale` (`0.1.0`)
+  - Release receipts (`evals/LATEST.md` & `evals/scenarios/product-planning/README.md`): `Stale` (`0.1.0`)
+- **Remediation Steps**:
+  - [ ] Upgrade all 8 existing content scenarios and all v1 routing prompts in `evals/scenarios/product-planning/cases.json` to Model v2 and `.nyssa-ai/plan-product/`.
+  - [ ] Add `concept-macro-flow-artifact` and `maintain-v1-migration-conflict` content scenarios to `cases.json` (bringing total to 10 content scenarios) and update `baseline.json` hashes.
+  - [ ] Create `evals/waza/skills/plan-product/eval.yaml` covering positive and negative triggers for `plan-product`.
+  - [ ] Update `evals/matrix.json`, `evals/LATEST.md`, and `evals/scenarios/product-planning/README.md` to `0.2.0`.
 
 ---
 
-## Remediation Checklist Summary
+## Prioritized Remediation Roadmap
 
-- [x] Phase 1: Reorganize topology into Encapsulated Facade with Direct Commands.
-- [x] Phase 2: Relocate `.codex/` and clean up root layout.
-- [x] Phase 3: Move `evals/` scenarios under `evals/scenarios/` and add `matrix.json` + `LATEST.md`.
-- [x] Phase 4: Create canonical root `plugin.json` and `scripts/assemble.mjs`.
-- [x] Phase 5: Add `> [!IMPORTANT] Scope Directive` alert blocks to all runbooks and commands.
-- [x] Phase 6: Refactor verification gates into structured `- [ ]` checklists.
-- [x] Phase 7: Update contract tests (`test/planning-contract.test.mjs`) and verify `npm test`, `npm run assemble`, `npm run eval:prepare`, `npm pack --dry-run`.
+1. **Phase 1: Canonical Asset & NyssaAI State Relocation (`.nyssa-ai/plan-product/` & `skills/plan-product/assets/`)**
+   - [ ] Move default `config.json`, `schema.json`, and `templates/*.md` into `skills/plan-product/assets/` with `.nyssa-ai/plan-product/` default paths.
+   - [ ] Move repository planning config/state from `.plan-product/` to `.nyssa-ai/plan-product/`, delete root `.plan-product/`, and delete root `CONCEPTS.md`.
+   - [ ] Update `scripts/init.mjs`, `scripts/migrate.mjs`, and `scripts/validate.mjs` to source bundled assets from `skills/plan-product/assets/`, write project state to `.nyssa-ai/plan-product/`, and migrate legacy `.plan-product/` to `.nyssa-ai/plan-product/`.
+   - [ ] Update `package.json` `files` array so `skills/plan-product/assets/` is packaged and neither `.plan-product/` nor `.nyssa-ai/` is included in release tarballs.
+2. **Phase 2: Strict Model v2 Contract, Prompts, Docs & Manifests**
+   - [ ] Update `skills/plan-product/SKILL.md`, all 6 `workflows/*.md`, all 6 `commands/*.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/**` to reference `.nyssa-ai/plan-product/config.json` and enforce strict Model v2 conflict alerting.
+   - [ ] Update `skills/plan-product/SKILL.md` frontmatter `description` to start with `"Use this skill when..."` and include quoted triggers for `concept` and `maintain`.
+   - [ ] Update `plugin.json` metadata for v0.2.0 and run `npm run assemble:write`.
+3. **Phase 3: Model v2-Only Evals, Waza Suite, Tests & Release Receipts**
+   - [ ] Upgrade all routing and content scenarios in `evals/scenarios/product-planning/cases.json` to Model v2 + `.nyssa-ai/plan-product/`, add `concept` and `maintain` content scenarios, and update `baseline.json` and `prepare.mjs`.
+   - [ ] Create `evals/waza/skills/plan-product/eval.yaml`.
+   - [ ] Update `test/init.test.mjs` and `test/planning-contract.test.mjs` for `.nyssa-ai/plan-product/`, `skills/plan-product/assets/`, and the v2 eval suite.
+   - [ ] Refresh `evals/matrix.json`, `evals/LATEST.md`, and `evals/scenarios/product-planning/README.md` to `0.2.0` and verify `npm run validate`, `npm run assemble`, `npm test`, `npm run eval:prepare`, and `npm pack --dry-run`.

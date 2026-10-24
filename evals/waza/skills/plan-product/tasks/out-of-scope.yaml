@@ -1,0 +1,101 @@
+- id: plan-product-negative-backend-code
+  name: Reject backend API route coding
+  description: Writing Express route handlers belongs to engineering implementation, not product planning.
+  tags:
+    - trigger
+    - negative
+  inputs:
+    prompt: "Write a TypeScript interface and express route handler for the volunteer scheduling service."
+  expected:
+    should_trigger: false
+  graders:
+    - type: trigger
+      name: facade-negative-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: negative
+
+- id: plan-product-negative-unit-tests
+  name: Reject software unit testing
+  description: Writing pytest/jest unit tests belongs to code testing, not product planning.
+  tags:
+    - trigger
+    - negative
+  inputs:
+    prompt: "Write unit tests using pytest for the recurring-shift calculation logic."
+  expected:
+    should_trigger: false
+  graders:
+    - type: trigger
+      name: facade-negative-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: negative
+
+- id: plan-product-negative-bug-fix
+  name: Reject code bug fixing
+  description: Fixing null pointer exceptions in application controllers belongs to code debugging.
+  tags:
+    - trigger
+    - negative
+  inputs:
+    prompt: "Fix the NullPointerException bug occurring in the CSV export controller."
+  expected:
+    should_trigger: false
+  graders:
+    - type: trigger
+      name: facade-negative-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: negative
+
+- id: plan-product-negative-browser-test
+  name: Reject browser E2E test scripting
+  description: Authoring Cypress browser tests belongs to test automation.
+  tags:
+    - trigger
+    - negative
+  inputs:
+    prompt: "Write a Cypress end-to-end browser test script for the volunteer shift cancellation flow."
+  expected:
+    should_trigger: false
+  graders:
+    - type: trigger
+      name: facade-negative-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: negative
+
+- id: plan-product-negative-db-migration
+  name: Reject SQL database schema migration
+  description: Creating SQL DDL migrations belongs to database engineering.
+  tags:
+    - trigger
+    - negative
+  inputs:
+    prompt: "Create a SQL database migration to add an is_cancelled column to the shift_assignments table."
+  expected:
+    should_trigger: false
+  graders:
+    - type: trigger
+      name: facade-negative-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: negative
+
+- id: plan-product-negative-ci-deploy
+  name: Reject CI/CD deployment execution
+  description: Deploying docker containers to Kubernetes belongs to DevOps / infrastructure.
+  tags:
+    - trigger
+    - negative
+  inputs:
+    prompt: "Run the CI build and deploy the latest Docker container to our Kubernetes staging cluster."
+  expected:
+    should_trigger: false
+  graders:
+    - type: trigger
+      name: facade-negative-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: negative

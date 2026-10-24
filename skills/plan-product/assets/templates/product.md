@@ -24,6 +24,10 @@ List non-goals, constraints, and things this product should not own.
 
 List the observable user outcomes that show the product is working.
 
+## Core Concepts & Macro-Flows
+
+Foundational domain concepts and end-to-end macro-flows are maintained in `docs/concepts/`.
+
 ## Features
 
 The feature catalog and detailed feature guides are maintained in `docs/features.md` and `docs/features/`.

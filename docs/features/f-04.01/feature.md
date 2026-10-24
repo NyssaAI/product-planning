@@ -14,6 +14,11 @@ Upgrade older planning documents to the current functional grouping and numberin
 
 Teams with existing planning documents written under an earlier numbering convention need a safe, effortless way to adopt the current `F-gg.nn`, `UC-gg.nn.uu`, and `R-pp.ss` scheme without manually renaming files, fixing links, or losing their written content.
 
+## Conceptual Context
+
+- [C-01: Canonical Planning Taxonomy & Hierarchy](../../concepts/c-01-canonical-planning-taxonomy.md) — migrates legacy v1 identifiers (`F-Nxx`, `UC-nnn`, `R-NNN`) into the v2 canonical taxonomy.
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — upgrades legacy v1 repositories to v2 while preserving all user-authored notes and custom paths.
+
 ## Use Cases
 
 None yet.

@@ -14,6 +14,11 @@ Establish a shared product summary, feature catalog, and high-level technology o
 
 Founders, product owners, and teams need a single, readable starting point that explains who the product is for, what problem it solves, what capabilities it offers, and what high-level constraints apply—without losing notes they have already written.
 
+## Conceptual Context
+
+- [C-02: End-to-End Product Planning Lifecycle](../../concepts/c-02-product-planning-lifecycle.md) — drives Stage 2 product discovery and overview confirmation.
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — applies template-only detection and merge-by-heading preservation when updating overview docs.
+
 ## Use Cases
 
 None yet.

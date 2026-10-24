@@ -18,7 +18,7 @@ Target / focus: $ARGUMENTS
 
 ## Writes
 
-- `.plan-product/config.json` (bumped to `version: 2`)
+- `.nyssa-ai/plan-product/config.json` (bumped to `version: 2`)
 - configured templates under `.plan-product/templates/`
 - feature guides and folders under `docs/features/`
 - feature inventory, usually `docs/features.md`

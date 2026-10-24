@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,6 +7,22 @@ const json = file => JSON.parse(readFileSync(path.join(root, file), 'utf8'));
 
 export function assemble(mode = 'check') {
   const canonical = json('plugin.json');
+  const commandFiles = readdirSync(path.join(root, 'commands'))
+    .filter(f => f.endsWith('.md'))
+    .map(f => `commands/${f}`)
+    .sort();
+  const declaredCommands = [...(canonical.commands || [])].sort();
+  if (JSON.stringify(commandFiles) !== JSON.stringify(declaredCommands)) {
+    throw new Error(`plugin.json commands array (${declaredCommands.join(', ')}) does not match commands/ directory (${commandFiles.join(', ')})`);
+  }
+  const workflowFiles = readdirSync(path.join(root, 'skills/plan-product/workflows'))
+    .filter(f => f.endsWith('.md'))
+    .map(f => f.replace(/\.md$/, ''))
+    .sort();
+  const expectedCommands = workflowFiles.map(w => `commands/plan-${w}.md`).sort();
+  if (JSON.stringify(commandFiles) !== JSON.stringify(expectedCommands)) {
+    throw new Error(`commands/ (${commandFiles.join(', ')}) does not match skills/plan-product/workflows/ (${expectedCommands.join(', ')})`);
+  }
   const hosts = [
     {
       file: '.claude-plugin/plugin.json',

@@ -16,7 +16,7 @@ Describe the outcome the actor needs in plain, non-technical language.
 
 ## Starting Context
 
-Describe what the actor already has, sees, knows, or what state exists before the workflow starts.
+Describe what the actor already has, sees, knows, or what state exists before the workflow starts (and optionally link to the parent concept or macro-flow stage in `../../concepts/`).
 
 ## Entry Route
 

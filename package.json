@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
   "version": "0.2.0",
-  "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
+  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "private": true,
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "author": {
@@ -19,9 +19,6 @@
     ".claude-plugin/",
     ".codex-plugin/",
     ".cursor-plugin/",
-    ".plan-product/config.json",
-    ".plan-product/schema.json",
-    ".plan-product/templates/",
     "commands/",
     "scripts/",
     "!scripts/**/*.test.mjs",

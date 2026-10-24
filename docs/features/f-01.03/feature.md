@@ -14,6 +14,10 @@ Organize related capabilities into two-digit functional Feature Groups (`F-gg.nn
 
 Users want related features—such as all authentication capabilities or all reporting capabilities—to sit together in the catalog and folder list, without hitting a 9-group ceiling or confusing functional relatedness with technical build order.
 
+## Conceptual Context
+
+- [C-01: Canonical Planning Taxonomy & Hierarchy](../../concepts/c-01-canonical-planning-taxonomy.md) — enforces two-digit functional grouping (`F-gg.nn`) and inherited use-case numbering (`UC-gg.nn.uu`).
+
 ## Use Cases
 
 None yet.

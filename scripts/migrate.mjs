@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, renameSync, writeFileSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, renameSync, writeFileSync, rmSync, mkdirSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,9 +7,18 @@ const readJson = file => JSON.parse(readFileSync(file, 'utf8'));
 
 export function migrate(root = process.cwd()) {
   root = path.resolve(root);
-  const configFile = path.join(root, '.plan-product/config.json');
-  if (!existsSync(configFile)) {
-    throw new Error(`Cannot find config at ${configFile}`);
+
+  const legacyConfigFile = path.join(root, '.plan-product/config.json');
+  const targetConfigFile = path.join(root, '.nyssa-ai/plan-product/config.json');
+
+  let configFile = targetConfigFile;
+  let isLegacyLocation = false;
+
+  if (existsSync(legacyConfigFile)) {
+    configFile = legacyConfigFile;
+    isLegacyLocation = true;
+  } else if (!existsSync(targetConfigFile)) {
+    throw new Error(`Cannot find config at ${targetConfigFile} or ${legacyConfigFile}`);
   }
 
   const config = readJson(configFile);
@@ -200,17 +209,21 @@ export function migrate(root = process.cwd()) {
       rdContent = rdContent.replaceAll(`features/${info.oldFolder}/feature.md`, `features/${info.newFolder}/feature.md`);
     }
 
-    // Link use cases where applicable
-    for (const uc of useCaseMap.values()) {
-      const newPath = `features/${featureMap.get(uc.oldUcId ? info => info.newId === uc.featureNewId : null)?.newFolder || ''}/${uc.newFile}`;
-    }
-
     writeFileSync(roadmapFile, rdContent);
     results.filesUpdated.push(path.relative(root, roadmapFile).replaceAll('\\', '/'));
   }
 
-  // Update config.json
+  // Update config paths to .nyssa-ai/plan-product/
   config.version = 2;
+  config.paths = config.paths || {};
+  for (const [key, val] of Object.entries(config.paths)) {
+    if (typeof val === 'string' && val.startsWith('.plan-product/')) {
+      config.paths[key] = val.replace(/^\.plan-product\//, '.nyssa-ai/plan-product/');
+    }
+  }
+  if (!config.paths.configSchema) config.paths.configSchema = '.nyssa-ai/plan-product/schema.json';
+  if (!config.paths.templates) config.paths.templates = '.nyssa-ai/plan-product/templates';
+
   config.structure = config.structure || {};
   config.structure.features = config.structure.features || {};
   config.structure.features.idPattern = 'F-gg.nn';
@@ -221,21 +234,42 @@ export function migrate(root = process.cwd()) {
   config.structure.features.useCaseFilePattern = 'uc-gg.nn.uu-short-slug.md';
   config.structure.features.useCasePathPattern = `${featureRootRel}/f-gg.nn/uc-gg.nn.uu-short-slug.md`;
 
+  config.structure.concepts = config.structure.concepts || {
+    root: config.paths.concepts || 'docs/concepts',
+    idPattern: 'C-nn',
+    filePattern: 'c-nn-short-slug.md',
+    pathPattern: 'docs/concepts/c-nn-short-slug.md'
+  };
+
   config.structure.roadmap = config.structure.roadmap || {};
   config.structure.roadmap.idPattern = 'R-pp.ss';
 
-  writeFileSync(configFile, JSON.stringify(config, null, 2) + '\n');
+  mkdirSync(path.dirname(targetConfigFile), { recursive: true });
+  writeFileSync(targetConfigFile, JSON.stringify(config, null, 2) + '\n');
   results.configUpgraded = true;
-  results.filesUpdated.push(path.relative(root, configFile).replaceAll('\\', '/'));
+  results.filesUpdated.push(path.relative(root, targetConfigFile).replaceAll('\\', '/'));
 
-  // Update schema.json
-  const schemaFile = path.join(root, '.plan-product/schema.json');
-  if (existsSync(schemaFile)) {
-    const bundleSchema = path.join(bundle, '.plan-product/schema.json');
-    if (existsSync(bundleSchema)) {
-      writeFileSync(schemaFile, readFileSync(bundleSchema, 'utf8'));
-      results.filesUpdated.push(path.relative(root, schemaFile).replaceAll('\\', '/'));
+  // Copy bundled schema to .nyssa-ai/plan-product/schema.json
+  const targetSchemaFile = path.join(root, '.nyssa-ai/plan-product/schema.json');
+  const bundleSchema = path.join(bundle, 'skills/plan-product/assets/schema.json');
+  if (existsSync(bundleSchema)) {
+    writeFileSync(targetSchemaFile, readFileSync(bundleSchema, 'utf8'));
+    results.filesUpdated.push(path.relative(root, targetSchemaFile).replaceAll('\\', '/'));
+  }
+
+  // If old templates existed, copy them to .nyssa-ai/plan-product/templates
+  const legacyTemplatesDir = path.join(root, '.plan-product/templates');
+  const targetTemplatesDir = path.join(root, '.nyssa-ai/plan-product/templates');
+  if (existsSync(legacyTemplatesDir)) {
+    mkdirSync(targetTemplatesDir, { recursive: true });
+    for (const f of readdirSync(legacyTemplatesDir)) {
+      cpSync(path.join(legacyTemplatesDir, f), path.join(targetTemplatesDir, f));
     }
+  }
+
+  // Remove legacy .plan-product folder
+  if (isLegacyLocation && existsSync(path.join(root, '.plan-product'))) {
+    rmSync(path.join(root, '.plan-product'), { recursive: true, force: true });
   }
 
   return results;
@@ -244,7 +278,7 @@ export function migrate(root = process.cwd()) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.length === 1 && args[0] === '--help') {
-    console.log('Usage: node <plugin-root>/scripts/migrate.mjs [target-repo-root]\nMigrates planning assets from Model v1 (F-Nxx, UC-nnn, R-NNN) to Model v2 (F-gg.nn, UC-gg.nn.uu, R-pp.ss).');
+    console.log('Usage: node <plugin-root>/scripts/migrate.mjs [target-repo-root]\nMigrates planning assets from Model v1 (F-Nxx, UC-nnn, R-NNN, .plan-product/) to Model v2 (F-gg.nn, UC-gg.nn.uu, R-pp.ss, .nyssa-ai/plan-product/).');
   } else {
     try {
       const target = args[0] || process.cwd();

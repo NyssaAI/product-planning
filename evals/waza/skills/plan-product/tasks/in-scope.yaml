@@ -1,0 +1,101 @@
+- id: plan-product-trigger-product
+  name: Route product definition and inventory request
+  description: A request to bootstrap or define product documentation belongs to plan-product.
+  tags:
+    - trigger
+    - positive
+  inputs:
+    prompt: "Help me define the product, audience and high-level feature inventory for a new volunteer scheduling service."
+  expected:
+    should_trigger: true
+  graders:
+    - type: trigger
+      name: facade-positive-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: positive
+
+- id: plan-product-trigger-concept
+  name: Route domain concept and macro-flow request
+  description: A request to capture cross-feature domain models or lifecycles belongs to plan-product.
+  tags:
+    - trigger
+    - positive
+  inputs:
+    prompt: "Define the end-to-end Order Fulfillment macro-flow in docs/concepts/c-01-order-fulfillment.md and link its participating features."
+  expected:
+    should_trigger: true
+  graders:
+    - type: trigger
+      name: facade-positive-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: positive
+
+- id: plan-product-trigger-feature
+  name: Route feature guide specification request
+  description: A request to specify feature scope, boundaries, inputs, and acceptance belongs to plan-product.
+  tags:
+    - trigger
+    - positive
+  inputs:
+    prompt: "Interview me to specify the recurring-shift feature and create its feature guide with clear capability boundaries."
+  expected:
+    should_trigger: true
+  graders:
+    - type: trigger
+      name: facade-positive-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: positive
+
+- id: plan-product-trigger-use-case
+  name: Route actor workflow and process tree request
+  description: A request to document step-by-step actor workflows and failure branches belongs to plan-product.
+  tags:
+    - trigger
+    - positive
+  inputs:
+    prompt: "Document the use case where a coordinator cancels one occurrence of a recurring shift, including failures and alternate flows."
+  expected:
+    should_trigger: true
+  graders:
+    - type: trigger
+      name: facade-positive-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: positive
+
+- id: plan-product-trigger-roadmap
+  name: Route delivery roadmap sequencing request
+  description: A request to sequence Model v2 delivery steps (R-pp.ss) with Rationale, Concepts, Gotchas, Verify checkpoints, and ce-plan handoff belongs to plan-product.
+  tags:
+    - trigger
+    - positive
+  inputs:
+    prompt: "Turn our approved feature guides, domain concepts, and tech stack into a dependency-ordered product roadmap with R-pp.ss step IDs, enriched step fields, and a ce-plan handoff."
+  expected:
+    should_trigger: true
+  graders:
+    - type: trigger
+      name: facade-positive-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: positive
+
+- id: plan-product-trigger-maintain
+  name: Route planning model upgrade request
+  description: A request to upgrade legacy planning documents from v1 to Model v2 belongs to plan-product.
+  tags:
+    - trigger
+    - positive
+  inputs:
+    prompt: "Upgrade our repository's legacy planning documents from model v1 (.plan-product, F-101, UC-001, R-001) to Model v2 (.nyssa-ai/plan-product/, F-gg.nn, UC-gg.nn.uu, R-pp.ss)."
+  expected:
+    should_trigger: true
+  graders:
+    - type: trigger
+      name: facade-positive-trigger
+      config:
+        skill_path: skills/plan-product/SKILL.md
+        mode: positive

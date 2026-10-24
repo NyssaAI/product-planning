@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user.
 - Configured paths are repo-relative. Render links relative to document location.
-- Read `.plan-product/config.json` for paths and `paths.useCaseTemplate` for file shape.
+- Read `.nyssa-ai/plan-product/config.json` for paths and `paths.useCaseTemplate` for file shape.
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time.
 - Do not invent a happy path from the feature summary. The user must explain workflow steps.
@@ -25,7 +25,7 @@
 ## Procedure
 
 ### 1. Target Resolution & Context Check
-1. Read `.plan-product/config.json` and the feature inventory.
+1. Read `.nyssa-ai/plan-product/config.json` and the feature inventory.
 2. Resolve parent feature guide from `structure.features.featurePathPattern`.
 3. If user named existing use case, read it. Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
 
@@ -52,6 +52,16 @@
 3. Update parent feature guide:
    - Add markdown link under `## Use Cases`: `- [UC-gg.nn.uu: Title](uc-gg.nn.uu-short-slug.md)`.
 
+### 4. Optional Roadmap Handoff
+
+After successfully writing a new or materially updated use case, ask the user whether to reflect it in delivery planning:
+
+- If `paths.roadmap` exists, ask: `Would you like to update the roadmap now?`
+- If `paths.roadmap` does not exist, ask: `Would you like to create the roadmap now?`
+- If the user says yes, load `workflows/roadmap.md` in the same conversation. Carry the affected `UC-gg.nn.uu`, parent `F-gg.nn`, confirmed acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
+- If the user says no, report the use-case and parent-feature updates and complete normally. Do not treat roadmap work as a blocking condition and do not write a roadmap.
+- Do not ask after a read-only review, an unchanged write, or a cancelled update.
+
 ---
 
 ## Verification Checklist
@@ -64,3 +74,4 @@
 - [ ] Complex tree nodes elaborated in `Step Details`.
 - [ ] Sibling use cases checked for duplicates or contradictory flows.
 - [ ] Parent feature guide updated with relative link to the new use case.
+- [ ] After a material write, offered the optional roadmap handoff without blocking completion.

@@ -14,6 +14,11 @@ Sequence delivery work into ordered phases and steps (`R-pp.ss`) with dependenci
 
 Builders and product owners need a practical delivery sequence that orders work in the way it must actually be built and tested—pulling across any functional feature group as needed—and defines a concrete way to verify each step.
 
+## Conceptual Context
+
+- [C-01: Canonical Planning Taxonomy & Hierarchy](../../concepts/c-01-canonical-planning-taxonomy.md) — sequences `R-pp.ss` delivery steps targeting `UC-gg.nn.uu` and `F-gg.nn` independently of feature groups.
+- [C-02: End-to-End Product Planning Lifecycle](../../concepts/c-02-product-planning-lifecycle.md) — executes Stage 5 delivery sequencing, dependency validation, and status tie-out.
+
 ## Use Cases
 
 None yet.

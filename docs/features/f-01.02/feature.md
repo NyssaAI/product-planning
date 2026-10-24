@@ -14,6 +14,10 @@ Define clear capability boundaries for each feature and map step-by-step actor w
 
 Before building a capability, teams need to agree on who needs it, what is in or out of scope, how a user or actor actually walks through the workflow, and what happens when something goes wrong—without duplicating or contradicting another feature.
 
+## Conceptual Context
+
+- [C-02: End-to-End Product Planning Lifecycle](../../concepts/c-02-product-planning-lifecycle.md) — executes Stage 3 boundary hardening and Stage 4 actor workflow mapping.
+
 ## Use Cases
 
 - [UC-01.02.01: Define a Feature Guide Through Guided Interview](uc-01.02.01-author-feature-guide.md)
