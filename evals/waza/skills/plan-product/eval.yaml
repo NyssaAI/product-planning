@@ -2,7 +2,7 @@ name: plan-product-eval
 description: Fast local trigger checks for the plan-product planning facade skill.
 skill: plan-product
 schemaVersion: "1.4"
-version: "0.2.0"
+version: "0.12.0"
 config:
   trials_per_task: 1
   timeout_seconds: 10

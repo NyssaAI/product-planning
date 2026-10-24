@@ -4,7 +4,7 @@
 > Records canonical verification receipts, execution status, and evaluation evidence for `plan-product` release readiness across supported hosts.
 
 **Last Verified**: 2026-10-24  
-**Version**: 0.2.0  
+**Version**: 0.12.0  
 **Topology**: Encapsulated Facade (`skills/plan-product` + internal workflows)  
 **Status**: Passing (Local Verification Gate & CI Pipeline)  
 

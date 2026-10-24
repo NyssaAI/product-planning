@@ -1,6 +1,6 @@
 {
   "name": "plan-product",
-  "version": "0.2.0",
+  "version": "0.12.0",
   "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "private": true,
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
