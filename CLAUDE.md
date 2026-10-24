@@ -8,8 +8,9 @@ Same content as `CLAUDE.md`. This repository owns the `plan-product` planning fa
   - `workflows/product.md`: product definition, feature inventory, and descriptive technology context.
   - `workflows/feature.md`: feature identity, user need, boundaries, acceptance checks, and dependencies.
   - `workflows/use-case.md`: actor workflows, entry routes, process trees, alternatives, and failures.
-  - `workflows/roadmap.md`: product delivery order, stable slice IDs, dependencies, and acceptance checkpoints.
-- Matching slash commands in `commands/`: `plan-product`, `plan-feature`, `plan-use-case`, `plan-roadmap`.
+  - `workflows/roadmap.md`: product delivery order, stable step IDs (R-pp.ss), dependencies, and acceptance checkpoints.
+  - `workflows/maintain.md`: model versioning, legacy migration (v1 to v2), and reference reconciliation.
+- Matching slash commands in `commands/`: `plan-product`, `plan-feature`, `plan-use-case`, `plan-roadmap`, `plan-maintain`.
 
 ## Repository contract
 
@@ -20,9 +21,9 @@ Preserve user-authored documents, local notes, custom templates, and stable iden
 ## Structure
 
 - `.plan-product/`: planning config, schema, and six document templates.
-- `skills/plan-product/`: unified facade skill (`SKILL.md`) and four encapsulated workflows (`workflows/`).
+- `skills/plan-product/`: unified facade skill (`SKILL.md`) and five encapsulated workflows (`workflows/`).
 - `commands/`: matching command entrypoints.
-- `scripts/`: initializer (`init.mjs`), repo path resolver, and host manifest assembler (`assemble.mjs`).
+- `scripts/`: initializer (`init.mjs`), migrator (`migrate.mjs`), repo path resolver, and host manifest assembler (`assemble.mjs`).
 - `docs/`: product documentation, feature guides, and product roadmap.
 - `test/`: initialization, packaging, and planning-contract regression checks.
 - `evals/scenarios/product-planning/`: routing and content evaluations.

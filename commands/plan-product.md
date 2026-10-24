@@ -27,4 +27,4 @@ Target / focus: $ARGUMENTS
 - configured feature guide stubs from `structure.features.featurePathPattern`
 
 Use the current templates named in `.plan-product/config.json`; do not
-duplicate template content in the command or skill.
+duplicate template content in the command or skill. Write `product.md` and `features.md` in plain, non-technical user-outcome and use-case language (with no links in `## Feature Checklist Summary`), and keep technology selections strictly in `tech-stack.md`.

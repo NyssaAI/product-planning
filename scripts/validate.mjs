@@ -18,7 +18,7 @@ export function validate() {
   } else {
     const manifest = json('plugin.json');
     if (!manifest.name || manifest.name !== 'plan-product') fail('plugin.json name must be "plan-product"');
-    if (!manifest.version || manifest.version !== '0.1.0') fail('plugin.json version must be "0.1.0"');
+    if (!manifest.version || !/^\d+\.\d+\.\d+$/.test(manifest.version)) fail('plugin.json version must be valid semver');
     if (!manifest.skills || !Array.isArray(manifest.skills)) fail('plugin.json skills array is missing');
     if (!manifest.commands || !Array.isArray(manifest.commands)) fail('plugin.json commands array is missing');
 

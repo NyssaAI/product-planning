@@ -1,18 +1,18 @@
 ---
-id: F-000
-phase: 0
+id: F-00.01
+group: "00"
 status: planned
 ---
 
-# F-000 Feature Name
+# F-00.01 Feature Name
 
 ## Summary
 
-Describe the capability in one or two sentences.
+Describe the capability in one or two sentences using plain, user-focused language (do not include technical architecture or technology selections).
 
 ## User Need
 
-Describe who needs this and what they need to do.
+Describe who needs this and what they need to accomplish.
 
 ## Use Cases
 
@@ -20,7 +20,7 @@ None yet.
 
 ## Scope
 
-List what this feature owns.
+List the user-visible capabilities and behaviors this feature owns.
 
 ## Out of Scope
 
@@ -28,17 +28,16 @@ List adjacent responsibilities this feature does not own.
 
 ## Inputs
 
-List files, commands, configs, prompts, or user decisions the feature reads.
+List user-supplied information, decisions, or starting context required by this capability.
 
 ## Outputs
 
-List files, reports, commands, or state changes the feature creates.
+List observable user outcomes, information, or artifacts produced for the user.
 
 ## Acceptance
 
-- The expected artifact exists.
-- The expected behavior is verified.
-- The path contract matches `.plan-product/config.json`.
+- Describe the observable outcome that proves this capability works for the user.
+- Keep acceptance criteria free of internal implementation details or technology selections.
 
 ## Dependencies
 

@@ -7,12 +7,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { initialize } from '../scripts/init.mjs';
 
-const commandNames = ['plan-feature','plan-product','plan-roadmap','plan-use-case'];
-const workflowNames = ['feature','product','roadmap','use-case'];
+const commandNames = ['plan-feature','plan-maintain','plan-product','plan-roadmap','plan-use-case'];
+const workflowNames = ['feature','maintain','product','roadmap','use-case'];
 const json = file => JSON.parse(readFileSync(file, 'utf8'));
 const root = path.resolve(import.meta.dirname, '..');
 
-test('all hosts expose the plan-product facade and matching commands at version 0.1.0', () => {
+test('all hosts expose the plan-product facade and matching commands with matching version', () => {
   assert.deepEqual(readdirSync('skills').sort(), ['plan-product']);
   assert.deepEqual(readdirSync('skills/plan-product/workflows').sort(), workflowNames.map(w => `${w}.md`));
   assert.deepEqual(readdirSync('commands').sort(), commandNames.map(name => `${name}.md`));
@@ -30,12 +30,13 @@ test('all hosts expose the plan-product facade and matching commands at version 
     assert.ok(workflow.includes('> [!IMPORTANT] Scope Directive'));
     for (const [, script] of workflow.matchAll(/\$\{PLUGIN_ROOT\}\/(scripts\/[\w/.-]+)/g)) assert.ok(existsSync(script), script);
   }
+  const rootManifest = json('plugin.json');
   for (const file of ['plugin.json', 'package.json','.claude-plugin/plugin.json','.codex-plugin/plugin.json','.cursor-plugin/plugin.json','gemini-extension.json']) {
     const manifest = json(file);
-    assert.equal(manifest.version, '0.1.0', file);
+    assert.equal(manifest.version, rootManifest.version, file);
     assert.equal(manifest.name, 'plan-product', file);
   }
-  assert.equal(json('package-lock.json').version, '0.1.0');
+  assert.equal(json('package-lock.json').version, rootManifest.version);
   assert.deepEqual(Object.keys(json('package-lock.json').packages), ['']);
 });
 
@@ -82,7 +83,7 @@ test('evaluation preparation packages all scenarios and declares usable local fi
   t.after(() => rmSync(temp, { recursive: true, force: true }));
   const target = path.join(temp, 'prepared');
   execFileSync(process.execPath, ['evals/scenarios/product-planning/prepare.mjs', root, target]);
-  assert.equal(readdirSync(path.join(target, 'routing')).length, 32);
+  assert.equal(readdirSync(path.join(target, 'routing')).length, 40);
   assert.equal(readdirSync(path.join(target, 'content')).length, 8);
   for (const row of json('evals/scenarios/product-planning/cases.json').content) {
     const folder = path.join(target, 'content', row.id);
@@ -103,7 +104,7 @@ test('release package contains only the planning runtime and initializes without
   const output = JSON.parse(execFileSync(process.execPath, [npm, 'pack', '--dry-run', '--json', '--ignore-scripts'], { encoding: 'utf8' }));
   const pack = Array.isArray(output) ? output[0] : output['plan-product'];
   const files = pack.files.map(row => row.path).sort();
-  assert.deepEqual(files.filter(file => file.startsWith('scripts/')), ['scripts/assemble.mjs','scripts/init.mjs','scripts/lib/repo-paths.mjs','scripts/validate.mjs']);
+  assert.deepEqual(files.filter(file => file.startsWith('scripts/')), ['scripts/assemble.mjs','scripts/init.mjs','scripts/lib/repo-paths.mjs','scripts/migrate.mjs','scripts/validate.mjs']);
   assert.deepEqual(files.filter(file => file.startsWith('skills/')), [
     'skills/plan-product/SKILL.md',
     ...workflowNames.map(w => `skills/plan-product/workflows/${w}.md`)

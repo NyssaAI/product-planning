@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, existsSync, readdi
 import os from 'node:os';
 import path from 'node:path';
 import { initialize } from '../scripts/init.mjs';
+import { migrate } from '../scripts/migrate.mjs';
 
 function fixture(t) {
   const root = mkdtempSync(path.join(os.tmpdir(), 'product-planning-test-'));
@@ -66,7 +67,7 @@ test('invalid config and escaping paths fail before creating any document', t =>
     assert.deepEqual(readFileSync(configPath(root)), before);
     assert.equal(existsSync(path.join(root, 'docs')), false);
   }
-  for (const config of [{version: 2},{paths: null},{structure: []},{structure: { features: { idPattern: 42 } }}]) {
+  for (const config of [{version: 3},{version: 1},{paths: null},{structure: []},{structure: { features: { idPattern: 42 } }}]) {
     const root = fixture(t);
     setConfig(root, config);
     assert.throws(() => initialize(root));
@@ -96,8 +97,8 @@ test('partial custom feature roots feed naming patterns and inventory aliases', 
   const config = readConfig(root);
   assert.equal(config.structure.features.inventory, 'planning/catalog.md');
   assert.equal(config.structure.features.root, 'planning/capabilities');
-  assert.equal(config.structure.features.featurePathPattern, 'planning/capabilities/f-nxx/feature.md');
-  assert.equal(config.structure.features.useCasePathPattern, 'planning/capabilities/f-nxx/uc-nnn-short-slug.md');
+  assert.equal(config.structure.features.featurePathPattern, 'planning/capabilities/f-gg.nn/feature.md');
+  assert.equal(config.structure.features.useCasePathPattern, 'planning/capabilities/f-gg.nn/uc-gg.nn.uu-short-slug.md');
 });
 
 test('file/directory conflicts fail before modifying config or creating assets', t => {
@@ -119,4 +120,75 @@ test('traversal characters in sub-path patterns fail before writes', t => {
     assert.throws(() => initialize(root), /traversal or separators/);
     assert.equal(existsSync(path.join(root, '.plan-product/schema.json')), false);
   }
+});
+
+test('migrate converts model v1 repositories to model v2 deterministically', t => {
+  const root = fixture(t);
+  const v1Config = {
+    version: 1,
+    paths: {
+      repoRoot: '.',
+      product: 'docs/product.md',
+      features: 'docs/features.md',
+      techStack: 'docs/tech-stack.md',
+      featureDocs: 'docs/features',
+      roadmap: 'docs/roadmap.md'
+    },
+    structure: {
+      features: {
+        inventory: 'docs/features.md',
+        root: 'docs/features',
+        idPattern: 'F-Nxx',
+        folderPattern: 'f-nxx',
+        featureFile: 'feature.md',
+        featurePathPattern: 'docs/features/f-nxx/feature.md',
+        useCaseIdPattern: 'UC-nnn',
+        useCaseFilePattern: 'uc-nnn-short-slug.md',
+        useCasePathPattern: 'docs/features/f-nxx/uc-nnn-short-slug.md'
+      },
+      roadmap: {
+        file: 'docs/roadmap.md',
+        idPattern: 'R-NNN'
+      }
+    }
+  };
+  setConfig(root, v1Config);
+  mkdirSync(path.join(root, 'docs/features/f-101'), { recursive: true });
+  writeFileSync(path.join(root, 'docs/features/f-101/feature.md'), '---\nid: F-101\nphase: 1\nstatus: planned\n---\n\n# F-101 Auth\n\n## Use Case\n- [UC-001: Login](uc-001-login.md)\n');
+  writeFileSync(path.join(root, 'docs/features/f-101/uc-001-login.md'), '---\nfeature: F-101\nid: UC-001\nstatus: planned\n---\n\n# UC-001 Login\n');
+  writeFileSync(path.join(root, 'docs/features.md'), '# Features\n\n| Delivery Phase | Complete |\n| --- | --- |\n\n### Phase 1 - Auth\n- [ ] F-101: [Auth](features/f-101/feature.md)\n');
+  writeFileSync(path.join(root, 'docs/roadmap.md'), '# Roadmap\n\n## Slices\n- [ ] R-001: First slice — [F-101](features/f-101/feature.md)\n');
+
+  assert.throws(() => initialize(root), /legacy/);
+
+  const result = migrate(root);
+  assert.equal(result.configUpgraded, true);
+  assert.equal(result.featuresMigrated.length, 1);
+  assert.equal(result.featuresMigrated[0].newId, 'F-01.01');
+  assert.equal(result.useCasesMigrated.length, 1);
+  assert.equal(result.useCasesMigrated[0].newUcId, 'UC-01.01.01');
+
+  assert.ok(existsSync(path.join(root, 'docs/features/f-01.01/feature.md')));
+  assert.ok(existsSync(path.join(root, 'docs/features/f-01.01/uc-01.01.01-login.md')));
+  assert.equal(existsSync(path.join(root, 'docs/features/f-101')), false);
+
+  const featContent = readFileSync(path.join(root, 'docs/features/f-01.01/feature.md'), 'utf8');
+  assert.match(featContent, /id: F-01\.01/);
+  assert.match(featContent, /group: "01"/);
+  assert.match(featContent, /## User Need\n\n## Use Cases/);
+  assert.match(featContent, /UC-01\.01\.01/);
+
+  const invContent = readFileSync(path.join(root, 'docs/features.md'), 'utf8');
+  assert.match(invContent, /^- \[ \] F-01\.01: Auth$/m);
+  assert.match(invContent, /## Feature Inventory/);
+  assert.match(invContent, /\[Feature Guide: Auth\]\(features\/f-01\.01\/feature\.md\)/);
+
+  const rdContent = readFileSync(path.join(root, 'docs/roadmap.md'), 'utf8');
+  assert.match(rdContent, /## Steps/);
+  assert.match(rdContent, /R-01\.01/);
+  assert.match(rdContent, /F-01\.01/);
+
+  const upgraded = initialize(root);
+  assert.ok(upgraded.created.includes('.plan-product/templates/feature.md'));
+  assert.deepEqual(initialize(root).created, []);
 });

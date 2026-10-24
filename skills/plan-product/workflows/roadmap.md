@@ -1,7 +1,7 @@
-# Workflow: Roadmap Sequencing & Work Slicing
+# Workflow: Roadmap Sequencing & Step Delivery
 
 > [!IMPORTANT] Scope Directive
-> This workflow sequences and maintains the dependency-ordered product delivery roadmap (`docs/roadmap.md`). It owns work slicing with stable `R-NNN` IDs, imperative statement lines with `- Verify:` stopping checkpoints and demo data, `after:` dependency resolution, and tie-out validation against the feature inventory (`docs/features.md`). It does not inspect source code, author technical implementation specs, or execute code edits.
+> This workflow sequences and maintains the dependency-ordered product delivery roadmap (`docs/roadmap.md`). It owns work delivery steps with stable `R-pp.ss` IDs, imperative statement lines with `- Verify:` stopping checkpoints and demo data, `after:` dependency resolution, target linking to `UC-gg.nn.uu` (with `F-gg.nn` fallback for features without use cases), and tie-out validation against the feature inventory (`docs/features.md`). It does not inspect source code, author technical implementation specs, or execute code edits.
 
 ---
 
@@ -11,12 +11,13 @@
 - Configured paths are repo-relative. Render links relative to document location.
 - Read `.plan-product/config.json` for paths and `paths.roadmapTemplate` for file shape.
 - Preserve existing user-authored content. Preserve unparseable lines verbatim with flags.
-- Assign slice IDs once via `structure.roadmap.idPattern` (`R-NNN`). Never renumber or reuse IDs. Document order, not the ID, determines delivery order.
-- Each slice is a human-readable block: `- [ ] R-NNN: Statement — [F-Nxx](<path>) — after: ...`, followed by descriptive sub-bullets and a `- Verify:` sub-bullet.
-- Every slice's `- Verify:` sub-bullet is a user-verifiable stopping point (what user runs/clicks, expected output, demo data). Slices without direct observable outcomes may defer with `Verify: with R-NNN`, but no more than two consecutive open slices may defer.
-- Completed slices are immutable history. Never uncheck a completed slice.
-- Each slice references exactly one parent feature. Slices must not name their own parent feature in `after:`.
-- Slice removal is permitted only for open slices; references in other open slices must be repaired concurrently.
+- Assign step IDs once via `structure.roadmap.idPattern` (`R-pp.ss`, where `pp` is the two-digit phase and `ss` is the step). Never renumber or reuse IDs. Document order, not the ID, determines delivery order.
+- Technical delivery decisions, product/technology selections, and concrete verification commands **are permitted** in roadmap step bullets and `- Verify:` checkpoints (whereas feature guides and use cases must remain non-technical).
+- Each step is a human-readable block: `- [ ] R-pp.ss: Statement — [UC-gg.nn.uu](<path>) — after: ...` (or fallback `— [F-gg.nn](<path>)`), followed by descriptive sub-bullets and a `- Verify:` sub-bullet.
+- Target linking: Each step links to one or more `[UC-gg.nn.uu](...)` use cases. When a feature has no separate use cases (e.g. foundational or setup capabilities), the step falls back to linking `[F-gg.nn](...)`.
+- Every step's `- Verify:` sub-bullet is a user-verifiable stopping point (what user runs/clicks, expected output, demo data). Steps without direct observable outcomes may defer with `Verify: with R-pp.ss`, but no more than two consecutive open steps may defer.
+- Completed steps are immutable history. Never uncheck a completed step.
+- Step removal is permitted only for open steps; references in other open steps must be repaired concurrently.
 
 ---
 
@@ -30,28 +31,28 @@
 
 ### 2. Entry Validation Pass
 Validate the following in order:
-1. **Resolution**: Every slice's parent feature exists in inventory and guide file exists on disk.
-2. **Coverage**: Every incomplete feature in inventory has at least one slice.
-3. **Ordering**: No open slice appears before any slice or feature listed in its `after:` clause.
+1. **Resolution**: Every step's target use case or parent feature exists on disk.
+2. **Coverage**: Every incomplete feature in inventory has at least one step covering it or its use cases.
+3. **Ordering**: No open step appears before any step or feature listed in its `after:` clause.
 4. **Reference Integrity**: Every `after:` entry resolves without cycles or dangling IDs.
-5. **Verification Rigor**: Every open slice has a concrete `- Verify:` stopping point or a valid `with R-NNN` deferral. No more than two consecutive slices defer.
+5. **Verification Rigor**: Every open step has a concrete `- Verify:` stopping point or a valid `with R-pp.ss` deferral. No more than two consecutive steps defer.
 
 Prompt user to resolve any detected entry violations before proceeding.
 
-### 3. Slicing & Interview Pass
-1. Interview for requested slice additions, completions, removals, or reordering.
-2. For new slices, capture:
+### 3. Step Sequencing & Interview Pass
+1. Interview for requested step additions, completions, removals, or reordering.
+2. For new steps, capture:
    - Imperative statement line.
    - 2–4 descriptive sub-bullets.
    - User-verifiable `- Verify:` stopping point with demo data.
-   - Parent feature reference and link.
+   - Target use case reference and link (or parent feature fallback).
    - Explicit `after:` dependencies.
-3. Assign next highest `R-NNN` ID.
+3. Assign next highest `R-pp.ss` ID within target phase `pp`.
 
 ### 4. Inventory Synchronization & Exit Validation
 1. Cross-check status with feature inventory:
-   - Flag complete features with open slices.
-   - Flag incomplete features whose slices are all checked.
+   - Flag complete features with open steps.
+   - Flag incomplete features whose steps are all checked.
    - Update inventory checkboxes only with user confirmation.
 2. Write roadmap preserving order and format.
 3. Re-run entry validation rules on the written document.
@@ -60,10 +61,10 @@ Prompt user to resolve any detected entry violations before proceeding.
 
 ## Verification Checklist
 
-- [ ] All parent features exist and link to real feature guides.
-- [ ] Every non-completed feature has slice coverage.
+- [ ] All target use cases and parent features exist and link to real files.
+- [ ] Every non-completed feature has step coverage.
 - [ ] No circular dependencies or backward references in document order.
-- [ ] Every open slice has a verified `- Verify:` stopping point.
-- [ ] No more than two consecutive open slices defer verification.
-- [ ] Stable `R-NNN` IDs assigned sequentially without renumbering history.
+- [ ] Every open step has a verified `- Verify:` stopping point.
+- [ ] No more than two consecutive open steps defer verification.
+- [ ] Stable `R-pp.ss` IDs assigned sequentially without renumbering history.
 - [ ] Inventory checkboxes synchronized with user confirmation.

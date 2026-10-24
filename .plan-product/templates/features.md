@@ -1,32 +1,40 @@
 # Product Feature Progress
 
-| Delivery Phase | Complete / Total | % Complete |
-|----------------|------------------|------------|
-| Phase 0 - Foundation | 0 / 0 | 0% |
-| **Overall** | 0 / 0 | 0% |
+| Feature Group | Complete / Total | % Complete |
+| --- | --- | --- |
+| Group 00: Foundation | 0 / 0 | 0% |
+| **Overall** | **0 / 0** | **0%** |
 
 ---
 
 ## How to Use This Feature Inventory
 
-This document lists product features in intended build order.
+This document catalogs product capabilities in non-technical, user-focused language, organized by functional capability groups.
 
-* **Feature IDs:** Canonical features use the `F-Nxx` scheme, where `N` is the delivery phase and `xx` is the two-digit feature number.
-* **Feature folders:** Each feature owns a folder named with the lowercase feature ID, for example `docs/features/f-001/`.
-* **Feature files:** The main feature guide is always `feature.md` inside that folder. Use cases live beside it as `uc-001-short-slug.md`.
-* **Status:** An item is marked `complete` only when the capability is implemented, documented, and verified.
-* **Phases:** Group features into phases that reflect build order and dependency chains.
+| Numbering Pattern | Canonical Name | Segment Definitions | Path / Location |
+| :--- | :--- | :--- | :--- |
+| **`F-gg.nn`**<br>*(e.g. `F-01.02`)* | **Feature ID** | • **`gg` = Feature Group** (`00`–`99`): Cohesive functional area clustering related features (`00` = Foundation).<br>• **`nn` = Feature Number** (`01`–`99`): Sequential feature within that Feature Group. | `docs/features/f-gg.nn/feature.md` |
+| **`UC-gg.nn.uu`**<br>*(e.g. `UC-01.02.01`)* | **Use Case ID** | • **`gg` = Feature Group** (`00`–`99`): Inherited from parent Feature.<br>• **`nn` = Feature Number** (`01`–`99`): Inherited from parent Feature.<br>• **`uu` = Use Case Number** (`01`–`99`): Sequential actor workflow within `F-gg.nn`. | `docs/features/f-gg.nn/uc-gg.nn.uu-short-slug.md` |
+| **`R-pp.ss`**<br>*(e.g. `R-01.03`)* | **Roadmap Step ID** | • **`pp` = Phase** (`00`–`99` or `01`–`99`): Technical delivery stage in build order.<br>• **`ss` = Step** (`01`–`99`): Ordered unit of delivery work within Phase `pp` that completes/verifies target `UC-gg.nn.uu`s (or `F-gg.nn` fallback). | `docs/roadmap.md` |
+
+* **User-Focused Language:** Describe features in plain, use-case language explaining what users can accomplish—not internal file paths or implementation details.
+* **Checklist Summary:** Keep `## Feature Checklist Summary` scannable with `- [ ] F-gg.nn: Feature Title` only (no links needed, as `F-gg.nn` maps directly to `features/f-gg.nn/feature.md`).
+* **Status:** Mark an item complete (`[x]`) only when the capability is implemented, documented, and verified.
 
 ---
 
 ## Feature Checklist Summary
 
-* [ ] F-001: Example foundation feature
+### Group 00: Foundation
+
+- [ ] F-00.01: Example foundation feature
+
+---
 
 ## Feature Inventory
 
-### Phase 0 - Foundation
+### Group 00: Foundation
 
-**F-001: Example foundation feature**  
-Brief description of the feature.  
-[Feature Guide: Example Foundation Feature](features/f-001/feature.md)
+**F-00.01: Example foundation feature**  
+Brief non-technical description of what this capability enables for the user.  
+[Feature Guide: Example Foundation Feature](features/f-00.01/feature.md)

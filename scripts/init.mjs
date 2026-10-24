@@ -32,7 +32,8 @@ export function initialize(root = process.cwd()) {
   const configFile = relativePath(root, '.plan-product/config.json', 'config');
   const original = existsSync(configFile) ? readJson(configFile) : {};
   const config = fillMissing(original, defaults);
-  if (config.version !== 1) throw new Error('Unsupported planning config version');
+  if (config.version === 1) throw new Error('Planning config version 1 is legacy. Run "node scripts/migrate.mjs" to upgrade to version 2.');
+  if (config.version !== 2) throw new Error('Unsupported planning config version');
 
   // Resolve aliases only when one side was omitted, never rewrite explicit values.
   for (const [section, key, field] of [['features','inventory','features'], ['features','root','featureDocs'], ['roadmap','file','roadmap']]) {

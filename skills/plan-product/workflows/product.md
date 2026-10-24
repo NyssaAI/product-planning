@@ -1,7 +1,7 @@
 # Workflow: Product Definition & Core Inventory
 
 > [!IMPORTANT] Scope Directive
-> This workflow establishes or refreshes foundational product planning documents (`docs/product.md`, `docs/features.md`, `docs/tech-stack.md`) through an interactive discovery interview. It owns product-level capsules, feature grouping, stable ID banding (`F-0xx`, `F-1xx`, `F-2xx`), and tech-stack context. It delegates individual feature elaboration to `workflows/feature.md` and workflow trees to `workflows/use-case.md`.
+> This workflow establishes or refreshes foundational product planning documents (`docs/product.md`, `docs/features.md`, `docs/tech-stack.md`) through an interactive discovery interview. It owns product-level capsules, feature grouping, stable ID banding (`F-gg.nn`), and tech-stack context. It delegates individual feature elaboration to `workflows/feature.md` and workflow trees to `workflows/use-case.md`.
 
 ---
 
@@ -103,13 +103,17 @@ Interview clusters:
 4. **Dependencies**: Sequencing constraints between feature groups.
 
 Assign stable feature IDs by group:
-- Foundation / Setup: `F-0xx`
-- First Usable Version: `F-1xx`
-- Future / Additional: `F-2xx`
+- Foundation / Setup: `F-00.01` .. `F-00.99` (`### Group 00: Foundation`)
+- Functional Groups: `F-01.01` .. `F-99.99` (`### Group gg: <Group Name>`)
+
+Write `paths.features` for the user:
+- Use non-technical, use-case language describing what users can accomplish (never internal config keys or implementation jargon).
+- In `## Feature Checklist Summary`, write only `- [ ] F-gg.nn: Feature Title` under each `### Group gg: <Group Name>` heading—do **not** put links or descriptions in the checklist summary.
+- In `## Feature Inventory`, write the plain-language description and `[Feature Guide: <Title>](features/f-gg.nn/feature.md)` link under each `### Group gg: <Group Name>` heading.
 
 For each newly added feature, write a lightweight feature guide stub if it does not already exist:
 - Read `paths.featureTemplate` immediately before writing.
-- Populate ID, Phase, Status, Title, and Summary.
+- Populate ID (`F-gg.nn`), Group (`gg`), Status, Title, and Summary.
 - Leave deeper sections (`Scope`, `Acceptance`, `Dependencies`) as `To be defined.`.
 
 ### 4. Gather Tech Stack
@@ -129,7 +133,8 @@ Execute the verification checklist before completing.
 - [ ] All target paths resolved from `.plan-product/config.json`.
 - [ ] Configured templates read immediately prior to write.
 - [ ] Product capsule confirmed by user prior to writing.
-- [ ] Feature IDs assigned according to phase bands (`F-0xx`, `F-1xx`, `F-2xx`) with no renumbering.
-- [ ] Feature inventory links point to real or newly stubbed feature guide paths.
+- [ ] Feature IDs assigned according to Feature Groups (`F-gg.nn`) with no renumbering.
+- [ ] Feature inventory written in non-technical, use-case language with no links in `## Feature Checklist Summary`.
+- [ ] Feature inventory links in `## Feature Inventory` point to real or newly stubbed feature guide paths.
 - [ ] Existing user-authored sections and notes preserved during updates.
 - [ ] Reported all created or updated paths to user.

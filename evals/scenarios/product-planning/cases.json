@@ -55,6 +55,20 @@
         { "id": "neg-ci-deploy", "kind": "negative", "prompt": "Run the CI build and deploy the latest Docker container to our Kubernetes staging cluster." },
         { "id": "neg-poker-estimation", "kind": "negative", "prompt": "Estimate story points and sprint velocity for our Jira planning poker session." }
       ]
+    },
+    {
+      "skill": "plan-product",
+      "workflow": "maintain",
+      "cases": [
+        { "id": "pos-migrate-v1", "kind": "positive", "prompt": "Upgrade our repository's legacy planning documents from model v1 to v2." },
+        { "id": "pos-upgrade-features", "kind": "positive", "prompt": "We still have F-101 and F-102 feature folders. Run plan-maintain to upgrade them to the new F-gg.nn naming convention." },
+        { "id": "pos-reconcile-roadmap", "kind": "positive", "prompt": "Migrate our old R-001 roadmap slices to R-pp.ss steps and update all feature links." },
+        { "id": "amb-check-model-version", "kind": "ambiguous", "prompt": "Check if our planning configuration and document paths match the current model version." },
+        { "id": "amb-repair-links", "kind": "ambiguous", "prompt": "Some feature folder names don't match the new naming patterns. Help reconcile and repair them." },
+        { "id": "neg-npm-audit", "kind": "negative", "prompt": "Run npm audit fix to update vulnerable dependencies in package.json." },
+        { "id": "neg-db-schema-migration", "kind": "negative", "prompt": "Write a Knex migration script to add columns to the production database." },
+        { "id": "neg-git-merge", "kind": "negative", "prompt": "Resolve merge conflicts between the feature branch and origin/main." }
+      ]
     }
   ],
   "content": [

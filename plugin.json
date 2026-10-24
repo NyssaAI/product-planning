@@ -1,6 +1,6 @@
 {
   "name": "plan-product",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
   "author": {
     "name": "NyssaAI"
@@ -24,7 +24,8 @@
     "commands/plan-product.md",
     "commands/plan-feature.md",
     "commands/plan-use-case.md",
-    "commands/plan-roadmap.md"
+    "commands/plan-roadmap.md",
+    "commands/plan-maintain.md"
   ],
   "interface": {
     "displayName": "plan-product",

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "paths": {
     "repoRoot": ".",
     "product": "docs/product.md",
@@ -20,17 +20,17 @@
     "features": {
       "inventory": "docs/features.md",
       "root": "docs/features",
-      "idPattern": "F-Nxx",
-      "folderPattern": "f-nxx",
+      "idPattern": "F-gg.nn",
+      "folderPattern": "f-gg.nn",
       "featureFile": "feature.md",
-      "featurePathPattern": "docs/features/f-nxx/feature.md",
-      "useCaseIdPattern": "UC-nnn",
-      "useCaseFilePattern": "uc-nnn-short-slug.md",
-      "useCasePathPattern": "docs/features/f-nxx/uc-nnn-short-slug.md"
+      "featurePathPattern": "docs/features/f-gg.nn/feature.md",
+      "useCaseIdPattern": "UC-gg.nn.uu",
+      "useCaseFilePattern": "uc-gg.nn.uu-short-slug.md",
+      "useCasePathPattern": "docs/features/f-gg.nn/uc-gg.nn.uu-short-slug.md"
     },
     "roadmap": {
       "file": "docs/roadmap.md",
-      "idPattern": "R-NNN"
+      "idPattern": "R-pp.ss"
     }
   }
 }
