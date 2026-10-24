@@ -1,0 +1,18 @@
+name: plan-product-eval
+description: Fast local trigger checks for the plan-product planning facade skill.
+skill: plan-product
+schemaVersion: "1.4"
+version: "0.2.0"
+config:
+  trials_per_task: 1
+  timeout_seconds: 10
+  parallel: false
+  executor: mock
+  model: mock
+metrics:
+  - name: trigger_quality
+    weight: 1.0
+    threshold: 1.0
+    description: Does the plan-product facade trigger for product planning requests without triggering on adjacent software implementation?
+tasks:
+  - "tasks/*.yaml"

@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
-  "version": "0.1.2",
-  "description": "Define products, features, use cases, and dependency-ordered product roadmaps through guided conversations.",
+  "version": "0.2.0",
+  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "author": {
     "name": "NyssaAI"
   },
@@ -11,6 +11,8 @@
     "product-planning",
     "features",
     "use-cases",
-    "roadmaps"
+    "roadmaps",
+    "concepts",
+    "macro-flows"
   ]
 }

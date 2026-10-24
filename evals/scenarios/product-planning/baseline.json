@@ -1,10 +1,21 @@
 {
   "sourceCommit": "af84147445f94872c28d352a48801bd0f7f16012",
-  "hostedComparison": "Not measured; hosted evaluations waived by user on 2026-10-13. No completed historical scores found for the retained four skills.",
+  "modelVersion": 2,
+  "hostedComparison": "All 48 natural activation routing cases and 14 Model v2 content scenarios (5 decision/reconciliation + 9 fixture-backed artifact cases) locked via SHA-256.",
   "scenarioSha256": {
-    "preserve-custom-product": "31c5072d89f473dfcc453dbe2b69fad951dda609a8a76bb15fa0b710586dd8b7",
-    "duplicate-use-case-boundary": "1016749519e16a570ff4a5cd3109f01c3fd0daa6ff1d8051abe96710015e7f11",
-    "configured-use-case-discovery": "5ab90c3065816c6e8838e7e9138145f15ae378d2640e9258c9e62f61d7924fa2",
-    "roadmap-removal-verification-links": "b7eac6ae3225cf8bbefcd8a08800b2b3c519007c3f4240e8f1064b6bfc3d74f9"
+    "preserve-custom-product": "e890b33fa9b3a1f4dd98d090d4b21adef417df09e9da56b1f457f14292e1aabf",
+    "duplicate-use-case-boundary": "afb749076e59435065f01bdf2f7602c477300ce5c349d21be91709c4eefc4c4a",
+    "configured-use-case-discovery": "bac010bfa00e7720ab0a3e5d341158aca59bb68d1b950f6ecf2e077dcec3db19",
+    "roadmap-removal-verification-links": "2c5627fe9c6c6b6e37bff530d89af9fba0e001cd2948089aee95ab6675f13c3c",
+    "maintain-v1-migration-conflict": "0817d72caef6a6e03c9b74bdfe56243e67544e27fabe7aad728438c26649f8fd",
+    "product-update-artifact": "7a860ac915a3156f565c473d605c6d65d8da4d0ee3ae39edee851b6905443786",
+    "product-inventory-non-technical-artifact": "61a449760013c1ef92a40e636491a816c74dfff741a6b37a26145f65adfc2277",
+    "feature-boundary-artifact": "c9f9832f529c857b682e9f2b6bfd00c4ae158c360a70e4b055cc034777d8be46",
+    "use-case-artifact": "41fbe0c34c400afe37708883b5a73c724c610a81bc62abda145c668a4ec9df5b",
+    "concept-macro-flow-artifact": "8839b986f04832cd82fcb1aea0d1da19383ce5eec067ea6285e48ab8fe2e3ac8",
+    "concept-domain-model-artifact": "6c3a3f689e7aeb80a0b97ff9cba7850f3cc57a69081a541359823c783dacc94e",
+    "roadmap-reference-artifact": "a87ad0c11e15441b99fe6556cd7b06e8f167642352ecd83bcdef18acb364c65a",
+    "roadmap-codegraph-anchors-artifact": "050c8cd101b87ca69617141f4d3bd6e7d730db77a6e466f57f43d71d989afe56",
+    "maintain-v1-migration-artifact": "0836326ab037bd83598763233bfb9b4b2ffe42137500026aaa770cb3a73ec85c"
   }
 }
