@@ -17,7 +17,7 @@ Same content as `CLAUDE.md`. This repository owns the `plan-product` planning fa
 
 `.nyssa-ai/plan-product/config.json` is the path authority. Read configured templates immediately before writing. Committed paths must be repo-relative; installation-specific locations belong in environment variables.
 
-Preserve user-authored documents, local notes, custom templates, and stable identities. Ask only for missing information or unresolved decisions. Product requirements belong here; engineering execution belongs to the user's development workflow.
+Preserve user-authored documents, local notes, custom templates, and stable identities. Ask only for missing information or unresolved decisions. Product requirements belong here; engineering execution belongs to the user's development workflow. Feature naming enforces canonical action- and safeguard-oriented formulas (e.g. `Update Tasks & Projects without Overwriting Personal Notes`), strictly banning pseudo-academic jargon (*canonical*, *surgical*), plumbing words (*ingestion*, *storage*), and vague 1–2 word stubs.
 
 ## Structure
 

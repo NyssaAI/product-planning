@@ -111,6 +111,18 @@ Assign stable feature IDs by group:
 - Foundation / Setup: `F-00.01` .. `F-00.99` (`### Group 00: Foundation`)
 - Functional Groups: `F-01.01` .. `F-99.99` (`### Group gg: <Group Name>`)
 
+Enforce the Canonical Feature Naming Standard:
+Every feature title must be a clear, Title Case phrase (typically 4–8 words) following one of three positive formulas:
+1. **Action & Safeguard / Outcome**: `[Active Verb / Capability] with/without [User Safeguard or Benefit]` (e.g. `Update Tasks & Projects without Overwriting Personal Notes`, `Connect Read-Only Email & Chat with Protected Credentials`, `Restrict File Permissions & Prevent Concurrent Write Collisions`).
+2. **Multi-Stage Action Chain**: `[Verb 1], [Verb 2] & [Verb 3] [Specific Domain Entity]` (e.g. `Define, Refine & Update Ideal Client Profiles (ICPs)`, `Read, Save & Merge Application Settings`, `Research, Evaluate & Score Provisional Leads`).
+3. **Concrete Domain Capability**: `[Active Verb] [Specific Domain Artifacts] & [Key Constraint/Gate]` (e.g. `Extract Action Items from Messages & Filter Duplicates`, `Rotate Log Files at 10 MB & Keep 30 Days of Backups`, `Review Carried Work, Assign Tasks to Days & Finalize Plan`).
+
+Strictly enforce negative naming constraints:
+- **Ban pseudo-academic & architecture jargon**: Never use terms like *Canonical*, *Surgical*, *Ingestion/Ingest*, *Storage* (as the feature noun), *Persist/Persistence Layer*, *Syndication*, *Pipeline Matrix*, or *Memory* (when meaning cache/history). Never name internal code parsing/diffing techniques.
+- **Ban vague 1–2 word stubs**: Never name features with vague placeholders like *Shift Swaps*, *Reminders*, *Authentication*, *Search*, *Settings*, or *Data Sync*. Always pair the capability with the operational scope or protection guarantee.
+- **Ban conversational user-story clauses**: Never use clauses like *"Allow users to..."*, *"User can..."*, or *"Help the user manage..."*.
+- **Apply the Non-Technical User Test**: Verify an end user can read the title and immediately picture what they achieve or what safety guarantee they get without an engineer translating it. If it sounds like a developer describing code plumbing, rewrite to the user outcome.
+
 Write `paths.features` for the user:
 - Use non-technical, use-case language describing what users can accomplish (never internal config keys or implementation jargon).
 - In `## Feature Checklist Summary`, write only `- [ ] F-gg.nn: Feature Title` under each `### Group gg: <Group Name>` heading—do **not** put links or descriptions in the checklist summary.
@@ -139,6 +151,7 @@ Execute the verification checklist before completing.
 - [ ] Configured templates read immediately prior to write.
 - [ ] Product capsule confirmed by user prior to writing.
 - [ ] Feature IDs assigned according to Feature Groups (`F-gg.nn`) with no renumbering.
+- [ ] Every feature title adheres to the canonical naming standard (Title Case, action/safeguard-oriented, zero academic/plumbing jargon like "canonical" or "surgical", zero vague 1-2 word stubs).
 - [ ] Feature inventory written in non-technical, use-case language with no links in `## Feature Checklist Summary`.
 - [ ] Feature inventory links in `## Feature Inventory` point to real or newly stubbed feature guide paths.
 - [ ] Existing user-authored sections and notes preserved during updates.

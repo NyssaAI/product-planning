@@ -14,7 +14,7 @@
 - Ask one blocking question at a time only for missing required information.
 - Do not invent feature ownership, user need, acceptance checks, dependencies, or delivery status. Mark inferred items as `[inferred]` and confirm them.
 - Keep `Summary`, `User Need`, `Conceptual Context`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` as distinct output sections.
-- Write all feature content in non-technical, user-outcome language. Do **not** allow overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, libraries, config keys, CLI scripts) to leak into `feature.md` or `features.md` (those belong only in `tech-stack.md` or `roadmap.md` entries).
+- Write all feature content in non-technical, user-outcome language. Feature titles MUST follow the canonical naming standard: Title Case, active verbs, and user safeguards/protections (e.g. `Update Tasks & Projects without Overwriting Personal Notes`, `Define, Refine & Update Ideal Client Profiles (ICPs)`, or `Extract Action Items from Messages & Filter Duplicates`). Strictly ban pseudo-academic or plumbing jargon (e.g. *Canonical*, *Surgical*, *Ingestion*, *Storage*, *Syndication*), vague 1–2 word stubs (e.g. *Reminders*, *Shift Swaps*, *Search*), and conversational user-story clauses (*"Allow user to..."*). Run the Non-Technical User Test before finalizing: an end user must immediately grasp what they achieve or what safety guarantee they get without an engineer translating it. Do **not** allow overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, libraries, config keys, CLI scripts) to leak into `feature.md` or `features.md` (those belong only in `tech-stack.md` or `roadmap.md` entries).
 - Keep feature boundaries at the capability level. Actor workflows, entry routes, and process trees belong in use-case files via `workflows/use-case.md`.
 - Do not create use-case files unless explicitly requested. In the feature guide, list real use-case files or write `None yet.`; never leave template placeholder links.
 - Do not finalize a feature that duplicates or contradicts another feature. Propose merging, narrowing, or splitting before writing.
@@ -36,6 +36,7 @@
    - Capability added or refined.
    - User persona and primary need.
    - Conceptual context: whether this feature belongs to or enforces an existing `C-nn` concept or macro-flow in `docs/concepts/`.
+   - Feature title formulation: synthesize an active, user-focused Title Case name following canonical formulas (`[Capability] with/without [Safeguard]`, `[Verb], [Verb] & [Verb] [Domain Entity]`, or `[Verb] [Artifacts] & [Constraint]`). Test against the Non-Technical User Test.
    - Concrete user-visible scope (what it owns).
    - Explicit out-of-scope boundaries (what it does not own).
    - User-level inputs (information, decisions, or starting context required).
@@ -73,6 +74,7 @@ After successfully writing a new or materially updated feature guide, ask the us
 - [ ] Path derived from `structure.features.featurePathPattern` without hardcoding.
 - [ ] Feature template read immediately prior to write.
 - [ ] Explicit Scope and Out of Scope sections clearly distinguish boundaries.
+- [ ] Feature title adheres to the canonical naming standard (Title Case, action/safeguard-oriented, zero academic/plumbing jargon like "canonical" or "surgical", zero vague 1-2 word stubs).
 - [ ] No overly technical decisions or product/technology selections leaked into the feature guide or inventory.
 - [ ] Acceptance criteria trace directly to inputs, outputs, and user need.
 - [ ] Cross-feature consistency check executed against sibling feature guides.

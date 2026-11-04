@@ -27,4 +27,4 @@ Target / focus: $ARGUMENTS
 - configured feature guide stubs from `structure.features.featurePathPattern`
 
 Use the current templates named in `.nyssa-ai/plan-product/config.json`; do not
-duplicate template content in the command or skill. Write `product.md` and `features.md` in plain, non-technical user-outcome and use-case language (with no links in `## Feature Checklist Summary`), and keep technology selections strictly in `tech-stack.md`.
+duplicate template content in the command or skill. Write `product.md` and `features.md` in plain, non-technical user-outcome and use-case language (with no links in `## Feature Checklist Summary`), and keep technology selections strictly in `tech-stack.md`. Enforce canonical feature naming across the inventory: Title Case, active verbs, and user safeguards/protections (banning pseudo-academic jargon like "canonical" or "surgical", and banning vague 1-2 word stubs).
