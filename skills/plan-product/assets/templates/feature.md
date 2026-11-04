@@ -4,11 +4,11 @@ group: "00"
 status: planned
 ---
 
-# F-00.01 Feature Name
+# F-00.01 Feature Title (e.g. Set Up Work Folders, User Profile & Note Templates)
 
 ## Summary
 
-Describe the capability in one or two sentences using plain, user-focused language (do not include technical architecture or technology selections).
+Describe the capability in one or two sentences using plain, user-focused language (do not include technical architecture, plumbing mechanics, or technology selections).
 
 ## User Need
 

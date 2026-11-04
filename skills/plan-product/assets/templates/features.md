@@ -18,6 +18,7 @@ This document catalogs product capabilities in non-technical, user-focused langu
 | **`R-pp.ss`**<br>*(e.g. `R-01.03`)* | **Roadmap Step ID** | • **`pp` = Phase** (`00`–`99` or `01`–`99`): Technical delivery stage in build order.<br>• **`ss` = Step** (`01`–`99`): Ordered unit of delivery work within Phase `pp` that completes/verifies target `UC-gg.nn.uu`s (or `F-gg.nn` fallback). | `docs/roadmap.md` |
 
 * **User-Focused Language:** Describe features in plain, use-case language explaining what users can accomplish—not internal file paths or implementation details.
+* **Feature Naming:** Use Title Case compound phrases (4–8 words) following active verb or safeguard formulas (e.g. `Set Up Work Folders, User Profile & Note Templates` or `Update Tasks & Projects without Overwriting Personal Notes`). Banned: academic jargon (*canonical*, *surgical*), plumbing words (*ingestion*, *storage*), vague 1–2 word stubs (*reminders*, *auth*), and user stories (*"allow user to..."*).
 * **Checklist Summary:** Keep `## Feature Checklist Summary` scannable with `- [ ] F-gg.nn: Feature Title` only (no links needed, as `F-gg.nn` maps directly to `features/f-gg.nn/feature.md`).
 * **Status:** Mark an item complete (`[x]`) only when the capability is implemented, documented, and verified.
 
@@ -27,7 +28,7 @@ This document catalogs product capabilities in non-technical, user-focused langu
 
 ### Group 00: Foundation
 
-- [ ] F-00.01: Example foundation feature
+- [ ] F-00.01: Set Up Work Folders, User Profile & Note Templates
 
 ---
 
@@ -35,6 +36,6 @@ This document catalogs product capabilities in non-technical, user-focused langu
 
 ### Group 00: Foundation
 
-**F-00.01: Example foundation feature**  
-Brief non-technical description of what this capability enables for the user.  
-[Feature Guide: Example Foundation Feature](features/f-00.01/feature.md)
+**F-00.01: Set Up Work Folders, User Profile & Note Templates**  
+Configure user profile, local timezone, personal priorities, and work folders, and manage note template customizations with safe upgrade prompts.  
+[Feature Guide: Set Up Work Folders, User Profile & Note Templates](features/f-00.01/feature.md)

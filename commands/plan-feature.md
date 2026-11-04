@@ -1,6 +1,6 @@
 ---
 description: Interview the user and create or update one plan-product feature guide, then check for duplicate or contradictory ownership.
-argument-hint: "[feature id or name, e.g. F-01.01]"
+argument-hint: "[feature id or name, e.g. F-01.01 or Set Up Work Folders, User Profile & Note Templates]"
 ---
 
 > [!IMPORTANT] Scope Directive
@@ -23,4 +23,4 @@ Target feature: $ARGUMENTS
 
 Use `.nyssa-ai/plan-product/config.json` for paths and `paths.featureTemplate` for file shape. The feature guide should keep `Summary`, `User Need`, `Conceptual Context`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` distinct.
 
-Do not leave placeholder use-case links. List only real `UC-gg.nn.uu` files or write `None yet.`. Use `plan-use-case` only when the user asks to document specific workflows. Write feature guides and inventory entries in plain, non-technical user-outcome language; never leak overly technical decisions or technology selections into features.
+Do not leave placeholder use-case links. List only real `UC-gg.nn.uu` files or write `None yet.`. Use `plan-use-case` only when the user asks to document specific workflows. Write feature guides and inventory entries in plain, non-technical user-outcome language; never leak overly technical decisions or technology selections into features. Enforce canonical feature naming: Title Case, active verbs, concrete domain artifacts, and user safeguards/protections (banning pseudo-academic jargon like "canonical" or "surgical", and banning vague 1-2 word stubs).
