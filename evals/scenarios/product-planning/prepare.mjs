@@ -38,16 +38,9 @@ if (!process.argv[3]) process.exit(0);
 const output = resolve(process.argv[3]);
 // A fresh destination prevents accidentally replacing another run or source tree.
 await mkdir(output);
-for (const path of ['skills', 'scripts', 'commands', 'package.json', 'package-lock.json', 'plugin.json']) {
+for (const path of ['skills', 'scripts', 'commands', '.tessl-plugin', 'package.json', 'package-lock.json', 'plugin.json']) {
   await cp(join(source, path), join(output, path), { recursive: true });
 }
-await mkdir(join(output, '.tessl-plugin'));
-await writeFile(join(output, '.tessl-plugin/plugin.json'), JSON.stringify({
-  name: `${pluginManifest.author?.name || 'NyssaAI'}/plan-product`,
-  version: pluginManifest.version,
-  description: pluginManifest.description,
-  private: true,
-}, null, 2));
 
 async function scenario(group, id, task, criteria) {
   const folder = join(output, group, id);

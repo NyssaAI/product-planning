@@ -37,8 +37,31 @@ test('all hosts expose the plan-product facade and matching commands with matchi
     assert.equal(manifest.version, rootManifest.version, file);
     assert.equal(manifest.name, 'plan-product', file);
   }
+  const tesslManifest = json('.tessl-plugin/plugin.json');
+  assert.equal(tesslManifest.version, rootManifest.version);
+  assert.equal(tesslManifest.name, 'nyssa-ai/plan-product');
+  assert.equal(tesslManifest.skills, 'skills');
   assert.equal(json('package-lock.json').version, rootManifest.version);
   assert.deepEqual(Object.keys(json('package-lock.json').packages), ['']);
+});
+
+test('active skills, workflows, commands, templates, and evals align with dev-standards and exclude retired references', () => {
+  const activeFiles = [
+    'README.md',
+    'skills/plan-product/SKILL.md',
+    ...workflowNames.map(w => `skills/plan-product/workflows/${w}.md`),
+    ...commandNames.map(c => `commands/${c}.md`),
+    'skills/plan-product/assets/templates/roadmap.md',
+    'evals/LATEST.md',
+    'evals/scenarios/product-planning/README.md',
+    'evals/scenarios/product-planning/cases.json',
+    'evals/waza/skills/plan-product/tasks/in-scope.yaml',
+  ];
+  for (const rel of activeFiles) {
+    const content = readFileSync(rel, 'utf8');
+    assert.doesNotMatch(content, /\bce-plan\b|compound-engineering/i, `${rel} must not reference retired Compound Engineering`);
+    assert.doesNotMatch(content, /\.codegraph\b/, `${rel} must check docs/code-map/codegraph.db instead of .codegraph`);
+  }
 });
 
 test('material feature and use-case writes offer a non-blocking roadmap handoff', () => {

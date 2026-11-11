@@ -27,7 +27,7 @@
 ### 1. Target Resolution & Context Check
 1. Read `.nyssa-ai/plan-product/config.json` and the feature inventory.
 2. Resolve parent feature guide from `structure.features.featurePathPattern`.
-3. If user named existing use case, read it. Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
+3. If user named existing use case, read it. Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, read `docs/GLOSSARY.md` (and `apps/<app>/docs/GLOSSARY.md` when present) so actor and entity terms match canonical Ubiquitous Language, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
 
 ### 2. Workflow Discovery & Adversarial Pass
 1. Interview for:

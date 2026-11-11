@@ -1,11 +1,7 @@
-.worktrees/
-.private-journal/
 .claude/
 .DS_Store
 node_modules/
 bin/
 obj/
-inspo
-triage/
 .temp/
 .nyssa-ai/

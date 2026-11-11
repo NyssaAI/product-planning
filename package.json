@@ -1,6 +1,6 @@
 {
   "name": "plan-product",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "private": true,
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
@@ -19,6 +19,7 @@
     ".claude-plugin/",
     ".codex-plugin/",
     ".cursor-plugin/",
+    ".tessl-plugin/",
     "commands/",
     "scripts/",
     "!scripts/**/*.test.mjs",

@@ -69,7 +69,7 @@ Would you like to:
 When every existing file is `template only`, proceed as a fresh run without prompting.
 
 ### 2. Gather Product Definition
-Read `paths.productTemplate` immediately before writing. If `STRATEGY.md` exists, summarize relevant direction. If concepts exist under `docs/concepts/`, reuse their domain terminology.
+Read `paths.productTemplate` immediately before writing. If `STRATEGY.md` exists, summarize relevant direction. If `docs/GLOSSARY.md` (or `apps/*/docs/GLOSSARY.md` in monorepos) or concepts under `docs/concepts/` exist, reuse their canonical Ubiquitous Language terms and honor banned synonyms.
 
 Interview clusters:
 1. **Product Identity**: Name, category, and one-sentence core value proposition.
