@@ -35,7 +35,7 @@ export function validate(targetRoot = root) {
 
     try {
       assemble('check');
-      pass('Host manifest assemblies (.claude-plugin, .codex-plugin, .cursor-plugin, gemini-extension) in sync');
+      pass('Host manifest assemblies (.claude-plugin, .codex-plugin, .cursor-plugin, .tessl-plugin, gemini-extension) in sync');
     } catch (err) {
       fail(err.message);
     }
@@ -101,9 +101,9 @@ export function validate(targetRoot = root) {
     console.log('\n--- 3. Validating Filesystem Roles & Directory Layout ---');
     // Top-level directory whitelist
     const allowedTopLevelDirs = [
-      'skills', 'src', 'test', 'evals', 'docs', 'scripts', 'adapters', 'rules',
-      'commands', 'hooks', 'artifacts', '.temp', '.github',
-      '.claude-plugin', '.codex-plugin', '.cursor-plugin', '.agents', '.hermes',
+      'skills', 'src', 'test', 'evals', 'docs', 'scripts',
+      'commands', '.temp', '.github',
+      '.claude-plugin', '.codex-plugin', '.cursor-plugin', '.tessl-plugin', '.agents', '.hermes',
       '.nyssa-ai', '.claude', 'node_modules', '.git'
     ];
     for (const entry of readdirSync(root, { withFileTypes: true })) {

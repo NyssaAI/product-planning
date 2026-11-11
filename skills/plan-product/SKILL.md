@@ -4,7 +4,7 @@ description: >-
   Use this skill when the user asks to "plan this product", "define product docs", "define a domain concept",
   "capture a macro-flow", "plan a feature", "create feature guide", "document a use case", "sequence roadmap",
   "order delivery steps", "upgrade planning docs", "migrate model v1 to v2", or run any plan-product workflow.
-  Do NOT use this skill for implementing source code, editing repository files directly, or executing engineering delivery work.
+  Do NOT use this skill for implementing source code, editing repository files directly, technical slice planning / code review / debugging (route to dev-delivery), repo standards conformance (route to dev-standards), or PR/release shipping (route to dev-ship).
 ---
 
 # Plan Product
@@ -49,7 +49,8 @@ If the user's intent is broad or ambiguous (e.g. `"help me plan my app"`), start
 3. **Strict Model v2 Enforcement (Zero Dual v1/v2 Operation)**: This plugin operates **exclusively** under Model v2 rules. It CANNOT attempt to operate under the rules of Model v1 and Model v2 simultaneously. If legacy `.plan-product/` exists, `config.version < 2`, or legacy `F-Nxx` / `UC-nnn` / `R-NNN` paths are detected, **stop immediately, alert the user of the version conflict, and dispatch to [`workflows/maintain.md`](workflows/maintain.md)** to run migration (`node "${PLUGIN_ROOT}/scripts/migrate.mjs"`) before attempting any planning operations.
 4. **Preserve User Content**: Merge by section heading and preserve unmatched sections, comments, links, and local notes. A file matching its configured template byte-for-byte is `template only` and may be initialized without confirmation.
 5. **Non-Technical Feature & Use-Case Language**: `product.md`, `features.md`, `feature.md`, and `uc-gg.nn.uu-short-slug.md` MUST be written in plain, non-technical user-outcome and actor-behavior language. Feature titles must follow canonical formulas (Title Case, active verbs, concrete domain artifacts, and user safeguards/protections, e.g. `Update Tasks & Projects without Overwriting Personal Notes` or `Define, Refine & Update Ideal Client Profiles (ICPs)`). Pseudo-academic or plumbing jargon (*Canonical*, *Surgical*, *Ingestion*, *Storage*, *Syndication*), vague 1–2 word stubs (*Reminders*, *Shift Swaps*), and user-story phrasing (*"Allow users to..."*) are strictly banned. Never leak overly technical decisions, implementation mechanics, or specific product/technology selections into features or use cases. Technology context belongs in `tech-stack.md`, and concrete technical decisions or technology selections may appear in `roadmap.md` entries.
-6. **Structured Interview**: Ask one blocking question cluster at a time. Present numbered choices in terminal runtimes. Mark inferred items with `[inferred]` and confirm before writing.
+6. **Ubiquitous Language Alignment (`docs/GLOSSARY.md`)**: When `docs/GLOSSARY.md` (or `apps/<owned-app>/docs/GLOSSARY.md` and `apps/<owned-app>/docs/concepts/*.md` in monorepos) exists, read it before drafting domain concepts, feature titles, actor terms, or roadmap steps so product docs enforce canonical domain terms and avoid banned synonyms (`ARCH-NAME`).
+7. **Structured Interview**: Ask one blocking question cluster at a time. Present numbered choices in terminal runtimes. Mark inferred items with `[inferred]` and confirm before writing.
 
 ---
 

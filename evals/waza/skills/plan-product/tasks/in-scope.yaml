@@ -68,12 +68,12 @@
 
 - id: plan-product-trigger-roadmap
   name: Route delivery roadmap sequencing request
-  description: A request to sequence Model v2 delivery steps (R-pp.ss) with Rationale, Concepts, Gotchas, Verify checkpoints, and ce-plan handoff belongs to plan-product.
+  description: A request to sequence Model v2 delivery steps (R-pp.ss) with Rationale, Concepts, Gotchas, Verify checkpoints, and dev-delivery handoff belongs to plan-product.
   tags:
     - trigger
     - positive
   inputs:
-    prompt: "Turn our approved feature guides, domain concepts, and tech stack into a dependency-ordered product roadmap with R-pp.ss step IDs, enriched step fields, and a ce-plan handoff."
+    prompt: "Turn our approved feature guides, domain concepts, and tech stack into a dependency-ordered product roadmap with R-pp.ss step IDs, enriched step fields, and a dev-delivery handoff."
   expected:
     should_trigger: true
   graders:

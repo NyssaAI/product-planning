@@ -3,8 +3,8 @@
 > [!IMPORTANT] Scope Directive
 > Records canonical verification receipts, execution status, and evaluation evidence for `plan-product` release readiness across supported hosts.
 
-**Last Verified**: 2026-10-24  
-**Version**: 0.12.0  
+**Last Verified**: 2026-11-11  
+**Version**: 0.12.4  
 **Topology**: Encapsulated Facade (`skills/plan-product` + internal workflows)  
 **Status**: Passing (Local Verification Gate & CI Pipeline)  
 
@@ -15,12 +15,12 @@
 | Gate | Target | Status | Details |
 | :--- | :--- | :--- | :--- |
 | **Structural & Link Validator** | `scripts/validate.mjs` | **PASS** | Scope Directives, link integrity, layout whitelist, test isolation |
-| **Host Assembly Sync** | `scripts/assemble.mjs` | **PASS** | Parity verified across Claude, Codex, Cursor, and Gemini |
+| **Host Assembly Sync** | `scripts/assemble.mjs` | **PASS** | Parity verified across Claude, Codex, Cursor, Tessl, and Gemini |
 | **Unit & Contract Tests** | `test/*.test.mjs` | **PASS** | Passing via native Node.js test runner |
 | **Scenario Preparation** | `evals/scenarios/product-planning/` | **PASS** | Validated 48 routing cases (with near-neighbor negatives) and 14 Model v2 content cases |
 | **Waza Trigger Suite** | `evals/waza/skills/plan-product/` | **PASS** | Fast local trigger suite with positive and negative cases |
 | **Package Hygiene** | `npm pack --dry-run` | **PASS** | 0 leaks of `evals/`, `docs/`, `test/`, `.nyssa-ai/`, or `.temp/` |
-| **Multi-Host Adapters** | `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `gemini-extension.json` | **PASS** | Synchronized with canonical root `plugin.json` |
+| **Multi-Host Adapters** | `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.tessl-plugin/`, `gemini-extension.json` | **PASS** | Synchronized with canonical root `plugin.json` |
 
 ---
 
@@ -55,6 +55,6 @@ Each of the six encapsulated workflows (`product`, `concept`, `feature`, `use-ca
 - `use-case-artifact`: Actor workflow ASCII process tree with error branches, `Consistency Check`, and parent link.
 - `concept-macro-flow-artifact`: Cross-feature macro-flow (`type: flow`) specification with bi-directional link synchronization.
 - `concept-domain-model-artifact`: Sequential domain model (`C-02`, `type: domain-model`) specification with entity invariants and multi-feature bi-directional links.
-- `roadmap-reference-artifact`: Model v2 enriched step schema (`Rationale:`, `Concepts:`, `Gotchas:`, `Verify:`), `Verify: with` repair, clean CodeGraph omission when `.codegraph/` is absent, and `ce-plan` handoff.
-- `roadmap-codegraph-anchors-artifact`: Conditional `.codegraph/` AST `Anchors:`, Planning vs. Implementation boundary (rejecting code/DDL in roadmap), and `ce-plan` handoff with `codegraph_explore` symbol.
+- `roadmap-reference-artifact`: Model v2 enriched step schema (`Rationale:`, `Concepts:`, `Gotchas:`, `Verify:`), `Verify: with` repair, clean CodeGraph omission when `docs/code-map/codegraph.db` is absent, and `dev-delivery` handoff.
+- `roadmap-codegraph-anchors-artifact`: Conditional `docs/code-map/codegraph.db` AST `Anchors:`, Planning vs. Implementation boundary (rejecting code/DDL in roadmap), and `dev-delivery` handoff with `codegraph_explore` symbol.
 - `maintain-v1-migration-artifact`: End-to-end execution of v1-to-v2 repository migration (`.plan-product` $\rightarrow$ `.nyssa-ai/plan-product`, `F-101` $\rightarrow$ `F-01.01`, `UC-001` $\rightarrow$ `UC-01.01.01`, `R-001` $\rightarrow$ `R-01.01`).

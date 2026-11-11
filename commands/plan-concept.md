@@ -21,5 +21,6 @@ Target concept: $ARGUMENTS
 - the configured concept path from `structure.concepts.pathPattern`, usually `docs/concepts/c-nn-short-slug.md`
 - the configured product doc path from `paths.product`, usually `docs/product.md`
 - participating feature guides under `structure.features.featurePathPattern`
+- `docs/GLOSSARY.md` (or `apps/<app>/docs/GLOSSARY.md` in monorepos), only with user confirmation when reconciling `domain-model` Ubiquitous Language terms
 
 Use `.nyssa-ai/plan-product/config.json` for paths and `paths.conceptTemplate` for file shape. Keep `Summary`, `Core Model / Stages`, `Invariants & Rules`, and `Participating Features` distinct, written in plain, non-technical domain language.

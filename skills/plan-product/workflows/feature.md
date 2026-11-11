@@ -29,7 +29,7 @@
    - User named ID: derive path from `structure.features.featurePathPattern`.
    - User named title: match against inventory and open guide.
    - User requests new feature: select next unused ID in target Feature Group (`F-gg.nn`).
-3. For existing features, read current guide. Scan sibling feature guides under `structure.features.root` for boundary overlap, and scan `structure.concepts.root` (`docs/concepts/`) for existing `C-nn` domain concepts or macro-flows this feature participates in.
+3. For existing features, read current guide. Scan sibling feature guides under `structure.features.root` for boundary overlap, read `docs/GLOSSARY.md` (and `apps/<app>/docs/GLOSSARY.md` when present) for canonical Ubiquitous Language terms and banned synonyms, and scan `structure.concepts.root` (`docs/concepts/`) for existing `C-nn` domain concepts or macro-flows this feature participates in.
 
 ### 2. Feature Discovery & Adversarial Boundary Pass
 1. Interview for:

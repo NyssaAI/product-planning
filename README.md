@@ -1,21 +1,21 @@
 # plan-product
 
-Version **0.2.0**. Guided product planning in Markdown: define the product, describe features, capture use cases, and sequence delivery outcomes.
+Version **0.12.4**. Guided product planning in Markdown: define the product, codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered delivery steps that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 
-The plugin operates as an **Encapsulated Facade**: the `plan-product` skill serves as the single conversational entrypoint, delegating to focused internal workflows, accompanied by four direct slash commands:
+The plugin operates as an **Encapsulated Facade**: the `plan-product` skill serves as the single conversational entrypoint, delegating to focused internal workflows, accompanied by six direct slash commands:
 
 | Command / Workflow | Purpose | Runbook |
 | :--- | :--- | :--- |
 | `plan-product` | Define or refresh product purpose, audience, feature inventory, and high-level technology context. | `workflows/product.md` |
-| `plan-concept` | Define an atomic domain concept, mental model, or cross-feature macro-flow (`C-nn`). | `workflows/concept.md` |
+| `plan-concept` | Define an atomic domain concept, mental model, or cross-feature macro-flow (`C-nn`), reconciling Ubiquitous Language (`docs/GLOSSARY.md`). | `workflows/concept.md` |
 | `plan-feature` | Define one capability, its boundaries, inputs, outputs, acceptance checks, and dependencies. | `workflows/feature.md` |
 | `plan-use-case` | Capture an actor workflow, entry route, process tree, alternatives, failures, and acceptance checks. | `workflows/use-case.md` |
-| `plan-roadmap` | Sequence product deliverables with stable IDs, dependencies, and observable acceptance checkpoints. | `workflows/roadmap.md` |
+| `plan-roadmap` | Sequence product deliverables with stable `R-pp.ss` IDs, conditional CodeGraph `Anchors:` (`docs/code-map/codegraph.db`), observable acceptance checkpoints, and `dev-delivery` handoff. | `workflows/roadmap.md` |
 | `plan-maintain` | Upgrade legacy product planning documents from Model v1 to Model v2, or reconcile document integrity. | `workflows/maintain.md` |
 
-The workflows interview for missing information, preserve existing content, use configured paths and current templates, and check for conflicting or duplicate ownership. Roadmaps describe delivery outcomes; engineering execution belongs to the user's development workflow.
+The workflows interview for missing information, preserve existing content, use configured paths and current templates, align with Ubiquitous Language (`docs/GLOSSARY.md`), and check for conflicting or duplicate ownership. Roadmaps describe delivery outcomes and architectural briefing notes; technical slice planning, adversarial plan review (`plan-adversary`), and clean-context code execution belong to `dev-delivery` (with automatic `uc-*.md`, `feature.md`, and `docs/features.md` completion roll-up as `R-pp.ss` steps finish).
 
 ## Canonical Numbering & Terminology Contract (v2)
 
@@ -34,10 +34,10 @@ In Claude Code:
 
 ```text
 /plugin marketplace add NyssaAI/plugin-marketplace
-/plugin install plan-product@jamaynor
+/plugin install plan-product@nyssaai
 ```
 
-Claude Code uses `.claude-plugin/plugin.json` and the command entrypoints in `commands/`. Cursor uses `.cursor-plugin/plugin.json`, `commands/`, and `skills/`. Gemini uses `gemini-extension.json` and `GEMINI.md`.
+Claude Code uses `.claude-plugin/plugin.json` and the command entrypoints in `commands/`. Cursor uses `.cursor-plugin/plugin.json`, `commands/`, and `skills/`. Tessl uses `.tessl-plugin/plugin.json` and `skills/`. Gemini uses `gemini-extension.json` and `GEMINI.md`.
 
 ### Codex usage
 
@@ -73,13 +73,18 @@ The initializer creates missing configuration, schema, seven templates, and the 
 |       |-- use-case.md
 |       `-- roadmap.md
 `-- docs/
+    |-- GLOSSARY.md                 Optional Ubiquitous Language glossary (shared with dev-standards).
     |-- product.md
     |-- features.md
     |-- tech-stack.md
     |-- roadmap.md                  Created by plan-roadmap.
-    |-- concepts/                  Created by plan-concept.
+    |-- code-map/codegraph.db       Optional tracked CodeGraph snapshot read by plan-roadmap.
+    |-- specs/                      Optional JSON specifications for business entities (DTOs) & interfaces.
+    |-- learnings/                  Optional grounded project lessons read into roadmap Gotchas.
+    |-- plans/                      Durable engineering implementation plans authored by dev-delivery.
+    |-- concepts/                   Created by plan-concept.
     |   `-- c-01-example.md
-    `-- features/                  Created as features are defined.
+    `-- features/                   Created as features are defined.
         `-- f-01.01/
             |-- feature.md
             `-- uc-01.01.01-example.md  Created by plan-use-case.
@@ -87,7 +92,7 @@ The initializer creates missing configuration, schema, seven templates, and the 
 
 All paths are relative to the target repository root. `.nyssa-ai/plan-product/config.json` owns document locations, template locations, feature naming, and roadmap naming. Customize those paths before planning. Existing documents remain in their current locations; changing a path does not move them automatically.
 
-Optional `STRATEGY.md` and `docs/concepts/` provide upstream direction and vocabulary. The initializer does not create or edit repository agent instructions.
+Optional `STRATEGY.md`, `docs/GLOSSARY.md`, `docs/specs/*.json`, `docs/learnings/`, and `docs/concepts/` provide upstream direction, contracts, and vocabulary. The initializer does not create or edit repository agent instructions.
 
 ## Development and evaluation
 

@@ -29,7 +29,7 @@
    - User named ID (`C-nn`) or file: resolve under `structure.concepts.root` (or `paths.concepts`).
    - User named title: match against existing files in `structure.concepts.root`.
    - User requests new concept: scan existing `c-nn-*.md` files, select next sequential ID (`C-01`, `C-02`, ...), and derive path from `structure.concepts.pathPattern`.
-3. Read existing concept files to check for overlapping domain definitions or contradictory invariants.
+3. Read existing concept files and `docs/GLOSSARY.md` (plus `apps/<app>/docs/GLOSSARY.md` in monorepos, when present) to check for overlapping domain definitions, canonical Ubiquitous Language terms, banned synonyms, or contradictory invariants.
 
 ### 2. Concept Discovery & Boundary Pass
 1. Interview for:
@@ -51,6 +51,8 @@
    - Under `## Core Concepts & Macro-Flows`, add or update the relative link `- [C-nn: Title](concepts/c-nn-short-slug.md) — brief summary`.
 4. Update each participating feature guide (`docs/features/f-gg.nn/feature.md`):
    - Under `## Conceptual Context`, replace `None.` or append `- [C-nn: Title](../../concepts/c-nn-short-slug.md) — role in this concept/flow`.
+5. **Ubiquitous Language Reconciliation (`docs/GLOSSARY.md`, Optional)**:
+   - When `type: domain-model` introduces or refines canonical domain nouns or banned synonyms and `docs/GLOSSARY.md` (or `apps/<app>/docs/GLOSSARY.md`) exists—or when the user confirms creating `docs/GLOSSARY.md`—reconcile the canonical terms and banned synonyms so engineering delivery (`dev-standards` / `dev-delivery`) shares the exact same Ubiquitous Language.
 
 ---
 

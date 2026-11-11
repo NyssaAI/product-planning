@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -79,6 +79,16 @@ export function assemble(mode = 'check') {
       }),
     },
     {
+      file: '.tessl-plugin/plugin.json',
+      generate: () => ({
+        name: `nyssa-ai/${canonical.name}`,
+        version: canonical.version,
+        description: canonical.description,
+        private: true,
+        skills: 'skills',
+      }),
+    },
+    {
       file: 'gemini-extension.json',
       generate: () => ({
         name: canonical.name,
@@ -92,12 +102,14 @@ export function assemble(mode = 'check') {
   let drifted = false;
   for (const { file, generate } of hosts) {
     const generated = generate();
-    const existing = json(file);
+    const targetPath = path.join(root, file);
     const content = JSON.stringify(generated, null, 2) + '\n';
     if (mode === 'write') {
-      writeFileSync(path.join(root, file), content);
+      mkdirSync(path.dirname(targetPath), { recursive: true });
+      writeFileSync(targetPath, content);
       console.log(`Updated ${file}`);
     } else {
+      const existing = existsSync(targetPath) ? json(file) : null;
       if (JSON.stringify(existing) !== JSON.stringify(generated)) {
         console.error(`Drift in ${file}: manifest does not match canonical projection from plugin.json`);
         drifted = true;
