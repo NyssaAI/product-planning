@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.12.4**. Guided product planning in Markdown: define the product, codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered delivery steps that hand off cleanly to `dev-delivery`.
+Version **0.12.5**. Guided product planning in Markdown: define the product, codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered delivery steps that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 

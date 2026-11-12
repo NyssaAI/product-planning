@@ -1,6 +1,6 @@
 {
   "name": "nyssa-ai/plan-product",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "private": true,
   "skills": "skills"
