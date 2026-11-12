@@ -19,17 +19,29 @@ export function validate(targetRoot = root) {
       fail('Root plugin.json is missing');
     } else {
       const manifest = json('plugin.json');
+      const portableFields = new Set([
+        '$schema', 'name', 'version', 'description', 'author',
+        'homepage', 'repository', 'license', 'keywords', 'extensions',
+      ]);
+      if (manifest.$schema !== 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json') {
+        fail('plugin.json $schema must be "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"');
+      }
       if (!manifest.name || manifest.name !== 'plan-product') fail('plugin.json name must be "plan-product"');
       if (!manifest.version || !/^\d+\.\d+\.\d+$/.test(manifest.version)) fail('plugin.json version must be valid semver');
-      if (!manifest.skills || !Array.isArray(manifest.skills)) fail('plugin.json skills array is missing');
-      if (!manifest.commands || !Array.isArray(manifest.commands)) fail('plugin.json commands array is missing');
-
-      for (const skill of manifest.skills || []) {
-        const skillFile = path.join(root, skill, 'SKILL.md');
-        if (!existsSync(skillFile)) fail(`Declared skill missing SKILL.md: ${skill}`);
+      if (typeof manifest.repository !== 'string' || !manifest.repository) fail('plugin.json repository must be a non-empty string');
+      for (const key of Object.keys(manifest)) {
+        if (!portableFields.has(key)) {
+          fail(`plugin.json contains non-portable Agent Plugins v1 field: ${key}`);
+        }
       }
-      for (const cmd of manifest.commands || []) {
-        if (!existsSync(path.join(root, cmd))) fail(`Declared command missing file: ${cmd}`);
+      if (!existsSync(path.join(root, 'skills/plan-product/SKILL.md'))) {
+        fail('Missing canonical skill: skills/plan-product/SKILL.md');
+      }
+      const commandFiles = existsSync(path.join(root, 'commands'))
+        ? readdirSync(path.join(root, 'commands')).filter(f => f.endsWith('.md'))
+        : [];
+      if (commandFiles.length === 0) {
+        fail('commands/ directory must contain at least one Markdown command wrapper');
       }
     }
 

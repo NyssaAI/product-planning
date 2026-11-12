@@ -32,6 +32,8 @@ test('all hosts expose the plan-product facade and matching commands with matchi
     for (const [, script] of workflow.matchAll(/\$\{PLUGIN_ROOT\}\/(scripts\/[\w/.-]+)/g)) assert.ok(existsSync(script), script);
   }
   const rootManifest = json('plugin.json');
+  assert.equal(rootManifest.$schema, 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json');
+  assert.equal(typeof rootManifest.repository, 'string');
   for (const file of ['plugin.json', 'package.json','.claude-plugin/plugin.json','.codex-plugin/plugin.json','.cursor-plugin/plugin.json','gemini-extension.json']) {
     const manifest = json(file);
     assert.equal(manifest.version, rootManifest.version, file);
