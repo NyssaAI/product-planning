@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "plan-product",
-  "version": "0.12.5",
+  "version": "0.12.6",
   "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
   "author": {
     "name": "NyssaAI"

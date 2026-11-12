@@ -2,7 +2,7 @@
   "name": "plan-product",
   "displayName": "plan-product",
   "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
-  "version": "0.12.5",
+  "version": "0.12.6",
   "author": {
     "name": "NyssaAI"
   },
