@@ -33,7 +33,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/unit test/use_case",
+    "test": "node --test \"test/unit/**/*.test.mjs\" \"test/use_case/**/*.test.mjs\"",
     "validate": "node src/validation/validate.mjs",
     "assemble": "node scripts/assemble.mjs check",
     "assemble:write": "node scripts/assemble.mjs write",
