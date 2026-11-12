@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "plan-product",
-  "version": "0.12.6",
-  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
+  "version": "0.12.7",
+  "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
   "author": {
     "name": "NyssaAI"
   },
@@ -11,9 +11,10 @@
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
     "product-planning",
+    "glossary",
     "features",
     "use-cases",
-    "roadmaps",
+    "development-plans",
     "concepts",
     "application-flows"
   ]

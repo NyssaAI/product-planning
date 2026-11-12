@@ -1,0 +1,41 @@
+# Development Plan
+
+This document lists delivery steps in build order. `docs/features.md` owns the user-facing feature catalog and functional groupings, `docs/concepts/` owns domain models and cross-feature macro-flows (`C-nn`), `docs/GLOSSARY.md` and `docs/specs/` record Ubiquitous Language and machine-readable DTO/interface specifications (when present), and `docs/tech-stack.md` records technology context; this development plan synthesizes them (along with existing AST symbols when `docs/code-map/codegraph.db` is present) into dependency-driven delivery sequencing, architectural rationale, technical guardrails, and verification checkpoints.
+
+---
+
+## How to Use This Development Plan
+
+* **Step IDs (`DP-pp.ss`):** Each delivery step uses the `DP-pp.ss` scheme, where `pp` is the two-digit Delivery Phase (`00`–`99`) in build order, and `ss` is the sequential Step (`01`–`99`) within that phase. IDs are assigned once and never renumbered; list order determines delivery order.
+* **Target Linking:** Each step completes one or more Use Cases, written as `[UC-gg.nn.uu](../features/f-gg.nn/uc-gg.nn.uu-short-slug.md)`. When a foundational or setup feature has no separate use cases, the step falls back to linking the feature directly as `[F-gg.nn](../features/f-gg.nn/feature.md)`.
+* **Planning vs. Implementation Boundary:** Unlike feature guides and use cases (which must remain in non-technical, user-focused language), development-plan steps and `Verify:` checkpoints may include concrete technical delivery decisions, technology selections, symbol anchors, and verification commands. However, development-plan steps must **not** contain source code snippets, function definitions, file-by-file edit tasks, class/call trees, or database DDL schemas—those belong in downstream implementation planning via `dev-delivery` (`plan` → `docs/plans/dp-pp.ss-<slug>.md` and `implement`).
+* **Enriched Step Schema (Field Guide):** Every step captures high-signal sub-bullets under its statement line:
+  1. **Statement:** One human-readable statement line: `- [ ] DP-pp.ss: Imperative statement — [UC-gg.nn.uu](../features/f-gg.nn/uc-gg.nn.uu-short-slug.md)`, with `— after: ...` appended only when the step declares dependencies.
+  2. **Rationale (`- Rationale:`):** Causal reason why this step is positioned here and what upstream state or prerequisite capability it relies upon.
+  3. **Concepts (`- Concepts:`):** Linked domain models (`[C-nn](../concepts/c-nn-short-slug.md)`), `docs/specs/*.json` DTO/interface specs, and tech-stack capabilities informing this delivery slice.
+  4. **Anchors (`- Anchors:`):** *(Conditional: included only when `docs/code-map/codegraph.db` is present)* Names prerequisite AST symbols consumed and target symbols/interfaces established so `dev-delivery` can query them directly via `codegraph_explore`. Omit cleanly when CodeGraph is not active.
+  5. **Gotchas (`- Gotchas:`):** Critical architectural constraints, `docs/learnings/` lessons, edge cases, or concurrency/idempotency pitfalls to account for without prescribing implementation code.
+  6. **Verify (`- Verify:`):** A user-verifiable stopping point describing what the user runs or clicks, what observable outcome confirms success, and demo data when needed. A step with no direct user-observable outcome may defer with `Verify: with DP-pp.ss`, naming a later step whose checkpoint demonstrates it (never more than two consecutive open steps defer).
+* **Dependencies (`after:`):** An optional `after:` list names prior step IDs (`DP-pp.ss`) or feature IDs (`F-gg.nn`) this step must follow. A step must not name its own parent feature or use case.
+* **Status & Automatic Roll-Up:** Check a step only when its work is implemented and verified (`dev-delivery` `implement` automatically marks `status: completed` in `uc-*.md` / `feature.md` and checks `- [x] F-gg.nn` in `docs/features.md` once all steps targeting that use case or feature are `[x]`). Completed steps are immutable history.
+* **Coverage:** Every incomplete feature in `docs/features.md` needs step coverage here.
+* **Engineering Handoff (`dev-delivery`):** Each `DP-pp.ss` step is structured as a briefing note for `dev-delivery` (`plan` / `implement`) to perform architectural slice planning, adversarial plan review, and clean-context implementation.
+
+---
+
+## Steps
+
+### Phase 01: Foundation & Core Flows
+
+- [ ] DP-01.01: Example foundational step — [F-00.01](../features/f-00.01/feature.md)
+    - Rationale: Establishes foundational configuration and state prerequisites required by downstream feature workflows.
+    - Concepts: Informed by `[C-01: Example Domain Model](../concepts/c-01-example-domain-model.md)` invariants and core runtime stack in `docs/tech-stack.md`.
+    - Anchors: Establishes `ConfigStore` and `WorkspacePaths` interfaces (include `Anchors:` only when `docs/code-map/codegraph.db` is active).
+    - Gotchas: Ensure configuration initialization is idempotent and preserves existing user-customized files on re-run.
+    - Verify: run the named command or open the named screen with the listed demo data, and confirm the described outcome.
+- [ ] DP-01.02: Example dependent step — [UC-01.01.01](../features/f-01.01/uc-01.01.01-slug.md) — after: DP-01.01
+    - Rationale: Requires persisted foundational state from DP-01.01 before actor workflow transitions can be recorded.
+    - Concepts: Enforces stage transitions defined in `[C-01: Example Domain Model](../concepts/c-01-example-domain-model.md)`.
+    - Anchors: Consumes `ConfigStore` (from DP-01.01); establishes `WorkflowDispatcher` interface (include `Anchors:` only when `docs/code-map/codegraph.db` is active).
+    - Gotchas: Concurrent or retried requests must be handled idempotently without duplicating state transitions.
+    - Verify: describe the user-runnable check and demo data for this step, or defer with `with DP-pp.ss` to a later checkpoint.

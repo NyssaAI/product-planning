@@ -1,6 +1,6 @@
 {
   "name": "plan-product",
-  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
-  "version": "0.12.6",
+  "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
+  "version": "0.12.7",
   "contextFileName": "GEMINI.md"
 }

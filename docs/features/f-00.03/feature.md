@@ -8,7 +8,7 @@ status: complete
 
 ## Summary
 
-Provide editable starter templates so every new product, feature, use-case, and roadmap document starts with a consistent structure tailored to the team.
+Provide editable starter templates so every new product, glossary, concept, feature, use-case, and development plan document starts with a consistent structure tailored to the team.
 
 ## User Need
 
@@ -24,7 +24,7 @@ None yet.
 
 ## Scope
 
-- Provide starter templates for the product overview, feature catalog, technology overview, individual feature guides, actor use cases, and delivery roadmap.
+- Provide starter templates for the product overview, Ubiquitous Language glossary, domain concepts, feature catalog, technology overview, individual feature guides, actor use cases, and phased development plan.
 - Restore any missing starter templates automatically during project setup.
 - Respect and preserve any customizations a team makes to its templates when creating new documents.
 
@@ -43,7 +43,7 @@ None yet.
 
 ## Acceptance
 
-- Every new product, feature, use-case, or roadmap document follows the team's current template layout.
+- Every new product, glossary, concept, feature, use-case, or development plan document follows the team's current template layout.
 - Custom edits made to any starter template survive repeated setup runs untouched.
 - If a template is accidentally deleted, setup restores it without disturbing existing planning documents.
 

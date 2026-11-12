@@ -2,21 +2,23 @@
   "version": 2,
   "paths": {
     "repoRoot": ".",
+    "glossary": "docs/GLOSSARY.md",
     "product": "docs/product.md",
     "features": "docs/features.md",
     "techStack": "docs/tech-stack.md",
     "featureDocs": "docs/features",
     "concepts": "docs/concepts",
-    "roadmap": "docs/roadmap.md",
+    "developmentPlan": "docs/plans/development-plan.md",
     "configSchema": ".nyssa-ai/plan-product/schema.json",
     "templates": ".nyssa-ai/plan-product/templates",
+    "glossaryTemplate": ".nyssa-ai/plan-product/templates/glossary.md",
     "productTemplate": ".nyssa-ai/plan-product/templates/product.md",
     "featuresTemplate": ".nyssa-ai/plan-product/templates/features.md",
     "techStackTemplate": ".nyssa-ai/plan-product/templates/tech-stack.md",
     "featureTemplate": ".nyssa-ai/plan-product/templates/feature.md",
     "useCaseTemplate": ".nyssa-ai/plan-product/templates/use-case.md",
     "conceptTemplate": ".nyssa-ai/plan-product/templates/concept.md",
-    "roadmapTemplate": ".nyssa-ai/plan-product/templates/roadmap.md"
+    "developmentPlanTemplate": ".nyssa-ai/plan-product/templates/development-plan.md"
   },
   "structure": {
     "features": {
@@ -36,9 +38,9 @@
       "filePattern": "c-nn-short-slug.md",
       "pathPattern": "docs/concepts/c-nn-short-slug.md"
     },
-    "roadmap": {
-      "file": "docs/roadmap.md",
-      "idPattern": "R-pp.ss"
+    "developmentPlan": {
+      "file": "docs/plans/development-plan.md",
+      "idPattern": "DP-pp.ss"
     }
   }
 }

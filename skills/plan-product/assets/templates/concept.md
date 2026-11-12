@@ -1,6 +1,6 @@
 ---
 id: C-01
-type: flow # or "domain-model"
+kind: flow # or "domain-model"
 status: active
 ---
 

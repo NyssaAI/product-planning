@@ -26,7 +26,7 @@ None yet.
 ## Scope
 
 - Summarize completion progress across functional Feature Groups at the top of the catalog.
-- Explain the numbering conventions so any reader understands how features, use cases, and roadmap steps relate.
+- Explain the numbering conventions so any reader understands how concepts, features, use cases, and development plan steps relate.
 - Provide a clean checklist summary listing only the status, feature ID, and plain feature title for quick scanning.
 - Provide a detailed inventory section describing what each feature enables for users in non-technical language, along with a link to its feature guide.
 

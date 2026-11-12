@@ -1,6 +1,6 @@
 {
   "plugin": "plan-product",
-  "version": "0.12.0",
+  "version": "0.12.7",
   "hosts": [
     {
       "name": "claude",

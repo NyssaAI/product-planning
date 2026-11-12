@@ -8,16 +8,16 @@ status: complete
 
 ## Summary
 
-Establish a shared product summary, feature catalog, and high-level technology overview through a guided conversation.
+Establish a shared product summary, Ubiquitous Language glossary, feature catalog, and high-level technology overview through a guided conversation.
 
 ## User Need
 
-Founders, product owners, and teams need a single, readable starting point that explains who the product is for, what problem it solves, what capabilities it offers, and what high-level constraints apply—without losing notes they have already written.
+Founders, product owners, and teams need a single, readable starting point that explains who the product is for, what problem it solves, what shared domain terms mean, what capabilities it offers, and what high-level constraints apply—without losing notes they have already written.
 
 ## Conceptual Context
 
-- [C-02: End-to-End Product Planning Lifecycle](../../concepts/c-02-product-planning-lifecycle.md) — drives Stage 2 product discovery and overview confirmation.
-- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — applies template-only detection and merge-by-heading preservation when updating overview docs.
+- [C-02: End-to-End Product Planning Lifecycle](../../concepts/c-02-product-planning-lifecycle.md) — drives Stage 2 product discovery, glossary seeding, and overview confirmation.
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — applies template-only detection and merge-by-heading preservation when updating overview and glossary docs.
 
 ## Use Cases
 
@@ -25,7 +25,7 @@ None yet.
 
 ## Scope
 
-- Interview the user to capture product purpose, target audience, core problem, solution shape, boundaries, and success signals.
+- Interview the user to capture product purpose, target audience, core problem, solution shape, canonical domain vocabulary, boundaries, and success signals.
 - Present a concise product summary for confirmation before writing or updating documents.
 - Incorporate existing product strategy and terminology notes when available in the project.
 - Preserve existing user-written sections, comments, and local notes when refreshing overview documents.
@@ -42,13 +42,13 @@ None yet.
 
 ## Outputs
 
-- Confirmed product overview, initial feature catalog, and high-level technology context documents.
+- Confirmed product overview, Ubiquitous Language glossary, initial feature catalog, and high-level technology context documents.
 
 ## Acceptance
 
-- A new project can go from an initial conversation to a complete set of overview documents after user confirmation.
+- A new project can go from an initial conversation to a complete set of overview and glossary documents after user confirmation.
 - Skipped or unknown topics are clearly marked as open rather than filled with invented requirements.
-- Updating an existing product overview preserves custom sections and notes the user previously wrote.
+- Updating an existing product overview or glossary preserves custom sections and notes the user previously wrote.
 
 ## Dependencies
 

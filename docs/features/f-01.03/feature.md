@@ -8,7 +8,7 @@ status: complete
 
 ## Summary
 
-Organize related capabilities into two-digit functional Feature Groups (`F-gg.nn`) so related features stay clustered together regardless of when they are built or how large the catalog grows.
+Normalize related capabilities into two-digit functional Feature Groups (`F-gg.nn`) so related features stay clustered together regardless of when they are built or how large the catalog grows.
 
 ## User Need
 
@@ -26,7 +26,7 @@ None yet.
 
 - Group features by functional domain using two-digit group numbers (`gg`) and two-digit feature numbers (`nn`).
 - Inherit the parent feature's group and number in every use case ID (`UC-gg.nn.uu`) so any use case immediately identifies the capability it belongs to.
-- Keep functional grouping independent of the delivery order on the roadmap.
+- Keep functional grouping independent of the delivery order in the development plan.
 
 ## Out of Scope
 
@@ -45,7 +45,7 @@ None yet.
 
 - Related capabilities share the same Feature Group (`gg`) and sort together cleanly past 9 groups and 9 features per group.
 - Every use case ID (`UC-gg.nn.uu`) is unique across the entire product and visibly tied to its parent feature (`F-gg.nn`).
-- Changing the build order on the roadmap never requires renumbering or moving a feature across functional groups.
+- Changing the build order in the development plan never requires renumbering or moving a feature across functional groups.
 
 ## Dependencies
 

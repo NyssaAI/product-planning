@@ -8,7 +8,7 @@ argument-hint: "[concept id or name, e.g. C-01 or Order Fulfillment]"
 
 # plan-concept - define a concept or macro-flow
 
-Load the `plan-product` skill and execute its `workflows/concept.md` runbook. The workflow owns the archetype selection (`flow` vs `domain-model`), boundary enforcement against microscopic UI steps and technical implementation, and bi-directional cross-linking with `product.md` and participating `feature.md` guides; this command file is only the entry point.
+Load the `plan-product` skill and execute its `workflows/concept.md` runbook. The workflow owns the **Concept Kind** selection (`kind: flow` vs `kind: domain-model` — no `*Type`), boundary enforcement against microscopic UI steps and technical implementation, and bi-directional cross-linking with `product.md` and participating `feature.md` guides; this command file is only the entry point.
 
 Interview the user and create or update one atomic concept or macro-flow document under `docs/concepts/`. Confirm the concept model and invariants before writing, then synchronize links across `docs/product.md` and participating feature guides.
 
@@ -21,6 +21,6 @@ Target concept: $ARGUMENTS
 - the configured concept path from `structure.concepts.pathPattern`, usually `docs/concepts/c-nn-short-slug.md`
 - the configured product doc path from `paths.product`, usually `docs/product.md`
 - participating feature guides under `structure.features.featurePathPattern`
-- `docs/GLOSSARY.md` (or `apps/<app>/docs/GLOSSARY.md` in monorepos), only with user confirmation when reconciling `domain-model` Ubiquitous Language terms
+- `docs/GLOSSARY.md` (or `<app>/docs/GLOSSARY.md` in monorepos), only with user confirmation when reconciling `domain-model` Ubiquitous Language terms
 
 Use `.nyssa-ai/plan-product/config.json` for paths and `paths.conceptTemplate` for file shape. Keep `Summary`, `Core Model / Stages`, `Invariants & Rules`, and `Participating Features` distinct, written in plain, non-technical domain language.

@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
-  "version": "0.12.6",
-  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
+  "version": "0.12.7",
+  "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
   "author": {
     "name": "NyssaAI"
   },
@@ -10,17 +10,18 @@
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "keywords": [
     "product-planning",
+    "glossary",
     "features",
     "use-cases",
-    "roadmaps",
+    "development-plans",
     "concepts",
     "application-flows"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "plan-product",
-    "shortDescription": "Plan products, features, use cases, and roadmaps.",
-    "longDescription": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
+    "shortDescription": "Plan products, concepts, features, use cases, and development plans.",
+    "longDescription": "Define products, Ubiquitous Language glossaries, domain concepts, features, use cases, and dependency-ordered development plans through guided conversations.",
     "developerName": "NyssaAI",
     "category": "Software engineering",
     "capabilities": [
@@ -34,9 +35,9 @@
       "Define a domain concept",
       "Plan a feature",
       "Document a use case",
-      "Sequence the product roadmap",
+      "Sequence the development plan",
       "Update the product",
-      "Update the product roadmap",
+      "Update the development plan",
       "Upgrade planning docs to v2"
     ],
     "brandColor": "#2563EB",
