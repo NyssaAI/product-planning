@@ -12,12 +12,12 @@ Upgrade older planning documents to the current functional grouping and numberin
 
 ## User Need
 
-Teams with existing planning documents written under an earlier numbering convention need a safe, effortless way to adopt the current `F-gg.nn`, `UC-gg.nn.uu`, and `R-pp.ss` scheme without manually renaming files, fixing links, or losing their written content.
+Teams with existing planning documents written under an earlier numbering or file convention need a safe, effortless way to adopt the current `F-gg.nn`, `UC-gg.nn.uu`, and `DP-pp.ss` scheme without manually renaming files, fixing links, or losing their written content.
 
 ## Conceptual Context
 
-- [C-01: Canonical Planning Taxonomy & Hierarchy](../../concepts/c-01-canonical-planning-taxonomy.md) — migrates legacy v1 identifiers (`F-Nxx`, `UC-nnn`, `R-NNN`) into the v2 canonical taxonomy.
-- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — upgrades legacy v1 repositories to v2 while preserving all user-authored notes and custom paths.
+- [C-01: Canonical Planning Taxonomy & Hierarchy](../../concepts/c-01-canonical-planning-taxonomy.md) — migrates legacy identifiers (`F-Nxx`, `UC-nnn`, `R-NNN`, `R-pp.ss`) into the v2 canonical taxonomy.
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — upgrades legacy repositories to v2 while preserving all user-authored notes and custom paths.
 
 ## Use Cases
 
@@ -25,8 +25,8 @@ None yet.
 
 ## Scope
 
-- Detect when a project's planning documents use an earlier numbering convention.
-- Translate feature IDs, use case IDs, roadmap step IDs, folder names, and cross-document links to the current scheme.
+- Detect when a project's planning documents use an earlier numbering or roadmap layout convention.
+- Translate feature IDs, use case IDs, development plan step IDs, folder names, and cross-document links to the current scheme.
 - Clean up legacy checklist summaries by moving inline links and descriptions into the detailed feature inventory section.
 - Keep legacy upgrade rules isolated to the maintenance workflow so day-to-day planning stays focused solely on the current model.
 
@@ -45,7 +45,7 @@ None yet.
 
 ## Acceptance
 
-- Upgrading an older project updates all feature, use-case, and roadmap identifiers and links without breaking references.
+- Upgrading an older project updates all feature, use-case, and development plan identifiers and links without breaking references.
 - All user-authored product descriptions, scope boundaries, and custom notes are preserved intact.
 - Day-to-day planning workflows remain completely free of legacy numbering rules.
 

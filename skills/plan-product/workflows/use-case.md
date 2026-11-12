@@ -8,13 +8,13 @@
 ## Operating Rules
 
 - Reuse information and approval already supplied by the user.
-- Configured paths are repo-relative. Render links relative to document location.
+- Configured paths are `repo_root`-relative. Render links relative to document location.
 - Read `.nyssa-ai/plan-product/config.json` for paths and `paths.useCaseTemplate` for file shape.
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time.
 - Do not invent a happy path from the feature summary. The user must explain workflow steps.
 - Require an entry route: how the actor reaches the flow (screen, user action, trigger, starting state).
-- Write all use-case steps, details, and outcomes in plain, non-technical actor-behavior language. Do **not** leak overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, APIs, config files, scripts) into use cases—those belong only in `tech-stack.md` or `roadmap.md` entries.
+- Write all use-case steps, details, and outcomes in plain, non-technical actor-behavior language. Do **not** leak overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, APIs, config files, scripts) into use cases—those belong only in `tech-stack.md` or `docs/plans/development-plan.md` entries.
 - Preserve `Starting Context`, `Entry Route`, `Trigger`, `Process`, and `Step Details` as separate sections.
 - Render workflow process strictly as an ASCII tree using standard markers (`+--`, `|`, `\--`).
 - Keep explanations for complex tree nodes under `Step Details`. Keep simple nodes in the tree only.
@@ -27,7 +27,7 @@
 ### 1. Target Resolution & Context Check
 1. Read `.nyssa-ai/plan-product/config.json` and the feature inventory.
 2. Resolve parent feature guide from `structure.features.featurePathPattern`.
-3. If user named existing use case, read it. Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, read `docs/GLOSSARY.md` (and `apps/<app>/docs/GLOSSARY.md` when present) so actor and entity terms match canonical Ubiquitous Language, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
+3. If user named existing use case, read it. Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, read `paths.glossary` (`docs/GLOSSARY.md`, and `<app>/docs/GLOSSARY.md` when present) so actor and entity terms match canonical Ubiquitous Language, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
 
 ### 2. Workflow Discovery & Adversarial Pass
 1. Interview for:
@@ -52,14 +52,14 @@
 3. Update parent feature guide:
    - Add markdown link under `## Use Cases`: `- [UC-gg.nn.uu: Title](uc-gg.nn.uu-short-slug.md)`.
 
-### 4. Optional Roadmap Handoff
+### 4. Optional Development Plan Handoff
 
 After successfully writing a new or materially updated use case, ask the user whether to reflect it in delivery planning:
 
-- If `paths.roadmap` exists, ask: `Would you like to update the roadmap now?`
-- If `paths.roadmap` does not exist, ask: `Would you like to create the roadmap now?`
-- If the user says yes, load `workflows/roadmap.md` in the same conversation. Carry the affected `UC-gg.nn.uu`, parent `F-gg.nn`, confirmed acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
-- If the user says no, report the use-case and parent-feature updates and complete normally. Do not treat roadmap work as a blocking condition and do not write a roadmap.
+- If `paths.developmentPlan` exists, ask: `Would you like to update the development plan now?`
+- If `paths.developmentPlan` does not exist, ask: `Would you like to create the development plan now?`
+- If the user says yes, load `workflows/development-plan.md` in the same conversation. Carry the affected `UC-gg.nn.uu`, parent `F-gg.nn`, confirmed acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
+- If the user says no, report the use-case and parent-feature updates and complete normally. Do not treat development plan work as a blocking condition and do not write a development plan.
 - Do not ask after a read-only review, an unchanged write, or a cancelled update.
 
 ---
@@ -74,4 +74,4 @@ After successfully writing a new or materially updated use case, ask the user wh
 - [ ] Complex tree nodes elaborated in `Step Details`.
 - [ ] Sibling use cases checked for duplicates or contradictory flows.
 - [ ] Parent feature guide updated with relative link to the new use case.
-- [ ] After a material write, offered the optional roadmap handoff without blocking completion.
+- [ ] After a material write, offered the optional development plan handoff without blocking completion.

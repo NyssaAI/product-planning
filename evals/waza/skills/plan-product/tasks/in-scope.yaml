@@ -5,7 +5,7 @@
     - trigger
     - positive
   inputs:
-    prompt: "Help me define the product, audience and high-level feature inventory for a new volunteer scheduling service."
+    prompt: "Help me define the product, Ubiquitous Language glossary, audience, and high-level feature inventory for a new volunteer scheduling service."
   expected:
     should_trigger: true
   graders:
@@ -66,14 +66,14 @@
         skill_path: skills/plan-product/SKILL.md
         mode: positive
 
-- id: plan-product-trigger-roadmap
-  name: Route delivery roadmap sequencing request
-  description: A request to sequence Model v2 delivery steps (R-pp.ss) with Rationale, Concepts, Gotchas, Verify checkpoints, and dev-delivery handoff belongs to plan-product.
+- id: plan-product-trigger-development-plan
+  name: Route development plan sequencing request
+  description: A request to sequence Model v2 delivery steps (DP-pp.ss) with Rationale, Concepts, Gotchas, Verify checkpoints, and dev-delivery handoff belongs to plan-product.
   tags:
     - trigger
     - positive
   inputs:
-    prompt: "Turn our approved feature guides, domain concepts, and tech stack into a dependency-ordered product roadmap with R-pp.ss step IDs, enriched step fields, and a dev-delivery handoff."
+    prompt: "Turn our approved feature guides, domain concepts, and tech stack into a dependency-ordered development plan in docs/plans/development-plan.md with DP-pp.ss step IDs, enriched step fields, and a dev-delivery handoff."
   expected:
     should_trigger: true
   graders:
@@ -90,7 +90,7 @@
     - trigger
     - positive
   inputs:
-    prompt: "Upgrade our repository's legacy planning documents from model v1 (.plan-product, F-101, UC-001, R-001) to Model v2 (.nyssa-ai/plan-product/, F-gg.nn, UC-gg.nn.uu, R-pp.ss)."
+    prompt: "Upgrade our repository's legacy planning documents from model v1 (.plan-product, F-101, UC-001, R-001) to Model v2 (.nyssa-ai/plan-product/, docs/GLOSSARY.md, F-gg.nn, UC-gg.nn.uu, docs/plans/development-plan.md DP-pp.ss)."
   expected:
     should_trigger: true
   graders:

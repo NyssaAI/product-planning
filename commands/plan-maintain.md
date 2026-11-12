@@ -1,6 +1,6 @@
 ---
-description: Upgrade legacy product planning documents from Model v1 to Model v2, or reconcile document integrity.
-argument-hint: "[target repo or upgrade scope]"
+description: Upgrade legacy product planning documents from Model v1 or legacy roadmap layouts to Model v2, or reconcile document integrity.
+argument-hint: "[repo_root or upgrade scope]"
 ---
 
 > [!IMPORTANT] Scope Directive
@@ -8,9 +8,9 @@ argument-hint: "[target repo or upgrade scope]"
 
 # plan-maintain - upgrade and maintain planning docs
 
-Load the `plan-product` skill and execute its `workflows/maintain.md` runbook. The workflow owns the model version detection, deterministic migration coordination, and document verification; this command file is only the entry point.
+Load the `plan-product` skill and execute its `workflows/maintain.md` runbook. The workflow owns model version detection, deterministic migration coordination, and document verification; this command file is only the entry point.
 
-Inspect the target repository planning configuration and documents. If legacy Model v1 patterns are present (`version: 1`, `F-Nxx`, `UC-nnn`, `R-NNN`), invoke the migration script to upgrade to canonical Model v2 (`version: 2`, `F-gg.nn`, `UC-gg.nn.uu`, `R-pp.ss`), then verify link and schema integrity.
+Inspect `repo_root` planning configuration and documents. If legacy Model v1 patterns (`.plan-product/`, `version: 1`, `F-Nxx`, `UC-nnn`, `R-NNN`) or legacy pre-rename layouts (`docs/roadmap.md`, `R-pp.ss`, concept `type:`, `.nyssa-ai/plan-product/usage/`) are present, invoke the migration script to upgrade to canonical Model v2 (`.nyssa-ai/plan-product/`, `version: 2`, `docs/GLOSSARY.md`, `F-gg.nn`, `UC-gg.nn.uu`, `docs/plans/development-plan.md`, `DP-pp.ss`, concept `kind:`, `.nyssa-ai/plan-product/runtime/usage/`), then verify link and schema integrity.
 
 ## Invocation Context
 
@@ -19,9 +19,10 @@ Target / focus: $ARGUMENTS
 ## Writes
 
 - `.nyssa-ai/plan-product/config.json` (bumped to `version: 2`)
-- configured templates under `.plan-product/templates/`
-- feature guides and folders under `docs/features/`
+- configured templates under `.nyssa-ai/plan-product/templates/`
+- `docs/GLOSSARY.md` (if missing)
+- feature guides and folders under `docs/features/` and concepts under `docs/concepts/`
 - feature inventory, usually `docs/features.md`
-- delivery roadmap, usually `docs/roadmap.md`
+- phased development plan, usually `docs/plans/development-plan.md`
 
-Use `scripts/migrate.mjs` for mechanical migrations. Preserves all user-authored content, custom templates, and local notes. Verify that upgraded feature and use-case documents remain in non-technical, user-focused language and that `## Feature Checklist Summary` in `features.md` contains no links.
+Use `src/migration/migrate.mjs` for mechanical migrations. Preserves all user-authored content, custom templates, and local notes. Verify that upgraded feature and use-case documents remain in non-technical, user-focused language and that `## Feature Checklist Summary` in `features.md` contains no links.

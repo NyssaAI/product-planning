@@ -1,5 +1,5 @@
 ---
-description: Interview the user and create or update plan-product's core product docs (product, features, tech-stack).
+description: Interview the user and create or update plan-product's core product docs (product, glossary, features, tech-stack).
 argument-hint: "[what to define or update]"
 ---
 
@@ -8,10 +8,10 @@ argument-hint: "[what to define or update]"
 
 # plan-product - define product docs
 
-Load the `plan-product` skill and execute its `workflows/product.md` runbook. The workflow owns the interview flow, product capsule confirmation, feature-ID banding, and merge-by-heading preservation rules; this command file is only the entry point.
+Load the `plan-product` skill and execute its `workflows/product.md` runbook. The workflow owns the interview flow, product capsule confirmation, Ubiquitous Language seeding, feature-ID banding, and merge-by-heading preservation rules; this command file is only the entry point.
 
 Interview the user and create or update plan-product's core product docs.
-Use `.nyssa-ai/plan-product/config.json` for paths and verify the configured templates
+Use `.nyssa-ai/plan-product/config.json` (`user_home` -> `repo_root` lookup) for paths and verify the configured templates
 exist before writing so template refinements are picked up automatically.
 
 ## Invocation Context
@@ -22,9 +22,10 @@ Target / focus: $ARGUMENTS
 
 - `.nyssa-ai/plan-product/config.json`
 - the configured product doc path, usually `docs/product.md`
+- the configured Ubiquitous Language glossary path, usually `docs/GLOSSARY.md`
 - the configured feature inventory path, usually `docs/features.md`
 - the configured tech-stack path, usually `docs/tech-stack.md`
 - configured feature guide stubs from `structure.features.featurePathPattern`
 
 Use the current templates named in `.nyssa-ai/plan-product/config.json`; do not
-duplicate template content in the command or skill. Write `product.md` and `features.md` in plain, non-technical user-outcome and use-case language (with no links in `## Feature Checklist Summary`), and keep technology selections strictly in `tech-stack.md`. Enforce canonical feature naming across the inventory: Title Case, active verbs, and user safeguards/protections (banning pseudo-academic jargon like "canonical" or "surgical", and banning vague 1-2 word stubs).
+duplicate template content in the command or skill. Write `product.md` and `features.md` in plain, non-technical user-outcome and use-case language (with no links in `## Feature Checklist Summary`), and keep technology selections strictly in `tech-stack.md`. Enforce canonical feature naming across the inventory: Title Case, active verbs, and user safeguards/protections (banning plumbing jargon like "surgical", "storage", "ingestion", or "syndication" while permitting "canonical", and banning vague 1-2 word stubs).

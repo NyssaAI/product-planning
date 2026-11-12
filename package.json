@@ -1,7 +1,7 @@
 {
   "name": "plan-product",
-  "version": "0.12.6",
-  "description": "Define products, features, use cases, domain concepts, and dependency-ordered product roadmaps through guided conversations.",
+  "version": "0.12.7",
+  "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
   "private": true,
   "license": "LicenseRef-Jamaynor-Commercial-1.0",
   "author": {
@@ -21,8 +21,8 @@
     ".cursor-plugin/",
     ".tessl-plugin/",
     "commands/",
+    "src/",
     "scripts/",
-    "!scripts/**/*.test.mjs",
     "skills/",
     "plugin.json",
     "AGENTS.md",
@@ -33,8 +33,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test \"test/*.test.mjs\"",
-    "validate": "node scripts/validate.mjs",
+    "test": "node --test \"test/unit/**/*.test.mjs\" \"test/use_case/**/*.test.mjs\"",
+    "validate": "node src/validation/validate.mjs",
     "assemble": "node scripts/assemble.mjs check",
     "assemble:write": "node scripts/assemble.mjs write",
     "eval:prepare": "node evals/scenarios/product-planning/prepare.mjs"

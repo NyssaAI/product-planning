@@ -6,7 +6,6 @@ import assert from 'node:assert/strict';
 const here = dirname(fileURLToPath(import.meta.url));
 const cases = JSON.parse(await readFile(join(here, 'cases.json'), 'utf8'));
 const source = resolve(process.argv[2] || join(here, '../../..'));
-const pluginManifest = JSON.parse(await readFile(join(source, 'plugin.json'), 'utf8'));
 
 const workflows = (await readdir(join(source, 'skills/plan-product/workflows'), { withFileTypes: true }))
   .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
@@ -38,7 +37,7 @@ if (!process.argv[3]) process.exit(0);
 const output = resolve(process.argv[3]);
 // A fresh destination prevents accidentally replacing another run or source tree.
 await mkdir(output);
-for (const path of ['skills', 'scripts', 'commands', '.tessl-plugin', 'package.json', 'package-lock.json', 'plugin.json']) {
+for (const path of ['skills', 'src', 'scripts', 'commands', '.tessl-plugin', 'package.json', 'package-lock.json', 'plugin.json']) {
   await cp(join(source, path), join(output, path), { recursive: true });
 }
 
@@ -61,7 +60,7 @@ for (const row of cases.routing) {
   }
 }
 for (const row of cases.content) {
-  await scenario('content', row.id, row.task, row.criteria);
+  await scenario( 'content', row.id, row.task, row.criteria);
   if (row.files) {
     const folder = join(output, 'content', row.id);
     for (const [path, contents] of Object.entries(row.files)) {

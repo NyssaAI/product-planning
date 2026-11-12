@@ -8,7 +8,7 @@ status: complete
 
 ## Summary
 
-Allow teams to choose where their product, feature, and roadmap documents live so planning fits naturally into their existing project organization.
+Allow teams to choose where their product, glossary, feature, and development plan documents live so planning fits naturally into their existing project organization.
 
 ## User Need
 
@@ -16,7 +16,7 @@ Teams want their planning documents stored in the folders they already use for p
 
 ## Conceptual Context
 
-- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — enforces repo-relative path resolution, alias synchronization, and pre-write safety checks.
+- [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — enforces `repo_root`-relative path resolution, `user_home` -> `repo_root` precedence, and pre-write safety checks.
 
 ## Use Cases
 
@@ -24,7 +24,7 @@ None yet.
 
 ## Scope
 
-- Let teams define custom project locations for product overviews, feature catalogs, feature guides, use cases, roadmaps, and document templates.
+- Let teams define custom project locations for product overviews, Ubiquitous Language glossaries, feature catalogs, feature guides, use cases, development plans, and document templates.
 - Keep all document locations portable across different people's computers and workspaces.
 - Prevent invalid locations that point outside the project or collide with existing folders before any files are written.
 
