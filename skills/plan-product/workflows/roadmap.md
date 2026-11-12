@@ -64,7 +64,7 @@ Every `R-pp.ss` step in `docs/roadmap.md` must capture high-signal attributes:
 5. **Conditional AST Code Mapping (`docs/code-map/codegraph.db` Detection)**:
    - Check whether `docs/code-map/codegraph.db` (or `apps/*/docs/code-map/codegraph.db` / `tools/*/docs/code-map/codegraph.db` in a monorepo) exists:
      - **If `docs/code-map/codegraph.db` is present (CodeGraph Active)**:
-       1. *Empirical Code Discovery*: Use the `codegraph_explore` MCP tool (or the `dev-standards` CodeGraph CLI wrapper hydrated into `.temp/codegraph/`) to probe existing code symbols, classes, and call paths relevant to `docs/concepts/` (`C-nn`), `docs/specs/*.json`, and open `docs/features/` targets. Identify whether prerequisite models, pools, or handlers already exist to avoid redundant foundational steps.
+       1. *Empirical Code Discovery*: Use the `codegraph_explore` MCP tool (or `mcp__codegraph__codegraph_explore` via `tool_search` on Hermes Agent, or the `dev-standards` CodeGraph CLI wrapper hydrated into `.temp/codegraph/`) to probe existing code symbols, classes, and call paths relevant to `docs/concepts/` (`C-nn`), `docs/specs/*.json`, and open `docs/features/` targets. Identify whether prerequisite models, pools, or handlers already exist to avoid redundant foundational steps.
        2. *Call Graph Centrality & Coupling Gotchas*: Prioritize high-centrality symbols (nodes with many callers/callees) into earlier phases to stabilize core interfaces before downstream leaves are built, and extract real coupling constraints into `Gotchas:`.
        3. *Step Anchoring*: Populate `- Anchors:` on each step naming prerequisite symbols consumed and target symbols/interfaces established (using canonical `docs/GLOSSARY.md` names).
      - **If `docs/code-map/codegraph.db` is absent (Standard Markdown Fallback)**:
@@ -79,7 +79,7 @@ When sequencing a small set of open features (5 or fewer), synthesize the assemb
 1. **Partition into Domain Clusters**: Group open features (`F-gg.nn`) and their participating concepts (`C-nn`) by Feature Group (`F-gg`) or cohesive domain cluster, and create `.temp/plan-product/<run-id>/`.
 2. **Fan-Out to Clean-Context Domain Subagents (`Model Tier: mid` / `Thinking Budget: medium`; `fast`/`low` for purely mechanical file inventory)**:
    - Launch one isolated Depth-1 leaf subagent per domain cluster (*"Read-only over project docs/source; do NOT spawn subagents"*).
-   - Instruct each subagent to read **only** `paths.techStack`, `docs/GLOSSARY.md`, relevant `docs/specs/*.json` and `docs/learnings/**/*.md`, its assigned `C-nn` concept files, and its assigned `F-gg.nn` feature guides and `UC-gg.nn.uu` use-case contracts, and (when `docs/code-map/codegraph.db` is present) query domain AST symbols via `codegraph_explore`.
+   - Instruct each subagent to read **only** `paths.techStack`, `docs/GLOSSARY.md`, relevant `docs/specs/*.json` and `docs/learnings/**/*.md`, its assigned `C-nn` concept files, and its assigned `F-gg.nn` feature guides and `UC-gg.nn.uu` use-case contracts, and (when `docs/code-map/codegraph.db` is present) query domain AST symbols via `codegraph_explore` (or `mcp__codegraph__codegraph_explore` via `tool_search` on Hermes Agent).
    - Each subagent determines local technical ordering and writes an intermediate domain manifest to `.temp/plan-product/<run-id>/<domain-id>.manifest.json` following this contract:
      ```json
      {
