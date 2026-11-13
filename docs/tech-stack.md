@@ -14,7 +14,7 @@ Node.js 22 or later; ECMAScript modules. Zero third-party runtime dependencies.
 
 ## Artifacts and Root Boundaries
 
-Planning documents live in `repo_root` (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`, `docs/concepts/`, `docs/features/`, and `docs/plans/development-plan.md`). Configuration resolves from `user_home` (`~/.nyssa-ai/plan-product/`) to `repo_root` (`<repo_root>/.nyssa-ai/plan-product/config.json`). Templates are copied locally so teams can customize document shape. Any mutable runtime state or usage telemetry lives strictly under `runtime_root` (`<runtime_root>/usage/`). Tracked AST symbol snapshots live at `docs/code-map/codegraph.db`.
+Planning documents live in `repo_root` (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`, `docs/concepts/`, `docs/features/`, and `docs/plans/development-plan.md`). Configuration resolves from `user_home` (`~/.nyssa-ai/plan-product/config.json`) to `repo_root` (`<repo_root>/.nyssa-ai/plan-product/config.json`). Templates are copied locally so teams can customize document shape. Mutable runtime state resolves via the 4-step `runtime_root` precedence contract (`--runtime-root` -> `NYSSA_RUNTIME_ROOT` -> `<persona_cwd>/.nyssa-ai/plan-product/runtime/` when `SOUL.md` and `IDENTITY.md` are present -> configured `runtimeRoot` or `.nyssa-ai/plan-product/runtime/`). Opt-in usage telemetry (`"telemetry": { "enabled": false }` by default) creates zero `usage/` directories or files unless `telemetry.enabled === true`, writing `<runtime_root>/usage/events.jsonl` when enabled. Tracked AST symbol snapshots live at `docs/code-map/codegraph.db`.
 
 ## Tooling
 

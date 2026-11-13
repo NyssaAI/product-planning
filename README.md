@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.12.7**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
+Version **0.12.8**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 
@@ -37,7 +37,7 @@ In Claude Code:
 /plugin install plan-product@nyssaai
 ```
 
-Each host reads its projected `harness-adapter`: Claude Code uses `.claude-plugin/plugin.json` and `commands/`, Cursor uses `.cursor-plugin/plugin.json`, `commands/`, and `skills/`, Tessl uses `.tessl-plugin/plugin.json` and `skills/`, and Gemini uses `gemini-extension.json` and `GEMINI.md`.
+Each host reads its projected `harness-adapter`: Claude Code uses `.claude-plugin/plugin.json` and `commands/`, Cursor uses `.cursor-plugin/plugin.json`, `commands/`, and `skills/`, Tessl uses `.tessl-plugin/plugin.json` and `./skills`, Gemini uses `gemini-extension.json` and `skills/`, Antigravity stages `.temp/dist/antigravity/` (with `commands/` projected as `plan-product-cmd-*` skills), and Hermes Agent stages `.temp/dist/hermes/` via `harness-adapters/hermes/plugin.py`.
 
 ### Codex usage
 
@@ -55,7 +55,7 @@ From `repo_root`, run the initializer with Node.js 22 or later:
 node <plugin_root>/src/init/init.mjs
 ```
 
-Resolve `plugin_root` from `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed skill directory. Do not put installation-specific absolute paths in committed configuration. Configuration defaults resolve from `user_home` (`~/.nyssa-ai/plan-product/`) and are overridden by `repo_root` (`<repo_root>/.nyssa-ai/plan-product/`). Any mutable runtime state or usage telemetry is written strictly under `runtime_root` (`<runtime_root>/usage/`).
+Resolve `plugin_root` from `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed skill directory. Do not put installation-specific absolute paths in committed configuration. Configuration defaults resolve from `user_home` (`~/.nyssa-ai/plan-product/config.json`) and are overridden by `repo_root` (`<repo_root>/.nyssa-ai/plan-product/config.json`). `runtime_root` resolves via 4-step precedence (`--runtime-root` -> `NYSSA_RUNTIME_ROOT` -> `<persona_cwd>/.nyssa-ai/plan-product/runtime/` when `SOUL.md` and `IDENTITY.md` exist -> configured `runtimeRoot` or `.nyssa-ai/plan-product/runtime/`). Usage telemetry is opt-in (`"telemetry": { "enabled": false }` default), creating zero `usage/` directories or files unless `telemetry.enabled === true` (`<runtime_root>/usage/events.jsonl`).
 
 The initializer creates missing configuration, schema, eight starter templates, and four core document starters (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`). Re-running it fills missing configuration fields and restores missing templates at their configured locations while preserving existing user documents and custom templates.
 
@@ -111,4 +111,4 @@ Tests in `test/unit/` and `test/use_case/` exercise path containment, `user_home
 
 ## License
 
-[Commercial license](LICENSE).
+Licensed under the [Apache License 2.0](LICENSE). See [CHANGELOG.md](CHANGELOG.md) for release history.

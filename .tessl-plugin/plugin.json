@@ -1,7 +1,7 @@
 {
   "name": "nyssa-ai/plan-product",
-  "version": "0.12.7",
+  "version": "0.12.8",
   "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
   "private": true,
-  "skills": "skills"
+  "skills": "./skills"
 }

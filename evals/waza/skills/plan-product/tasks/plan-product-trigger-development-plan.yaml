@@ -1,0 +1,16 @@
+id: plan-product-trigger-development-plan
+name: Route development plan sequencing request
+description: A request to sequence Model v2 delivery steps (DP-pp.ss) with Rationale, Concepts, Gotchas, Verify checkpoints, and dev-delivery handoff belongs to plan-product.
+tags:
+  - trigger
+  - positive
+inputs:
+  prompt: "Turn our approved feature guides, domain concepts, and tech stack into a dependency-ordered development plan in docs/plans/development-plan.md with DP-pp.ss step IDs, enriched step fields, and a dev-delivery handoff."
+expected:
+  should_trigger: true
+graders:
+  - type: trigger
+    name: facade-positive-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: positive

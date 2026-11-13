@@ -1,40 +1,94 @@
 {
-  "plugin": "plan-product",
-  "version": "0.12.7",
-  "hosts": [
+  "schema": 1,
+  "suite_revision": "0.12.8",
+  "rows": [
     {
-      "name": "claude",
-      "adapter": ".claude-plugin/plugin.json",
-      "command": "claude",
-      "enabled": true
+      "suite": "product-planning",
+      "harness": "Codex",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Codex session outside repo_root; static validation and offline Waza trigger checks pass locally."
     },
     {
-      "name": "codex",
-      "adapter": ".codex-plugin/plugin.json",
-      "command": "codex",
-      "enabled": true
+      "suite": "product-planning",
+      "harness": "Claude Code",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Claude Code session outside repo_root; static validation and offline Waza trigger checks pass locally."
     },
     {
-      "name": "cursor",
-      "adapter": ".cursor-plugin/plugin.json",
-      "command": "cursor",
-      "enabled": true
+      "suite": "product-planning",
+      "harness": "Claude Cowork",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Claude Cowork session outside repo_root; static validation and offline Waza trigger checks pass locally."
     },
     {
-      "name": "gemini",
-      "adapter": "gemini-extension.json",
-      "command": "gemini",
-      "enabled": true
-    }
-  ],
-  "suites": [
-    {
-      "name": "contract-unit-tests",
-      "command": "npm test"
+      "suite": "product-planning",
+      "harness": "Antigravity CLI",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Antigravity CLI session outside repo_root; static validation and offline Waza trigger checks pass locally."
     },
     {
-      "name": "eval-preparation",
-      "command": "npm run eval:prepare"
+      "suite": "product-planning",
+      "harness": "Antigravity 2.0",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Antigravity 2.0 session outside repo_root; static validation and offline Waza trigger checks pass locally."
+    },
+    {
+      "suite": "product-planning",
+      "harness": "Antigravity IDE",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Antigravity IDE session outside repo_root; static validation and offline Waza trigger checks pass locally."
+    },
+    {
+      "suite": "product-planning",
+      "harness": "Hermes Agent",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Hermes Agent session outside repo_root; static validation and offline Waza trigger checks pass locally."
+    },
+    {
+      "suite": "product-planning",
+      "harness": "OpenClaw",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": true,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh OpenClaw session outside repo_root; static validation and offline Waza trigger checks pass locally."
+    },
+    {
+      "suite": "product-planning",
+      "harness": "Cursor",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": false,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Cursor session outside repo_root; static validation and offline Waza trigger checks pass locally."
+    },
+    {
+      "suite": "product-planning",
+      "harness": "Grok Bot",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": false,
+      "remaining": "Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Grok Bot session outside repo_root; static validation and offline Waza trigger checks pass locally."
+    },
+    {
+      "suite": "product-planning",
+      "harness": "Muse",
+      "platform": "windows-x86_64",
+      "config": "default",
+      "required": false,
+      "remaining": "Provisional: establish loader contract before producing or validating an artifact."
     }
   ]
 }

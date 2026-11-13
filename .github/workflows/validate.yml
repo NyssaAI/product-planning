@@ -1,13 +1,18 @@
-name: Planning plugin tests
+name: Validate standalone plugin
+
 on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
-  test:
+  validate:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -16,8 +21,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm run validate
       - run: npm run assemble
+      - run: npm run assemble:write
+      - run: npm run assemble
+      - run: npm run validate
       - run: npm test
       - run: npm run eval:prepare
+      - run: npm run eval:report
       - run: npm pack --dry-run

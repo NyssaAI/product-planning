@@ -37,7 +37,25 @@ if (!process.argv[3]) process.exit(0);
 const output = resolve(process.argv[3]);
 // A fresh destination prevents accidentally replacing another run or source tree.
 await mkdir(output);
-for (const path of ['skills', 'src', 'scripts', 'commands', '.tessl-plugin', 'package.json', 'package-lock.json', 'plugin.json']) {
+const stagedPluginPaths = [
+  'skills',
+  'src',
+  'scripts',
+  'commands',
+  'harness-adapters',
+  '.claude-plugin',
+  '.codex-plugin',
+  '.cursor-plugin',
+  '.tessl-plugin',
+  'gemini-extension.json',
+  'AGENTS.md',
+  'CLAUDE.md',
+  'GEMINI.md',
+  'package.json',
+  'package-lock.json',
+  'plugin.json',
+];
+for (const path of stagedPluginPaths) {
   await cp(join(source, path), join(output, path), { recursive: true });
 }
 

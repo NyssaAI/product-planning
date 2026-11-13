@@ -1,0 +1,16 @@
+id: plan-product-trigger-product
+name: Route product definition and inventory request
+description: A request to bootstrap or define product documentation belongs to plan-product.
+tags:
+  - trigger
+  - positive
+inputs:
+  prompt: "Help me define the product, Ubiquitous Language glossary, audience, and high-level feature inventory for a new volunteer scheduling service."
+expected:
+  should_trigger: true
+graders:
+  - type: trigger
+    name: facade-positive-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: positive

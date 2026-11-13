@@ -6,7 +6,7 @@ import { existsSync, readFileSync, mkdirSync, writeFileSync, statSync } from 'no
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolveRepoContainedPath } from './repo-paths.mjs';
+import { resolveRepoContainedPath, validatePlanningConfig } from './repo-paths.mjs';
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const readJson = file => JSON.parse(readFileSync(file, 'utf8'));
@@ -52,20 +52,27 @@ export function initialize(repoRoot = process.cwd(), options = {}) {
 
   const bundledDefaults = readJson(path.join(pluginRoot, 'skills/plan-product/assets/config.json'));
   const userConfigFile = userHome ? path.join(userHome, '.nyssa-ai/plan-product/config.json') : null;
-  const userDefaults = userConfigFile && existsSync(userConfigFile)
-    ? fillMissing(readJson(userConfigFile), bundledDefaults, 'user_home.config')
-    : bundledDefaults;
+  let userDefaults = bundledDefaults;
+  if (userConfigFile && existsSync(userConfigFile)) {
+    const rawUserConfig = validatePlanningConfig(readJson(userConfigFile), 'user_home.config');
+    const seedableUserConfig = { ...rawUserConfig };
+    delete seedableUserConfig.runtimeRoot;
+    delete seedableUserConfig.telemetry;
+    userDefaults = fillMissing(seedableUserConfig, bundledDefaults, 'user_home.config');
+  }
 
   const configFile = relativePath(repoRoot, '.nyssa-ai/plan-product/config.json', 'config');
   const original = existsSync(configFile) ? readJson(configFile) : {};
   if (isObject(original) && (original.paths?.roadmap !== undefined || original.structure?.roadmap !== undefined)) {
     throw new Error('Legacy roadmap configuration detected. Run "node <plugin_root>/src/migration/migrate.mjs" to upgrade to developmentPlan (docs/plans/development-plan.md, DP-pp.ss).');
   }
+  validatePlanningConfig(original, 'config');
 
   // Seed missing repo_root fields from user_home (#1) merged over bundled plugin_root defaults.
   const config = fillMissing(original, userDefaults);
   if (config.version === 1) throw new Error('Planning config version 1 is legacy. Run "node <plugin_root>/src/migration/migrate.mjs" to upgrade to version 2.');
   if (config.version !== 2) throw new Error('Unsupported planning config version');
+  validatePlanningConfig(config, 'config');
 
   // Resolve aliases only when one side was omitted, never rewriting explicit values.
   for (const [section, key, field] of [

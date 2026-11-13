@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, existsSync, mkdtempSync, rmSync, cpSync, mkdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, mkdtempSync, rmSync, cpSync, mkdirSync, symlinkSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
@@ -42,7 +42,24 @@ test('all hosts expose the plan-product facade, 6 workflows, and 6 commands with
 
   const rootManifest = json('plugin.json');
   assert.equal(rootManifest.$schema, 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json');
+  assert.equal(rootManifest.license, 'Apache-2.0');
+  assert.equal(typeof rootManifest.homepage, 'string');
   assert.equal(typeof rootManifest.repository, 'string');
+  const pkgManifest = json('package.json');
+  assert.equal(pkgManifest.license, rootManifest.license);
+  assert.equal(pkgManifest.homepage, rootManifest.homepage);
+  for (const hostRel of [
+    '.claude-plugin/plugin.json',
+    '.codex-plugin/plugin.json',
+    '.cursor-plugin/plugin.json',
+  ]) {
+    const hostManifest = json(hostRel);
+    assert.deepEqual(hostManifest.author, rootManifest.author, hostRel);
+    assert.equal(hostManifest.homepage, rootManifest.homepage, hostRel);
+    assert.equal(hostManifest.repository, rootManifest.repository, hostRel);
+    assert.equal(hostManifest.license, rootManifest.license, hostRel);
+    assert.deepEqual(hostManifest.keywords, rootManifest.keywords, hostRel);
+  }
   for (const file of [
     'plugin.json',
     'package.json',
@@ -55,10 +72,13 @@ test('all hosts expose the plan-product facade, 6 workflows, and 6 commands with
     assert.equal(manifest.version, rootManifest.version, file);
     assert.equal(manifest.name, 'plan-product', file);
   }
+  const geminiManifest = json('gemini-extension.json');
+  assert.deepEqual(Object.keys(geminiManifest).sort(), ['description', 'name', 'version']);
+  assert.equal('contextFileName' in geminiManifest, false);
   const tesslManifest = json('.tessl-plugin/plugin.json');
   assert.equal(tesslManifest.version, rootManifest.version);
   assert.equal(tesslManifest.name, 'nyssa-ai/plan-product');
-  assert.equal(tesslManifest.skills, 'skills');
+  assert.equal(tesslManifest.skills, './skills');
   assert.equal(json('package-lock.json').version, rootManifest.version);
   assert.deepEqual(Object.keys(json('package-lock.json').packages), ['']);
   assert.equal(
@@ -79,10 +99,15 @@ test('active skills, workflows, commands, templates, docs, and evals align with 
     'skills/plan-product/assets/templates/glossary.md',
     'skills/plan-product/assets/templates/features.md',
     'skills/plan-product/assets/templates/concept.md',
+    'evals/README.md',
     'evals/LATEST.md',
     'evals/scenarios/product-planning/README.md',
     'evals/scenarios/product-planning/cases.json',
-    'evals/waza/skills/plan-product/tasks/in-scope.yaml',
+    'evals/waza/skills/plan-product/eval.yaml',
+    ...readdirSync(path.join(root, 'evals/waza/skills/plan-product/tasks'))
+      .filter(f => f.endsWith('.yaml'))
+      .sort()
+      .map(f => `evals/waza/skills/plan-product/tasks/${f}`),
   ];
   for (const rel of activeFiles) {
     const content = readFileSync(path.join(root, rel), 'utf8');
@@ -105,6 +130,18 @@ test('material feature and use-case writes offer a non-blocking development plan
 });
 
 function validateSchema(value, schema, label) {
+  if (schema.oneOf) {
+    const matched = schema.oneOf.some(branch => {
+      try {
+        validateSchema(value, branch, label);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+    assert.ok(matched, `${label} must match oneOf`);
+    return;
+  }
   if (schema.const !== undefined) assert.equal(value, schema.const, label);
   if (schema.type === 'object') {
     assert.ok(value && typeof value === 'object' && !Array.isArray(value), label);
@@ -115,8 +152,12 @@ function validateSchema(value, schema, label) {
       else if (schema.additionalProperties === false) assert.fail(`${label}.${key} is unexpected`);
       else if (typeof schema.additionalProperties === 'object') validateSchema(child, schema.additionalProperties, `${label}.${key}`);
     }
-  } else if (schema.type === 'string') assert.equal(typeof value, 'string', label);
-  else if (schema.type === 'integer') assert.ok(Number.isInteger(value), label);
+  } else if (schema.type === 'string') {
+    assert.equal(typeof value, 'string', label);
+    if (schema.minLength !== undefined) assert.ok(value.length >= schema.minLength, `${label}.minLength`);
+  } else if (schema.type === 'integer') assert.ok(Number.isInteger(value), label);
+  else if (schema.type === 'boolean') assert.equal(typeof value, 'boolean', label);
+  else if (schema.type === 'null') assert.equal(value, null, label);
 }
 
 test('fresh initialization satisfies the bundled schema and every template resolves', t => {
@@ -146,14 +187,33 @@ test('all Model v2 content rubrics are locked in baseline.json and remain byte-e
   }
 });
 
-test('evaluation preparation packages src/, skills/, commands/, and all 48 routing + 14 content scenarios', t => {
+test('evaluation preparation packages all root plugin/harness-adapter files and all 48 routing + 14 content scenarios', t => {
   const temp = mkdtempSync(path.join(os.tmpdir(), 'planning-eval-test-'));
   t.after(() => rmSync(temp, { recursive: true, force: true }));
   const target = path.join(temp, 'prepared');
   execFileSync(process.execPath, [path.join(root, 'evals/scenarios/product-planning/prepare.mjs'), root, target]);
   assert.equal(readdirSync(path.join(target, 'routing')).length, 48);
   assert.equal(readdirSync(path.join(target, 'content')).length, 14);
-  assert.ok(existsSync(path.join(target, 'src/init/init.mjs')));
+  for (const expectedRel of [
+    'skills/plan-product/SKILL.md',
+    'src/init/init.mjs',
+    'scripts/assemble.mjs',
+    'commands/plan-product.md',
+    'harness-adapters/hermes/plugin.py',
+    '.claude-plugin/plugin.json',
+    '.codex-plugin/plugin.json',
+    '.cursor-plugin/plugin.json',
+    '.tessl-plugin/plugin.json',
+    'gemini-extension.json',
+    'AGENTS.md',
+    'CLAUDE.md',
+    'GEMINI.md',
+    'package.json',
+    'package-lock.json',
+    'plugin.json',
+  ]) {
+    assert.ok(existsSync(path.join(target, expectedRel)), `Expected staged ${expectedRel}`);
+  }
   for (const row of json('evals/scenarios/product-planning/cases.json').content) {
     const folder = path.join(target, 'content', row.id);
     const criteria = JSON.parse(readFileSync(path.join(folder, 'criteria.json'), 'utf8'));
@@ -179,6 +239,10 @@ test('release package ships Scale A src/ runtime and initializes without depende
   const files = pack.files.map(row => row.path).sort();
 
   assert.deepEqual(files.filter(file => file.startsWith('scripts/')), ['scripts/assemble.mjs']);
+  assert.deepEqual(
+    files.filter(file => file.startsWith('harness-adapters/')),
+    ['harness-adapters/hermes/plugin.py']
+  );
   assert.deepEqual(
     files.filter(file => file.startsWith('src/')),
     ['src/init/init.mjs', 'src/init/repo-paths.mjs', 'src/migration/migrate.mjs', 'src/validation/validate.mjs']
@@ -213,6 +277,78 @@ test('release package ships Scale A src/ runtime and initializes without depende
   assert.ok(existsSync(path.join(project, 'docs/GLOSSARY.md')));
 });
 
+test('assemble CLI stages and checks portable, antigravity, and hermes bundles via --output-dir', t => {
+  const sandbox = mkdtempSync(path.join(os.tmpdir(), 'planning-assemble-cli-'));
+  t.after(() => rmSync(sandbox, { recursive: true, force: true }));
+  const assembleScript = path.join(root, 'scripts/assemble.mjs');
+  const outDir = path.join(sandbox, 'dist');
+
+  execFileSync(process.execPath, [assembleScript, 'write', '--output-dir', outDir], { cwd: root });
+  execFileSync(process.execPath, [assembleScript, 'check', '--output-dir', outDir], { cwd: root });
+
+  assert.deepEqual(readdirSync(outDir).sort(), ['antigravity', 'hermes', 'portable']);
+  for (const name of commandNames) {
+    assert.ok(
+      existsSync(path.join(outDir, `antigravity/skills/plan-product-cmd-${name}/SKILL.md`)),
+      `Expected converted command skill plan-product-cmd-${name}`
+    );
+  }
+  assert.ok(existsSync(path.join(outDir, 'hermes/plugin.yaml')));
+  assert.ok(existsSync(path.join(outDir, 'hermes/__init__.py')));
+  assert.ok(existsSync(path.join(outDir, 'portable/plugin.json')));
+
+  const linkPath = path.join(sandbox, 'link-dist');
+  symlinkSync(outDir, linkPath);
+  assert.throws(() =>
+    execFileSync(process.execPath, [assembleScript, 'check', '--output-dir', linkPath], {
+      cwd: root,
+      stdio: 'pipe',
+    })
+  );
+  assert.throws(() =>
+    execFileSync(process.execPath, [assembleScript, 'write', '--output-dir', root], {
+      cwd: root,
+      stdio: 'pipe',
+    })
+  );
+});
+
 test('product-planning repository itself passes full validate() checks', () => {
   assert.doesNotThrow(() => validateRepo(root));
+});
+
+test('evals/matrix.json and evals/LATEST.md stay synchronized with Candidate SHA-256 via evals/report.mjs', () => {
+  const matrix = json('evals/matrix.json');
+  const rootManifest = json('plugin.json');
+  assert.equal(matrix.schema, 1);
+  assert.equal(matrix.suite_revision, rootManifest.version);
+  assert.deepEqual(
+    matrix.rows.map(r => [r.harness, r.required]),
+    [
+      ['Codex', true],
+      ['Claude Code', true],
+      ['Claude Cowork', true],
+      ['Antigravity CLI', true],
+      ['Antigravity 2.0', true],
+      ['Antigravity IDE', true],
+      ['Hermes Agent', true],
+      ['OpenClaw', true],
+      ['Cursor', false],
+      ['Grok Bot', false],
+      ['Muse', false],
+    ]
+  );
+
+  const hashOut = execFileSync(process.execPath, [path.join(root, 'evals/report.mjs'), 'hash'], {
+    cwd: root,
+    encoding: 'utf8',
+  }).trim();
+  assert.match(hashOut, /^[0-9a-f]{64}$/);
+  const checkOut = execFileSync(process.execPath, [path.join(root, 'evals/report.mjs'), 'check'], {
+    cwd: root,
+    encoding: 'utf8',
+  }).trim();
+  assert.match(checkOut, /^Report consistent;/);
+  const latest = readFileSync(path.join(root, 'evals/LATEST.md'), 'utf8');
+  assert.ok(latest.includes(`Candidate SHA-256: \`${hashOut}\`. Suite revision: \`${rootManifest.version}\`.`));
 });

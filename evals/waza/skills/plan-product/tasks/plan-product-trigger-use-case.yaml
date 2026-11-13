@@ -1,0 +1,16 @@
+id: plan-product-trigger-use-case
+name: Route actor workflow and process tree request
+description: A request to document step-by-step actor workflows and failure branches belongs to plan-product.
+tags:
+  - trigger
+  - positive
+inputs:
+  prompt: "Document the use case where a coordinator cancels one occurrence of a recurring shift, including failures and alternate flows."
+expected:
+  should_trigger: true
+graders:
+  - type: trigger
+    name: facade-positive-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: positive

@@ -1,14 +1,14 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "plan-product",
-  "version": "0.12.7",
+  "version": "0.12.8",
   "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
   "author": {
     "name": "NyssaAI"
   },
   "homepage": "https://github.com/NyssaAI/product-planning",
   "repository": "https://github.com/NyssaAI/product-planning",
-  "license": "LicenseRef-Jamaynor-Commercial-1.0",
+  "license": "Apache-2.0",
   "keywords": [
     "product-planning",
     "glossary",
