@@ -1,12 +1,13 @@
 {
   "name": "plan-product",
-  "version": "0.12.7",
+  "version": "0.12.8",
   "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
   "private": true,
-  "license": "LicenseRef-Jamaynor-Commercial-1.0",
+  "license": "Apache-2.0",
   "author": {
     "name": "NyssaAI"
   },
+  "homepage": "https://github.com/NyssaAI/product-planning",
   "repository": {
     "type": "git",
     "url": "https://github.com/NyssaAI/product-planning"
@@ -21,6 +22,7 @@
     ".cursor-plugin/",
     ".tessl-plugin/",
     "commands/",
+    "harness-adapters/",
     "src/",
     "scripts/",
     "skills/",
@@ -30,6 +32,7 @@
     "GEMINI.md",
     "gemini-extension.json",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
@@ -37,6 +40,8 @@
     "validate": "node src/validation/validate.mjs",
     "assemble": "node scripts/assemble.mjs check",
     "assemble:write": "node scripts/assemble.mjs write",
-    "eval:prepare": "node evals/scenarios/product-planning/prepare.mjs"
+    "eval:prepare": "node evals/scenarios/product-planning/prepare.mjs",
+    "eval:report": "node evals/report.mjs check",
+    "eval:report:write": "node evals/report.mjs generate"
   }
 }

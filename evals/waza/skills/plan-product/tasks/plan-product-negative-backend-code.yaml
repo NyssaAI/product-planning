@@ -1,0 +1,16 @@
+id: plan-product-negative-backend-code
+name: Reject backend API route coding
+description: Writing Express route handlers belongs to engineering implementation, not product planning.
+tags:
+  - trigger
+  - negative
+inputs:
+  prompt: "Write a TypeScript interface and express route handler for the volunteer scheduling service."
+expected:
+  should_trigger: false
+graders:
+  - type: trigger
+    name: facade-negative-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: negative

@@ -1,0 +1,16 @@
+id: plan-product-negative-ci-deploy
+name: Reject CI/CD deployment execution
+description: Deploying docker containers to Kubernetes belongs to DevOps / infrastructure.
+tags:
+  - trigger
+  - negative
+inputs:
+  prompt: "Run the CI build and deploy the latest Docker container to our Kubernetes staging cluster."
+expected:
+  should_trigger: false
+graders:
+  - type: trigger
+    name: facade-negative-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: negative

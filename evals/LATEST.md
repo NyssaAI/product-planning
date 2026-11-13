@@ -1,60 +1,24 @@
-# Evaluation Receipts: `plan-product`
+# Latest plugin evaluation
 
-> [!IMPORTANT] Scope Directive
-> Records canonical verification receipts, execution status, and evaluation evidence for `plan-product` release readiness across supported hosts.
+Generated from [matrix.json](matrix.json), [scenarios/product-planning/cases.json](scenarios/product-planning/cases.json), [waza/skills/plan-product/eval.yaml](waza/skills/plan-product/eval.yaml), and verified `.temp/evals/evidence/` receipts by `node evals/report.mjs generate`.
+Candidate SHA-256: `ff9b8b0fe3010894bdfe73b19e2f4195166fd406bf81f61f255251ee6701fc2e`. Suite revision: `0.12.8`.
 
-**Last Verified**: 2026-11-12  
-**Version**: 0.12.7  
-**Topology**: Encapsulated Facade (`skills/plan-product` + internal workflows + Scale A `src/`)  
-**Status**: Passing (Local Verification Gate & CI Pipeline)  
+A missing or failing required row blocks release. A consistent report does not imply release readiness.
 
----
+Offline deterministic gates (`npm run validate`, `npm test`, `npm run eval:prepare`, and Waza trigger checks) verify static contracts locally; native host rows require isolated execution outside `repo_root`. See [README.md](README.md) for workflow instructions.
 
-## Verification Summary
+| Suite | Harness | Platform | Configuration | Required | Latest completed result | Outcome / score | Freshness | Newer attempt / next check |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| product-planning | Codex | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Codex session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Claude Code | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Claude Code session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Claude Cowork | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Claude Cowork session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Antigravity CLI | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Antigravity CLI session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Antigravity 2.0 | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Antigravity 2.0 session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Antigravity IDE | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Antigravity IDE session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Hermes Agent | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Hermes Agent session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | OpenClaw | windows-x86_64 | default | Yes | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh OpenClaw session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Cursor | windows-x86_64 | default | No | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Cursor session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Grok Bot | windows-x86_64 | default | No | Not run | Score unavailable | No result | Prepare isolated scenarios via npm run eval:prepare and execute routing/content cases in a fresh Grok Bot session outside repo_root; static validation and offline Waza trigger checks pass locally. |
+| product-planning | Muse | windows-x86_64 | default | No | Not run | Score unavailable | No result | Provisional: establish loader contract before producing or validating an artifact. |
 
-| Gate | Target | Status | Details |
-| :--- | :--- | :--- | :--- |
-| **Structural & Link Validator** | `src/validation/validate.mjs` | **PASS** | Scope Directives, link integrity, `docs/` lockdown, `codegraph.db`, test layout |
-| **Host Assembly Sync** | `scripts/assemble.mjs` | **PASS** | `harness-adapter` parity verified across Claude, Codex, Cursor, Tessl, and Gemini |
-| **Unit & Use-Case Tests** | `test/unit/` & `test/use_case/` | **PASS** | Passing via native Node.js test runner |
-| **Scenario Preparation** | `evals/scenarios/product-planning/` | **PASS** | Validated 48 routing cases (with near-neighbor negatives) and 14 Model v2 content cases |
-| **Waza Trigger Suite** | `evals/waza/skills/plan-product/` | **PASS** | Fast local trigger suite with positive and negative cases |
-| **Package Hygiene** | `npm pack --dry-run` | **PASS** | 0 leaks of `evals/`, `docs/`, `test/`, `.nyssa-ai/`, or `.temp/` |
-| **Multi-Host Adapters** | `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.tessl-plugin/`, `gemini-extension.json` | **PASS** | Synchronized with canonical root `plugin.json` |
-
----
-
-## Scenario Inventory
-
-### Natural Activation Cases (48)
-Each of the six encapsulated workflows (`product`, `concept`, `feature`, `use-case`, `development-plan`, `maintain`) declares 8 test cases:
-- **3 positive triggers**: Distinct, realistic user prompts covering greenfield setup, refresh, and deep specification.
-- **2 ambiguous triggers**: Boundary and scope exploration prompts.
-- **3 near-neighbor negative triggers**: Challenging near-neighbor developer requests testing sharp boundaries against adjacent disciplines:
-  - Backend API coding and route implementation
-  - Software unit testing and test runner scripts
-  - Bug diagnosis and error fixing
-  - Code refactoring and middleware updates
-  - E2E browser automation (Cypress)
-  - UI mockup design (Figma)
-  - Database schema migrations (SQL / Knex)
-  - Sprint backlog management and poker estimation
-  - CI/CD container deployments and release tagging
-  - React state machine implementations
-  - DDL foreign key constraints
-
-### Content Scenarios (14)
-- `preserve-custom-product`: Custom path resolution and merge-by-heading preservation.
-- `duplicate-use-case-boundary`: Uniqueness and cross-use-case contradiction checks.
-- `configured-use-case-discovery`: Custom naming and existing workflow detection.
-- `development-plan-removal-verification-links`: Incoming `Verify: with DP-pp.ss` reference checks on step removal.
-- `maintain-v1-migration-conflict`: Immediate v1 conflict detection (Zero Dual v1/v2 Operation) and upgrade routing.
-- `product-update-artifact`: Custom-path document edit preserving existing sections and `Local notes`.
-- `product-inventory-non-technical-artifact`: `F-00.01` / `F-01.01` group banding, link-free checklist summary, stubbed feature guides, and stripping leaked tech stack details to `docs/tech-stack.md`.
-- `feature-boundary-artifact`: Capability boundary specification in non-technical user-outcome language with concrete inputs/outputs.
-- `use-case-artifact`: Actor workflow ASCII process tree with error branches, `Consistency Check`, and parent link.
-- `concept-macro-flow-artifact`: Cross-feature macro-flow (`kind: flow`) specification with bi-directional link synchronization.
-- `concept-domain-model-artifact`: Sequential domain model (`C-02`, `kind: domain-model`) specification with entity invariants and multi-feature bi-directional links.
-- `development-plan-reference-artifact`: Model v2 enriched step schema (`Rationale:`, `Concepts:`, `Gotchas:`, `Verify:`), `Verify: with` repair, clean CodeGraph omission when `docs/code-map/codegraph.db` is absent, and `dev-delivery` handoff.
-- `development-plan-codegraph-anchors-artifact`: Conditional `docs/code-map/codegraph.db` AST `Anchors:`, Planning vs. Implementation boundary (rejecting code/DDL in `docs/plans/development-plan.md`), and `dev-delivery` handoff with `codegraph_explore` symbol.
-- `maintain-v1-migration-artifact`: End-to-end execution of v1-to-v2 repository migration (`.plan-product` $\rightarrow$ `.nyssa-ai/plan-product`, `docs/GLOSSARY.md`, `F-101` $\rightarrow$ `F-01.01`, `UC-001` $\rightarrow$ `UC-01.01.01`, `docs/roadmap.md` `R-001` $\rightarrow$ `docs/plans/development-plan.md` `DP-01.01`).
+Release acceptance: **Fail — required evidence missing, stale, or failing**.

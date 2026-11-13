@@ -1,0 +1,16 @@
+id: plan-product-negative-bug-fix
+name: Reject code bug fixing
+description: Fixing null pointer exceptions in application controllers belongs to code debugging.
+tags:
+  - trigger
+  - negative
+inputs:
+  prompt: "Fix the NullPointerException bug occurring in the CSV export controller."
+expected:
+  should_trigger: false
+graders:
+  - type: trigger
+    name: facade-negative-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: negative

@@ -1,0 +1,16 @@
+id: plan-product-trigger-maintain
+name: Route planning model upgrade request
+description: A request to upgrade legacy planning documents from v1 to Model v2 belongs to plan-product.
+tags:
+  - trigger
+  - positive
+inputs:
+  prompt: "Upgrade our repository's legacy planning documents from model v1 (.plan-product, F-101, UC-001, R-001) to Model v2 (.nyssa-ai/plan-product/, docs/GLOSSARY.md, F-gg.nn, UC-gg.nn.uu, docs/plans/development-plan.md DP-pp.ss)."
+expected:
+  should_trigger: true
+graders:
+  - type: trigger
+    name: facade-positive-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: positive

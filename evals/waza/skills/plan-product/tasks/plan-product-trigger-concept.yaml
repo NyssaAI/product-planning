@@ -1,0 +1,16 @@
+id: plan-product-trigger-concept
+name: Route domain concept and macro-flow request
+description: A request to capture cross-feature domain models or lifecycles belongs to plan-product.
+tags:
+  - trigger
+  - positive
+inputs:
+  prompt: "Define the end-to-end Order Fulfillment macro-flow in docs/concepts/c-01-order-fulfillment.md and link its participating features."
+expected:
+  should_trigger: true
+graders:
+  - type: trigger
+    name: facade-positive-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: positive

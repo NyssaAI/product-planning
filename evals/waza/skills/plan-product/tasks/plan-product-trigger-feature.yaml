@@ -1,0 +1,16 @@
+id: plan-product-trigger-feature
+name: Route feature guide specification request
+description: A request to specify feature scope, boundaries, inputs, and acceptance belongs to plan-product.
+tags:
+  - trigger
+  - positive
+inputs:
+  prompt: "Interview me to specify the recurring-shift feature and create its feature guide with clear capability boundaries."
+expected:
+  should_trigger: true
+graders:
+  - type: trigger
+    name: facade-positive-trigger
+    config:
+      skill_path: skills/plan-product/SKILL.md
+      mode: positive
