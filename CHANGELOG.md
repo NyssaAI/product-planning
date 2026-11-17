@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.12.9 - Phase- and feature-scoped `dev-delivery` handoff and `Delivery Phase` Ubiquitous Language
+
+- Added canonical **`Delivery Phase (Phase pp)`** definition to `docs/GLOSSARY.md` aligned with `dev-standards` (`v0.10.10`).
+- Updated `skills/plan-product/SKILL.md`, `skills/plan-product/workflows/development-plan.md`, and `skills/plan-product/assets/templates/development-plan.md` (`.nyssa-ai/plan-product/templates/development-plan.md`) so exit handoffs target whole `Delivery Phase` (`docs/plans/phase-pp-<slug>.md`), `Feature Group` (`F-gg`), or `Feature` (`F-gg.nn`) execution in `dev-delivery` alongside single-step `docs/plans/dp-pp.ss-<slug>.md` overrides.
+
 ## 0.12.8 - Cross-plugin 11-host adapters, CI & Waza parity, runtime_root & telemetry, Apache-2.0, routing, and validator parity
 
 - Aligned 11-host `harness-adapter` distribution parity: added `harness-adapters/hermes/plugin.py`, enforced `.tessl-plugin/plugin.json` (`"skills": "./skills"`) and `gemini-extension.json` (`contextFileName` omission for consumer isolation), projected `homepage` into `.claude-plugin/plugin.json` to match `.codex-plugin/plugin.json` and `.cursor-plugin/plugin.json`, and staged deterministic `.temp/dist/{portable,antigravity,hermes}` bundles via `scripts/assemble.mjs`.
