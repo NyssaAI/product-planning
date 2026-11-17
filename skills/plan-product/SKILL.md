@@ -15,7 +15,7 @@ description: >-
 > Unified facade and orchestrator for product planning workflows. Coordinates product definitions, Ubiquitous Language glossaries, domain concepts, feature specifications, actor use cases, phased development plans, and model migrations. Procedural workflows are encapsulated in `workflows/`; deterministic path resolution, initialization, migration, and validation live under `src/` (`src/init/init.mjs`, `src/migration/migrate.mjs`, `src/validation/validate.mjs`).
 >
 > **Out-of-Scope Cross-Plugin Routing Boundaries**:
-> - Source code implementation, technical slice planning (`docs/plans/dp-pp.ss-<slug>.md`), causal-chain debugging, and diff/PR code review -> **`dev-delivery`**
+> - Source code implementation, technical phase/step planning (`docs/plans/phase-pp-<slug>.md` or `docs/plans/dp-pp.ss-<slug>.md`), causal-chain debugging, and diff/PR code review -> **`dev-delivery`**
 > - Language/architecture coding standards, `check_adoption.py`, AST checkers, and `docs/code-map/codegraph.db` indexing -> **`dev-standards`**
 > - Post-implementation grounded project learnings (`docs/learnings/`) -> **`dev-learnings`**
 > - Verified GitHub PR merges (`"push it"`) and SemVer/tag/marketplace releases (`"ship that"`) -> **`dev-ship`**

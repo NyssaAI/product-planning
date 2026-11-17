@@ -19,8 +19,8 @@
 
 The development plan sequencing workflow operates strictly within the **planning phase**. It is an informed opinion on build order grounded in architecture, Ubiquitous Language (`docs/GLOSSARY.md`), domain concepts, DTO/interface specs (`docs/specs/*.json`), technology stack, and (when indexed) existing AST symbols—not an implementation specification:
 - Technical delivery decisions, product/technology selections, symbol anchor names, and concrete verification commands **are permitted** in development plan step bullets and `- Verify:` checkpoints (whereas feature guides and use cases must remain non-technical).
-- **Strictly prohibited**: Do not include source code snippets, function definitions, file-by-file edit task lists, class diagrams, database DDL/ORM schemas, migration scripts, or unit-test mocking harnesses. Defer architectural slice design, adversarial plan review (`plan-adversary`), and code changes to `dev-delivery` (`plan` → `docs/plans/dp-pp.ss-<slug>.md`, then `implement`).
-- **Cross-Plugin Lifecycle Boundaries**: `dev-standards` owns language/architecture coding standards, `check_adoption.py`, AST checkers, and `docs/code-map/codegraph.db` indexing; `dev-delivery` owns `docs/plans/dp-pp.ss-<slug>.md` technical slice planning, causal-chain debugging, diff/PR code review, and source code execution; `dev-learnings` owns post-implementation grounded project learnings in `docs/learnings/` (later consumed into `Gotchas:`); `dev-ship` owns verified GitHub PR merges (`"push it"`) and SemVer/tag/marketplace releases (`"ship that"`); and `plugin-builder` owns agent plugin scaffolding, skill authoring, topology reorganization, and multi-host `harness-adapter` packaging.
+- **Strictly prohibited**: Do not include source code snippets, function definitions, file-by-file edit task lists, class diagrams, database DDL/ORM schemas, migration scripts, or unit-test mocking harnesses. Defer architectural `Delivery Phase` / slice design, adversarial plan review (`plan-adversary`), fast per-step coding, and end-of-phase review to `dev-delivery` (`plan` → `docs/plans/phase-pp-<slug>.md` or `docs/plans/dp-pp.ss-<slug>.md`, then `implement`).
+- **Cross-Plugin Lifecycle Boundaries**: `dev-standards` owns language/architecture coding standards, `check_adoption.py`, AST checkers, and `docs/code-map/codegraph.db` indexing; `dev-delivery` owns `docs/plans/phase-pp-<slug>.md` / `dp-pp.ss-<slug>.md` technical implementation planning, causal-chain debugging, diff/PR code review, and source code execution; `dev-learnings` owns post-implementation grounded project learnings in `docs/learnings/` (later consumed into `Gotchas:`); `dev-ship` owns verified GitHub PR merges (`"push it"`) and SemVer/tag/marketplace releases (`"ship that"`); and `plugin-builder` owns agent plugin scaffolding, skill authoring, topology reorganization, and multi-host `harness-adapter` packaging.
 
 | Dimension | In Scope for Development Plan (Briefing Note) | Out of Scope / Deferred to `dev-delivery` (`plan` & `implement`) |
 | :--- | :--- | :--- |
@@ -149,11 +149,11 @@ Prompt user to resolve any detected entry violations before proceeding.
 3. Re-run entry validation rules on the written document.
 4. **Engineering Delivery Handoff (`dev-delivery` Bridge)**:
    - Report a concise summary of sequenced phases, total delivery steps, and cross-domain dependency sanity confirmation.
-   - Generate an explicit handoff to `dev-delivery` (`plan` → `docs/plans/dp-pp.ss-<slug>.md`, followed by `implement`) targeting the first open `DP-pp.ss` step, noting any `Anchors:` so `dev-delivery` immediately queries `codegraph_explore "<SymbolName>"` without exploratory grep loops:
+   - Generate an explicit handoff to `dev-delivery` (`plan` → `docs/plans/phase-pp-<slug>.md`, followed by `implement`) targeting the next open **`Delivery Phase`** (`Phase pp`, or a specific `DP-pp.ss` step when requested), noting phase `Anchors:` so `dev-delivery` queries `codegraph_explore` across the whole `Delivery Phase` up front without exploratory grep loops:
      ```text
-     Development plan sequenced. To begin architectural implementation planning & adversarial review for the first open step:
-     Invoke `dev-delivery` (`plan` / `implement`) targeting DP-pp.ss (linked to UC-gg.nn.uu / F-gg.nn).
-     [If CodeGraph active: CodeGraph anchor `<SymbolName>` ready for `codegraph_explore` querying]
+     Development plan sequenced. To begin phase- or feature-scoped architectural planning, fast step implementation, and end-of-batch review:
+     Invoke `dev-delivery` (`plan` / `implement`) targeting Delivery Phase pp, Feature Group F-gg, or Feature F-gg.nn.
+     [If CodeGraph active: CodeGraph anchors `<SymbolNames>` ready for Stage 0 `--phase pp` querying]
      ```
 
 ---
@@ -171,4 +171,4 @@ Prompt user to resolve any detected entry violations before proceeding.
 - [ ] Every open step has a verified `- Verify:` stopping point, and no more than two consecutive open steps defer verification.
 - [ ] Stable `DP-pp.ss` IDs assigned sequentially without renumbering history.
 - [ ] Inventory checkboxes synchronized with user confirmation.
-- [ ] Exit handoff generated for `dev-delivery` (`plan` / `implement`) targeting the first open `DP-pp.ss` step (including any `Anchors:` for instant `codegraph_explore` querying).
+- [ ] Exit handoff generated for `dev-delivery` (`plan` / `implement`) targeting the next open `Delivery Phase` (`Phase pp`, including phase `Anchors:` for Stage 0 `codegraph_explore` querying).

@@ -2,7 +2,7 @@
   "name": "plan-product",
   "displayName": "plan-product",
   "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations.",
-  "version": "0.12.8",
+  "version": "0.12.9",
   "author": {
     "name": "NyssaAI"
   },

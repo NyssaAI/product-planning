@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.12.8**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
+Version **0.12.9**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 
