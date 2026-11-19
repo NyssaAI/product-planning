@@ -12,7 +12,9 @@
 - Read `.nyssa-ai/plan-product/config.json` for paths and `paths.useCaseTemplate` for file shape.
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time.
-- Do not invent a happy path from the feature summary. The user must explain workflow steps.
+- Do not invent a happy path from the feature summary. The user must explain workflow steps in interactive mode, or every step, trigger, outcome, and failure path must be unambiguously evidenced under the Zero-Guessing Sufficiency Gate in non-interactive mode.
+- **Unblock Recovery (`status: blocked`)**: When reading an existing `uc-gg.nn.uu-*.md` whose frontmatter sets `status: blocked` or includes `## Open Questions & Blockers`, prioritize interviewing directly to resolve every listed blocker; once resolved and confirmed, transition `status: blocked` -> `status: planned` and remove the resolved `## Open Questions & Blockers` section.
+- **Autonomous / Non-Interactive Execution**: When invoked headlessly without user interaction, enforce the Zero-Guessing Sufficiency Gate: write `status: planned` only when Actor & Entry Trigger, Observable Outcomes & Failure Paths, and Scope/Risk Constraints resolve unambiguously (never invent `[inferred]` guesses); otherwise write partial known facts with `status: blocked` and an itemized `## Open Questions & Blockers` section, return the open questions, and skip interactive Step 4 confirmation.
 - Require an entry route: how the actor reaches the flow (screen, user action, trigger, starting state).
 - Write all use-case steps, details, and outcomes in plain, non-technical actor-behavior language. Do **not** leak overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, APIs, config files, scripts) into use cases—those belong only in `tech-stack.md` or `docs/plans/development-plan.md` entries.
 - Preserve `Starting Context`, `Entry Route`, `Trigger`, `Process`, and `Step Details` as separate sections.
@@ -27,10 +29,11 @@
 ### 1. Target Resolution & Context Check
 1. Read `.nyssa-ai/plan-product/config.json` and the feature inventory.
 2. Resolve parent feature guide from `structure.features.featurePathPattern`.
-3. If user named existing use case, read it. Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, read `paths.glossary` (`docs/GLOSSARY.md`, and `<app>/docs/GLOSSARY.md` when present) so actor and entity terms match canonical Ubiquitous Language, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
+3. If user named existing use case, read it and inspect `status:` plus any `## Open Questions & Blockers` section (targeting those open blockers first if `status: blocked`). Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, read `paths.glossary` (`docs/GLOSSARY.md`, and `<app>/docs/GLOSSARY.md` when present) so actor and entity terms match canonical Ubiquitous Language, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
 
 ### 2. Workflow Discovery & Adversarial Pass
-1. Interview for:
+1. Interview for (or verify via the Zero-Guessing Sufficiency Gate in non-interactive mode):
+   - Resolution of any existing `## Open Questions & Blockers` when unblocking a `status: blocked` use case.
    - Primary actor and goal.
    - Starting context / prerequisite state.
    - Entry route (discovery/entry mechanism).
@@ -39,7 +42,7 @@
    - Complex steps requiring elaboration in `Step Details`.
    - Failure conditions and error handling.
    - Concrete acceptance criteria.
-2. Restate candidate use case for confirmation.
+2. In interactive mode, restate candidate use case for confirmation. In non-interactive mode, reject `[inferred]` guessing: if any material flow detail or failure case remains ambiguous, write `status: blocked` + `## Open Questions & Blockers`.
 3. Adversarial completeness & consistency check:
    - Verify every ASCII tree node identifies actor, action, and observable outcome in plain, non-technical language.
    - Verify no overly technical decisions or product/technology selections leaked into the process tree or step details.
@@ -48,7 +51,7 @@
 
 ### 3. File Generation & Parent Link
 1. Read `paths.useCaseTemplate` immediately before writing.
-2. Write use case file from template, filling all sections.
+2. Write use case file from template, filling all sections, setting `status: planned` and removing resolved `## Open Questions & Blockers` when ready (or stamping `status: blocked` with itemized `## Open Questions & Blockers` when ambiguous in non-interactive mode).
 3. Update parent feature guide:
    - Add markdown link under `## Use Cases`: `- [UC-gg.nn.uu: Title](uc-gg.nn.uu-short-slug.md)`.
 
@@ -72,6 +75,6 @@ After successfully writing a new or materially updated use case, ask the user wh
 - [ ] No overly technical decisions or product/technology selections leaked into the use case.
 - [ ] Distinct `Entry Route` and `Trigger` sections present.
 - [ ] Complex tree nodes elaborated in `Step Details`.
-- [ ] Sibling use cases checked for duplicates or contradictory flows.
+- [ ] Sibling use cases checked for duplicates or contradictory flows, and canonical `status:` lifecycle (`planned` with no stale blockers, or `blocked` with itemized `## Open Questions & Blockers` in non-interactive mode) verified.
 - [ ] Parent feature guide updated with relative link to the new use case.
-- [ ] After a material write, offered the optional development plan handoff without blocking completion.
+- [ ] After a material write, offered the optional development plan handoff without blocking completion (or skipped cleanly in autonomous non-interactive mode).

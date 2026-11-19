@@ -304,7 +304,7 @@ test('assemble stages deterministic portable, antigravity, and hermes bundles an
   const realTarget = path.join(sandbox, 'real-target');
   mkdirSync(realTarget);
   const symlinkOut = path.join(sandbox, 'symlink-out');
-  symlinkSync(realTarget, symlinkOut);
+  symlinkSync(realTarget, symlinkOut, process.platform === 'win32' ? 'junction' : 'dir');
   assert.throws(() => assemble('write', { outputDir: symlinkOut }), /symlink/i);
 });
 
@@ -632,4 +632,71 @@ test('validate plugin mode enforces cross-plugin compliance (root bans, .gitattr
   expectValidationFailure(/Disallowed retired schema file/);
   rmSync(retiredSchemaFile);
   assert.doesNotThrow(() => validate(tempPlugin, { validatePlugin: true, userHome: null }));
+});
+
+test('validate enforces feature and use-case status lifecycle, Open Questions & Blockers invariants, and UC frontmatter/links', t => {
+  const root = fixture(t);
+  const featDir = path.join(root, 'docs/features/f-01.01');
+  mkdirSync(featDir, { recursive: true });
+  const featPath = path.join(featDir, 'feature.md');
+  const ucPath = path.join(featDir, 'uc-01.01.01-checkout.md');
+
+  const writeFeature = (status, extra = '') =>
+    writeFileSync(
+      featPath,
+      `---\nid: F-01.01\ngroup: "01"\nstatus: ${status}\n---\n\n# F-01.01 Complete Orders with Verified Payment\n\n## Summary\nCheckout.\n${extra}`,
+      'utf8'
+    );
+  const writeUc = (status, { id = 'UC-01.01.01', feature = 'F-01.01', extra = '' } = {}) =>
+    writeFileSync(
+      ucPath,
+      `---\nfeature: ${feature}\nid: ${id}\nstatus: ${status}\n---\n\n# ${id} Submit Order\n\n## Actor\nCustomer\n\n## Parent\n[Feature](feature.md)\n${extra}`,
+      'utf8'
+    );
+
+  // Allowed lifecycle statuses pass cleanly
+  for (const status of ['planned', 'in-progress', 'awaiting-deferred-verify', 'completed', 'complete']) {
+    writeFeature(status);
+    writeUc(status);
+    assert.doesNotThrow(() => validate(root), `Expected status ${status} to pass validation`);
+  }
+
+  // status: blocked with non-empty ## Open Questions & Blockers passes on both feature.md and uc-*.md
+  writeFeature('blocked', '\n## Open Questions & Blockers\n\n- Confirm payment capture timing.\n');
+  writeUc('blocked', { extra: '\n## Open Questions & Blockers\n\n- Clarify idempotency key header.\n' });
+  assert.doesNotThrow(() => validate(root));
+
+  // status: blocked without or with empty ## Open Questions & Blockers fails
+  writeFeature('blocked');
+  assert.throws(() => validate(root), /Validation failed/);
+  writeFeature('blocked', '\n## Open Questions & Blockers\n   \n');
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // status: completed/complete with non-empty ## Open Questions & Blockers fails
+  writeFeature('planned');
+  writeUc('completed', { extra: '\n## Open Questions & Blockers\n\n- Unresolved item.\n' });
+  assert.throws(() => validate(root), /Validation failed/);
+  writeUc('complete', { extra: '\n## Open Questions & Blockers\n\n- Unresolved item.\n' });
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Unknown status fails
+  writeUc('unknown-state');
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Mismatched UC frontmatter id or feature fails
+  writeUc('planned', { id: 'UC-01.01.99' });
+  assert.throws(() => validate(root), /Validation failed/);
+  writeUc('planned', { feature: 'F-99.99' });
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Broken relative link in UC fails
+  writeUc('planned', { extra: '\n## References\n[Missing](../../concepts/c-99-missing.md)\n' });
+  assert.throws(() => validate(root), /Validation failed/);
+  writeUc('planned');
+  assert.doesNotThrow(() => validate(root));
+
+  // Stray non-canonical file under docs/features/f-01.01/ fails
+  const strayPath = path.join(featDir, 'notes.md');
+  writeFileSync(strayPath, '# Stray note\n', 'utf8');
+  assert.throws(() => validate(root), /Validation failed/);
 });
