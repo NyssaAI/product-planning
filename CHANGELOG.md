@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- Aligned `plan-product` with `dev-standards` (`v0.10.11`) Discreet Development Process (`DP-05.01`):
+## 0.12.10 - Discreet development process cooperation, status lifecycle, and UC validation
+
+- Aligned `plan-product` with `dev-standards` (`v0.10.12`) Discreet Development Process (`DP-05.01`):
   - Documented canonical `Document Status` (`planned`, `blocked`, `in-progress`, `awaiting-deferred-verify`, `completed`, plus `complete` alias), `Zero-Guessing Sufficiency Gate`, and `High-Risk Surface` (`Security/Auth`, `Money/Ledger`, `Prompt-Injection`) terms in `docs/GLOSSARY.md`.
   - Updated `skills/plan-product/SKILL.md`, `workflows/{feature,use-case}.md`, and `commands/plan-{feature,use-case}.md` with `status: blocked` + `## Open Questions & Blockers` unblock recovery in interactive mode and strict Zero-Guessing Sufficiency Gate rules (zero `[inferred]` guesses) in non-interactive mode.
   - Updated `workflows/development-plan.md`, `assets/templates/development-plan.md`, `commands/plan-development.md`, and `README.md` to flag High-Risk Surfaces in `- Gotchas:`, reference `Hydrogen` (`fast`), `Argon` (`mid`), and `Carbon` / `Gemini Orchestrator` (`deep`) subagent tiers, and align `dev-delivery` handoffs (`feat/<slug>`, Dual-Agent TDD, complexity-gated reviews, `awaiting-deferred-verify` roll-up).
