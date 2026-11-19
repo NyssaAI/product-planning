@@ -34,7 +34,7 @@ Preserve user-authored documents, local notes, custom templates, and stable iden
 Node.js 22 or later runs all `src/` modules and tests with zero runtime dependencies. Run `npm run validate`, `npm run assemble`, `npm test`, `npm run eval:prepare`, and `npm pack --dry-run` after relevant changes.
 
 # Development standards (typescript)
-<!-- dev-standards: language=typescript version=0.10.8 revision=cff6156b186231685082c79becccf1db2c30abed sha256=3c3fc2013b1aa98e2704bdf6a3bfcd99659a7b19cf7a72c59ede7d1ae0f8d00d -->
+<!-- dev-standards: language=typescript version=0.10.12 revision=ce987337c6defd95eee10fb3fb40613f5cdb4737 sha256=3c3fc2013b1aa98e2704bdf6a3bfcd99659a7b19cf7a72c59ede7d1ae0f8d00d -->
 
 - **Ubiquitous Language**: Ground all domain concepts, variables, boundary DTOs, and state transitions in the project's authoritative Ubiquitous Language (`docs/GLOSSARY.md` or `docs/concepts/`, and `apps/<app>/docs/GLOSSARY.md` + root Context Map in a monorepo). Banned synonyms and naming drift are strictly prohibited (`ARCH-NAME`).
 - **Code Navigation (`CodeGraph`)**: Reach for `codegraph_explore` (bundled in the `dev-standards` MCP server, or `codegraph explore "<query>"` via CLI) backed by the pre-indexed `docs/code-map/codegraph.db` snapshot (`apps/<app>/docs/code-map/codegraph.db` and `tools/<tool>/docs/code-map/codegraph.db` in a monorepo) before executing recursive file searches (`find`, `dir`, globbing) or broad repository greps (`rg`, `Select-String`). Never generate `CODE_MAP.md` files; refresh snapshots after structural symbol changes with `--sync-codegraph`.

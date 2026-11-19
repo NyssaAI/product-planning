@@ -19,17 +19,17 @@
 
 The development plan sequencing workflow operates strictly within the **planning phase**. It is an informed opinion on build order grounded in architecture, Ubiquitous Language (`docs/GLOSSARY.md`), domain concepts, DTO/interface specs (`docs/specs/*.json`), technology stack, and (when indexed) existing AST symbols—not an implementation specification:
 - Technical delivery decisions, product/technology selections, symbol anchor names, and concrete verification commands **are permitted** in development plan step bullets and `- Verify:` checkpoints (whereas feature guides and use cases must remain non-technical).
-- **Strictly prohibited**: Do not include source code snippets, function definitions, file-by-file edit task lists, class diagrams, database DDL/ORM schemas, migration scripts, or unit-test mocking harnesses. Defer architectural `Delivery Phase` / slice design, adversarial plan review (`plan-adversary`), fast per-step coding, and end-of-phase review to `dev-delivery` (`plan` → `docs/plans/phase-pp-<slug>.md` or `docs/plans/dp-pp.ss-<slug>.md`, then `implement`).
-- **Cross-Plugin Lifecycle Boundaries**: `dev-standards` owns language/architecture coding standards, `check_adoption.py`, AST checkers, and `docs/code-map/codegraph.db` indexing; `dev-delivery` owns `docs/plans/phase-pp-<slug>.md` / `dp-pp.ss-<slug>.md` technical implementation planning, causal-chain debugging, diff/PR code review, and source code execution; `dev-learnings` owns post-implementation grounded project learnings in `docs/learnings/` (later consumed into `Gotchas:`); `dev-ship` owns verified GitHub PR merges (`"push it"`) and SemVer/tag/marketplace releases (`"ship that"`); and `plugin-builder` owns agent plugin scaffolding, skill authoring, topology reorganization, and multi-host `harness-adapter` packaging.
+- **Strictly prohibited**: Do not include source code snippets, function definitions, file-by-file edit task lists, class diagrams, database DDL/ORM schemas, migration scripts, or unit-test mocking harnesses. Defer architectural `Delivery Phase` / slice design, 3-Tier Architectural Fit Checklist verification (including Operational Telemetry), adversarial plan review (`plan-adversary`), context-isolated Dual-Agent TDD, always-on $0 verification gates, and complexity-gated adversarial reviews to `dev-delivery` (`plan` → `docs/plans/{phase-pp,f-gg.nn,f-gg,dp-pp.ss}-<slug>.md`, then `implement` on a `feat/<slug>` branch).
+- **Cross-Plugin Lifecycle Boundaries**: `dev-standards` owns language/architecture coding standards, `check_adoption.py`, AST checkers, and `docs/code-map/codegraph.db` indexing; `dev-delivery` owns feature-branch isolation (`feat/<slug>`), autonomous Step 1.5 spec synthesis / Draft-PR fail-fast, `docs/plans/{phase-pp,f-gg.nn,f-gg,dp-pp.ss}-<slug>.md` technical implementation planning, causal-chain debugging, context-isolated Dual-Agent TDD, and complexity-gated adversarial diff/PR review; `dev-learnings` owns post-implementation grounded project learnings in `docs/learnings/` (later consumed into `Gotchas:`); `dev-ship` owns verified GitHub PR merges (`"push it"`) and SemVer/tag/marketplace releases (`"ship that"`); and `plugin-builder` owns agent plugin scaffolding, skill authoring, topology reorganization, and multi-host `harness-adapter` packaging.
 
 | Dimension | In Scope for Development Plan (Briefing Note) | Out of Scope / Deferred to `dev-delivery` (`plan` & `implement`) |
 | :--- | :--- | :--- |
 | **Sequencing Rationale** | Explains *why* this step belongs here (causal dependency on prior state). | Class diagrams, call trees, function signatures, or API routing details. |
 | **Conceptual Linkages** | Maps which domain concepts (`[C-nn]`), `docs/specs/*.json` DTO/interface specs, and tech-stack capabilities inform this step. | Database DDL, table schema definitions, ORM models, or migration scripts. |
-| **Architectural Gotchas** | Highlights non-obvious traps, `docs/learnings/` constraints, edge cases, and concurrency/idempotency risks. | Code-level solutions, algorithms, locking mechanisms, or boilerplate. |
+| **Architectural Gotchas** | Highlights non-obvious traps, `docs/learnings/` constraints, edge cases, concurrency/idempotency risks, and **High-Risk Surfaces** (`Security/Auth boundaries`, `Money/Billing/Ledger mutations`, `Prompt-Injection/Untrusted-Input boundaries`). | Code-level solutions, algorithms, locking mechanisms, or boilerplate. |
 | **CodeGraph Anchors** | Names prerequisite symbols consumed and target symbols/interfaces established. | Writing method bodies, type definitions, or line-by-line syntax. |
 | **Verification Checkpoint** | User-runnable command (`test/unit/`, `test/use_case/`, `test/e2e/`) or observable outcome with demo data (`- Verify:`). | Internal unit test mechanics, mocking harnesses, or test suites. |
-| **Execution Breakdown** | Delivery slice targeting a use case or foundational feature. | File-by-file task lists, subagent slice waves, code edits, and refactorings. |
+| **Execution Breakdown** | Delivery slice targeting a use case or foundational feature. | File-by-file task lists, Dual-Agent TDD slices, code edits, and refactorings. |
 
 ### The "Sufficient Information" Step Schema
 
@@ -40,7 +40,7 @@ Every `DP-pp.ss` step in `docs/plans/development-plan.md` must capture high-sign
     - Rationale: Why this step is positioned here; what upstream state or prerequisite it relies upon.
     - Concepts: Domain models ([C-nn](../concepts/c-nn-short-slug.md)), `docs/specs/*.json` contracts, and tech-stack elements informing this slice.
     - Anchors: Consumes `ExistingSymbol` (from DP-pp.ss); establishes `TargetSymbol` interface. (Optional: present only when `docs/code-map/codegraph.db` is active)
-    - Gotchas: Critical architectural constraints, `docs/learnings/` rules, edge cases, or concurrency/idempotency traps to account for.
+    - Gotchas: Critical architectural constraints, `docs/learnings/` rules, edge cases, concurrency/idempotency traps, and High-Risk Surfaces (Security/Auth, Money/Ledger, or Prompt-Injection/Untrusted-Input boundaries) to flag for `High` Complexity & Risk review.
     - Verify: Concrete command, test run, or screen inspection with observable demo data.
 ```
 
@@ -78,7 +78,7 @@ Every `DP-pp.ss` step in `docs/plans/development-plan.md` must capture high-sign
 When sequencing a small set of open features (5 or fewer), synthesize the assembled context directly. When sequencing a large system (many concepts, more than 5 open features, or dozens of use cases), prevent context bloat and attention degradation by executing a **Flat Depth-1 (`max_depth = 1`) Fan-Out / Fan-In (Map-Reduce)** pass staged in `.temp/plan-product/<run-id>/` (falling back cleanly to sequential `degraded-inline` analysis if running inside a nested subagent where child spawning is blocked):
 
 1. **Partition into Domain Clusters**: Group open features (`F-gg.nn`) and their participating concepts (`C-nn`) by Feature Group (`F-gg`) or cohesive domain cluster, and create `.temp/plan-product/<run-id>/`.
-2. **Fan-Out to Clean-Context Domain Subagents (`Model Tier: mid` / `Thinking Budget: medium`; `fast`/`low` for purely mechanical file inventory)**:
+2. **Fan-Out to Clean-Context Domain Subagents (`Model Tier: mid` / `Thinking Budget: medium` — **Argon**; `fast` / `light` / **Hydrogen** with `Thinking Budget: low` for purely mechanical file inventory)**:
    - Launch one isolated Depth-1 leaf subagent per domain cluster (*"Read-only over project docs/source; do NOT spawn subagents"*).
    - Instruct each subagent to read **only** `paths.techStack`, `docs/GLOSSARY.md`, relevant `docs/specs/*.json` and `docs/learnings/**/*.md`, its assigned `C-nn` concept files, and its assigned `F-gg.nn` feature guides and `UC-gg.nn.uu` use-case contracts, and (when `docs/code-map/codegraph.db` is present) query domain AST symbols via `codegraph_explore` (or `mcp__codegraph__codegraph_explore` via `tool_search` on Hermes Agent).
    - Each subagent determines local technical ordering and writes an intermediate domain manifest to `.temp/plan-product/<run-id>/<domain-id>.manifest.json` following this contract:
@@ -107,51 +107,51 @@ When sequencing a small set of open features (5 or fewer), synthesize the assemb
            "rationale": "Base credential storage for authentication",
            "concepts": ["C-01"],
            "anchors": "Consumes `PostgresPool`; establishes `UserAccount`",
-           "gotchas": "Enforce unique email constraints at database level, not application level",
+           "gotchas": "Enforce unique email constraints at database level; High-Risk Surface (Security/Auth): enforce hashed secrets and constant-time comparison",
            "after": ["database-infrastructure"],
            "verify": "npm test test/use_case/auth/schema.test.mjs"
          }
        ]
      }
      ```
-3. **Fan-In via High-Reasoning Topological Synthesis (`Model Tier: deep` / `Thinking Budget: high`)**:
+3. **Fan-In via High-Reasoning Topological Synthesis (`Model Tier: deep` / `Thinking Budget: high` — **Carbon** / **Gemini Orchestrator**)**:
    - Synthesize in a clean `deep`/`high` pass reading **only** `.temp/plan-product/<run-id>/*.manifest.json`.
    - Perform a topological sort across all cross-domain `ingressPrerequisites` and `egressCapabilities`, resolving circularities or flagging missing foundational prerequisites.
    - Allocate global delivery phases (`Phase 00`, `Phase 01`, ...) and stable `DP-pp.ss` IDs, emitting the unified `docs/plans/development-plan.md` draft for human review and tie-out.
 
 ### 3. Entry Validation Pass
 Validate the following in order:
-1. **Resolution & Contract Alignment**: Every step's target use case (`UC-gg.nn.uu`) or parent feature (`F-gg.nn`) exists on disk, and its declared `Inputs` and `Dependencies` are satisfied by prior steps.
+1. **Resolution & Contract Alignment**: Every step's target use case (`UC-gg.nn.uu`) or parent feature (`F-gg.nn`) exists on disk, and its declared `Inputs` and `Dependencies` are satisfied by prior steps. Flag any linked `feature.md` or `uc-*.md` still marked `status: blocked` with `## Open Questions & Blockers` (interview to unblock in interactive mode, or preserve `status: blocked` cleanly in non-interactive mode).
 2. **Coverage**: Every incomplete feature in `paths.features` has at least one step covering it or its use cases.
 3. **Ordering**: No open step appears before any step or feature listed in its `after:` clause, or before upstream stages required by its linked `C-nn` concepts.
 4. **Reference Integrity**: Every `after:` entry and `Verify: with DP-pp.ss` deferral resolves without cycles or dangling IDs.
-5. **Enriched Schema & Verification Rigor**: Every open step includes `Rationale:`, `Concepts:`, `Gotchas:`, conditional `Anchors:` (when `docs/code-map/codegraph.db` is present), and a concrete `- Verify:` stopping point (or valid `with DP-pp.ss` deferral, with no more than two consecutive open steps deferring), and remains free of source code snippets, function definitions, or DDL schemas.
+5. **Enriched Schema & Verification Rigor**: Every open step includes `Rationale:`, `Concepts:`, `Gotchas:` (explicitly flagging any High-Risk Surface: **Security/Auth boundaries**, **Money/Billing/Ledger mutations**, or **Prompt-Injection/Untrusted-Input boundaries**), conditional `Anchors:` (when `docs/code-map/codegraph.db` is present), and a concrete `- Verify:` stopping point (or valid `with DP-pp.ss` deferral, with no more than two consecutive open steps deferring), and remains free of source code snippets, function definitions, or DDL schemas.
 
-Prompt user to resolve any detected entry violations before proceeding.
+Prompt user to resolve any detected entry violations before proceeding (or record blocking questions and return unresolved blockers when invoked non-interactively).
 
 ### 4. Step Sequencing & Interview Pass
-1. Interview for requested step additions, completions, removals, or reordering.
+1. Interview for requested step additions, completions, removals, or reordering (or synthesize non-interactively via the Zero-Guessing Sufficiency Gate without inventing missing facts).
 2. For new or updated steps, capture the enriched step schema:
    - Imperative statement line with target `[UC-gg.nn.uu](<path>)` (or `[F-gg.nn](<path>)` fallback) and explicit `after:` dependencies.
    - `- Rationale:` causal reason for its position in sequence and prerequisite state required.
    - `- Concepts:` domain models (`[C-nn](<path>)`), `docs/specs/*.json` specs, and tech-stack capabilities informing the slice.
    - `- Anchors:` *(conditional: included only when `docs/code-map/codegraph.db` is present)* prerequisite symbols consumed and target symbols/interfaces established.
-   - `- Gotchas:` critical architectural constraints, `docs/learnings/` lessons, edge cases, and pitfalls to watch out for (without prescribing implementation code).
+   - `- Gotchas:` critical architectural constraints, `docs/learnings/` lessons, edge cases, concurrency/idempotency pitfalls, and High-Risk Surfaces (**Security/Auth**, **Money/Ledger**, **Prompt-Injection/Untrusted Input**) to escalate `dev-delivery` Complexity & Risk to `High` (without prescribing implementation code).
    - `- Verify:` runnable command, screen check, or observable outcome with demo data.
 3. Assign the next highest `DP-pp.ss` ID within target phase `pp`.
 4. When removing an open step, inspect all other open steps for incoming `after:` and `Verify: with DP-pp.ss` references and obtain user confirmation on replacement checkpoints or dependencies before deleting.
 
 ### 5. Inventory Synchronization, Exit Validation & `dev-delivery` Handoff
 1. Cross-check status with feature inventory (`paths.features`) and linked `uc-*.md` / `feature.md` files:
-   - Flag complete features with open steps.
-   - Flag incomplete features or use cases whose `DP-pp.ss` steps are all checked (`dev-delivery` `implement` automatically rolls up `status: completed` to `uc-*.md` / `feature.md` and `- [x] F-gg.nn` in `docs/features.md` upon step verification; reconcile any manual edits here with user confirmation).
+   - Flag complete features with open steps, and flag any `status: blocked` feature/use case retaining unresolved `## Open Questions & Blockers`.
+   - Flag incomplete features or use cases whose `DP-pp.ss` steps are all checked (`dev-delivery` `implement` automatically rolls up `status: completed` — or `awaiting-deferred-verify` on the implementation plan when deferred — to `uc-*.md` / `feature.md` and `- [x] F-gg.nn` in `docs/features.md` upon step verification; reconcile any manual edits here with user confirmation).
 2. Read `paths.developmentPlanTemplate` immediately before writing, then write `paths.developmentPlan` preserving order, headings, and local notes.
 3. Re-run entry validation rules on the written document.
 4. **Engineering Delivery Handoff (`dev-delivery` Bridge)**:
-   - Report a concise summary of sequenced phases, total delivery steps, and cross-domain dependency sanity confirmation.
-   - Generate an explicit handoff to `dev-delivery` (`plan` → `docs/plans/phase-pp-<slug>.md`, followed by `implement`) targeting the next open **`Delivery Phase`** (`Phase pp`, or a specific `DP-pp.ss` step when requested), noting phase `Anchors:` so `dev-delivery` queries `codegraph_explore` across the whole `Delivery Phase` up front without exploratory grep loops:
+   - Report a concise summary of sequenced phases, total delivery steps, flagged High-Risk Surfaces, and cross-domain dependency sanity confirmation.
+   - Generate an explicit handoff to `dev-delivery` (`plan` → `docs/plans/{phase-pp,f-gg.nn,f-gg,dp-pp.ss}-<slug>.md`, followed by `implement` on a `feat/<slug>` branch enforcing the 3-Tier Architectural Fit Checklist with Operational Telemetry, context-isolated Dual-Agent TDD, always-on $0 verification, and complexity-gated adversarial reviews) targeting the next open **`Delivery Phase`** (`Phase pp`, or a specific `F-gg` / `F-gg.nn` / `DP-pp.ss` target when requested), noting phase `Anchors:` so `dev-delivery` queries `codegraph_explore` across the whole `Delivery Phase` up front without exploratory grep loops:
      ```text
-     Development plan sequenced. To begin phase- or feature-scoped architectural planning, fast step implementation, and end-of-batch review:
+     Development plan sequenced. To begin feature-branch delivery (`feat/<slug>`), architectural fit evaluation, Dual-Agent TDD, and complexity-gated adversarial review:
      Invoke `dev-delivery` (`plan` / `implement`) targeting Delivery Phase pp, Feature Group F-gg, or Feature F-gg.nn.
      [If CodeGraph active: CodeGraph anchors `<SymbolNames>` ready for Stage 0 `--phase pp` querying]
      ```
@@ -162,11 +162,11 @@ Prompt user to resolve any detected entry violations before proceeding.
 
 - [ ] Read `paths.techStack`, repository manifests, `docs/GLOSSARY.md` / `docs/specs/*.json` / `docs/learnings/` (when present), `paths.concepts` (`c-*.md`), and open feature/use-case contracts (`Inputs`, `Outputs`, `Dependencies`, and process trees).
 - [ ] Checked for `docs/code-map/codegraph.db` (and monorepo `<unit>/docs/code-map/codegraph.db`): probed AST symbols and populated `Anchors:` when present, or bypassed cleanly with zero errors/warnings and no auto-indexing when absent.
-- [ ] Delegated large-scale domain analysis via Flat Depth-1 subagents (`mid`/`medium`) and `.temp/plan-product/<run-id>/*.manifest.json` scratch manifests with `deep`/`high` topological synthesis when sequencing large feature sets.
-- [ ] All target use cases (`UC-gg.nn.uu`) and parent features (`F-gg.nn`) exist and link to real files (using relative `../features/...` / `../concepts/...` paths from `docs/plans/development-plan.md`).
+- [ ] Delegated large-scale domain analysis via Flat Depth-1 subagents (`mid` **Argon** / `fast` **Hydrogen**) staged in `.temp/plan-product/<run-id>/*.manifest.json` with `deep` **Carbon** / **Gemini Orchestrator** topological synthesis when sequencing large feature sets.
+- [ ] All target use cases (`UC-gg.nn.uu`) and parent features (`F-gg.nn`) exist and link to real files (using relative `../features/...` / `../concepts/...` paths from `docs/plans/development-plan.md`), with any `status: blocked` docs flagged or unblocked cleanly.
 - [ ] Every non-completed feature has step coverage.
 - [ ] No circular dependencies or backward references in document order.
-- [ ] Every open step captures the enriched schema: target link + `after:`, `Rationale:`, `Concepts:`, conditional `Anchors:`, `Gotchas:`, and `Verify:`.
+- [ ] Every open step captures the enriched schema: target link + `after:`, `Rationale:`, `Concepts:`, conditional `Anchors:`, `Gotchas:` (explicitly flagging any High-Risk Surface: Security/Auth, Money/Ledger, Prompt-Injection), and `Verify:`.
 - [ ] Planning boundary enforced: no source code snippets, function definitions, file-by-file edit tasks, or DDL schemas in development plan steps.
 - [ ] Every open step has a verified `- Verify:` stopping point, and no more than two consecutive open steps defer verification.
 - [ ] Stable `DP-pp.ss` IDs assigned sequentially without renumbering history.

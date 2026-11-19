@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.12.9**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
+Version **0.12.10**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 
@@ -15,7 +15,7 @@ The plugin operates as an **Encapsulated Facade**: the `plan-product` skill serv
 | `plan-development` | Sequence product deliverables in `docs/plans/development-plan.md` with stable `DP-pp.ss` IDs, conditional CodeGraph `Anchors:` (`docs/code-map/codegraph.db`), observable `- Verify:` checkpoints, and `dev-delivery` handoff. | `workflows/development-plan.md` |
 | `plan-maintain` | Upgrade legacy product planning documents from Model v1 or `docs/roadmap.md` to Model v2, or reconcile document integrity. | `workflows/maintain.md` |
 
-The workflows interview for missing information, preserve existing content, use configured paths (`user_home` -> `repo_root`) and current templates, align with Ubiquitous Language (`docs/GLOSSARY.md`), and check for conflicting or duplicate ownership. Development plans describe delivery outcomes and architectural briefing notes; technical slice planning (`docs/plans/dp-pp.ss-<slug>.md`), adversarial plan review (`plan-adversary`), and clean-context code execution belong to `dev-delivery` (with automatic `uc-*.md`, `feature.md`, and `docs/features.md` completion roll-up as `DP-pp.ss` steps finish).
+The workflows interview for missing information (or enforce the non-interactive Zero-Guessing Sufficiency Gate and recover `status: blocked` documents via `## Open Questions & Blockers`), preserve existing content, use configured paths (`user_home` -> `repo_root`) and current templates, align with Ubiquitous Language (`docs/GLOSSARY.md`), and check for conflicting or duplicate ownership. Development plans describe delivery outcomes, `DP-pp.ss` briefing notes, and flagged High-Risk Surfaces (`Security/Auth`, `Money/Ledger`, `Prompt-Injection`); feature-branch execution (`feat/<slug>`), technical implementation plans (`docs/plans/{phase-pp,f-gg.nn,f-gg,dp-pp.ss}-<slug>.md`), 3-Tier Architectural Fit verification (with Operational Telemetry across all tiers), context-isolated Dual-Agent TDD, and complexity-gated adversarial reviews belong to `dev-delivery` (with automatic `uc-*.md`, `feature.md`, and `docs/features.md` completion roll-up as `DP-pp.ss` steps finish).
 
 ## Canonical Numbering & Terminology Contract (v2)
 
@@ -84,7 +84,8 @@ The initializer creates missing configuration, schema, eight starter templates, 
     |-- learnings/                  Optional grounded project lessons read into development-plan Gotchas.
     |-- plans/
     |   |-- development-plan.md     Created by plan-development (DP-pp.ss steps).
-    |   `-- dp-01.01-example.md     Durable implementation plans authored by dev-delivery.
+    |   |-- phase-01-example.md     Phase- or feature-scoped implementation plans authored by dev-delivery.
+    |   `-- dp-01.01-example.md     Single-step implementation plan override authored by dev-delivery.
     |-- concepts/                   Created by plan-concept.
     |   `-- c-01-example.md
     `-- features/                   Created as features are defined.

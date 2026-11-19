@@ -12,6 +12,14 @@ import { resolvePlanningConfig, validatePlanningConfig } from '../init/repo-path
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const BANNED_FEATURE_TITLE_JARGON = /\b(?:surgical|storage|ingestion|ingest|syndication)\b/i;
 const VERIFICATION_HEADING_REGEX = /^##\s+(?:\d+\.\s+)?Verification\b/m;
+const VALID_FEATURE_UC_STATUSES = new Set([
+  'planned',
+  'blocked',
+  'in-progress',
+  'awaiting-deferred-verify',
+  'completed',
+  'complete',
+]);
 const BINARY_EXTENSIONS = new Set([
   '.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico', '.pdf', '.zip', '.db', '.pyc',
 ]);
@@ -171,6 +179,29 @@ function isTemplateOnlyDocument(docPath, repoRoot, config, templateKey, bundledA
   }
   const bundledFull = path.join(PLUGIN_ROOT, 'skills/plan-product/assets/templates', bundledAssetFile);
   return existsSync(bundledFull) && normalizeText(readFileSync(bundledFull, 'utf8')) === docNorm;
+}
+
+/**
+ * Enforce shared Document Status lifecycle and Open Questions & Blockers section invariants.
+ */
+function validateDocStatusAndBlockers(content, fm, relPath, label, fail) {
+  if (!fm) return;
+  const status = typeof fm.status === 'string' ? fm.status.trim() : '';
+  if (!VALID_FEATURE_UC_STATUSES.has(status)) {
+    fail(
+      `${label} ${relPath} frontmatter status must be one of ${[...VALID_FEATURE_UC_STATUSES].join(', ')} (found ${JSON.stringify(fm.status ?? null)})`
+    );
+    return;
+  }
+  const blockerBody = (
+    content.split(/^##\s+Open Questions & Blockers(?:\r?\n|$)/m)[1]?.split(/^##\s+/m)[0] || ''
+  ).trim();
+  if (status === 'blocked' && !blockerBody) {
+    fail(`${label} ${relPath} has status: blocked and must include a non-empty '## Open Questions & Blockers' section`);
+  }
+  if ((status === 'completed' || status === 'complete') && blockerBody) {
+    fail(`${label} ${relPath} has status: ${status} and must not retain an open '## Open Questions & Blockers' section`);
+  }
 }
 
 function checkMarkdownRelativeLinks(fullPath, repoRoot, fail, label) {
@@ -894,14 +925,62 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
         fail(`Disallowed file directly under ${featuresRel}/ (only f-gg.nn/ directories allowed): ${featuresRel}/${entry.name}`);
         continue;
       }
-      if (!/^f-\d{2}\.\d{2}$/.test(entry.name)) {
+      const folderMatch = entry.name.match(/^f-(\d{2})\.(\d{2})$/);
+      if (!folderMatch) {
         fail(`Non-canonical feature directory under ${featuresRel}/: ${featuresRel}/${entry.name}`);
         continue;
       }
-      const featPath = path.join(featuresDir, entry.name, 'feature.md');
+      const [, gg, nn] = folderMatch;
+      const expectedFeatId = `F-${gg}.${nn}`;
+      const featDir = path.join(featuresDir, entry.name);
+      const ucFileRegex = new RegExp(`^uc-${gg}\\.${nn}\\.(\\d{2})-[a-z0-9-]+\\.md$`);
+
+      for (const child of readdirSync(featDir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+        const childRel = `${featuresRel}/${entry.name}/${child.name}`;
+        if (!child.isFile()) {
+          fail(`Non-canonical entry under ${featuresRel}/${entry.name}/: ${childRel}`);
+          continue;
+        }
+        if (child.name === 'feature.md') continue;
+        const ucMatch = child.name.match(ucFileRegex);
+        if (!ucMatch) {
+          fail(`Non-canonical entry under ${featuresRel}/${entry.name}/: ${childRel}`);
+          continue;
+        }
+        const expectedUcId = `UC-${gg}.${nn}.${ucMatch[1]}`;
+        const ucPath = path.join(featDir, child.name);
+        const ucContent = readFileSync(ucPath, 'utf8');
+        const ucFm = parseYamlFrontmatter(ucContent);
+        if (!ucFm) {
+          fail(`Use case ${childRel} missing YAML frontmatter`);
+        } else {
+          if (ucFm.id !== expectedUcId) {
+            fail(`Use case frontmatter id must match filename ID (${expectedUcId}) in ${childRel}`);
+          }
+          if (ucFm.feature !== expectedFeatId) {
+            fail(`Use case frontmatter feature must match parent feature (${expectedFeatId}) in ${childRel}`);
+          }
+          validateDocStatusAndBlockers(ucContent, ucFm, childRel, 'Use case', fail);
+        }
+        checkMarkdownRelativeLinks(ucPath, repoRoot, fail, childRel);
+      }
+
+      const featPath = path.join(featDir, 'feature.md');
       if (!existsSync(featPath)) continue;
       const relFeat = path.relative(repoRoot, featPath).replaceAll('\\', '/');
       const featContent = readFileSync(featPath, 'utf8');
+      const featFm = parseYamlFrontmatter(featContent);
+      if (!featFm) {
+        fail(`Feature ${relFeat} missing YAML frontmatter`);
+      } else {
+        if (featFm.id !== expectedFeatId) {
+          fail(`Feature frontmatter id must match folder ID (${expectedFeatId}) in ${relFeat}`);
+        }
+        if (featFm.group !== gg) {
+          fail(`Feature frontmatter group must match folder group ("${gg}") in ${relFeat}`);
+        }
+        validateDocStatusAndBlockers(featContent, featFm, relFeat, 'Feature', fail);
+      }
       const headingMatch = featContent.match(/^#\s+F-\d{2}\.\d{2}\s+(.+)$/m);
       if (headingMatch && BANNED_FEATURE_TITLE_JARGON.test(headingMatch[1])) {
         fail(`Feature title in ${relFeat} contains banned jargon (Surgical, Storage, Ingestion, or Syndication): ${headingMatch[1]}`);
@@ -919,8 +998,7 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
         } else {
           const conceptContent = readFileSync(resolved, 'utf8');
           const partSection = conceptContent.split(/^## Participating Features\r?\n/m)[1]?.split(/^## /m)[0] || '';
-          const featIdMatch = featContent.match(/^id:\s*(F-\S+)/m);
-          const featId = featIdMatch ? featIdMatch[1] : entry.name;
+          const featId = featFm?.id || expectedFeatId;
           if (!partSection.includes(featId) && !partSection.includes(entry.name)) {
             fail(`Bi-directional link missing: Feature ${relFeat} links to concept ${path.relative(repoRoot, resolved).replaceAll('\\', '/')}, but that concept's '## Participating Features' does not reference ${featId}`);
           }

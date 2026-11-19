@@ -12,7 +12,9 @@
 - Read `.nyssa-ai/plan-product/config.json` for paths and `paths.featureTemplate` for file shape.
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time only for missing required information.
-- Do not invent feature ownership, user need, acceptance checks, dependencies, or delivery status. Mark inferred items as `[inferred]` and confirm them.
+- Do not invent feature ownership, user need, acceptance checks, dependencies, or delivery status. Mark inferred items as `[inferred]` and confirm them in interactive mode.
+- **Unblock Recovery (`status: blocked`)**: When reading an existing `feature.md` whose frontmatter sets `status: blocked` or includes `## Open Questions & Blockers` (for example from a `dev-delivery` `HALT 1` / `HALT 2` Draft PR), prioritize interviewing directly to resolve every listed blocker; once resolved and confirmed, transition `status: blocked` -> `status: planned` and remove the resolved `## Open Questions & Blockers` section.
+- **Autonomous / Non-Interactive Execution**: When invoked headlessly without user interaction, enforce the Zero-Guessing Sufficiency Gate: write `status: planned` only when Actor & Entry Trigger, Observable Outcomes & Failure Paths, and Scope/Risk Constraints are unambiguously resolved from evidence (with zero `[inferred]` guesses); otherwise write partial known facts with `status: blocked` and an itemized `## Open Questions & Blockers` section, return the open questions, and skip interactive Step 4 confirmation.
 - Keep `Summary`, `User Need`, `Conceptual Context`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` as distinct output sections.
 - Write all feature content in non-technical, user-outcome language. Feature titles MUST follow the canonical naming standard: Title Case, active verbs, and user safeguards/protections (e.g. `Update Tasks & Projects without Overwriting Personal Notes`, `Define, Refine & Update Ideal Client Profiles (ICPs)`, or `Extract Action Items from Messages & Filter Duplicates`). Strictly ban plumbing jargon (e.g. *Surgical*, *Ingestion*, *Storage*, *Syndication* — *Canonical* is permitted), vague 1–2 word stubs (e.g. *Reminders*, *Shift Swaps*, *Search*), and conversational user-story clauses (*"Allow user to..."*). Run the Non-Technical User Test before finalizing: an end user must immediately grasp what they achieve or what safety guarantee they get without an engineer translating it. Do **not** allow overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, libraries, config keys, CLI scripts) to leak into `feature.md` or `features.md` (those belong only in `tech-stack.md` or `docs/plans/development-plan.md` entries).
 - Keep feature boundaries at the capability level. Actor workflows, entry routes, and process trees belong in use-case files via `workflows/use-case.md`.
@@ -29,11 +31,11 @@
    - User named ID: derive path from `structure.features.featurePathPattern`.
    - User named title: match against inventory and open guide.
    - User requests new feature: select next unused ID in target Feature Group (`F-gg.nn`).
-3. For existing features, read current guide. Scan sibling feature guides under `structure.features.root` for boundary overlap, read `paths.glossary` (`docs/GLOSSARY.md`, and `<app>/docs/GLOSSARY.md` when present) for canonical Ubiquitous Language terms and banned synonyms, and scan `structure.concepts.root` (`docs/concepts/`) for existing `C-nn` domain concepts or macro-flows this feature participates in.
+3. For existing features, read current guide and inspect `status:` plus any `## Open Questions & Blockers` section (targeting those open blockers first if `status: blocked`). Scan sibling feature guides under `structure.features.root` for boundary overlap, read `paths.glossary` (`docs/GLOSSARY.md`, and `<app>/docs/GLOSSARY.md` when present) for canonical Ubiquitous Language terms and banned synonyms, and scan `structure.concepts.root` (`docs/concepts/`) for existing `C-nn` domain concepts or macro-flows this feature participates in.
 
 ### 2. Feature Discovery & Adversarial Boundary Pass
-1. Interview for:
-   - Capability added or refined.
+1. Interview for (or verify via the Zero-Guessing Sufficiency Gate in non-interactive mode):
+   - Capability added or refined, including resolution of any `## Open Questions & Blockers` on a blocked guide.
    - User persona and primary need.
    - Conceptual context: whether this feature belongs to or enforces an existing `C-nn` concept or macro-flow in `docs/concepts/`.
    - Feature title formulation: synthesize an active, user-focused Title Case name following canonical formulas (`[Capability] with/without [Safeguard]`, `[Verb], [Verb] & [Verb] [Domain Entity]`, or `[Verb] [Artifacts] & [Constraint]`). Test against the Non-Technical User Test.
@@ -43,7 +45,7 @@
    - User-level outputs (observable outcomes, information, or artifacts produced for the user).
    - Observable acceptance checks that prove completion without prescribing implementation or technology choices.
    - Prerequisite feature IDs or external dependencies.
-2. Restate candidate feature with marked `[inferred]` fields for confirmation.
+2. In interactive mode, restate candidate feature with marked `[inferred]` fields for confirmation. In non-interactive mode, never use `[inferred]` guesses: if any material detail remains ambiguous, set `status: blocked` and record `## Open Questions & Blockers`.
 3. Boundary & contradiction check:
    - Compare candidate against existing guides and inventory.
    - Ensure inputs, outputs, and acceptance criteria are testable, unambiguous, and free of leaked technical or technology selections.
@@ -51,7 +53,7 @@
 
 ### 3. File Generation & Inventory Sync
 1. Read `paths.featureTemplate` immediately before writing.
-2. Write or update feature guide retaining standard template heading order, linking any participating `C-nn` concepts under `## Conceptual Context` (or `None.`) and updating the corresponding concept files' `## Participating Features` section.
+2. Write or update feature guide retaining standard template heading order, setting `status: planned` and removing any resolved `## Open Questions & Blockers` section when ready (or stamping `status: blocked` with itemized `## Open Questions & Blockers` when ambiguous in non-interactive mode), linking any participating `C-nn` concepts under `## Conceptual Context` (or `None.`), and updating the corresponding concept files' `## Participating Features` section.
 3. Update feature inventory (`paths.features`):
    - Keep `paths.features` in non-technical, use-case language written for the user.
    - In `## Feature Checklist Summary`, keep only `- [ ] F-gg.nn: Feature Title` (never links or descriptions).
@@ -77,7 +79,7 @@ After successfully writing a new or materially updated feature guide, ask the us
 - [ ] Feature title adheres to the canonical naming standard (Title Case, action/safeguard-oriented, zero banned plumbing jargon like *Surgical*, *Storage*, *Ingestion*, or *Syndication*, zero vague 1-2 word stubs).
 - [ ] No overly technical decisions or product/technology selections leaked into the feature guide or inventory.
 - [ ] Acceptance criteria trace directly to inputs, outputs, and user need.
-- [ ] Cross-feature consistency check executed against sibling feature guides.
+- [ ] Sibling-feature consistency and canonical `status:` lifecycle (`planned` with no stale blockers, or `blocked` with itemized `## Open Questions & Blockers` in non-interactive mode) verified.
 - [ ] Zero placeholder use-case links; only real `UC-gg.nn.uu` links or `None yet.`.
 - [ ] Inventory entry updated in non-technical language with no links in `## Feature Checklist Summary` and a valid link in `## Feature Inventory`.
-- [ ] After a material write, offered the optional development plan handoff without blocking completion.
+- [ ] After a material write, offered the optional development plan handoff without blocking completion (or skipped cleanly in autonomous non-interactive mode).

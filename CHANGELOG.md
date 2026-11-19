@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.12.10 - Discreet development process cooperation, status lifecycle, and UC validation
+
+- Aligned `plan-product` with `dev-standards` (`v0.10.12`) Discreet Development Process (`DP-05.01`):
+  - Documented canonical `Document Status` (`planned`, `blocked`, `in-progress`, `awaiting-deferred-verify`, `completed`, plus `complete` alias), `Zero-Guessing Sufficiency Gate`, and `High-Risk Surface` (`Security/Auth`, `Money/Ledger`, `Prompt-Injection`) terms in `docs/GLOSSARY.md`.
+  - Updated `skills/plan-product/SKILL.md`, `workflows/{feature,use-case}.md`, and `commands/plan-{feature,use-case}.md` with `status: blocked` + `## Open Questions & Blockers` unblock recovery in interactive mode and strict Zero-Guessing Sufficiency Gate rules (zero `[inferred]` guesses) in non-interactive mode.
+  - Updated `workflows/development-plan.md`, `assets/templates/development-plan.md`, `commands/plan-development.md`, and `README.md` to flag High-Risk Surfaces in `- Gotchas:`, reference `Hydrogen` (`fast`), `Argon` (`mid`), and `Carbon` / `Gemini Orchestrator` (`deep`) subagent tiers, and align `dev-delivery` handoffs (`feat/<slug>`, Dual-Agent TDD, complexity-gated reviews, `awaiting-deferred-verify` roll-up).
+  - Hardened `src/validation/validate.mjs` to enforce allowed `feature.md` / `uc-*.md` `status:` lifecycle values, `status: blocked` <-> `## Open Questions & Blockers` invariants, non-canonical file detection inside `docs/features/f-gg.nn/`, and `uc-gg.nn.uu-*.md` frontmatter and relative link checks, plus fixed Windows non-elevated symlink tests in `validate.test.mjs` and `planning-contract.test.mjs`.
+
 ## 0.12.9 - Phase- and feature-scoped `dev-delivery` handoff and `Delivery Phase` Ubiquitous Language
 
 - Added canonical **`Delivery Phase (Phase pp)`** definition to `docs/GLOSSARY.md` aligned with `dev-standards` (`v0.10.10`).

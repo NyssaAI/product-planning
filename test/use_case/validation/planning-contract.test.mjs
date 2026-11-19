@@ -298,7 +298,7 @@ test('assemble CLI stages and checks portable, antigravity, and hermes bundles v
   assert.ok(existsSync(path.join(outDir, 'portable/plugin.json')));
 
   const linkPath = path.join(sandbox, 'link-dist');
-  symlinkSync(outDir, linkPath);
+  symlinkSync(outDir, linkPath, process.platform === 'win32' ? 'junction' : 'dir');
   assert.throws(() =>
     execFileSync(process.execPath, [assembleScript, 'check', '--output-dir', linkPath], {
       cwd: root,
