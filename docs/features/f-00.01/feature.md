@@ -17,6 +17,7 @@ Teams want their planning documents stored in the folders they already use for p
 ## Conceptual Context
 
 - [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — enforces `repo_root`-relative path resolution, `user_home` -> `repo_root` precedence, and pre-write safety checks.
+- [C-04: External Plugin Isolation & Ephemeral Factory Boundaries](../../concepts/c-04-external-plugin-isolation.md) — resolves `user_home`, opt-in `repo_root`, and `runtime_root` paths cleanly while keeping external plugin code out of consuming repositories.
 
 ## Use Cases
 

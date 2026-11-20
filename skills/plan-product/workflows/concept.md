@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user. Interview only for missing decisions.
 - Configured paths are `repo_root`-relative. Render Markdown links relative to the document containing the link.
-- Read `.nyssa-ai/plan-product/config.json` for paths and `paths.conceptTemplate` for file shape.
+- Resolve paths and `concept.md` template via zero-footprint precedence (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/` -> optional `<repo_root>/.nyssa-ai/plan-product/` override, without creating `.nyssa-ai/plan-product/` in `repo_root`).
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time only for missing required information.
 - Keep each concept document atomic and single-subject (typically 40–80 lines), classified by **Concept Kind** (`kind:` frontmatter — never `type:` or `*Type`) into one of two values:

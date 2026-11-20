@@ -29,6 +29,7 @@ Stakeholders can read the product and feature documents without needing technica
 - [C-01: Canonical Planning Taxonomy & Hierarchy](concepts/c-01-canonical-planning-taxonomy.md) — five-tier model (`Product Vision`, `C-nn`, `F-gg.nn`, `UC-gg.nn.uu`, `DP-pp.ss`) separating functional capability grouping from technical delivery order.
 - [C-02: End-to-End Product Planning Lifecycle](concepts/c-02-product-planning-lifecycle.md) — five-stage macro-flow from workspace setup and product discovery through feature boundary hardening, use-case mapping, and development plan sequencing.
 - [C-03: Path Authority & Non-Destructive Preservation](concepts/c-03-path-authority-and-preservation.md) — `user_home` -> `repo_root` path resolution, template-only detection, and merge-by-heading preservation of user-authored notes.
+- [C-04: External Plugin Isolation & Ephemeral Factory Boundaries](concepts/c-04-external-plugin-isolation.md) — zero-footprint external `plugin_root` isolation, ephemeral Tessl Cloud factory guards, 5-root config/state separation, and `.gitignore` boundary rules.
 
 ## Ubiquitous Language
 

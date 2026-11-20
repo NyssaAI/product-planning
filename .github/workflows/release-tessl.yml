@@ -1,0 +1,26 @@
+name: Publish release to Tessl Registry
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish-tessl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Tessl CLI
+        uses: tesslio/setup-tessl@v2
+        with:
+          token: ${{ secrets.TESSL_TOKEN }}
+
+      - name: Publish plugin to Tessl private registry
+        env:
+          TESSL_TOKEN: ${{ secrets.TESSL_TOKEN }}
+        run: tessl plugin publish --resolve-symlinks

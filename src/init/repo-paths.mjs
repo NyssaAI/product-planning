@@ -1,10 +1,12 @@
-// Responsibility: Enforce repo_root path containment, user_home -> repo_root configuration precedence, 4-step runtime_root resolution, and opt-in usage telemetry.
+// Responsibility: Enforce repo_root path containment, zero-footprint user_home -> repo_root configuration and template precedence, 4-step runtime_root resolution, and opt-in usage telemetry.
 // Public interface:
+// +-- resolveBundledAssetsDir(pluginRoot)
 // +-- isPathContained(repoRoot, candidate)
 // +-- resolveRepoContainedPath(repoRoot, configuredPath, label)
 // +-- resolveRepoRelativePath(repoRoot, configuredPath, label)
 // +-- validatePlanningConfig(config, label)
 // +-- resolvePlanningConfig(repoRoot, options)
+// +-- resolveTemplateContent(repoRoot, config, templateKey, bundledAssetFile, options)
 // +-- resolveRuntimeRoot(repoRoot, options)
 // +-- resolveUsageTelemetryDir(repoRoot, options)
 // +-- isUsageTelemetryEnabled(repoRoot, options)
@@ -15,7 +17,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ALLOWED_TOP_LEVEL_CONFIG_KEYS = new Set([
   'version',
   'paths',
@@ -24,6 +26,25 @@ const ALLOWED_TOP_LEVEL_CONFIG_KEYS = new Set([
   'telemetry',
 ]);
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+/**
+ * Resolve bundled skills/plan-product/assets directory from either src/init/ or Tessl-mirrored skills/plan-product/scripts/init/.
+ */
+export function resolveBundledAssetsDir(pluginRoot = null) {
+  if (pluginRoot) {
+    const resolved = path.resolve(pluginRoot);
+    const direct = path.join(resolved, 'skills/plan-product/assets');
+    if (existsSync(direct)) return direct;
+    const skillScoped = path.join(resolved, 'assets');
+    if (existsSync(skillScoped)) return skillScoped;
+    return direct;
+  }
+  const mirroredAssets = path.resolve(MODULE_DIR, '../../assets');
+  if (existsSync(path.join(mirroredAssets, 'config.json'))) {
+    return mirroredAssets;
+  }
+  return path.resolve(MODULE_DIR, '../../skills/plan-product/assets');
+}
 
 function mergeLayers(base, override) {
   if (!isObject(override)) return structuredClone(base);
@@ -183,17 +204,17 @@ export function validatePlanningConfig(config, label = 'config') {
 
 /**
  * Resolve effective plan-product configuration in order:
- * bundled plugin_root defaults -> user_home (Layer #1) -> repo_root (Layer #2 override).
+ * bundled plugin_root defaults -> user_home (Layer #1) -> optional repo_root (Layer #2 override).
  */
 export function resolvePlanningConfig(repoRoot, options = {}) {
   const resolvedRepoRoot = path.resolve(repoRoot);
-  const pluginRoot = options.pluginRoot ? path.resolve(options.pluginRoot) : PLUGIN_ROOT;
+  const assetsDir = resolveBundledAssetsDir(options.pluginRoot ?? null);
   const userHome = options.userHome === null
     ? null
     : path.resolve(options.userHome ?? os.homedir());
 
   const bundledDefaults = JSON.parse(
-    readFileSync(path.join(pluginRoot, 'skills/plan-product/assets/config.json'), 'utf8')
+    readFileSync(path.join(assetsDir, 'config.json'), 'utf8')
   );
   const userConfigPath = userHome
     ? path.join(userHome, '.nyssa-ai/plan-product/config.json')
@@ -206,8 +227,79 @@ export function resolvePlanningConfig(repoRoot, options = {}) {
     ? JSON.parse(readFileSync(repoConfigPath, 'utf8'))
     : {};
 
-  // Layer #1: user_home base defaults -> Layer #2: repo_root overrides.
-  return mergeLayers(mergeLayers(bundledDefaults, userConfig), repoConfig);
+  // Layer #1: user_home base defaults -> Layer #2: optional repo_root overrides.
+  const merged = mergeLayers(mergeLayers(bundledDefaults, userConfig), repoConfig);
+
+  // Keep structure.* aliases in sync when sparse user_home or repo_root overrides set paths.* only.
+  const syncAlias = (section, key, pathField) => {
+    const repoSetsPath = typeof repoConfig.paths?.[pathField] === 'string';
+    const repoSetsStruct = typeof repoConfig.structure?.[section]?.[key] === 'string';
+    const userSetsPath = typeof userConfig.paths?.[pathField] === 'string';
+    const userSetsStruct = typeof userConfig.structure?.[section]?.[key] === 'string';
+    if (repoSetsPath && !repoSetsStruct) {
+      merged.structure[section][key] = merged.paths[pathField];
+    } else if (repoSetsStruct && !repoSetsPath) {
+      merged.paths[pathField] = merged.structure[section][key];
+    } else if (userSetsPath && !userSetsStruct && !repoSetsStruct) {
+      merged.structure[section][key] = merged.paths[pathField];
+    } else if (userSetsStruct && !userSetsPath && !repoSetsPath) {
+      merged.paths[pathField] = merged.structure[section][key];
+    }
+  };
+  if (merged.structure?.features && merged.paths) {
+    syncAlias('features', 'inventory', 'features');
+    syncAlias('features', 'root', 'featureDocs');
+    if (typeof repoConfig.structure?.features?.featurePathPattern !== 'string') {
+      merged.structure.features.featurePathPattern = `${merged.structure.features.root}/${merged.structure.features.folderPattern}/${merged.structure.features.featureFile}`;
+    }
+    if (typeof repoConfig.structure?.features?.useCasePathPattern !== 'string') {
+      merged.structure.features.useCasePathPattern = `${merged.structure.features.root}/${merged.structure.features.folderPattern}/${merged.structure.features.useCaseFilePattern}`;
+    }
+  }
+  if (merged.structure?.concepts && merged.paths) {
+    syncAlias('concepts', 'root', 'concepts');
+    if (typeof repoConfig.structure?.concepts?.pathPattern !== 'string') {
+      merged.structure.concepts.pathPattern = `${merged.structure.concepts.root}/${merged.structure.concepts.filePattern}`;
+    }
+  }
+  if (merged.structure?.developmentPlan && merged.paths) {
+    syncAlias('developmentPlan', 'file', 'developmentPlan');
+  }
+  return merged;
+}
+
+/**
+ * Resolve starter template content without requiring copied templates inside repo_root:
+ * (1) existing repo-local configured template -> (2) user_home custom template -> (3) bundled plugin_root template.
+ */
+export function resolveTemplateContent(repoRoot, config, templateKey, bundledAssetFile, options = {}) {
+  const resolvedRepoRoot = path.resolve(repoRoot);
+  const assetsDir = resolveBundledAssetsDir(options.pluginRoot ?? null);
+  const userHome = options.userHome === null
+    ? null
+    : path.resolve(options.userHome ?? os.homedir());
+
+  const configuredRel = config?.paths?.[templateKey];
+  if (typeof configuredRel === 'string' && configuredRel.trim()) {
+    try {
+      const candidate = resolveRepoContainedPath(resolvedRepoRoot, configuredRel, `paths.${templateKey}`);
+      if (existsSync(candidate) && statSync(candidate).isFile()) {
+        return { source: 'repo', path: candidate, content: readFileSync(candidate, 'utf8') };
+      }
+    } catch {
+      // Fall through to user_home and bundled plugin defaults if path is not repo-local.
+    }
+  }
+
+  if (userHome) {
+    const userTemplate = path.join(userHome, '.nyssa-ai/plan-product/templates', bundledAssetFile);
+    if (existsSync(userTemplate) && statSync(userTemplate).isFile()) {
+      return { source: 'user_home', path: userTemplate, content: readFileSync(userTemplate, 'utf8') };
+    }
+  }
+
+  const bundledTemplate = path.join(assetsDir, 'templates', bundledAssetFile);
+  return { source: 'plugin_root', path: bundledTemplate, content: readFileSync(bundledTemplate, 'utf8') };
 }
 
 /**

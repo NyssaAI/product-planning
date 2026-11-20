@@ -160,10 +160,10 @@ function validateSchema(value, schema, label) {
   else if (schema.type === 'null') assert.equal(value, null, label);
 }
 
-test('fresh initialization satisfies the bundled schema and every template resolves', t => {
+test('opt-in writeConfig initialization satisfies the bundled schema and every template resolves', t => {
   const target = mkdtempSync(path.join(os.tmpdir(), 'planning-schema-test-'));
   t.after(() => rmSync(target, { recursive: true, force: true }));
-  initialize(target, { userHome: null });
+  initialize(target, { userHome: null, writeConfig: true });
   const config = JSON.parse(readFileSync(path.join(target, '.nyssa-ai/plan-product/config.json'), 'utf8'));
   validateSchema(config, json('skills/plan-product/assets/schema.json'), 'config');
   for (const [key, value] of Object.entries(config.paths)) {
@@ -245,7 +245,22 @@ test('release package ships Scale A src/ runtime and initializes without depende
   );
   assert.deepEqual(
     files.filter(file => file.startsWith('src/')),
-    ['src/init/init.mjs', 'src/init/repo-paths.mjs', 'src/migration/migrate.mjs', 'src/validation/validate.mjs']
+    [
+      'src/init/init.mjs',
+      'src/init/repo-paths.mjs',
+      'src/migration/migrate.mjs',
+      'src/validation/validate-docs.mjs',
+      'src/validation/validate.mjs',
+    ]
+  );
+  assert.deepEqual(
+    files.filter(file => file.startsWith('skills/plan-product/scripts/')),
+    [
+      'skills/plan-product/scripts/init/init.mjs',
+      'skills/plan-product/scripts/init/repo-paths.mjs',
+      'skills/plan-product/scripts/migration/migrate.mjs',
+      'skills/plan-product/scripts/validation/validate-docs.mjs',
+    ]
   );
   assert.deepEqual(
     files.filter(file => file.startsWith('skills/plan-product/workflows/')),
@@ -271,10 +286,19 @@ test('release package ships Scale A src/ runtime and initializes without depende
   const project = path.join(temp, 'project');
   mkdirSync(project);
   execFileSync(process.execPath, [path.join(installed, 'src/init/init.mjs')], { cwd: project });
-  assert.ok(existsSync(path.join(project, '.nyssa-ai/plan-product/config.json')));
-  assert.ok(existsSync(path.join(project, '.nyssa-ai/plan-product/templates/glossary.md')));
-  assert.ok(existsSync(path.join(project, '.nyssa-ai/plan-product/templates/development-plan.md')));
+  assert.equal(existsSync(path.join(project, '.nyssa-ai')), false);
   assert.ok(existsSync(path.join(project, 'docs/GLOSSARY.md')));
+  execFileSync(process.execPath, [path.join(installed, 'src/validation/validate-docs.mjs'), project]);
+
+  // Tessl-style skills-only bundle (zero top-level src/ present) runs init, migrate, and validate-docs cleanly
+  const tesslOnly = path.join(temp, 'tessl-only');
+  cpSync(path.join(installed, 'skills'), path.join(tesslOnly, 'skills'), { recursive: true });
+  const tesslProject = path.join(temp, 'tessl-project');
+  mkdirSync(tesslProject);
+  execFileSync(process.execPath, [path.join(tesslOnly, 'skills/plan-product/scripts/init/init.mjs'), tesslProject]);
+  assert.equal(existsSync(path.join(tesslProject, '.nyssa-ai')), false);
+  assert.ok(existsSync(path.join(tesslProject, 'docs/GLOSSARY.md')));
+  execFileSync(process.execPath, [path.join(tesslOnly, 'skills/plan-product/scripts/validation/validate-docs.mjs'), tesslProject]);
 });
 
 test('assemble CLI stages and checks portable, antigravity, and hermes bundles via --output-dir', t => {

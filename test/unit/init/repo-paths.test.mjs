@@ -175,7 +175,7 @@ test('schema.json and validatePlanningConfig validate optional runtimeRoot and t
   }
   assert.throws(() => validatePlanningConfig({ ...bundledConfig, runtimeRoot: '   ' }, 'config'));
 
-  // initialize preserves repo_root telemetry while keeping personal user_home runtimeRoot/telemetry out of committed repo config
+  // initialize in opt-in writeConfig mode keeps personal user_home runtimeRoot/telemetry out of committed repo config
   const userHome = tempDir(t);
   const repoRoot = tempDir(t);
   mkdirSync(path.join(userHome, '.nyssa-ai/plan-product'), { recursive: true });
@@ -183,7 +183,7 @@ test('schema.json and validatePlanningConfig validate optional runtimeRoot and t
     path.join(userHome, '.nyssa-ai/plan-product/config.json'),
     JSON.stringify({ runtimeRoot: path.join(userHome, 'personal-rt'), telemetry: { enabled: true } })
   );
-  initialize(repoRoot, { userHome });
+  initialize(repoRoot, { userHome, writeConfig: true });
   const writtenRepoConfig = JSON.parse(
     readFileSync(path.join(repoRoot, '.nyssa-ai/plan-product/config.json'), 'utf8')
   );

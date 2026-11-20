@@ -1,17 +1,62 @@
-.claude/
-.agents/
-.hermes/
-.cursor/
-.DS_Store
+# ignore all dot directories (covers .temp/, .agents/, .hermes/, .nyssa-ai/, .tessl/, .cloud-launch/, .claude/, .cursor/, etc.)
+# and whitelist only the tracked dot directories we actually want
+# =====================================================================================
+.*/
+!.github/
+!.github/**
+!.claude-plugin/
+!.claude-plugin/**
+!.tessl-plugin/
+!.tessl-plugin/**
+!.codex-plugin/
+!.codex-plugin/**
+!.cursor-plugin/
+!.cursor-plugin/**
+
+
+# ignore specific dirs everywhere
+# =====================================================================================
+# scratch & disallowed artifact outputs (never ignore docs/ or docs/plans/development-plan.md)
+artifacts/
+
+# node / ts / next.js
 node_modules/
 dist/
+build/
+out/
+
+# .NET / C#
 bin/
 obj/
-artifacts/
+
+# Testing & logs
+coverage/
+logs/
+
+# ignore certain file types everywhere
+# =====================================================================================
+*.bak
+*.tmp
+.env
+.env.*
+*.log
+
+# scratch evaluation outputs (stage eval run artifacts in .temp/evals/)
+!evals/**
 evals/results/
 evals/attempts/
-.temp/
-.nyssa-ai/*/runtime/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local tooling, caches & ephemeral Tessl Cloud root files (not covered by .*/)
+tsconfig.tsbuildinfo
+skills-lock.json
+launch-result.json
+
+# SQLite databases (keep committed CodeGraph snapshots tracked)
 *.db
+!docs/code-map/
 !docs/code-map/codegraph.db
 !**/docs/code-map/codegraph.db

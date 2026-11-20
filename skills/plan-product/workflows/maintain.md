@@ -15,14 +15,14 @@
   - Legacy roadmap file & step IDs: `docs/roadmap.md` containing `R-NNN` (e.g. `R-001`) or `R-pp.ss` (e.g. `R-01.01`).
   - Legacy concept frontmatter: `type: flow` or `type: domain-model`.
   - Legacy telemetry directory: `.nyssa-ai/plan-product/usage/` outside `runtime_root`.
-- Canonical Model v2 (`version: 2`) characteristics:
-  - Path authority: `.nyssa-ai/plan-product/config.json` (with `user_home` -> `repo_root` lookup) and `docs/GLOSSARY.md` (`paths.glossary`).
+- Canonical Model v2 (`version: 2`, Zero-Footprint) characteristics:
+  - Zero-footprint defaults: `docs/GLOSSARY.md`, `docs/product.md`, `docs/features.md`, `docs/tech-stack.md`, `docs/features/f-gg.nn/`, `docs/concepts/c-nn-*.md`, and `docs/plans/development-plan.md` resolve automatically from `plugin_root` -> `user_home` (`~/.nyssa-ai/plan-product/`) without requiring `.nyssa-ai/plan-product/` in `repo_root` (opt-in sparse `<repo_root>/.nyssa-ai/plan-product/config.json` is retained only for non-default paths).
   - Feature IDs: `F-gg.nn` (e.g. `F-00.01`, `F-01.01`, `F-03.01`), where `gg` is Feature Group and `nn` is Feature Number, in `docs/features/f-gg.nn/` with `group: "<gg>"` and distinct `## User Need` and `## Use Cases`.
   - Use case IDs and files: `UC-gg.nn.uu` in `uc-gg.nn.uu-short-slug.md`.
   - Concept frontmatter: `kind: flow` or `kind: domain-model` (**Concept Kind**).
   - Development Plan & Step IDs: `docs/plans/development-plan.md` with `DP-pp.ss` (e.g. `DP-01.01`), linking to `../features/...` and `../concepts/...`.
   - Runtime state: `.nyssa-ai/plan-product/runtime/usage/` under `runtime_root`.
-- Deterministic execution: Run `node "${PLUGIN_ROOT}/src/migration/migrate.mjs"` from `repo_root` to perform mechanical transformations without manual search-and-replace.
+- Deterministic execution: Run `node "${PLUGIN_ROOT}/src/migration/migrate.mjs"` locally (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/migration/migrate.mjs"` in Tessl Registry installs) from `repo_root` to perform mechanical transformations without manual search-and-replace, then validate via `validate-docs.mjs`.
 
 ---
 
