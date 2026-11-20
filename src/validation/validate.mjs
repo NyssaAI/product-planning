@@ -413,10 +413,24 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
     }
 
     if (repoRoot === PLUGIN_ROOT && options.skipTesslLint !== true) {
-      const lint = process.platform === 'win32'
-        ? spawnSync('cmd.exe', ['/d', '/s', '/c', 'tessl.cmd', 'plugin', 'lint', repoRoot], { encoding: 'utf8' })
-        : spawnSync('tessl', ['plugin', 'lint', repoRoot], { encoding: 'utf8' });
-      if (!lint.error && lint.status !== 9009) {
+      let lint = null;
+      if (process.platform === 'win32') {
+        const probe = spawnSync('where.exe', ['tessl'], { encoding: 'utf8' });
+        const tesslBin = probe.status === 0
+          ? probe.stdout.split(/\r?\n/).map(s => s.trim()).find(Boolean)
+          : null;
+        if (tesslBin) {
+          lint = /\.cmd$|\.bat$/i.test(tesslBin)
+            ? spawnSync('cmd.exe', ['/d', '/s', '/c', tesslBin, 'plugin', 'lint', repoRoot], { encoding: 'utf8' })
+            : spawnSync(tesslBin, ['plugin', 'lint', repoRoot], { encoding: 'utf8' });
+        }
+      } else {
+        const result = spawnSync('tessl', ['plugin', 'lint', repoRoot], { encoding: 'utf8' });
+        if (!result.error) {
+          lint = result;
+        }
+      }
+      if (lint && !lint.error) {
         if (lint.status === 0) {
           pass('tessl plugin lint passed');
         } else {
