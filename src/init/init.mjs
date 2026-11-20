@@ -1,4 +1,4 @@
-// Responsibility: Seed and repair repo_root planning configuration, schema, starter templates, and core overview documents non-destructively.
+// Responsibility: Seed missing core Model v2 planning documents non-destructively in zero-footprint mode (with opt-in --write-config and monorepo --unit support).
 // Public interface:
 // `-- initialize(repoRoot, options)
 
@@ -6,9 +6,13 @@ import { existsSync, readFileSync, mkdirSync, writeFileSync, statSync } from 'no
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolveRepoContainedPath, validatePlanningConfig } from './repo-paths.mjs';
+import {
+  resolveBundledAssetsDir,
+  resolveRepoContainedPath,
+  resolveTemplateContent,
+  validatePlanningConfig,
+} from './repo-paths.mjs';
 
-const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const readJson = file => JSON.parse(readFileSync(file, 'utf8'));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 
@@ -25,32 +29,38 @@ function fillMissing(existing, defaults, label = 'config') {
   return result;
 }
 
-function relativePath(repoRoot, value, label) {
+function relativePath(targetRoot, value, label) {
   if (typeof value !== 'string' || path.posix.isAbsolute(value) || path.win32.isAbsolute(value) || /^[A-Za-z]:/.test(value)) {
     throw new Error(`${label} must be repo-relative`);
   }
-  return resolveRepoContainedPath(repoRoot, value.replaceAll('\\', '/'), label);
+  return resolveRepoContainedPath(targetRoot, value.replaceAll('\\', '/'), label);
 }
 
 /**
- * Create missing planning assets in repo_root while preserving existing documents and custom templates.
+ * Seed missing core Model v2 planning documents in repo_root (or monorepo --unit) without writing .nyssa-ai/plan-product/ unless writeConfig is explicitly requested.
  */
 export function initialize(repoRoot = process.cwd(), options = {}) {
-  repoRoot = path.resolve(repoRoot);
-  const pluginRoot = options.pluginRoot ? path.resolve(options.pluginRoot) : PLUGIN_ROOT;
+  const baseRepoRoot = path.resolve(repoRoot);
+  const targetRoot = options.unit
+    ? relativePath(baseRepoRoot, options.unit, 'unit')
+    : baseRepoRoot;
+  mkdirSync(targetRoot, { recursive: true });
+
+  const assetsDir = resolveBundledAssetsDir(options.pluginRoot ?? null);
   const userHome = options.userHome === null
     ? null
     : path.resolve(options.userHome ?? os.homedir());
+  const writeConfig = options.writeConfig === true;
 
-  const legacyConfigFile = path.join(repoRoot, '.plan-product/config.json');
+  const legacyConfigFile = path.join(targetRoot, '.plan-product/config.json');
   if (existsSync(legacyConfigFile)) {
-    throw new Error('Legacy Model v1 or .plan-product/ state detected. Run "node <plugin_root>/src/migration/migrate.mjs" to upgrade to Model v2 (.nyssa-ai/plan-product/).');
+    throw new Error('Legacy Model v1 or .plan-product/ state detected. Run migrate.mjs to upgrade to Model v2.');
   }
-  if (existsSync(path.join(repoRoot, 'docs/roadmap.md'))) {
-    throw new Error('Legacy docs/roadmap.md detected. Run "node <plugin_root>/src/migration/migrate.mjs" to migrate to docs/plans/development-plan.md (DP-pp.ss).');
+  if (existsSync(path.join(targetRoot, 'docs/roadmap.md'))) {
+    throw new Error('Legacy docs/roadmap.md detected. Run migrate.mjs to migrate to docs/plans/development-plan.md (DP-pp.ss).');
   }
 
-  const bundledDefaults = readJson(path.join(pluginRoot, 'skills/plan-product/assets/config.json'));
+  const bundledDefaults = readJson(path.join(assetsDir, 'config.json'));
   const userConfigFile = userHome ? path.join(userHome, '.nyssa-ai/plan-product/config.json') : null;
   let userDefaults = bundledDefaults;
   if (userConfigFile && existsSync(userConfigFile)) {
@@ -61,16 +71,17 @@ export function initialize(repoRoot = process.cwd(), options = {}) {
     userDefaults = fillMissing(seedableUserConfig, bundledDefaults, 'user_home.config');
   }
 
-  const configFile = relativePath(repoRoot, '.nyssa-ai/plan-product/config.json', 'config');
-  const original = existsSync(configFile) ? readJson(configFile) : {};
+  const configFile = relativePath(targetRoot, '.nyssa-ai/plan-product/config.json', 'config');
+  const hasExistingRepoConfig = existsSync(configFile);
+  const original = hasExistingRepoConfig ? readJson(configFile) : {};
   if (isObject(original) && (original.paths?.roadmap !== undefined || original.structure?.roadmap !== undefined)) {
-    throw new Error('Legacy roadmap configuration detected. Run "node <plugin_root>/src/migration/migrate.mjs" to upgrade to developmentPlan (docs/plans/development-plan.md, DP-pp.ss).');
+    throw new Error('Legacy roadmap configuration detected. Run migrate.mjs to upgrade to developmentPlan (docs/plans/development-plan.md, DP-pp.ss).');
   }
   validatePlanningConfig(original, 'config');
 
-  // Seed missing repo_root fields from user_home (#1) merged over bundled plugin_root defaults.
+  // Resolve effective config: bundled plugin_root defaults -> user_home (#1) -> optional repo_root (#2).
   const config = fillMissing(original, userDefaults);
-  if (config.version === 1) throw new Error('Planning config version 1 is legacy. Run "node <plugin_root>/src/migration/migrate.mjs" to upgrade to version 2.');
+  if (config.version === 1) throw new Error('Planning config version 1 is legacy. Run migrate.mjs to upgrade to version 2.');
   if (config.version !== 2) throw new Error('Unsupported planning config version');
   validatePlanningConfig(config, 'config');
 
@@ -97,14 +108,14 @@ export function initialize(repoRoot = process.cwd(), options = {}) {
   }
 
   // Validate all configured paths before the first write (including symlink/junction containment).
-  for (const [name, value] of Object.entries(config.paths)) relativePath(repoRoot, value, `paths.${name}`);
+  for (const [name, value] of Object.entries(config.paths)) relativePath(targetRoot, value, `paths.${name}`);
   if (config.paths.repoRoot !== '.') throw new Error('paths.repoRoot must be .');
   for (const [section, keys] of Object.entries({
     features: ['inventory', 'root', 'featurePathPattern', 'useCasePathPattern'],
     concepts: ['root', 'pathPattern'],
     developmentPlan: ['file'],
   })) {
-    for (const key of keys) relativePath(repoRoot, config.structure[section][key], `structure.${section}.${key}`);
+    for (const key of keys) relativePath(targetRoot, config.structure[section][key], `structure.${section}.${key}`);
   }
   for (const [section, key] of [
     ['features', 'folderPattern'],
@@ -134,28 +145,38 @@ export function initialize(repoRoot = process.cwd(), options = {}) {
     }
     writes.set(key, { target, content });
   };
-  schedule(configFile, JSON.stringify(config, null, 2) + '\n');
-  for (const [key, source] of assets) {
-    const target = relativePath(repoRoot, config.paths[key], `paths.${key}`);
-    const content = readFileSync(path.join(pluginRoot, 'skills/plan-product/assets', source), 'utf8');
-    schedule(target, content);
+
+  // Only materialize .nyssa-ai/plan-product/ config, schema, and templates when explicitly opted in (--write-config).
+  if (writeConfig) {
+    schedule(configFile, JSON.stringify(config, null, 2) + '\n');
+    for (const [key, source] of assets) {
+      const target = relativePath(targetRoot, config.paths[key], `paths.${key}`);
+      const content = readFileSync(path.join(assetsDir, source), 'utf8');
+      schedule(target, content);
+    }
   }
+
   for (const name of ['glossary', 'product', 'features', 'techStack']) {
-    const template = relativePath(repoRoot, config.paths[`${name}Template`], `paths.${name}Template`);
-    const pending = [...writes.values()].find(row => row.target === template);
-    const content = existsSync(template) ? readFileSync(template, 'utf8') : pending.content;
-    schedule(relativePath(repoRoot, config.paths[name], `paths.${name}`), content);
+    const filename = { techStack: 'tech-stack' }[name] || name;
+    const templateKey = `${name}Template`;
+    const resolvedTemplate = resolveTemplateContent(targetRoot, config, templateKey, `${filename}.md`, {
+      pluginRoot: options.pluginRoot ?? null,
+      userHome,
+    });
+    const docTarget = relativePath(targetRoot, config.paths[name], `paths.${name}`);
+    schedule(docTarget, resolvedTemplate.content);
   }
-  const result = { created: [], updated: [], preserved: [] };
+
+  const result = { created: [], updated: [], preserved: [], zeroFootprint: !writeConfig };
   for (const { target } of writes.values()) {
     let ancestor = path.dirname(target);
     while (!existsSync(ancestor)) ancestor = path.dirname(ancestor);
     if (!statSync(ancestor).isDirectory()) throw new Error(`Planning output parent must be a directory: ${ancestor}`);
   }
   for (const { target, content } of writes.values()) {
-    const relative = path.relative(repoRoot, target).replaceAll('\\', '/');
+    const relative = path.relative(targetRoot, target).replaceAll('\\', '/');
     if (existsSync(target)) {
-      if (target === configFile && JSON.stringify(original) !== JSON.stringify(config)) {
+      if (writeConfig && target === configFile && JSON.stringify(original) !== JSON.stringify(config)) {
         writeFileSync(target, content);
         result.updated.push(relative);
       } else {
@@ -173,13 +194,22 @@ export function initialize(repoRoot = process.cwd(), options = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.length === 1 && args[0] === '--help') {
-    console.log('Usage: node <plugin_root>/src/init/init.mjs [--repo-root <repo_root> | <repo_root>]\nRun from repo_root or pass --repo-root. Creates missing planning config, schema, starter templates (including glossary.md and development-plan.md), and core documents in .nyssa-ai/plan-product/ and docs/. Existing content is preserved.');
+    console.log(
+      'Usage: node <plugin_root>/src/init/init.mjs [--repo-root <repo_root> | <repo_root>] [--unit <apps/...|tools/...>] [--write-config]\n' +
+      'Seeds missing canonical Model v2 core documents in docs/ (or <unit>/docs/) using zero-footprint user_home -> plugin_root templates without writing .nyssa-ai/plan-product/ unless --write-config is explicitly passed.'
+    );
   } else {
     let targetRepo = null;
+    let unit = null;
+    let writeConfig = false;
     let invalidArgs = false;
     for (let i = 0; i < args.length; i++) {
       if (args[i] === '--repo-root' && i + 1 < args.length) {
         targetRepo = args[++i];
+      } else if (args[i] === '--unit' && i + 1 < args.length) {
+        unit = args[++i];
+      } else if (args[i] === '--write-config') {
+        writeConfig = true;
       } else if (!args[i].startsWith('-') && targetRepo === null) {
         targetRepo = args[i];
       } else {
@@ -191,7 +221,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       process.exitCode = 1;
     } else {
       try {
-        console.log(JSON.stringify(initialize(targetRepo || process.cwd()), null, 2));
+        console.log(JSON.stringify(initialize(targetRepo || process.cwd(), { unit, writeConfig }), null, 2));
       } catch (error) {
         console.error(error.message);
         process.exitCode = 1;

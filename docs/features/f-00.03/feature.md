@@ -17,6 +17,7 @@ Teams want new planning documents to follow a predictable, readable layout witho
 ## Conceptual Context
 
 - [C-03: Path Authority & Non-Destructive Preservation](../../concepts/c-03-path-authority-and-preservation.md) — preserves custom starter templates and restores missing templates at their configured paths.
+- [C-04: External Plugin Isolation & Ephemeral Factory Boundaries](../../concepts/c-04-external-plugin-isolation.md) — resolves starter templates directly from `user_home` or external `plugin_root` without copying template files into consuming repositories by default.
 
 ## Use Cases
 

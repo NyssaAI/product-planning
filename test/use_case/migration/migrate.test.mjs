@@ -13,7 +13,7 @@ function fixture(t) {
   return root;
 }
 
-test('migrate upgrades Model v1 (.plan-product, F-101, UC-001, docs/roadmap.md R-001) to canonical Model v2 development-plan', t => {
+test('migrate upgrades Model v1 (.plan-product, F-101, UC-001, docs/roadmap.md R-001) to zero-footprint Model v2 development-plan', t => {
   const root = fixture(t);
   const v1Config = {
     version: 1,
@@ -67,13 +67,15 @@ test('migrate upgrades Model v1 (.plan-product, F-101, UC-001, docs/roadmap.md R
 
   const result = migrate(root);
   assert.equal(result.configUpgraded, true);
+  assert.equal(result.configPruned, true);
   assert.equal(result.featuresMigrated.length, 1);
   assert.equal(result.featuresMigrated[0].newId, 'F-01.01');
   assert.equal(result.useCasesMigrated.length, 1);
   assert.equal(result.useCasesMigrated[0].newUcId, 'UC-01.01.01');
 
-  assert.ok(existsSync(path.join(root, '.nyssa-ai/plan-product/config.json')));
+  // Stock default paths are pruned to zero-footprint (no .nyssa-ai/ or .plan-product/ left behind)
   assert.equal(existsSync(path.join(root, '.plan-product')), false);
+  assert.equal(existsSync(path.join(root, '.nyssa-ai')), false);
   assert.equal(existsSync(path.join(root, 'docs/roadmap.md')), false);
   assert.ok(existsSync(path.join(root, 'docs/plans/development-plan.md')));
   assert.ok(existsSync(path.join(root, 'docs/features/f-01.01/feature.md')));
@@ -87,15 +89,16 @@ test('migrate upgrades Model v1 (.plan-product, F-101, UC-001, docs/roadmap.md R
 
   const initRes = initialize(root, { userHome: null });
   assert.ok(initRes.created.includes('docs/GLOSSARY.md'));
-  assert.ok(initRes.created.includes('.nyssa-ai/plan-product/templates/glossary.md'));
-  assert.ok(initRes.created.includes('.nyssa-ai/plan-product/templates/development-plan.md'));
+  assert.equal(existsSync(path.join(root, '.nyssa-ai')), false);
   assert.doesNotThrow(() => validate(root));
 });
 
-test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:, and usage/ telemetry to canonical v2', t => {
+test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:, usage/ telemetry, and retains sparse non-default override only', t => {
   const root = fixture(t);
   mkdirSync(path.join(root, '.nyssa-ai/plan-product/usage'), { recursive: true });
+  mkdirSync(path.join(root, '.nyssa-ai/plan-product/templates'), { recursive: true });
   writeFileSync(path.join(root, '.nyssa-ai/plan-product/usage/telemetry.json'), '{"runs":1}\n');
+  writeFileSync(path.join(root, '.nyssa-ai/plan-product/templates/roadmap.md'), '# Legacy\n');
   writeFileSync(
     path.join(root, '.nyssa-ai/plan-product/config.json'),
     JSON.stringify({
@@ -105,7 +108,7 @@ test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:,
         product: 'docs/product.md',
         features: 'docs/features.md',
         techStack: 'docs/tech-stack.md',
-        featureDocs: 'docs/features',
+        featureDocs: 'apps/web/docs/features',
         concepts: 'docs/concepts',
         roadmap: 'docs/roadmap.md',
         roadmapTemplate: '.nyssa-ai/plan-product/templates/roadmap.md',
@@ -116,26 +119,37 @@ test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:,
     })
   );
   mkdirSync(path.join(root, 'docs/concepts'), { recursive: true });
-  mkdirSync(path.join(root, 'docs/features/f-01.01'), { recursive: true });
+  mkdirSync(path.join(root, 'apps/web/docs/features/f-01.01'), { recursive: true });
   writeFileSync(
     path.join(root, 'docs/concepts/c-01-shift-flow.md'),
-    '---\nid: C-01\ntype: flow\nstatus: active\n---\n\n# C-01: Shift Flow\n\n## Participating Features\n- [F-01.01](../features/f-01.01/feature.md)\n'
+    '---\nid: C-01\ntype: flow\nstatus: active\n---\n\n# C-01: Shift Flow\n\n## Participating Features\n- [F-01.01](../../apps/web/docs/features/f-01.01/feature.md)\n'
   );
   writeFileSync(
-    path.join(root, 'docs/features/f-01.01/feature.md'),
-    '---\nid: F-01.01\ngroup: "01"\nstatus: planned\n---\n\n# F-01.01 Exchange Shifts with Coordinator Approval\n\n## Conceptual Context\n- [C-01](../../concepts/c-01-shift-flow.md)\n'
+    path.join(root, 'apps/web/docs/features/f-01.01/feature.md'),
+    '---\nid: F-01.01\ngroup: "01"\nstatus: planned\n---\n\n# F-01.01 Exchange Shifts with Coordinator Approval\n\n## Conceptual Context\n- [C-01](../../../../../docs/concepts/c-01-shift-flow.md)\n'
   );
   writeFileSync(
     path.join(root, 'docs/roadmap.md'),
-    '# Product Roadmap\n\n- [ ] R-01.01: Exchange shifts — [F-01.01](features/f-01.01/feature.md)\n    - Concepts: [C-01](concepts/c-01-shift-flow.md)\n    - Verify: swap shift.\n'
+    '# Product Roadmap\n\n- [ ] R-01.01: Exchange shifts — [F-01.01](../apps/web/docs/features/f-01.01/feature.md)\n    - Concepts: [C-01](concepts/c-01-shift-flow.md)\n    - Verify: swap shift.\n'
   );
 
-  migrate(root);
+  const res = migrate(root);
+  assert.equal(res.configPruned, false);
   initialize(root, { userHome: null });
 
   assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/usage')), false);
+  assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/templates')), false);
+  assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/schema.json')), false);
   assert.ok(existsSync(path.join(root, '.nyssa-ai/plan-product/runtime/usage/telemetry.json')));
   assert.equal(existsSync(path.join(root, 'docs/roadmap.md')), false);
+
+  const sparseConfig = JSON.parse(readFileSync(path.join(root, '.nyssa-ai/plan-product/config.json'), 'utf8'));
+  assert.deepEqual(sparseConfig, {
+    version: 2,
+    paths: {
+      featureDocs: 'apps/web/docs/features',
+    },
+  });
 
   const conceptText = readFileSync(path.join(root, 'docs/concepts/c-01-shift-flow.md'), 'utf8');
   assert.match(conceptText, /^kind: flow$/m);
@@ -143,8 +157,20 @@ test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:,
 
   const dpText = readFileSync(path.join(root, 'docs/plans/development-plan.md'), 'utf8');
   assert.match(dpText, /DP-01\.01:/);
-  assert.match(dpText, /\(\.\.\/features\/f-01\.01\/feature\.md\)/);
   assert.match(dpText, /\(\.\.\/concepts\/c-01-shift-flow\.md\)/);
 
   assert.doesNotThrow(() => validate(root));
+});
+
+test('migrate works cleanly even when no legacy config.json exists in repo_root', t => {
+  const root = fixture(t);
+  mkdirSync(path.join(root, 'docs'), { recursive: true });
+  writeFileSync(
+    path.join(root, 'docs/roadmap.md'),
+    '# Product Roadmap\n\n- [ ] R-01.01: Bootstrap service\n    - Verify: run tests.\n'
+  );
+  migrate(root);
+  assert.equal(existsSync(path.join(root, 'docs/roadmap.md')), false);
+  assert.equal(existsSync(path.join(root, '.nyssa-ai')), false);
+  assert.match(readFileSync(path.join(root, 'docs/plans/development-plan.md'), 'utf8'), /DP-01\.01:/);
 });

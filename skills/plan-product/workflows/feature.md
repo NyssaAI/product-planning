@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user. Interview only for missing decisions.
 - Configured paths are `repo_root`-relative. Render Markdown links relative to the document containing the link.
-- Read `.nyssa-ai/plan-product/config.json` for paths and `paths.featureTemplate` for file shape.
+- Resolve paths and `feature.md` template via zero-footprint precedence (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/` -> optional `<repo_root>/.nyssa-ai/plan-product/` override, without creating `.nyssa-ai/plan-product/` in `repo_root`). Never emit `.tessl/plugins/...` or internal `SKILL.md` paths into committed docs or `## Open Questions & Blockers`.
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time only for missing required information.
 - Do not invent feature ownership, user need, acceptance checks, dependencies, or delivery status. Mark inferred items as `[inferred]` and confirm them in interactive mode.

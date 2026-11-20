@@ -1,12 +1,12 @@
-// Responsibility: Migrate legacy Model v1 and legacy roadmap/usage assets in repo_root to canonical Model v2 development-plan and UL contracts.
+// Responsibility: Migrate legacy Model v1 and legacy roadmap/usage/in-repo-config assets in repo_root to zero-footprint canonical Model v2 development-plan and UL contracts.
 // Public interface:
-// `-- migrate(repoRoot)
+// `-- migrate(repoRoot, options)
 
 import { existsSync, readFileSync, readdirSync, renameSync, writeFileSync, rmSync, mkdirSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveBundledAssetsDir } from '../init/repo-paths.mjs';
 
-const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const readJson = file => JSON.parse(readFileSync(file, 'utf8'));
 
 function rewriteDevelopmentPlanLinks(content, movedDeeper) {
@@ -32,6 +32,10 @@ function rewriteDevelopmentPlanLinks(content, movedDeeper) {
 
   if (movedDeeper) {
     updated = updated.replace(
+      /\]\((\.\.\/[^)]+)\)/g,
+      '](../$1)'
+    );
+    updated = updated.replace(
       /\]\(((?!\.\.\/|https?:\/\/|#|\/|file:\/\/)(?:features|concepts|specs|learnings)\/[^)]+)\)/g,
       '](../$1)'
     );
@@ -43,31 +47,62 @@ function rewriteDevelopmentPlanLinks(content, movedDeeper) {
   return updated;
 }
 
+function extractCustomOverrides(config, bundledDefaults) {
+  const customPaths = {};
+  const pathKeysToCompare = [
+    'glossary',
+    'product',
+    'features',
+    'techStack',
+    'featureDocs',
+    'concepts',
+    'developmentPlan',
+  ];
+  for (const key of pathKeysToCompare) {
+    const val = config.paths?.[key];
+    if (typeof val === 'string' && val.trim() && val !== bundledDefaults.paths[key]) {
+      customPaths[key] = val;
+    }
+  }
+  if (Object.keys(customPaths).length === 0) {
+    return null;
+  }
+  return {
+    version: 2,
+    paths: customPaths,
+  };
+}
+
 /**
- * Upgrade Model v1 (.plan-product/, F-Nxx, UC-nnn, R-NNN) and legacy v2 roadmap/concept/usage layouts to canonical Model v2.
+ * Upgrade Model v1 (.plan-product/, F-Nxx, UC-nnn, R-NNN) and legacy v2 roadmap/concept/usage/config layouts to zero-footprint canonical Model v2.
  */
-export function migrate(repoRoot = process.cwd()) {
+export function migrate(repoRoot = process.cwd(), options = {}) {
   repoRoot = path.resolve(repoRoot);
+  const assetsDir = resolveBundledAssetsDir(options.pluginRoot ?? null);
+  const bundledDefaults = readJson(path.join(assetsDir, 'config.json'));
 
   const legacyConfigFile = path.join(repoRoot, '.plan-product/config.json');
   const targetConfigFile = path.join(repoRoot, '.nyssa-ai/plan-product/config.json');
 
-  let configFile = targetConfigFile;
+  let config = {};
   let isLegacyLocation = false;
+  let hadRepoConfig = false;
 
   if (existsSync(legacyConfigFile)) {
-    configFile = legacyConfigFile;
+    config = readJson(legacyConfigFile);
     isLegacyLocation = true;
-  } else if (!existsSync(targetConfigFile)) {
-    throw new Error(`Cannot find config at ${targetConfigFile} or ${legacyConfigFile}`);
+    hadRepoConfig = true;
+  } else if (existsSync(targetConfigFile)) {
+    config = readJson(targetConfigFile);
+    hadRepoConfig = true;
   }
 
-  const config = readJson(configFile);
   const results = {
     featuresMigrated: [],
     useCasesMigrated: [],
     filesUpdated: [],
     configUpgraded: false,
+    configPruned: false,
   };
 
   const featureRootRel = config.structure?.features?.root || config.paths?.featureDocs || 'docs/features';
@@ -176,7 +211,6 @@ export function migrate(repoRoot = process.cwd()) {
       results.featuresMigrated.push({ oldId: info.oldId, newId: info.newId, folder: info.newFolder });
     }
 
-    // Also update R-pp.ss / docs/roadmap.md references inside already-v2 feature folders.
     for (const dirEntry of readdirSync(featureRoot, { withFileTypes: true }).filter(e => e.isDirectory())) {
       const dirPath = path.join(featureRoot, dirEntry.name);
       for (const mdFile of readdirSync(dirPath).filter(f => f.endsWith('.md'))) {
@@ -308,75 +342,41 @@ export function migrate(repoRoot = process.cwd()) {
     rmSync(legacyUsageDir, { recursive: true, force: true });
   }
 
-  // Upgrade config paths & structure to Model v2 (.nyssa-ai/plan-product/, glossary, developmentPlan).
-  config.version = 2;
-  config.paths = config.paths || {};
-  for (const [key, val] of Object.entries(config.paths)) {
-    if (typeof val === 'string' && val.startsWith('.plan-product/')) {
-      config.paths[key] = val.replace(/^\.plan-product\//, '.nyssa-ai/plan-product/');
+  // Zero-footprint config reconciliation: prune copied schema/templates and keep a minimal sparse override ONLY if non-default paths exist.
+  const targetDir = path.join(repoRoot, '.nyssa-ai/plan-product');
+  const targetSchemaFile = path.join(targetDir, 'schema.json');
+  const targetTemplatesDir = path.join(targetDir, 'templates');
+  if (existsSync(targetSchemaFile)) {
+    rmSync(targetSchemaFile, { force: true });
+  }
+  if (existsSync(targetTemplatesDir)) {
+    rmSync(targetTemplatesDir, { recursive: true, force: true });
+  }
+
+  if (hadRepoConfig) {
+    config.paths = config.paths || {};
+    config.paths.developmentPlan = nextDevPlanRel;
+    const sparseOverrides = extractCustomOverrides(config, bundledDefaults);
+    if (sparseOverrides) {
+      mkdirSync(targetDir, { recursive: true });
+      writeFileSync(targetConfigFile, JSON.stringify(sparseOverrides, null, 2) + '\n');
+      results.configUpgraded = true;
+      results.filesUpdated.push(path.relative(repoRoot, targetConfigFile).replaceAll('\\', '/'));
+    } else {
+      if (existsSync(targetConfigFile)) {
+        rmSync(targetConfigFile, { force: true });
+      }
+      // Remove empty .nyssa-ai/plan-product (and empty .nyssa-ai) while preserving runtime/.
+      if (existsSync(targetDir) && readdirSync(targetDir).length === 0) {
+        rmSync(targetDir, { recursive: true, force: true });
+      }
+      const nyssaDir = path.join(repoRoot, '.nyssa-ai');
+      if (existsSync(nyssaDir) && readdirSync(nyssaDir).length === 0) {
+        rmSync(nyssaDir, { recursive: true, force: true });
+      }
+      results.configUpgraded = true;
+      results.configPruned = true;
     }
-  }
-  delete config.paths.roadmap;
-  delete config.paths.roadmapTemplate;
-  if (!config.paths.repoRoot) config.paths.repoRoot = '.';
-  if (!config.paths.glossary) config.paths.glossary = 'docs/GLOSSARY.md';
-  if (!config.paths.glossaryTemplate) config.paths.glossaryTemplate = '.nyssa-ai/plan-product/templates/glossary.md';
-  config.paths.developmentPlan = nextDevPlanRel;
-  if (!config.paths.developmentPlanTemplate) {
-    config.paths.developmentPlanTemplate = '.nyssa-ai/plan-product/templates/development-plan.md';
-  }
-  if (!config.paths.configSchema) config.paths.configSchema = '.nyssa-ai/plan-product/schema.json';
-  if (!config.paths.templates) config.paths.templates = '.nyssa-ai/plan-product/templates';
-
-  config.structure = config.structure || {};
-  config.structure.features = config.structure.features || {};
-  config.structure.features.inventory = config.structure.features.inventory || config.paths.features || 'docs/features.md';
-  config.structure.features.root = config.structure.features.root || featureRootRel;
-  config.structure.features.idPattern = 'F-gg.nn';
-  config.structure.features.folderPattern = 'f-gg.nn';
-  config.structure.features.featureFile = config.structure.features.featureFile || 'feature.md';
-  config.structure.features.featurePathPattern = `${featureRootRel}/f-gg.nn/feature.md`;
-  config.structure.features.useCaseIdPattern = 'UC-gg.nn.uu';
-  config.structure.features.useCaseFilePattern = 'uc-gg.nn.uu-short-slug.md';
-  config.structure.features.useCasePathPattern = `${featureRootRel}/f-gg.nn/uc-gg.nn.uu-short-slug.md`;
-
-  config.structure.concepts = config.structure.concepts || {
-    root: config.paths.concepts || 'docs/concepts',
-    idPattern: 'C-nn',
-    filePattern: 'c-nn-short-slug.md',
-    pathPattern: 'docs/concepts/c-nn-short-slug.md',
-  };
-
-  delete config.structure.roadmap;
-  config.structure.developmentPlan = {
-    file: nextDevPlanRel,
-    idPattern: 'DP-pp.ss',
-  };
-
-  mkdirSync(path.dirname(targetConfigFile), { recursive: true });
-  writeFileSync(targetConfigFile, JSON.stringify(config, null, 2) + '\n');
-  results.configUpgraded = true;
-  results.filesUpdated.push(path.relative(repoRoot, targetConfigFile).replaceAll('\\', '/'));
-
-  const targetSchemaFile = path.join(repoRoot, '.nyssa-ai/plan-product/schema.json');
-  const bundleSchema = path.join(PLUGIN_ROOT, 'skills/plan-product/assets/schema.json');
-  if (existsSync(bundleSchema)) {
-    writeFileSync(targetSchemaFile, readFileSync(bundleSchema, 'utf8'));
-    results.filesUpdated.push(path.relative(repoRoot, targetSchemaFile).replaceAll('\\', '/'));
-  }
-
-  const legacyTemplatesDir = path.join(repoRoot, '.plan-product/templates');
-  const targetTemplatesDir = path.join(repoRoot, '.nyssa-ai/plan-product/templates');
-  if (existsSync(legacyTemplatesDir)) {
-    mkdirSync(targetTemplatesDir, { recursive: true });
-    for (const f of readdirSync(legacyTemplatesDir)) {
-      if (f === 'roadmap.md') continue;
-      cpSync(path.join(legacyTemplatesDir, f), path.join(targetTemplatesDir, f));
-    }
-  }
-  const staleRoadmapTemplate = path.join(targetTemplatesDir, 'roadmap.md');
-  if (existsSync(staleRoadmapTemplate)) {
-    rmSync(staleRoadmapTemplate, { force: true });
   }
 
   if (isLegacyLocation && existsSync(path.join(repoRoot, '.plan-product'))) {
@@ -389,7 +389,10 @@ export function migrate(repoRoot = process.cwd()) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.length === 1 && args[0] === '--help') {
-    console.log('Usage: node <plugin_root>/src/migration/migrate.mjs [--repo-root <repo_root> | <repo_root>]\nMigrates planning assets from Model v1 (.plan-product/, F-Nxx, UC-nnn, R-NNN) and legacy v2 roadmaps (docs/roadmap.md, R-pp.ss) to canonical Model v2 (.nyssa-ai/plan-product/, F-gg.nn, UC-gg.nn.uu, docs/plans/development-plan.md, DP-pp.ss).');
+    console.log(
+      'Usage: node <plugin_root>/src/migration/migrate.mjs [--repo-root <repo_root> | <repo_root>]\n' +
+      'Migrates planning assets from Model v1 (.plan-product/, F-Nxx, UC-nnn, R-NNN) and legacy v2 roadmaps/configs to zero-footprint canonical Model v2 (F-gg.nn, UC-gg.nn.uu, docs/plans/development-plan.md, DP-pp.ss).'
+    );
   } else {
     try {
       let targetRepo = null;

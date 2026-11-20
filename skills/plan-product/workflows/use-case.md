@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user.
 - Configured paths are `repo_root`-relative. Render links relative to document location.
-- Read `.nyssa-ai/plan-product/config.json` for paths and `paths.useCaseTemplate` for file shape.
+- Resolve paths and `use-case.md` template via zero-footprint precedence (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/` -> optional `<repo_root>/.nyssa-ai/plan-product/` override, without creating `.nyssa-ai/plan-product/` in `repo_root`). Never emit `.tessl/plugins/...` or internal `SKILL.md` paths into committed docs or `## Open Questions & Blockers`.
 - Preserve existing user-authored content unless explicit replacement is requested.
 - Ask one blocking question at a time.
 - Do not invent a happy path from the feature summary. The user must explain workflow steps in interactive mode, or every step, trigger, outcome, and failure path must be unambiguously evidenced under the Zero-Guessing Sufficiency Gate in non-interactive mode.

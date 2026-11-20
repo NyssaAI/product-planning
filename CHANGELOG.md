@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.13.0 - Zero-footprint default, self-contained Tessl Registry tile scripts, and external plugin isolation
+
+- **Zero-Footprint Default & User-Level Config Precedence:**
+  - Updated `src/init/init.mjs` and `src/init/repo-paths.mjs` so initialization writes only starter `docs/` files (`GLOSSARY.md`, `product.md`, `features.md`, `tech-stack.md`) with zero `.nyssa-ai/plan-product/` files scaffolded into consuming repositories by default (`--write-config` is strictly opt-in for non-standard layouts, and `--unit` targets monorepo `<unit>/docs/` directly).
+  - Updated template and path resolution to layer `plugin_root` packaged assets -> optional user-level `~/.nyssa-ai/plan-product/` -> rare opt-in `<repo_root>/.nyssa-ai/plan-product/config.json`, keeping sparse path/structure overrides synchronized cleanly.
+  - Updated `src/migration/migrate.mjs` to work without legacy `config.json`, prune stock `.nyssa-ai/plan-product/` configs and copied templates (retaining sparse overrides only for non-default paths), and rewrite `../` links when migrating `docs/roadmap.md` to `docs/plans/development-plan.md`.
+- **Self-Contained Tessl Registry Tile & Automated Release Workflow:**
+  - Extracted pure consumer document validator `src/validation/validate-docs.mjs` (zero maintainer dependency) and mirrored `init.mjs`, `repo-paths.mjs`, `migrate.mjs`, and `validate-docs.mjs` under `skills/plan-product/scripts/` via `scripts/assemble.mjs` so Tessl Registry (`skills/`-only) installs run deterministically without top-level `src/`.
+  - Added `.github/workflows/release-tessl.yml` to publish `nyssa-ai/plan-product` to the private Tessl Registry on `v*.*.*` tags, updated `skills/plan-product/SKILL.md` and all six `workflows/*.md` with dual local/Tessl script resolution and Public-Repo No-Skill-Leak rules, and updated `test/` suites to verify skills-only Tessl execution.
+- **External Plugin Isolation & Clean `.gitignore` Baseline:**
+  - Added `docs/concepts/c-04-external-plugin-isolation.md` (linked from `docs/product.md`, `F-00.01`, and `F-00.03`) codifying zero-wrapper Option A `tessl.json`, global Tessl Registry consumption, and minimal `.*/` + `launch-result.json` `.gitignore` discipline, and aligned repository `.gitignore` to Profile C.
+
 ## 0.12.10 - Discreet development process cooperation, status lifecycle, and UC validation
 
 - Aligned `plan-product` with `dev-standards` (`v0.10.12`) Discreet Development Process (`DP-05.01`):

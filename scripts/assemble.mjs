@@ -19,6 +19,12 @@ import { fileURLToPath } from 'node:url';
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PLUGIN_SCHEMA_V1 = 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json';
 const ANTIGRAVITY_PLUGIN_SCHEMA_V1 = 'https://antigravity.google/schemas/v1/plugin.json';
+const SKILL_RUNTIME_MIRRORS = [
+  ['src/init/repo-paths.mjs', 'skills/plan-product/scripts/init/repo-paths.mjs'],
+  ['src/init/init.mjs', 'skills/plan-product/scripts/init/init.mjs'],
+  ['src/migration/migrate.mjs', 'skills/plan-product/scripts/migration/migrate.mjs'],
+  ['src/validation/validate-docs.mjs', 'skills/plan-product/scripts/validation/validate-docs.mjs'],
+];
 const IGNORED_BUNDLE_NAMES = new Set([
   '.DS_Store',
   '__pycache__',
@@ -403,6 +409,30 @@ export function assemble(mode = 'check', options = {}) {
 
   const rootManifestBuffers = {};
   let drifted = false;
+  for (const [srcRel, mirrorRel] of SKILL_RUNTIME_MIRRORS) {
+    const srcPath = path.join(targetRoot, srcRel);
+    const mirrorPath = path.join(targetRoot, mirrorRel);
+    if (!existsSync(srcPath)) {
+      throw new Error(`Missing canonical runtime source for skill mirror: ${srcRel}`);
+    }
+    if (lstatSync(mirrorPath, { throwIfNoEntry: false })?.isSymbolicLink()) {
+      throw new Error(`Unsafe symbolic link at mirror path: ${mirrorRel}`);
+    }
+    const srcBytes = readFileSync(srcPath);
+    if (mode === 'write') {
+      const existingBytes = existsSync(mirrorPath) ? readFileSync(mirrorPath) : null;
+      if (!existingBytes || !normalizeCrlfBytes(existingBytes).equals(normalizeCrlfBytes(srcBytes))) {
+        mkdirSync(path.dirname(mirrorPath), { recursive: true });
+        writeFileSync(mirrorPath, srcBytes);
+        console.log(`Updated ${mirrorRel}`);
+      }
+    } else {
+      if (!existsSync(mirrorPath) || !normalizeCrlfBytes(readFileSync(mirrorPath)).equals(normalizeCrlfBytes(srcBytes))) {
+        console.error(`Drift in ${mirrorRel}: mirrored runtime script does not match ${srcRel}`);
+        drifted = true;
+      }
+    }
+  }
   for (const { file, generate } of harnessAdapters) {
     const generated = generate();
     const contentBytes = encodeJson(generated);
