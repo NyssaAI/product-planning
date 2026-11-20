@@ -1,7 +1,7 @@
 # Latest plugin evaluation
 
 Generated from [matrix.json](matrix.json), [scenarios/product-planning/cases.json](scenarios/product-planning/cases.json), [waza/skills/plan-product/eval.yaml](waza/skills/plan-product/eval.yaml), and verified `.temp/evals/evidence/` receipts by `node evals/report.mjs generate`.
-Candidate SHA-256: `ade7b33f5739bb4cbf474ae6a35d7dc1192ee230b2ea10d89858245475989eb6`. Suite revision: `0.13.0`.
+Candidate SHA-256: `6e99b64f4954df11a4baea5db5383c4196c9de8b5ee2b4b786b12af883a81eae`. Suite revision: `0.13.0`.
 
 A missing or failing required row blocks release. A consistent report does not imply release readiness.
 
