@@ -4,11 +4,11 @@ argument-hint: "[feature id or name, e.g. F-01.01 or Set Up Work Folders, User P
 ---
 
 > [!IMPORTANT] Scope Directive
-> Entrypoint command for defining individual features. Invokes the `plan-product` facade skill and executes its internal `workflows/feature.md` runbook.
+> Entrypoint command for defining individual features. Invokes the `plan-product` facade skill and executes its internal `references/workflow-feature.md` runbook.
 
 # plan-feature - define a feature
 
-Load the `plan-product` skill and execute its `workflows/feature.md` runbook. The workflow owns the boundary-confirmation step, the `[inferred]` marking, and the cross-feature uniqueness and contradiction pass; this command file is only the entry point.
+Load the `plan-product` skill and execute its `references/workflow-feature.md` runbook. The workflow owns the boundary-confirmation step, the `[inferred]` marking, and the cross-feature uniqueness and contradiction pass; this command file is only the entry point.
 
 Interview the user and create or update one plan-product feature guide. Confirm the feature boundary before writing, then check for duplicate or contradictory ownership across existing feature guides.
 

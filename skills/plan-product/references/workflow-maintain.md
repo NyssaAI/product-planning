@@ -1,7 +1,7 @@
 # Workflow: Model Versioning & Document Maintenance
 
 > [!IMPORTANT] Scope Directive
-> This workflow upgrades, validates, and maintains product planning documents across schema/model versions. It encapsulates legacy Model v1 knowledge (`.plan-product/`, `F-Nxx`, `UC-nnn`, `R-NNN`, `phase:` frontmatter, singular `## Use Case`) and legacy pre-rename v2 artifacts (`docs/roadmap.md`, `R-pp.ss`, concept `type:` frontmatter, `.nyssa-ai/plan-product/usage/`), migrating repositories to zero-footprint canonical Model v2 (`docs/GLOSSARY.md`, `F-gg.nn`, `UC-gg.nn.uu`, `docs/plans/development-plan.md`, `DP-pp.ss`, `group:` and `kind:` frontmatter, `.nyssa-ai/plan-product/runtime/usage/`, pruning copied schemas/templates and retaining sparse `.nyssa-ai/plan-product/config.json` only for non-default paths). Deterministic file and link migrations are executed via `src/migration/migrate.mjs` (or `skills/plan-product/scripts/migration/migrate.mjs` in Tessl installs).
+> This workflow upgrades, validates, and maintains product planning documents across schema/model versions. It encapsulates legacy Model v1 knowledge (`.plan-product/`, `F-Nxx`, `UC-nnn`, `R-NNN`, `phase:` frontmatter, singular `## Use Case`) and legacy pre-rename v2 artifacts (`docs/roadmap.md`, `R-pp.ss`, concept `type:` frontmatter, `.nyssa-ai/plan-product/usage/`), migrating repositories to zero-footprint canonical Model v2 (`docs/GLOSSARY.md`, `F-gg.nn`, `UC-gg.nn.uu`, `docs/plans/development-plan.md`, `DP-pp.ss`, `group:` and `kind:` frontmatter, `.nyssa-ai/plan-product/runtime/usage/`, pruning copied schemas/templates and retaining sparse `.nyssa-ai/plan-product/config.json` only for non-default paths). Deterministic file and link migrations are executed via `<skill-dir>/scripts/migration/migrate.mjs`.
 
 ---
 
@@ -22,7 +22,7 @@
   - Concept frontmatter: `kind: flow` or `kind: domain-model` (**Concept Kind**).
   - Development Plan & Step IDs: `docs/plans/development-plan.md` with `DP-pp.ss` (e.g. `DP-01.01`), linking to `../features/...` and `../concepts/...`.
   - Runtime state: `.nyssa-ai/plan-product/runtime/usage/` under `runtime_root`.
-- Deterministic execution: Run `node "${PLUGIN_ROOT}/src/migration/migrate.mjs"` locally (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/migration/migrate.mjs"` in Tessl Registry installs) from `repo_root` to perform mechanical transformations without manual search-and-replace, then validate via `validate-docs.mjs`.
+- Deterministic execution: Run `node "<skill-dir>/scripts/migration/migrate.mjs"` from `repo_root` to perform mechanical transformations without manual search-and-replace, then validate via `node "<skill-dir>/scripts/validation/validate-docs.mjs"`.
 
 ---
 
@@ -40,7 +40,7 @@
    - Request confirmation before running migration.
 
 ### 2. Migration Execution
-1. Run `node "${PLUGIN_ROOT}/src/migration/migrate.mjs"` locally (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/migration/migrate.mjs"` in Tessl Registry installs) from `repo_root`, resolving `${PLUGIN_ROOT}` in order of precedence: `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, `.tessl/plugins/nyssa-ai/plan-product`, `~/.tessl/plugins/nyssa-ai/plan-product`, or relative path to the installed plugin.
+1. Run `node "<skill-dir>/scripts/migration/migrate.mjs"` from `repo_root` (see [`configuration-and-paths.md`](configuration-and-paths.md) for `<skill-dir>` and `${PLUGIN_ROOT}` resolution).
 2. The migrator deterministically:
    - Relocates `.nyssa-ai/plan-product/usage/` -> `.nyssa-ai/plan-product/runtime/usage/`, prunes legacy `.plan-product/`, copied `schema.json`, and copied `templates/`, and retains a minimal sparse `version: 2` `.nyssa-ai/plan-product/config.json` **only** when custom non-default paths exist (pruning default-only config cleanly for zero-footprint operation).
    - Renames feature directories from `f-nxx` to `f-gg.nn` and use case files from `uc-nnn-*` to `uc-gg.nn.uu-*`.

@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.14.0**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
+Version **0.14.1**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 
@@ -8,12 +8,12 @@ The plugin operates as an **Encapsulated Facade**: the `plan-product` skill serv
 
 | Command / Workflow | Purpose | Runbook |
 | :--- | :--- | :--- |
-| `plan-product` | Define or refresh product purpose, Ubiquitous Language (`docs/GLOSSARY.md`), feature inventory, and high-level technology context. | `workflows/product.md` |
-| `plan-concept` | Define an atomic domain concept or cross-feature macro-flow (`C-nn`, `kind: domain-model` \| `flow`), reconciling Ubiquitous Language (`docs/GLOSSARY.md`). | `workflows/concept.md` |
-| `plan-feature` | Define one capability (`F-gg.nn`), its boundaries, inputs, outputs, acceptance checks, and dependencies. | `workflows/feature.md` |
-| `plan-use-case` | Capture an actor workflow (`UC-gg.nn.uu`), entry route, process tree, alternatives, failures, and acceptance checks. | `workflows/use-case.md` |
-| `plan-development` | Sequence product deliverables in `docs/plans/development-plan.md` with stable `DP-pp.ss` IDs, conditional on-demand CodeGraph `Anchors:` (via ephemeral `.temp/codegraph/`), observable `- Verify:` checkpoints, and `dev-delivery` handoff. | `workflows/development-plan.md` |
-| `plan-maintain` | Upgrade legacy product planning documents from Model v1 or `docs/roadmap.md` to Model v2, or reconcile document integrity. | `workflows/maintain.md` |
+| `plan-product` | Define or refresh product purpose, Ubiquitous Language (`docs/GLOSSARY.md`), feature inventory, and high-level technology context. | `references/workflow-product.md` |
+| `plan-concept` | Define an atomic domain concept or cross-feature macro-flow (`C-nn`, `kind: domain-model` \| `flow`), reconciling Ubiquitous Language (`docs/GLOSSARY.md`). | `references/workflow-concept.md` |
+| `plan-feature` | Define one capability (`F-gg.nn`), its boundaries, inputs, outputs, acceptance checks, and dependencies. | `references/workflow-feature.md` |
+| `plan-use-case` | Capture an actor workflow (`UC-gg.nn.uu`), entry route, process tree, alternatives, failures, and acceptance checks. | `references/workflow-use-case.md` |
+| `plan-development` | Sequence product deliverables in `docs/plans/development-plan.md` with stable `DP-pp.ss` IDs, conditional on-demand CodeGraph `Anchors:` (via ephemeral `.temp/codegraph/`), observable `- Verify:` checkpoints, and `dev-delivery` handoff. | `references/workflow-development-plan.md` |
+| `plan-maintain` | Upgrade legacy product planning documents from Model v1 or `docs/roadmap.md` to Model v2, or reconcile document integrity. | `references/workflow-maintain.md` |
 
 The workflows interview for missing information (or enforce the non-interactive Zero-Guessing Sufficiency Gate and recover `status: blocked` documents via `## Open Questions & Blockers`), preserve existing content, use configured paths (`user_home` -> `repo_root`) and current templates, align with Ubiquitous Language (`docs/GLOSSARY.md`), and check for conflicting or duplicate ownership. Development plans describe delivery outcomes, `DP-pp.ss` briefing notes, and flagged High-Risk Surfaces (`Security/Auth`, `Money/Ledger`, `Prompt-Injection`); feature-branch execution (`feat/<slug>`), technical implementation plans (`docs/plans/{phase-pp,f-gg.nn,f-gg,dp-pp.ss}-<slug>.md`), 3-Tier Architectural Fit verification (with Operational Telemetry across all tiers), context-isolated Dual-Agent TDD, and complexity-gated adversarial reviews belong to `dev-delivery` (with automatic `uc-*.md`, `feature.md`, and `docs/features.md` completion roll-up as `DP-pp.ss` steps finish).
 

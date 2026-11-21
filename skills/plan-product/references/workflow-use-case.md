@@ -1,7 +1,7 @@
 # Workflow: Use Case Specification & Process Tree Mapping
 
 > [!IMPORTANT] Scope Directive
-> This workflow documents or refines a concrete actor workflow (`docs/features/f-gg.nn/uc-gg.nn.uu-short-slug.md`) nested under an existing feature. It owns actor definition, entry route, trigger, ASCII process trees, step details, failure paths, acceptance checks, and parent feature guide link consistency. Feature-level capability boundaries belong in `workflows/feature.md`.
+> This workflow documents or refines a concrete actor workflow (`docs/features/f-gg.nn/uc-gg.nn.uu-short-slug.md`) nested under an existing feature. It owns actor definition, entry route, trigger, ASCII process trees, step details, failure paths, acceptance checks, and parent feature guide link consistency. Feature-level capability boundaries belong in `references/workflow-feature.md`.
 
 ---
 
@@ -61,7 +61,7 @@ After successfully writing a new or materially updated use case, ask the user wh
 
 - If `paths.developmentPlan` exists, ask: `Would you like to update the development plan now?`
 - If `paths.developmentPlan` does not exist, ask: `Would you like to create the development plan now?`
-- If the user says yes, load `workflows/development-plan.md` in the same conversation. Carry the affected `UC-gg.nn.uu`, parent `F-gg.nn`, confirmed acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
+- If the user says yes, load `references/workflow-development-plan.md` in the same conversation. Carry the affected `UC-gg.nn.uu`, parent `F-gg.nn`, confirmed acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
 - If the user says no, report the use-case and parent-feature updates and complete normally. Do not treat development plan work as a blocking condition and do not write a development plan.
 - Do not ask after a read-only review, an unchanged write, or a cancelled update.
 

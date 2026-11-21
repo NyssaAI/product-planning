@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.14.1 - Tessl-native `references/` consolidation, lean Scope Directive & skill quality improvements
+
+- **Tessl-Native Skill & Reference Layout (`skills/plan-product/`):**
+  - Consolidated the six workflow runbooks from `skills/plan-product/workflows/` into flat, Agent-Skills-compliant `skills/plan-product/references/workflow-*.md` files (`workflow-product.md`, `workflow-concept.md`, `workflow-feature.md`, `workflow-use-case.md`, `workflow-development-plan.md`, `workflow-maintain.md`) and removed the retired `workflows/` directory.
+  - Offloaded zero-footprint config/template precedence, monorepo `--unit` usage, 4-step `runtime_root` routing, opt-in telemetry, and `${PLUGIN_ROOT}` resolution details from `SKILL.md` into `skills/plan-product/references/configuration-and-paths.md`.
+  - Updated `SKILL.md` (`Bundled References & Assets`) to link `references/configuration-and-paths.md`, `assets/config.json`, `assets/schema.json`, and all eight `assets/templates/*.md` files directly, aligned `SKILL.md` and `references/workflow-*.md` script invocations to skill-bundled `<skill-dir>/scripts/*.mjs`, and collapsed the duplicated `Scope Directive` cross-plugin routing list to a concise one-line boundary.
+  - Added an explicit third-person capability summary and natural user triggers (`"write product requirements"`, `"draft a PRD"`, `"create a product roadmap"`) to `SKILL.md` frontmatter `description`.
+- **Assembler, Validator, Docs & Eval Parity:**
+  - Updated `scripts/assemble.mjs`, `src/validation/validate.mjs` (enforcing Scope Directives on `references/*.md` and rejecting retired `skills/*/workflows/` directories), `evals/scenarios/product-planning/{prepare.mjs,cases.json,baseline.json}`, `test/unit/validation/validate.test.mjs`, `test/use_case/validation/planning-contract.test.mjs`, `commands/plan-*.md`, `docs/concepts/c-04-external-plugin-isolation.md`, `AGENTS.md`, `CLAUDE.md`, and `README.md`.
+
 ## 0.14.0 - Ephemeral on-demand `.temp/codegraph/` isolation, `dev-factory` handoff alignment, and zero committed `codegraph.db`
 
 - **Ephemeral On-Demand CodeGraph Isolation (`C-04`):**

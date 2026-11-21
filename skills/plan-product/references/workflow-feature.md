@@ -1,7 +1,7 @@
 # Workflow: Feature Specification & Boundary Hardening
 
 > [!IMPORTANT] Scope Directive
-> This workflow defines or deepens a single feature guide (`docs/features/f-gg.nn/feature.md`) and synchronizes its status with the feature inventory (`docs/features.md`). It owns feature identity, user need, capability scope, out-of-scope boundaries, concrete inputs/outputs, acceptance criteria, dependencies, and contradiction checks against peer features. Detailed actor workflows belong in `workflows/use-case.md`; delivery sequencing belongs in `workflows/development-plan.md`.
+> This workflow defines or deepens a single feature guide (`docs/features/f-gg.nn/feature.md`) and synchronizes its status with the feature inventory (`docs/features.md`). It owns feature identity, user need, capability scope, out-of-scope boundaries, concrete inputs/outputs, acceptance criteria, dependencies, and contradiction checks against peer features. Detailed actor workflows belong in `references/workflow-use-case.md`; delivery sequencing belongs in `references/workflow-development-plan.md`.
 
 ---
 
@@ -17,7 +17,7 @@
 - **Autonomous / Non-Interactive Execution**: When invoked headlessly without user interaction, enforce the Zero-Guessing Sufficiency Gate: write `status: planned` only when Actor & Entry Trigger, Observable Outcomes & Failure Paths, and Scope/Risk Constraints are unambiguously resolved from evidence (with zero `[inferred]` guesses); otherwise write partial known facts with `status: blocked` and an itemized `## Open Questions & Blockers` section, return the open questions, and skip interactive Step 4 confirmation.
 - Keep `Summary`, `User Need`, `Conceptual Context`, `Use Cases`, `Scope`, `Out of Scope`, `Inputs`, `Outputs`, `Acceptance`, and `Dependencies` as distinct output sections.
 - Write all feature content in non-technical, user-outcome language. Feature titles MUST follow the canonical naming standard: Title Case, active verbs, and user safeguards/protections (e.g. `Update Tasks & Projects without Overwriting Personal Notes`, `Define, Refine & Update Ideal Client Profiles (ICPs)`, or `Extract Action Items from Messages & Filter Duplicates`). Strictly ban plumbing jargon (e.g. *Surgical*, *Ingestion*, *Storage*, *Syndication* — *Canonical* is permitted), vague 1–2 word stubs (e.g. *Reminders*, *Shift Swaps*, *Search*), and conversational user-story clauses (*"Allow user to..."*). Run the Non-Technical User Test before finalizing: an end user must immediately grasp what they achieve or what safety guarantee they get without an engineer translating it. Do **not** allow overly technical decisions, implementation mechanics, or specific product/technology selections (frameworks, databases, libraries, config keys, CLI scripts) to leak into `feature.md` or `features.md` (those belong only in `tech-stack.md` or `docs/plans/development-plan.md` entries).
-- Keep feature boundaries at the capability level. Actor workflows, entry routes, and process trees belong in use-case files via `workflows/use-case.md`.
+- Keep feature boundaries at the capability level. Actor workflows, entry routes, and process trees belong in use-case files via `references/workflow-use-case.md`.
 - Do not create use-case files unless explicitly requested. In the feature guide, list real use-case files or write `None yet.`; never leave template placeholder links.
 - Do not finalize a feature that duplicates or contradicts another feature. Propose merging, narrowing, or splitting before writing.
 
@@ -65,7 +65,7 @@ After successfully writing a new or materially updated feature guide, ask the us
 
 - If `paths.developmentPlan` exists, ask: `Would you like to update the development plan now?`
 - If `paths.developmentPlan` does not exist, ask: `Would you like to create the development plan now?`
-- If the user says yes, load `workflows/development-plan.md` in the same conversation. Carry the affected `F-gg.nn`, its linked use cases, acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
+- If the user says yes, load `references/workflow-development-plan.md` in the same conversation. Carry the affected `F-gg.nn`, its linked use cases, acceptance checks, and dependencies forward; do not repeat discovery already confirmed in this workflow.
 - If the user says no, report the feature and inventory updates and complete normally. Do not treat development plan work as a blocking condition and do not write a development plan.
 - Do not ask after a read-only review, an unchanged write, or a cancelled update.
 

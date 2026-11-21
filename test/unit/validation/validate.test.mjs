@@ -598,14 +598,25 @@ test('validate plugin mode enforces cross-plugin compliance (root bans, .gitattr
   expectValidationFailure(/SKILL\.md missing '## Verification' section/);
   writeFileSync(skillPath, validSkill, 'utf8');
 
-  const wfPath = path.join(tempPlugin, 'skills/plan-product/workflows/concept.md');
+  const wfPath = path.join(tempPlugin, 'skills/plan-product/references/workflow-concept.md');
   const validWf = readFileSync(wfPath, 'utf8');
   writeFileSync(wfPath, validWf.replace('## Verification Checklist', '## Exit Summary'), 'utf8');
-  expectValidationFailure(/workflows\/concept\.md missing '## Verification' section/);
+  expectValidationFailure(/references\/workflow-concept\.md missing '## Verification' section/);
 
   writeFileSync(wfPath, `${validWf}\nUnescaped example [UC-01.01.01](<path>) in prose.\n`, 'utf8');
-  expectValidationFailure(/Broken relative link in skills\/plan-product\/workflows\/concept\.md: path/);
+  expectValidationFailure(/Broken relative link in skills\/plan-product\/references\/workflow-concept\.md: path/);
   writeFileSync(wfPath, validWf, 'utf8');
+
+  const retiredWorkflowsDir = path.join(tempPlugin, 'skills/plan-product/workflows');
+  mkdirSync(retiredWorkflowsDir, { recursive: true });
+  expectValidationFailure(/Retired 'skills\/plan-product\/workflows\/' directory detected/);
+  rmSync(retiredWorkflowsDir, { recursive: true, force: true });
+
+  const refPath = path.join(tempPlugin, 'skills/plan-product/references/configuration-and-paths.md');
+  const validRef = readFileSync(refPath, 'utf8');
+  writeFileSync(refPath, validRef.replace('> [!IMPORTANT] Scope Directive', '> Note'), 'utf8');
+  expectValidationFailure(/references\/configuration-and-paths\.md missing '> \[!IMPORTANT\] Scope Directive' header/);
+  writeFileSync(refPath, validRef, 'utf8');
   assert.doesNotThrow(() => validate(tempPlugin, { validatePlugin: true, userHome: null }));
 
   // 5. Retired skills/*/agents/ (openai.yaml) and harness-adapters/codex/**/openai.yaml ban

@@ -1,7 +1,7 @@
 # Workflow: Product Definition & Core Inventory
 
 > [!IMPORTANT] Scope Directive
-> This workflow establishes or refreshes foundational product planning documents (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`) through an interactive discovery interview. It owns product-level capsules, Ubiquitous Language seeding and maintenance, feature grouping, stable ID banding (`F-gg.nn`), and tech-stack context. It delegates individual feature elaboration to `workflows/feature.md` and workflow trees to `workflows/use-case.md`.
+> This workflow establishes or refreshes foundational product planning documents (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`) through an interactive discovery interview. It owns product-level capsules, Ubiquitous Language seeding and maintenance, feature grouping, stable ID banding (`F-gg.nn`), and tech-stack context. It delegates individual feature elaboration to `references/workflow-feature.md` and workflow trees to `references/workflow-use-case.md`.
 
 ---
 
@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user. Interview only for missing decisions; do not repeat a confirmation already given.
 - Configured paths are `repo_root`-relative. Render Markdown links relative to the document containing the link, and verify each target exists before completion.
-- Resolve configuration in zero-footprint 3-layer precedence: bundled Model v2 defaults (`plugin_root`) -> optional `user_home` (`~/.nyssa-ai/plan-product/config.json`) -> optional opt-in `repo_root` override (`<repo_root>/.nyssa-ai/plan-product/config.json`, never required or scaffolded by default). If starter `docs/` files are missing, bootstrap by executing `node "${PLUGIN_ROOT}/src/init/init.mjs"` (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/init/init.mjs"` in Tessl Registry installs, adding `--unit <apps/...|tools/...>` for monorepo units). Resolve `${PLUGIN_ROOT}` (`plugin_root`) from `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, `.tessl/plugins/nyssa-ai/plan-product`, `~/.tessl/plugins/nyssa-ai/plan-product`, or the relative path to this installed plugin.
+- Resolve configuration in zero-footprint 3-layer precedence: bundled Model v2 defaults (`plugin_root`) -> optional `user_home` (`~/.nyssa-ai/plan-product/config.json`) -> optional opt-in `repo_root` override (`<repo_root>/.nyssa-ai/plan-product/config.json`, never required or scaffolded by default). If starter `docs/` files are missing, bootstrap by executing `node "<skill-dir>/scripts/init/init.mjs"` (adding `--unit <apps/...|tools/...>` for monorepo units; see [`configuration-and-paths.md`](configuration-and-paths.md)).
 - Resolve every output path from effective config before interviewing. Do not hardcode `docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, or `docs/tech-stack.md` except as examples in user-facing text.
 - Read starter templates directly via zero-footprint precedence (existing repo override if present -> `~/.nyssa-ai/plan-product/templates/<name>.md` -> `${PLUGIN_ROOT}/skills/plan-product/assets/templates/<name>.md`) without copying templates into `repo_root`:
   - Product doc: `product.md` (`paths.productTemplate`)
@@ -21,7 +21,7 @@
 - If the user says "skip", "unknown", or gives a very brief answer, write `To be defined.` only into empty target sections. Never replace existing non-empty content with `To be defined.`.
 - Preserve existing user-authored content unless the user chooses to replace that file. For updates, merge by section heading and preserve unmatched sections, comments, links, and local notes.
 - A core doc whose content is identical to its configured template is treated as `template only`; overwrite it from the interview without confirmation.
-- Create only lightweight feature guide stubs in this workflow; use `workflows/feature.md` to deepen individual features.
+- Create only lightweight feature guide stubs in this workflow; use `references/workflow-feature.md` to deepen individual features.
 - Do not create use-case files during this workflow unless the user explicitly requests it.
 - Keep tech-stack capture light-touch. Record high-level stack context and unknowns; do not establish language-specific engineering standards.
 
