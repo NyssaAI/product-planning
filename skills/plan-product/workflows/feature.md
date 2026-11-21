@@ -26,7 +26,7 @@
 ## Procedure
 
 ### 1. Target Feature Resolution
-1. Read `.nyssa-ai/plan-product/config.json`, the feature inventory (`paths.features`), and `paths.featureTemplate`.
+1. Resolve effective paths (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/config.json` -> optional `<repo_root>/.nyssa-ai/plan-product/config.json`), then read the feature inventory (`paths.features`) and the resolved `paths.featureTemplate`.
 2. Determine target feature:
    - User named ID: derive path from `structure.features.featurePathPattern`.
    - User named title: match against inventory and open guide.

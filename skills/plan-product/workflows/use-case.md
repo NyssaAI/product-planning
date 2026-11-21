@@ -27,7 +27,7 @@
 ## Procedure
 
 ### 1. Target Resolution & Context Check
-1. Read `.nyssa-ai/plan-product/config.json` and the feature inventory.
+1. Resolve effective paths (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/config.json` -> optional `<repo_root>/.nyssa-ai/plan-product/config.json`), then read the feature inventory (`paths.features`).
 2. Resolve parent feature guide from `structure.features.featurePathPattern`.
 3. If user named existing use case, read it and inspect `status:` plus any `## Open Questions & Blockers` section (targeting those open blockers first if `status: blocked`). Otherwise scan sibling use cases under `structure.features.useCaseFilePattern`, read `paths.glossary` (`docs/GLOSSARY.md`, and `<app>/docs/GLOSSARY.md` when present) so actor and entity terms match canonical Ubiquitous Language, select next `UC-gg.nn.uu` ID (inheriting `gg.nn` from parent `F-gg.nn` with sequential `uu` `01`–`99`), and derive path from `structure.features.useCasePathPattern`.
 

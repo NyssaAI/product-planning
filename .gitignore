@@ -55,8 +55,8 @@ tsconfig.tsbuildinfo
 skills-lock.json
 launch-result.json
 
-# SQLite databases (keep committed CodeGraph snapshots tracked)
-*.db
-!docs/code-map/
-!docs/code-map/codegraph.db
-!**/docs/code-map/codegraph.db
+# Ephemeral CodeGraph SQLite indexes & retired snapshot paths (always generated on demand in .temp/codegraph/)
+codegraph.db
+codegraph.db-wal
+codegraph.db-shm
+**/docs/code-map/

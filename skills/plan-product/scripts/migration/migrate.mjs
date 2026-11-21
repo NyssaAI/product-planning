@@ -379,6 +379,13 @@ export function migrate(repoRoot = process.cwd(), options = {}) {
     }
   }
 
+  // Prune retired docs/code-map/ binary snapshots (CodeGraph indexes stay ephemeral in .temp/codegraph/).
+  const legacyCodeMapDir = path.join(repoRoot, 'docs/code-map');
+  if (existsSync(legacyCodeMapDir)) {
+    rmSync(legacyCodeMapDir, { recursive: true, force: true });
+    results.legacyCodeMapRemoved = true;
+  }
+
   if (isLegacyLocation && existsSync(path.join(repoRoot, '.plan-product'))) {
     rmSync(path.join(repoRoot, '.plan-product'), { recursive: true, force: true });
   }

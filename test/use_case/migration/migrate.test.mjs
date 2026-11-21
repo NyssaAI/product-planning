@@ -128,6 +128,8 @@ test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:,
     path.join(root, 'apps/web/docs/features/f-01.01/feature.md'),
     '---\nid: F-01.01\ngroup: "01"\nstatus: planned\n---\n\n# F-01.01 Exchange Shifts with Coordinator Approval\n\n## Conceptual Context\n- [C-01](../../../../../docs/concepts/c-01-shift-flow.md)\n'
   );
+  mkdirSync(path.join(root, 'docs/code-map'), { recursive: true });
+  writeFileSync(path.join(root, 'docs/code-map/codegraph.db'), 'legacy-sqlite\n');
   writeFileSync(
     path.join(root, 'docs/roadmap.md'),
     '# Product Roadmap\n\n- [ ] R-01.01: Exchange shifts — [F-01.01](../apps/web/docs/features/f-01.01/feature.md)\n    - Concepts: [C-01](concepts/c-01-shift-flow.md)\n    - Verify: swap shift.\n'
@@ -135,7 +137,10 @@ test('migrate upgrades legacy Model v2 docs/roadmap.md (R-pp.ss), concept type:,
 
   const res = migrate(root);
   assert.equal(res.configPruned, false);
+  assert.equal(res.legacyCodeMapRemoved, true);
   initialize(root, { userHome: null });
+
+  assert.equal(existsSync(path.join(root, 'docs/code-map')), false);
 
   assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/usage')), false);
   assert.equal(existsSync(path.join(root, '.nyssa-ai/plan-product/templates')), false);

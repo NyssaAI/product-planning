@@ -11,7 +11,7 @@
 
 | Canonical Term | Code / Config Identifier | Definition |
 | :--- | :--- | :--- |
-| **`repo_root`** | `repoRoot` / `--repo-root` | Target git repository or monorepo root containing `<repo_root>/.nyssa-ai/plan-product/` and `docs/`. All committed planning paths are `repo_root`-relative. |
+| **`repo_root`** | `repoRoot` / `--repo-root` | Target git repository or monorepo root containing canonical `docs/` (zero `.nyssa-ai/` files by default; optional opt-in `<repo_root>/.nyssa-ai/plan-product/config.json` only for custom layouts). All committed planning paths are `repo_root`-relative. |
 | **`user_home`** | `userHome` / `~/.nyssa-ai/plan-product/` | Per-OS-account configuration root (`~/.nyssa-ai/plan-product/config.json`). Configuration lookup resolves `user_home` defaults first, overridden by `repo_root` (`<repo_root>/.nyssa-ai/plan-product/config.json`), including optional `runtimeRoot` and `telemetry.enabled`. |
 | **`runtime_root`** | `runtimeRoot` / `--runtime-root` / `NYSSA_RUNTIME_ROOT` | Mutable agent execution state and opt-in usage telemetry root, resolved via the 4-step precedence contract: (1) `--runtime-root` -> (2) `NYSSA_RUNTIME_ROOT` (namespaced to `<NYSSA_RUNTIME_ROOT>/.nyssa-ai/plan-product/runtime/` when `SOUL.md` and `IDENTITY.md` are present) -> (3) `<persona_cwd>/.nyssa-ai/plan-product/runtime/` when `cwd` contains both `SOUL.md` and `IDENTITY.md` -> (4) layered `config.json` `runtimeRoot` (`user_home` -> `repo_root`), `<repo_root>/.nyssa-ai/plan-product/runtime/`, or `~/.nyssa-ai/plan-product/runtime/`. Opt-in usage telemetry (`telemetry.enabled === true`, default `false`) writes strictly to `<runtime_root>/usage/events.jsonl` and creates zero `usage/` directories or files when disabled. |
 | **`plugin_root`** | `pluginRoot` / `PLUGIN_ROOT` / `PLAN_PRODUCT_PLUGIN_ROOT` | Read-only installed `plan-product` plugin directory providing `skills/plan-product/assets/`, `commands/`, and `src/` entrypoints. Never mutated at runtime. |
@@ -35,7 +35,7 @@
 | **`Zero-Guessing Sufficiency Gate`** | Non-interactive specification gate | Decision gate shared with `dev-delivery` autonomous Step 1.5 (`spec-author`): before writing `status: planned`, require unambiguous evidence for (1) **Actor & Entry Trigger**, (2) **Observable Outcomes & Failure Paths**, and (3) **Scope, Risk & Domain Constraints**; otherwise write partial known facts with `status: blocked` and `## Open Questions & Blockers` without `[inferred]` guessing. |
 | **`High-Risk Surface`** | Security \| Money \| Prompt-Injection | Explicitly flagged domain constraint in `DP-pp.ss` `- Gotchas:` identifying security/authentication boundaries, money/billing/ledger mutations, or prompt-injection/untrusted-input boundaries so `dev-delivery` escalates Complexity & Risk to `High` (interval + final adversarial reviews and `deep`/Carbon TDD workers). |
 | **`Merge-by-Heading Preservation`** | Section-level merge | Non-destructive update rule that modifies only targeted Markdown headings while preserving unmatched user sections, comments, links, and local notes. |
-| **`Template-Only Detection`** | Byte-identical comparison | Rule classifying any planning document whose bytes match its configured template in `.nyssa-ai/plan-product/templates/` as unedited starter scaffolding safe to populate directly from a confirmed interview. |
+| **`Template-Only Detection`** | Byte-identical comparison | Rule classifying any planning document whose bytes match its resolved template (`repo_root` override -> `user_home` -> `plugin_root/skills/plan-product/assets/templates/`) as unedited starter scaffolding safe to populate directly from a confirmed interview. |
 
 ---
 
@@ -49,4 +49,5 @@
 | `Concept Type`, `type:` (in `concept.md`), `*Type` | `Concept Kind`, `kind:` (`domain-model` \| `flow`) | Eliminates ambiguous `*Type` naming in domain record classifications. |
 | `.plan-product/` | `.nyssa-ai/plan-product/` | Legacy Model v1 config directory; upgraded via `src/migration/migrate.mjs`. |
 | `.nyssa-ai/plan-product/usage/` | `<runtime_root>/usage/` (`.nyssa-ai/plan-product/runtime/usage/`) | Mutable telemetry must never mix with committed configuration and templates. |
+| `docs/code-map/codegraph.db`, `docs/code-map/`, `.codegraph/` | Ephemeral `.temp/codegraph/` (on-demand via `dev-standards`) | CodeGraph SQLite indexes are generated and refreshed on demand inside gitignored `.temp/codegraph/`; never commit binary `.db` snapshots. |
 | *Surgical*, *Storage*, *Ingestion*, *Syndication* (in feature titles) | User-outcome action & safeguard titles (*Canonical* is permitted) | Keeps feature titles readable by non-technical stakeholders without developer plumbing jargon. |

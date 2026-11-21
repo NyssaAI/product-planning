@@ -1,7 +1,7 @@
 # Workflow: Model Versioning & Document Maintenance
 
 > [!IMPORTANT] Scope Directive
-> This workflow upgrades, validates, and maintains product planning documents across schema/model versions. It encapsulates legacy Model v1 knowledge (`.plan-product/`, `F-Nxx`, `UC-nnn`, `R-NNN`, `phase:` frontmatter, singular `## Use Case`) and legacy pre-rename v2 artifacts (`docs/roadmap.md`, `R-pp.ss`, concept `type:` frontmatter, `.nyssa-ai/plan-product/usage/`), migrating repositories to canonical Model v2 (`.nyssa-ai/plan-product/`, `docs/GLOSSARY.md`, `F-gg.nn`, `UC-gg.nn.uu`, `docs/plans/development-plan.md`, `DP-pp.ss`, `group:` and `kind:` frontmatter, `.nyssa-ai/plan-product/runtime/usage/`). Deterministic file and link migrations are executed via `src/migration/migrate.mjs`.
+> This workflow upgrades, validates, and maintains product planning documents across schema/model versions. It encapsulates legacy Model v1 knowledge (`.plan-product/`, `F-Nxx`, `UC-nnn`, `R-NNN`, `phase:` frontmatter, singular `## Use Case`) and legacy pre-rename v2 artifacts (`docs/roadmap.md`, `R-pp.ss`, concept `type:` frontmatter, `.nyssa-ai/plan-product/usage/`), migrating repositories to zero-footprint canonical Model v2 (`docs/GLOSSARY.md`, `F-gg.nn`, `UC-gg.nn.uu`, `docs/plans/development-plan.md`, `DP-pp.ss`, `group:` and `kind:` frontmatter, `.nyssa-ai/plan-product/runtime/usage/`, pruning copied schemas/templates and retaining sparse `.nyssa-ai/plan-product/config.json` only for non-default paths). Deterministic file and link migrations are executed via `src/migration/migrate.mjs` (or `skills/plan-product/scripts/migration/migrate.mjs` in Tessl installs).
 
 ---
 
@@ -29,7 +29,7 @@
 ## Procedure
 
 ### 1. Version Detection & Scope Inspection
-1. Read `.nyssa-ai/plan-product/config.json` (or legacy `.plan-product/config.json`).
+1. Inspect any existing `.nyssa-ai/plan-product/config.json` (or legacy `.plan-product/config.json`), alongside bundled Model v2 defaults.
 2. Inspect current planning documents under `repo_root`:
    - Check if config version is `1`, omitted, or still contains legacy `roadmap` keys.
    - Scan `docs/features/` for legacy `f-nxx` folders and `docs/concepts/` for `type:` frontmatter.
@@ -40,13 +40,13 @@
    - Request confirmation before running migration.
 
 ### 2. Migration Execution
-1. Run `node "${PLUGIN_ROOT}/src/migration/migrate.mjs"` from `repo_root` (resolving `${PLUGIN_ROOT}` in order of precedence: `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, or relative path to installed plugin).
+1. Run `node "${PLUGIN_ROOT}/src/migration/migrate.mjs"` locally (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/migration/migrate.mjs"` in Tessl Registry installs) from `repo_root`, resolving `${PLUGIN_ROOT}` in order of precedence: `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, `.tessl/plugins/nyssa-ai/plan-product`, `~/.tessl/plugins/nyssa-ai/plan-product`, or relative path to the installed plugin.
 2. The migrator deterministically:
-   - Relocates `.plan-product/` -> `.nyssa-ai/plan-product/`, relocates `.nyssa-ai/plan-product/usage/` -> `.nyssa-ai/plan-product/runtime/usage/`, and updates `config.json` to `version: 2` with canonical `developmentPlan` and `glossary` paths.
-   - Upgrades unmodified bundled templates and seeds `docs/GLOSSARY.md` if missing.
+   - Relocates `.nyssa-ai/plan-product/usage/` -> `.nyssa-ai/plan-product/runtime/usage/`, prunes legacy `.plan-product/`, copied `schema.json`, and copied `templates/`, and retains a minimal sparse `version: 2` `.nyssa-ai/plan-product/config.json` **only** when custom non-default paths exist (pruning default-only config cleanly for zero-footprint operation).
    - Renames feature directories from `f-nxx` to `f-gg.nn` and use case files from `uc-nnn-*` to `uc-gg.nn.uu-*`.
    - Normalizes feature frontmatter (`phase:` -> `group:`), headings, and concept frontmatter (`type:` -> `kind:`).
    - Moves `docs/roadmap.md` -> `docs/plans/development-plan.md`, maps `R-NNN` and `R-pp.ss` steps to `DP-pp.ss`, and rewrites relative Markdown links (`features/...` -> `../features/...`, `concepts/...` -> `../concepts/...`).
+3. If `docs/GLOSSARY.md` is missing after migration, seed missing starter docs zero-footprint via `init.mjs`, then verify via `validate-docs.mjs`.
 
 ### 3. Post-Migration Verification & Consistency Check
 1. Verify all renamed feature guides, use cases, concepts, `docs/GLOSSARY.md`, and `docs/plans/development-plan.md` exist at their canonical paths.
@@ -58,8 +58,8 @@
 
 ## Verification Checklist
 
-- [ ] `.nyssa-ai/plan-product/config.json` set to `version: 2` with `glossary` and `developmentPlan` path patterns.
-- [ ] `docs/GLOSSARY.md` exists and templates under `.nyssa-ai/plan-product/templates/` include `glossary.md` and `development-plan.md`.
+- [ ] Legacy `.plan-product/`, copied `schema.json`, and copied `templates/` pruned; `.nyssa-ai/plan-product/config.json` removed when using default `docs/` paths or upgraded to a sparse `version: 2` override when custom paths exist.
+- [ ] `docs/GLOSSARY.md` exists and templates resolve cleanly from `plugin_root` / `user_home`.
 - [ ] All `f-nxx` directories cleanly renamed to `f-gg.nn` and use case files renamed to `uc-gg.nn.uu-*` with matching frontmatter IDs.
 - [ ] Feature frontmatter contains `group:` (no `phase:`) and concept frontmatter contains `kind:` (no `type:`).
 - [ ] `docs/features.md` organized by Feature Groups in non-technical, use-case language with no links in `## Feature Checklist Summary` and valid relative links in `## Feature Inventory`.

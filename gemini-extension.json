@@ -1,5 +1,5 @@
 {
   "name": "plan-product",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Define products, Ubiquitous Language glossaries, features, use cases, domain concepts, and dependency-ordered development plans through guided conversations."
 }

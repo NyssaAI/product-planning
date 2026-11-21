@@ -529,7 +529,7 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
       } else if (entry.isFile()) {
         const allowedFiles = [
           'plugin.json', 'package.json', 'package-lock.json', 'README.md', 'CHANGELOG.md', 'LICENSE',
-          'AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'gemini-extension.json', 'codegraph.json',
+          'AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'gemini-extension.json',
           '.gitignore', '.gitattributes',
         ];
         if (!allowedFiles.includes(entry.name)) {
@@ -542,8 +542,8 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
     validateRetiredAgentAndCodexTrees(repoRoot, fail);
     validateNoLeakedPathsOrRetiredTokens(repoRoot, fail, pass);
 
-    if (existsSync(path.join(repoRoot, 'src')) && !existsSync(path.join(repoRoot, 'docs/code-map/codegraph.db'))) {
-      fail('docs/code-map/codegraph.db is mandatory whenever src/ exists');
+    if (existsSync(path.join(repoRoot, 'docs/code-map'))) {
+      fail('docs/code-map/ is retired; CodeGraph SQLite indexes must stay strictly ephemeral in gitignored .temp/codegraph/ and never be committed');
     }
 
     const allowedEvalsChildren = ['waza', 'scenarios', 'reports', 'tessl'];

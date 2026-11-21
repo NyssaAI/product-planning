@@ -109,12 +109,33 @@ test('active skills, workflows, commands, templates, docs, and evals align with 
       .sort()
       .map(f => `evals/waza/skills/plan-product/tasks/${f}`),
   ];
+  const noRetiredCodeMapFiles = new Set([
+    'README.md',
+    'skills/plan-product/SKILL.md',
+    ...workflowNames.map(w => `skills/plan-product/workflows/${w}.md`),
+    ...commandNames.map(c => `commands/${c}.md`),
+    'skills/plan-product/assets/templates/development-plan.md',
+    'skills/plan-product/assets/templates/glossary.md',
+    'skills/plan-product/assets/templates/features.md',
+    'skills/plan-product/assets/templates/concept.md',
+    'evals/scenarios/product-planning/README.md',
+    'evals/scenarios/product-planning/cases.json',
+  ]);
   for (const rel of activeFiles) {
     const content = readFileSync(path.join(root, rel), 'utf8');
     assert.doesNotMatch(content, /\bce-plan\b|compound-engineering/i, `${rel} must not reference retired Compound Engineering`);
-    assert.doesNotMatch(content, /\.codegraph\b/, `${rel} must check docs/code-map/codegraph.db instead of .codegraph`);
+    if (noRetiredCodeMapFiles.has(rel)) {
+      assert.doesNotMatch(
+        content,
+        /docs\/code-map\/codegraph\.db/,
+        `${rel} must not require retired docs/code-map/codegraph.db; use ephemeral .temp/codegraph/ via codegraph_explore`
+      );
+    }
     assert.doesNotMatch(content, /\btargetRoot\b|<target-repo>|<project-root>/, `${rel} must use repo_root instead of retired root names`);
   }
+  const devPlanWorkflow = readFileSync(path.join(root, 'skills/plan-product/workflows/development-plan.md'), 'utf8');
+  assert.ok(devPlanWorkflow.includes('.temp/codegraph/'), 'development-plan workflow must reference ephemeral .temp/codegraph/');
+  assert.ok(devPlanWorkflow.includes('codegraph_explore'), 'development-plan workflow must reference codegraph_explore');
 });
 
 test('material feature and use-case writes offer a non-blocking development plan handoff', () => {
