@@ -198,10 +198,125 @@ export function checkMarkdownRelativeLinks(fullPath, repoRoot, fail, label) {
   }
 }
 
+function normalizeGitignorePattern(rawLine) {
+  const negated = rawLine.startsWith('!');
+  let pat = (negated ? rawLine.slice(1) : rawLine).trim();
+  const dirOnly = pat.endsWith('/');
+  const anchored = pat.startsWith('/');
+  pat = pat.replace(/^\/+|\/+$/g, '');
+  return { negated, pat, dirOnly, anchored };
+}
+
+function globSegmentMatch(value, pattern) {
+  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*').replace(/\?/g, '[^/]');
+  return new RegExp(`^${escaped}$`).test(value);
+}
+
+function patternMatchesExact(pat, dirOnly, anchored, relPath, targetIsDir) {
+  if (!pat) return false;
+  const parts = relPath.split('/').filter(Boolean);
+  if (pat === '.*' || pat === '.*/*' || pat === '.**') {
+    return parts[parts.length - 1].startsWith('.') && (!dirOnly || targetIsDir);
+  }
+  if (pat.startsWith('**/')) {
+    const sub = pat.slice(3);
+    if (!sub.includes('/')) {
+      return globSegmentMatch(parts[parts.length - 1], sub) && (!dirOnly || targetIsDir);
+    }
+    const subParts = sub.split('/');
+    if (parts.length < subParts.length) return false;
+    const tail = parts.slice(-subParts.length);
+    return (!dirOnly || targetIsDir) && tail.every((seg, i) => globSegmentMatch(seg, subParts[i]));
+  }
+  if (pat.endsWith('/**')) {
+    const prefix = pat.slice(0, -3);
+    return relPath === prefix || relPath.startsWith(`${prefix}/`);
+  }
+  if (pat.endsWith('/*')) {
+    const prefix = pat.slice(0, -2);
+    const prefixParts = prefix.split('/').filter(Boolean);
+    return parts.length === prefixParts.length + 1 && prefixParts.every((seg, i) => parts[i] === seg);
+  }
+  if (!anchored && !pat.includes('/')) {
+    return globSegmentMatch(parts[parts.length - 1], pat) && (!dirOnly || targetIsDir);
+  }
+  const patParts = pat.split('/');
+  return (
+    parts.length === patParts.length &&
+    (!dirOnly || targetIsDir) &&
+    parts.every((seg, i) => globSegmentMatch(seg, patParts[i]))
+  );
+}
+
+function evalGitignoreExact(lines, relPath, targetIsDir) {
+  let ignored = false;
+  for (const rawLine of lines) {
+    const { negated, pat, dirOnly, anchored } = normalizeGitignorePattern(rawLine);
+    if (patternMatchesExact(pat, dirOnly, anchored, relPath, targetIsDir)) {
+      ignored = !negated;
+    }
+  }
+  return ignored;
+}
+
+function isPathEffectivelyIgnored(lines, relPath, targetIsDir = false) {
+  const parts = relPath.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
+  for (let depth = 1; depth < parts.length; depth++) {
+    if (evalGitignoreExact(lines, parts.slice(0, depth).join('/'), true)) {
+      return true;
+    }
+  }
+  return evalGitignoreExact(lines, parts.join('/'), targetIsDir);
+}
+
+function validateTesslManifest(repoRoot, fail) {
+  const tesslPath = path.join(repoRoot, 'tessl.json');
+  if (!existsSync(tesslPath) || !lstatSync(tesslPath).isFile()) {
+    return;
+  }
+  const rawBuf = readFileSync(tesslPath);
+  if (rawBuf.length >= 3 && rawBuf[0] === 0xef && rawBuf[1] === 0xbb && rawBuf[2] === 0xbf) {
+    fail('tessl.json must be UTF-8 without BOM (breaks tessl doctor --automations on Windows)');
+    return;
+  }
+  let data;
+  try {
+    data = JSON.parse(rawBuf.toString('utf8'));
+  } catch (err) {
+    fail(`tessl.json is not valid JSON: ${err.message}`);
+    return;
+  }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    fail('tessl.json must be a JSON object');
+    return;
+  }
+  if (data.mode !== 'managed') {
+    fail(`tessl.json must set "mode": "managed" (found ${JSON.stringify(data.mode)})`);
+  }
+  for (const section of ['dependencies', 'plugins', 'tiles']) {
+    const block = data[section];
+    if (!block || typeof block !== 'object' || Array.isArray(block)) continue;
+    for (const [depName, depVal] of Object.entries(block)) {
+      if (typeof depVal === 'string' && depVal.trim().toLowerCase().startsWith('file:')) {
+        fail(`tessl.json must not contain local file: wrapper (${section}.${depName})`);
+      } else if (depVal && typeof depVal === 'object' && !Array.isArray(depVal)) {
+        for (const key of ['source', 'path', 'version']) {
+          const val = depVal[key];
+          if (typeof val === 'string' && val.trim().toLowerCase().startsWith('file:')) {
+            fail(`tessl.json must not contain local file: wrapper (${section}.${depName}.${key})`);
+          }
+        }
+      }
+    }
+  }
+}
+
 /**
- * Enforce LF .gitattributes (when required) and verify docs/ is tracked and never gitignored.
+ * Enforce LF .gitattributes (when required), thin tessl.json (zero wrappers), docs/ tracking, CodeGraph DB ignores, and Tessl leak guards.
  */
 export function validateGitAttributesAndDocsIgnore(repoRoot, fail, pass, { requireGitattributes = false } = {}) {
+  validateTesslManifest(repoRoot, fail);
+
   if (requireGitattributes) {
     const gitattributesPath = path.join(repoRoot, '.gitattributes');
     if (!existsSync(gitattributesPath) || !lstatSync(gitattributesPath).isFile()) {
@@ -221,19 +336,65 @@ export function validateGitAttributesAndDocsIgnore(repoRoot, fail, pass, { requi
 
   let docsIgnoredInFile = false;
   const gitignorePath = path.join(repoRoot, '.gitignore');
-  if (existsSync(gitignorePath) && lstatSync(gitignorePath).isFile()) {
-    for (const rawLine of readFileSync(gitignorePath, 'utf8').split(/\r?\n/)) {
-      const line = rawLine.trim();
-      if (!line || line.startsWith('#')) continue;
+  const hasTessl =
+    existsSync(path.join(repoRoot, 'tessl.json')) ||
+    existsSync(path.join(repoRoot, '.tessl'));
+  const checkTesslGuards = requireGitattributes || hasTessl;
+  const isPluginRepo = existsSync(path.join(repoRoot, 'plugin.json'));
+
+  if (!existsSync(gitignorePath) || !lstatSync(gitignorePath).isFile()) {
+    if (checkTesslGuards) {
+      fail('Missing root .gitignore (required when tessl.json, .tessl/, or plugin mode is active; REPO-GITIGNORE)');
+    }
+  } else {
+    const activeLines = readFileSync(gitignorePath, 'utf8')
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(line => line.length > 0 && !line.startsWith('#'));
+    for (const line of activeLines) {
       if (line.startsWith('!')) {
         const neg = line.slice(1).trim();
         if (/^\/?docs\/?$/.test(neg)) {
           docsIgnoredInFile = false;
         }
+        if (line.includes('codegraph.db') || line.includes('docs/code-map')) {
+          fail(`.gitignore must never whitelist CodeGraph databases (${line}); CodeGraph indexes stay strictly ephemeral in .temp/codegraph/`);
+        }
         continue;
       }
       if (/^(?:\/|\*\*\/)?docs(?:\/(?:\*\*?)?)?$/.test(line)) {
         docsIgnoredInFile = true;
+      }
+    }
+    if (!isPathEffectivelyIgnored(activeLines, '.temp', true)) {
+      fail('.gitignore must ignore .temp/ or .*/ (REPO-SCRATCH / REPO-GITIGNORE)');
+    }
+    for (const [samplePath, isDir, label] of [
+      ['.codegraph', true, '.codegraph/'],
+      ['codegraph.db', false, 'codegraph.db'],
+      ['codegraph.db-wal', false, 'codegraph.db-wal'],
+      ['codegraph.db-shm', false, 'codegraph.db-shm'],
+      ['docs/code-map', true, '**/docs/code-map/'],
+      ['apps/sample/docs/code-map', true, '**/docs/code-map/'],
+    ]) {
+      if (!isPathEffectivelyIgnored(activeLines, samplePath, isDir)) {
+        fail(`.gitignore must ignore ${label} so CodeGraph SQLite databases are never committed (REPO-GITIGNORE)`);
+      }
+    }
+    if (checkTesslGuards) {
+      const tesslTargets = [
+        ['.tessl/plugins', true, '.tessl/plugins/'],
+        ['.tessl/tiles', true, '.tessl/tiles/'],
+        ['.cloud-launch', true, '.cloud-launch/'],
+        ['launch-result.json', false, 'launch-result.json'],
+      ];
+      if (!isPluginRepo) {
+        tesslTargets.push(['.mcp.json', false, '/.mcp.json']);
+      }
+      for (const [samplePath, isDir, label] of tesslTargets) {
+        if (!isPathEffectivelyIgnored(activeLines, samplePath, isDir)) {
+          fail(`.gitignore must ignore ${label} to prevent Tessl plugin cache or cloud-result leaks (REPO-GITIGNORE)`);
+        }
       }
     }
   }
@@ -288,7 +449,7 @@ export function validatePlanningDocs(repoRoot = process.cwd(), options = {}) {
   const docsDir = path.join(targetRoot, 'docs');
   if (existsSync(docsDir) && statSync(docsDir).isDirectory()) {
     const allowedDocsFiles = new Set(['GLOSSARY.md', 'product.md', 'features.md', 'tech-stack.md']);
-    const allowedDocsDirs = new Set(['code-map', 'concepts', 'features', 'plans', 'learnings', 'specs']);
+    const allowedDocsDirs = new Set(['concepts', 'features', 'plans', 'learnings', 'specs']);
     for (const entry of readdirSync(docsDir, { withFileTypes: true })) {
       if (entry.isFile() && !allowedDocsFiles.has(entry.name)) {
         fail(`Disallowed file in docs/ allowed-set lockdown: docs/${entry.name}`);

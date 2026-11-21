@@ -24,7 +24,7 @@
 ## Procedure
 
 ### 1. Target Concept Resolution
-1. Read `.nyssa-ai/plan-product/config.json`, `paths.product`, `paths.glossary`, `paths.features`, and `paths.conceptTemplate`.
+1. Resolve effective paths (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/config.json` -> optional `<repo_root>/.nyssa-ai/plan-product/config.json`), then read `paths.product`, `paths.glossary`, `paths.features`, and the resolved `paths.conceptTemplate`.
 2. Determine target concept:
    - User named ID (`C-nn`) or file: resolve under `structure.concepts.root` (or `paths.concepts`).
    - User named title: match against existing files in `structure.concepts.root`.

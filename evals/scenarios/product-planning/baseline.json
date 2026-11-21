@@ -8,14 +8,14 @@
     "configured-use-case-discovery": "bac010bfa00e7720ab0a3e5d341158aca59bb68d1b950f6ecf2e077dcec3db19",
     "development-plan-removal-verification-links": "acb29464774072688330154c1b1a24ddb5566bc05ad79bd0ee63102cac6fb836",
     "maintain-v1-migration-conflict": "16866a74e0323ec2986f81272329998550f92d42721c98c703c8a2589a353d79",
-    "product-update-artifact": "d66b957fe0b28af2466a7b5123af7c3077dfebb1600fdd201c2c10ca7913ad74",
-    "product-inventory-non-technical-artifact": "4a6720673b55b3b820f84e3a0865e2aa8498ea15df329821807caa82eca6b4d6",
-    "feature-boundary-artifact": "637be6fc8610014c5114ff8f168a083d3987eef188840b683a75218d73138444",
-    "use-case-artifact": "f9dcbb17c13dd5581fb0ab7195c41acbc9405cc0e8027c93f1bfb2b2d1e4cf08",
-    "concept-macro-flow-artifact": "ed30e8698e457dd8cae3d79ef43cc2ac2c682442655b2b68c9e0c2dc153123fc",
-    "concept-domain-model-artifact": "40cc188f9d2a842d6545195c35423a551712731d7dcb5cb710ebc431bb9f9aba",
-    "development-plan-reference-artifact": "51cc56f5e003a1b4e620fc75cf74badab3378a542f74d2b144b5eb7ffc483858",
-    "development-plan-codegraph-anchors-artifact": "b5a1b1406b489b0ddccc524371cf6d83d62d7cdb2be25846a076cf2c4bcd2513",
+    "product-update-artifact": "5a7120d508d358c046ed64a6fdc50bc3f20e93002656c1bf371fce096c5d038e",
+    "product-inventory-non-technical-artifact": "d36c4e6fec2bd04d27c7e0409bf60cc319d05d24ac203e81796ddee7fa5e9778",
+    "feature-boundary-artifact": "de2cd7fef0a93d37c2c34771ceddc553527cd629eef51ae1c6b2c0e20f95e072",
+    "use-case-artifact": "750a884617bf4d57c54595df90c8978aae1088c99c746e3dd185e9cef04fe0c1",
+    "concept-macro-flow-artifact": "b8344afd3af272bb9befaf2f99ad6e869a685afa708c4365cd2588045b1241c1",
+    "concept-domain-model-artifact": "a5155e5e202531148574bd881ad0cb83877406d1cbd577e31d2e6b9241eebe6b",
+    "development-plan-reference-artifact": "c47639bf15c1c486ed58484f0b8137f06ba3dbac8b743e1c6176e7b9c69f6e2a",
+    "development-plan-codegraph-anchors-artifact": "cd3622ad9ec2ab8922d6f8cbb6b3423932b4f5225955a404b3032ab06f242c28",
     "maintain-v1-migration-artifact": "4d2f5c07632acbf4e27e0f4f7d5db9d3728137832c8a7177ccd56604b61f5513"
   }
 }

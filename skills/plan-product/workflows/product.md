@@ -9,7 +9,7 @@
 
 - Reuse information and approval already supplied by the user. Interview only for missing decisions; do not repeat a confirmation already given.
 - Configured paths are `repo_root`-relative. Render Markdown links relative to the document containing the link, and verify each target exists before completion.
-- Resolve configuration in zero-footprint 3-layer precedence: bundled Model v2 defaults (`plugin_root`) -> optional `user_home` (`~/.nyssa-ai/plan-product/config.json`) -> optional opt-in `repo_root` override (`<repo_root>/.nyssa-ai/plan-product/config.json`, never required or scaffolded by default). If starter `docs/` files are missing, bootstrap by executing `node "${PLUGIN_ROOT}/src/init/init.mjs"` (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/init/init.mjs"` in Tessl Registry installs, adding `--unit <apps/...|tools/...>` for monorepo units). Resolve `${PLUGIN_ROOT}` (`plugin_root`) from `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, `.tessl/plugins/nyssa-ai/plan-product`, or the relative path to this installed plugin.
+- Resolve configuration in zero-footprint 3-layer precedence: bundled Model v2 defaults (`plugin_root`) -> optional `user_home` (`~/.nyssa-ai/plan-product/config.json`) -> optional opt-in `repo_root` override (`<repo_root>/.nyssa-ai/plan-product/config.json`, never required or scaffolded by default). If starter `docs/` files are missing, bootstrap by executing `node "${PLUGIN_ROOT}/src/init/init.mjs"` (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/init/init.mjs"` in Tessl Registry installs, adding `--unit <apps/...|tools/...>` for monorepo units). Resolve `${PLUGIN_ROOT}` (`plugin_root`) from `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, `.tessl/plugins/nyssa-ai/plan-product`, `~/.tessl/plugins/nyssa-ai/plan-product`, or the relative path to this installed plugin.
 - Resolve every output path from effective config before interviewing. Do not hardcode `docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, or `docs/tech-stack.md` except as examples in user-facing text.
 - Read starter templates directly via zero-footprint precedence (existing repo override if present -> `~/.nyssa-ai/plan-product/templates/<name>.md` -> `${PLUGIN_ROOT}/skills/plan-product/assets/templates/<name>.md`) without copying templates into `repo_root`:
   - Product doc: `product.md` (`paths.productTemplate`)
@@ -153,7 +153,7 @@ Execute the verification checklist before completing.
 
 ## Verification Checklist
 
-- [ ] All target paths resolved from `.nyssa-ai/plan-product/config.json` (`user_home` -> `repo_root`).
+- [ ] All target paths resolved via zero-footprint precedence (`plugin_root` defaults -> `user_home` -> optional `repo_root` override, creating zero `.nyssa-ai/plan-product/` files unless explicitly requested).
 - [ ] Configured templates (`productTemplate`, `glossaryTemplate`, `featuresTemplate`, `techStackTemplate`) read immediately prior to write.
 - [ ] Product capsule and Ubiquitous Language terms confirmed by user prior to writing `paths.product` and `paths.glossary`.
 - [ ] Feature IDs assigned according to Feature Groups (`F-gg.nn`) with no renumbering.

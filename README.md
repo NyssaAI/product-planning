@@ -1,6 +1,6 @@
 # plan-product
 
-Version **0.13.0**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
+Version **0.14.0**. Guided product planning in Markdown: define the product, seed and maintain Ubiquitous Language (`docs/GLOSSARY.md`), codify domain concepts and macro-flows, describe features, capture actor use cases, and sequence dependency-ordered development plans (`docs/plans/development-plan.md`) that hand off cleanly to `dev-delivery`.
 
 ## Capabilities
 
@@ -12,7 +12,7 @@ The plugin operates as an **Encapsulated Facade**: the `plan-product` skill serv
 | `plan-concept` | Define an atomic domain concept or cross-feature macro-flow (`C-nn`, `kind: domain-model` \| `flow`), reconciling Ubiquitous Language (`docs/GLOSSARY.md`). | `workflows/concept.md` |
 | `plan-feature` | Define one capability (`F-gg.nn`), its boundaries, inputs, outputs, acceptance checks, and dependencies. | `workflows/feature.md` |
 | `plan-use-case` | Capture an actor workflow (`UC-gg.nn.uu`), entry route, process tree, alternatives, failures, and acceptance checks. | `workflows/use-case.md` |
-| `plan-development` | Sequence product deliverables in `docs/plans/development-plan.md` with stable `DP-pp.ss` IDs, conditional CodeGraph `Anchors:` (`docs/code-map/codegraph.db`), observable `- Verify:` checkpoints, and `dev-delivery` handoff. | `workflows/development-plan.md` |
+| `plan-development` | Sequence product deliverables in `docs/plans/development-plan.md` with stable `DP-pp.ss` IDs, conditional on-demand CodeGraph `Anchors:` (via ephemeral `.temp/codegraph/`), observable `- Verify:` checkpoints, and `dev-delivery` handoff. | `workflows/development-plan.md` |
 | `plan-maintain` | Upgrade legacy product planning documents from Model v1 or `docs/roadmap.md` to Model v2, or reconcile document integrity. | `workflows/maintain.md` |
 
 The workflows interview for missing information (or enforce the non-interactive Zero-Guessing Sufficiency Gate and recover `status: blocked` documents via `## Open Questions & Blockers`), preserve existing content, use configured paths (`user_home` -> `repo_root`) and current templates, align with Ubiquitous Language (`docs/GLOSSARY.md`), and check for conflicting or duplicate ownership. Development plans describe delivery outcomes, `DP-pp.ss` briefing notes, and flagged High-Risk Surfaces (`Security/Auth`, `Money/Ledger`, `Prompt-Injection`); feature-branch execution (`feat/<slug>`), technical implementation plans (`docs/plans/{phase-pp,f-gg.nn,f-gg,dp-pp.ss}-<slug>.md`), 3-Tier Architectural Fit verification (with Operational Telemetry across all tiers), context-isolated Dual-Agent TDD, and complexity-gated adversarial reviews belong to `dev-delivery` (with automatic `uc-*.md`, `feature.md`, and `docs/features.md` completion roll-up as `DP-pp.ss` steps finish).
@@ -49,37 +49,31 @@ Codex uses `.codex-plugin/plugin.json` and `skills/`. Direct command aliases are
 
 ## Project setup
 
-From `repo_root`, run the initializer with Node.js 22 or later:
+From `repo_root`, run the zero-footprint initializer with Node.js 22 or later:
 
 ```text
-node <plugin_root>/src/init/init.mjs
+# Local plugin checkout or host install:
+node <plugin_root>/src/init/init.mjs [--unit <apps/...|tools/...>]
+
+# Tessl Registry install (skills-only bundle):
+node <plugin_root>/skills/plan-product/scripts/init/init.mjs [--unit <apps/...|tools/...>]
 ```
 
-Resolve `plugin_root` from `PLAN_PRODUCT_PLUGIN_ROOT`, `PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, or the installed skill directory. Do not put installation-specific absolute paths in committed configuration. Configuration defaults resolve from `user_home` (`~/.nyssa-ai/plan-product/config.json`) and are overridden by `repo_root` (`<repo_root>/.nyssa-ai/plan-product/config.json`). `runtime_root` resolves via 4-step precedence (`--runtime-root` -> `NYSSA_RUNTIME_ROOT` -> `<persona_cwd>/.nyssa-ai/plan-product/runtime/` when `SOUL.md` and `IDENTITY.md` exist -> configured `runtimeRoot` or `.nyssa-ai/plan-product/runtime/`). Usage telemetry is opt-in (`"telemetry": { "enabled": false }` default), creating zero `usage/` directories or files unless `telemetry.enabled === true` (`<runtime_root>/usage/events.jsonl`).
+Resolve `plugin_root` from `PLAN_PRODUCT_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`, `PLUGIN_ROOT`, `.tessl/plugins/nyssa-ai/plan-product`, `~/.tessl/plugins/nyssa-ai/plan-product`, or the installed skill directory. Do not put installation-specific absolute paths in committed configuration. Configuration and starter templates resolve zero-footprint from bundled `plugin_root` defaults (`skills/plan-product/assets/`) -> optional `user_home` (`~/.nyssa-ai/plan-product/`) -> rare opt-in `repo_root` overrides (`<repo_root>/.nyssa-ai/plan-product/config.json`, materialized only when explicitly requested with `--write-config`). `runtime_root` resolves via 4-step precedence (`--runtime-root` -> `NYSSA_RUNTIME_ROOT` -> `<persona_cwd>/.nyssa-ai/plan-product/runtime/` when `SOUL.md` and `IDENTITY.md` exist -> configured `runtimeRoot` or `~/.nyssa-ai/plan-product/runtime/`). Usage telemetry is opt-in (`"telemetry": { "enabled": false }` default), creating zero `usage/` directories or files unless `telemetry.enabled === true` (`<runtime_root>/usage/events.jsonl`).
 
-The initializer creates missing configuration, schema, eight starter templates, and four core document starters (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`). Re-running it fills missing configuration fields and restores missing templates at their configured locations while preserving existing user documents and custom templates.
+By default, the initializer creates only the four canonical core document starters (`docs/product.md`, `docs/GLOSSARY.md`, `docs/features.md`, `docs/tech-stack.md`) with **zero `.nyssa-ai/` footprint** in `repo_root`, preserving all existing user documents and custom templates on re-run.
 
 ```text
 <repo_root>/
-|-- .nyssa-ai/plan-product/
-|   |-- config.json
-|   |-- schema.json
-|   |-- runtime/usage/              Gitignored mutable usage telemetry (runtime_root).
-|   `-- templates/
-|       |-- product.md
-|       |-- glossary.md
-|       |-- features.md
-|       |-- tech-stack.md
-|       |-- concept.md
-|       |-- feature.md
-|       |-- use-case.md
-|       `-- development-plan.md
+|-- AGENTS.md                       Thin repository notes + dev-standards anchor (+ @./AGENTS.md delegates).
+|-- tessl.json                      Thin managed Tessl Factory manifest (zero wrappers, registry refs only).
+|-- .gitignore                      Ignores .*/, codegraph.db*, **/docs/code-map/, and launch-result.json.
+|-- .temp/codegraph/                Gitignored ephemeral CodeGraph index built on demand by dev-standards.
 `-- docs/
     |-- GLOSSARY.md                 Ubiquitous Language glossary (seeded by init, shared with dev-standards).
     |-- product.md
     |-- features.md
     |-- tech-stack.md
-    |-- code-map/codegraph.db       Optional tracked CodeGraph snapshot read by plan-development.
     |-- specs/                      Optional JSON specifications for business entities (DTOs) & interfaces.
     |-- learnings/                  Optional grounded project lessons read into development-plan Gotchas.
     |-- plans/
@@ -94,7 +88,7 @@ The initializer creates missing configuration, schema, eight starter templates, 
             `-- uc-01.01.01-example.md  Created by plan-use-case.
 ```
 
-All committed paths are relative to `repo_root`. `.nyssa-ai/plan-product/config.json` owns document locations, template locations, feature naming, and development plan naming. Customize those paths before planning. Existing documents remain in their current locations; changing a path does not move them automatically.
+All committed paths are relative to `repo_root`. Standard repositories need zero `.nyssa-ai/plan-product/` files; teams that intentionally deviate from canonical `docs/` paths can opt into a sparse `.nyssa-ai/plan-product/config.json` (or `--write-config`). Existing documents remain in their current locations; changing a path does not move them automatically.
 
 ## Development and evaluation
 

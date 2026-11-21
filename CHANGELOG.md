@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.14.0 - Ephemeral on-demand `.temp/codegraph/` isolation, `dev-factory` handoff alignment, and zero committed `codegraph.db`
+
+- **Ephemeral On-Demand CodeGraph Isolation (`C-04`):**
+  - Removed the tracked `docs/code-map/codegraph.db` snapshot and banned `docs/code-map/` and `codegraph.db*` in `src/validation/validate-docs.mjs` (mirrored to `skills/plan-product/scripts/validation/validate-docs.mjs`), `src/validation/validate.mjs`, `src/migration/migrate.mjs`, `.gitignore`, and `.gitattributes`.
+  - Updated `skills/plan-product/SKILL.md`, all six `workflows/*.md`, `commands/*.md`, `docs/GLOSSARY.md`, `docs/concepts/c-04-external-plugin-isolation.md`, `docs/tech-stack.md`, `AGENTS.md`, `CLAUDE.md`, and `README.md` so CodeGraph `Anchors:` resolve strictly from ephemeral, gitignored `.temp/codegraph/` indexes warmed on demand by `dev-standards`.
+- **Cross-Plugin `dev-factory` Handoff & Test Suite Alignment:**
+  - Documented outbound routing to `dev-standards` `dev-factory` for zero-footprint Tessl Factory setup and `tessl.json` reconciliation across `skills/plan-product/SKILL.md`, `workflows/development-plan.md`, and `skills/plan-product/assets/templates/development-plan.md`.
+  - Updated evaluation scenarios (`evals/scenarios/product-planning/{cases.json,baseline.json,README.md}`) and unit/use-case validation tests (`test/unit/validation/validate.test.mjs`, `test/use_case/migration/migrate.test.mjs`, `test/use_case/validation/planning-contract.test.mjs`) to enforce ephemeral `.temp/codegraph/` isolation and reject committed `docs/code-map/codegraph.db` files.
+
 ## 0.13.0 - Zero-footprint default, self-contained Tessl Registry tile scripts, and external plugin isolation
 
 - **Zero-Footprint Default & User-Level Config Precedence:**

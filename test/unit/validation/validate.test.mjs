@@ -37,10 +37,15 @@ test('validate enforces docs/ allowed-set lockdown, mandatory GLOSSARY.md, and r
   assert.throws(() => validate(root), /Validation failed/);
   rmSync(path.join(root, 'docs/roadmap.md'));
 
-  // Disallowed directory in docs/
+  // Disallowed directory in docs/ (including retired docs/code-map/)
   mkdirSync(path.join(root, 'docs/refinement-plans'), { recursive: true });
   assert.throws(() => validate(root), /Validation failed/);
   rmSync(path.join(root, 'docs/refinement-plans'), { recursive: true, force: true });
+
+  mkdirSync(path.join(root, 'docs/code-map'), { recursive: true });
+  writeFileSync(path.join(root, 'docs/code-map/codegraph.db'), 'sqlite');
+  assert.throws(() => validate(root), /Validation failed/);
+  rmSync(path.join(root, 'docs/code-map'), { recursive: true, force: true });
 
   // Disallowed README.md directly under docs/features/
   mkdirSync(path.join(root, 'docs/features'), { recursive: true });
@@ -560,6 +565,17 @@ test('validate plugin mode enforces cross-plugin compliance (root bans, .gitattr
   rmSync(path.join(tempPlugin, '.git'), { recursive: true, force: true });
   assert.doesNotThrow(() => validate(tempPlugin, { validatePlugin: true, userHome: null }));
 
+  // 3b. Retired docs/code-map/ and CodeGraph .gitignore whitelist ban
+  mkdirSync(path.join(tempPlugin, 'docs/code-map'), { recursive: true });
+  writeFileSync(path.join(tempPlugin, 'docs/code-map/codegraph.db'), 'sqlite', 'utf8');
+  expectValidationFailure(/docs\/code-map\/ is retired/);
+  rmSync(path.join(tempPlugin, 'docs/code-map'), { recursive: true, force: true });
+
+  writeFileSync(gitignorePath, `${validGitignore}\n!docs/code-map/codegraph.db\n`, 'utf8');
+  expectValidationFailure(/must never whitelist CodeGraph databases/);
+  writeFileSync(gitignorePath, validGitignore, 'utf8');
+  assert.doesNotThrow(() => validate(tempPlugin, { validatePlugin: true, userHome: null }));
+
   // 4. SKILL.md BOM, name, description <= 1024, ## Verification, and workflow non-code-span links
   const skillPath = path.join(tempPlugin, 'skills/plan-product/SKILL.md');
   const validSkill = readFileSync(skillPath, 'utf8');
@@ -699,4 +715,86 @@ test('validate enforces feature and use-case status lifecycle, Open Questions & 
   const strayPath = path.join(featDir, 'notes.md');
   writeFileSync(strayPath, '# Stray note\n', 'utf8');
   assert.throws(() => validate(root), /Validation failed/);
+});
+
+test('validate enforces tessl.json zero-wrapper rules and ordered .gitignore rules for CodeGraph and Tessl leak guards (Profiles A & B)', t => {
+  const root = fixture(t);
+  const gitignorePath = path.join(root, '.gitignore');
+  const tesslPath = path.join(root, 'tessl.json');
+  writeFileSync(tesslPath, JSON.stringify({ mode: 'managed' }, null, 2) + '\n', 'utf8');
+
+  // Missing .gitignore altogether when tessl.json exists fails
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Invalid tessl.json (UTF-8 BOM, non-managed mode, or file: wrapper) fails even with clean .gitignore
+  const profileA = '.*/\ncodegraph.db\ncodegraph.db-wal\ncodegraph.db-shm\n**/docs/code-map/\nlaunch-result.json\n/.mcp.json\n';
+  writeFileSync(gitignorePath, profileA, 'utf8');
+  for (const badPayload of [
+    Buffer.from('\uFEFF{"mode":"managed"}\n', 'utf8'),
+    Buffer.from('{"mode":"vendored"}\n', 'utf8'),
+    Buffer.from('{"mode":"managed","dependencies":{"local":{"source":"file:tessl-factory"}}}\n', 'utf8'),
+  ]) {
+    writeFileSync(tesslPath, badPayload);
+    assert.throws(() => validate(root), /Validation failed/);
+  }
+  writeFileSync(tesslPath, JSON.stringify({ mode: 'managed' }, null, 2) + '\n', 'utf8');
+
+  // Missing CodeGraph DB / docs/code-map ignores fails
+  writeFileSync(gitignorePath, '.*/\nlaunch-result.json\n/.mcp.json\n', 'utf8');
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Whitelisting docs/code-map/codegraph.db fails even when codegraph.db is otherwise ignored
+  writeFileSync(
+    gitignorePath,
+    '.*/\ncodegraph.db\ncodegraph.db-wal\ncodegraph.db-shm\n**/docs/code-map/\n!docs/code-map/codegraph.db\nlaunch-result.json\n/.mcp.json\n',
+    'utf8'
+  );
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Missing launch-result.json or /.mcp.json when tessl.json exists in a consumer repo fails
+  writeFileSync(
+    gitignorePath,
+    '.*/\ncodegraph.db\ncodegraph.db-wal\ncodegraph.db-shm\n**/docs/code-map/\n/.mcp.json\n',
+    'utf8'
+  );
+  assert.throws(() => validate(root), /Validation failed/);
+  writeFileSync(
+    gitignorePath,
+    '.*/\ncodegraph.db\ncodegraph.db-wal\ncodegraph.db-shm\n**/docs/code-map/\nlaunch-result.json\n',
+    'utf8'
+  );
+  assert.throws(() => validate(root), /Validation failed/);
+
+  // Profile A (default clean consumer repo with thin tessl.json) passes
+  writeFileSync(gitignorePath, profileA, 'utf8');
+  assert.doesNotThrow(() => validate(root));
+
+  // Leaky !.tessl/** or !.tessl/ without .tessl/* fails (re-exposes .tessl/plugins/)
+  for (const leaky of [
+    '.*/\n!.tessl/**\ncodegraph.db\ncodegraph.db-wal\ncodegraph.db-shm\n**/docs/code-map/\nlaunch-result.json\n/.mcp.json\n',
+    '.*/\n!.tessl/\ncodegraph.db\ncodegraph.db-wal\ncodegraph.db-shm\n**/docs/code-map/\nlaunch-result.json\n/.mcp.json\n',
+  ]) {
+    writeFileSync(gitignorePath, leaky, 'utf8');
+    assert.throws(() => validate(root), /Validation failed/);
+  }
+
+  // Profile B (consumer repo tracking .tessl/cloud-launch-setup.sh with explicit .tessl/* and /.mcp.json) passes
+  writeFileSync(
+    gitignorePath,
+    [
+      '.*/',
+      '!.tessl/',
+      '.tessl/*',
+      '!.tessl/cloud-launch-setup.sh',
+      'codegraph.db',
+      'codegraph.db-wal',
+      'codegraph.db-shm',
+      '**/docs/code-map/',
+      'launch-result.json',
+      '/.mcp.json',
+      '',
+    ].join('\n'),
+    'utf8'
+  );
+  assert.doesNotThrow(() => validate(root));
 });

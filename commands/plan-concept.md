@@ -23,4 +23,4 @@ Target concept: $ARGUMENTS
 - participating feature guides under `structure.features.featurePathPattern`
 - `docs/GLOSSARY.md` (or `<app>/docs/GLOSSARY.md` in monorepos), only with user confirmation when reconciling `domain-model` Ubiquitous Language terms
 
-Use `.nyssa-ai/plan-product/config.json` for paths and `paths.conceptTemplate` for file shape. Keep `Summary`, `Core Model / Stages`, `Invariants & Rules`, and `Participating Features` distinct, written in plain, non-technical domain language.
+Resolve paths and `paths.conceptTemplate` via zero-footprint precedence (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/config.json` -> optional `<repo_root>/.nyssa-ai/plan-product/config.json`, without creating `.nyssa-ai/plan-product/` in `repo_root`). Keep `Summary`, `Core Model / Stages`, `Invariants & Rules`, and `Participating Features` distinct, written in plain, non-technical domain language.

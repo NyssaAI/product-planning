@@ -2,7 +2,7 @@
 
 Six encapsulated planning workflows each declare three positive, two ambiguous, and three near-neighbor negative routing requests: **48 natural activation cases**. Negative cases test sharp boundaries against adjacent developer tasks: software coding, bug fixes, refactoring, unit tests, E2E browser tests, UI mockups, database migrations, CI deployments, release tagging, sprint estimation, and state machines. Observe the workflow selected; do not treat forced-context scores as routing evidence.
 
-The **14 Model v2 content scenarios** (5 decision/reconciliation cases + 9 fixture-backed artifact cases) cover preserved decisions, non-technical language boundaries, domain concepts (`kind: flow` and `kind: domain-model`), enriched development plan sequencing (`docs/plans/development-plan.md` with `DP-pp.ss`, with and without `docs/code-map/codegraph.db`), and v1-to-v2 migration:
+The **14 Model v2 content scenarios** (5 decision/reconciliation cases + 9 fixture-backed artifact cases) cover preserved decisions, non-technical language boundaries, domain concepts (`kind: flow` and `kind: domain-model`), enriched development plan sequencing (`docs/plans/development-plan.md` with `DP-pp.ss`, with and without on-demand ephemeral `.temp/codegraph/`), and v1-to-v2 migration:
 
 | Scenario | Kind | Model v2 Evidence |
 | --- | --- | --- |
@@ -17,8 +17,8 @@ The **14 Model v2 content scenarios** (5 decision/reconciliation cases + 9 fixtu
 | `use-case-artifact` | Artifact | Actor workflow (`UC-01.01.01`) with ASCII process tree, failures, unknowns, `Consistency Check`, and parent linkage |
 | `concept-macro-flow-artifact` | Artifact | Domain macro-flow (`C-01`, `kind: flow`) with bi-directional links between `product.md` and `feature.md` |
 | `concept-domain-model-artifact` | Artifact | Sequential domain model (`C-02`, `kind: domain-model`) with entity invariants and multi-feature bi-directional links |
-| `development-plan-reference-artifact` | Artifact | Enriched v2 step schema (`Rationale:`, `Concepts:`, `Gotchas:`, `Verify:`), `Verify: with` repair, clean CodeGraph omission when `docs/code-map/codegraph.db` is absent, and `dev-delivery` handoff |
-| `development-plan-codegraph-anchors-artifact` | Artifact | Conditional `docs/code-map/codegraph.db` AST `Anchors:`, Planning vs. Implementation boundary (rejecting code/DDL in `docs/plans/development-plan.md`), and `dev-delivery` handoff with `codegraph_explore` symbol |
+| `development-plan-reference-artifact` | Artifact | Enriched v2 step schema (`Rationale:`, `Concepts:`, `Gotchas:`, `Verify:`), `Verify: with` repair, clean CodeGraph omission when CodeGraph is unavailable, and `dev-delivery` handoff |
+| `development-plan-codegraph-anchors-artifact` | Artifact | Conditional on-demand ephemeral `.temp/codegraph/` AST `Anchors:`, Planning vs. Implementation boundary (rejecting code/DDL in `docs/plans/development-plan.md`), and `dev-delivery` handoff with `codegraph_explore` symbol |
 | `maintain-v1-migration-artifact` | Artifact | End-to-end execution of v1-to-v2 repository migration (`.plan-product` $\rightarrow$ `.nyssa-ai/plan-product`, `docs/GLOSSARY.md`, `F-101` $\rightarrow$ `F-01.01`, `UC-001` $\rightarrow$ `UC-01.01.01`, `docs/roadmap.md` `R-001` $\rightarrow$ `docs/plans/development-plan.md` `DP-01.01`) |
 
 Each content rubric totals 100. Criteria judge outcomes rather than exact wording. Document scenarios include all required local configuration, templates, and prior documents; they require no secrets, external repositories, or setup downloads. The tasks supply confirmed user decisions so an unattended evaluation can produce artifacts without inventing interview answers.
