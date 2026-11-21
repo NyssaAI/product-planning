@@ -53,9 +53,9 @@ Every `DP-pp.ss` step in `docs/plans/development-plan.md` must capture high-sign
 ## Procedure
 
 ### 1. Initialization, Context Assembly & Conditional CodeGraph Detection
-1. Resolve effective paths (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/config.json` -> optional `<repo_root>/.nyssa-ai/plan-product/config.json`). If required starter `docs/` files are missing, run `node "${PLUGIN_ROOT}/src/init/init.mjs"` (or `node "${PLUGIN_ROOT}/skills/plan-product/scripts/init/init.mjs"` in Tessl Registry installs, adding `--unit <apps/...|tools/...>` for monorepo units).
+1. Resolve effective paths (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/config.json` -> optional `<repo_root>/.nyssa-ai/plan-product/config.json`). If required starter `docs/` files are missing, run `node "<skill-dir>/scripts/init/init.mjs"` (adding `--unit <apps/...|tools/...>` for monorepo units; see [`configuration-and-paths.md`](configuration-and-paths.md)).
 2. Read the resolved `development-plan.md` template (`user_home` -> `plugin_root`, or existing repo override) to confirm the target structure.
-3. Read the feature inventory (`paths.features`). If absent or containing only placeholder features, route user to [`workflows/product.md`](product.md).
+3. Read the feature inventory (`paths.features`). If absent or containing only placeholder features, route user to [`references/workflow-product.md`](workflow-product.md).
 4. **Assemble Architectural & Contract Context** (read document contents rather than merely checking file existence on disk):
    - **Technology Stack**: Read `paths.techStack` (`docs/tech-stack.md`) and top-level repository manifests (`package.json`, `go.mod`, `pyproject.toml`, `*.csproj`, etc.) to identify technical prerequisites (e.g., storage initialization, connection pooling, authentication middleware, test runners).
    - **Ubiquitous Language & Domain Concepts**: Read `paths.glossary` (`docs/GLOSSARY.md`, and `apps/*/docs/GLOSSARY.md` + `apps/*/docs/concepts/*.md` in monorepos when present) alongside all concept files under `structure.concepts.root` / `paths.concepts` (`docs/concepts/c-*.md`) to extract canonical domain terms, banned synonyms, stage progressions, and cross-feature invariants (`C-nn`).

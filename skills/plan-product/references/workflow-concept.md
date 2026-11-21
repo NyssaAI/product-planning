@@ -1,7 +1,7 @@
 # Workflow: Concept & Macro-Flow Specification
 
 > [!IMPORTANT] Scope Directive
-> This workflow defines or updates an atomic domain concept or end-to-end macro-flow (`docs/concepts/c-nn-short-slug.md`), links participating features (`docs/features/f-gg.nn/feature.md`), and indexes the concept in `docs/product.md`. It owns system-wide mental models, entity hierarchies, cross-feature lifecycles, and domain invariants. Microscopic actor steps belong in `workflows/use-case.md`; technical implementation choices belong in `docs/tech-stack.md` or `docs/plans/development-plan.md`.
+> This workflow defines or updates an atomic domain concept or end-to-end macro-flow (`docs/concepts/c-nn-short-slug.md`), links participating features (`docs/features/f-gg.nn/feature.md`), and indexes the concept in `docs/product.md`. It owns system-wide mental models, entity hierarchies, cross-feature lifecycles, and domain invariants. Microscopic actor steps belong in `references/workflow-use-case.md`; technical implementation choices belong in `docs/tech-stack.md` or `docs/plans/development-plan.md`.
 
 ---
 
@@ -40,7 +40,7 @@
    - Participating `F-gg.nn` features and each feature's role in the concept or flow.
 2. Restate candidate concept with marked `[inferred]` fields for confirmation.
 3. Boundary & contradiction check:
-   - Ensure microscopic step-by-step UI interactions are deferred to `workflows/use-case.md`.
+   - Ensure microscopic step-by-step UI interactions are deferred to `references/workflow-use-case.md`.
    - Ensure technical implementation details and stack choices are deferred to `docs/tech-stack.md`.
    - Stop and resolve contradictions if invariants conflict with existing concepts or feature guides.
 

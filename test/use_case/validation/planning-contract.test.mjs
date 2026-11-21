@@ -13,11 +13,12 @@ const workflowNames = ['concept', 'development-plan', 'feature', 'maintain', 'pr
 const root = path.resolve(import.meta.dirname, '../../..');
 const json = rel => JSON.parse(readFileSync(path.join(root, rel), 'utf8'));
 
-test('all hosts expose the plan-product facade, 6 workflows, and 6 commands with matching version', () => {
+test('all hosts expose the plan-product facade, 6 workflow references, and 6 commands with matching version', () => {
   assert.deepEqual(readdirSync(path.join(root, 'skills')).sort(), ['plan-product']);
+  assert.equal(existsSync(path.join(root, 'skills/plan-product/workflows')), false);
   assert.deepEqual(
-    readdirSync(path.join(root, 'skills/plan-product/workflows')).sort(),
-    workflowNames.map(w => `${w}.md`)
+    readdirSync(path.join(root, 'skills/plan-product/references')).sort(),
+    ['configuration-and-paths.md', ...workflowNames.map(w => `workflow-${w}.md`)].sort()
   );
   assert.deepEqual(
     readdirSync(path.join(root, 'commands')).sort(),
@@ -33,7 +34,7 @@ test('all hosts expose the plan-product facade, 6 workflows, and 6 commands with
     assert.ok(command.includes('`plan-product`'));
   }
   for (const w of workflowNames) {
-    const workflow = readFileSync(path.join(root, `skills/plan-product/workflows/${w}.md`), 'utf8');
+    const workflow = readFileSync(path.join(root, `skills/plan-product/references/workflow-${w}.md`), 'utf8');
     assert.ok(workflow.includes('> [!IMPORTANT] Scope Directive'));
     for (const [, modPath] of workflow.matchAll(/\$\{PLUGIN_ROOT\}\/((?:src|scripts)\/[\w/.-]+)/g)) {
       assert.ok(existsSync(path.join(root, modPath)), modPath);
@@ -93,7 +94,8 @@ test('active skills, workflows, commands, templates, docs, and evals align with 
     'AGENTS.md',
     'CLAUDE.md',
     'skills/plan-product/SKILL.md',
-    ...workflowNames.map(w => `skills/plan-product/workflows/${w}.md`),
+    'skills/plan-product/references/configuration-and-paths.md',
+    ...workflowNames.map(w => `skills/plan-product/references/workflow-${w}.md`),
     ...commandNames.map(c => `commands/${c}.md`),
     'skills/plan-product/assets/templates/development-plan.md',
     'skills/plan-product/assets/templates/glossary.md',
@@ -112,7 +114,8 @@ test('active skills, workflows, commands, templates, docs, and evals align with 
   const noRetiredCodeMapFiles = new Set([
     'README.md',
     'skills/plan-product/SKILL.md',
-    ...workflowNames.map(w => `skills/plan-product/workflows/${w}.md`),
+    'skills/plan-product/references/configuration-and-paths.md',
+    ...workflowNames.map(w => `skills/plan-product/references/workflow-${w}.md`),
     ...commandNames.map(c => `commands/${c}.md`),
     'skills/plan-product/assets/templates/development-plan.md',
     'skills/plan-product/assets/templates/glossary.md',
@@ -133,18 +136,18 @@ test('active skills, workflows, commands, templates, docs, and evals align with 
     }
     assert.doesNotMatch(content, /\btargetRoot\b|<target-repo>|<project-root>/, `${rel} must use repo_root instead of retired root names`);
   }
-  const devPlanWorkflow = readFileSync(path.join(root, 'skills/plan-product/workflows/development-plan.md'), 'utf8');
+  const devPlanWorkflow = readFileSync(path.join(root, 'skills/plan-product/references/workflow-development-plan.md'), 'utf8');
   assert.ok(devPlanWorkflow.includes('.temp/codegraph/'), 'development-plan workflow must reference ephemeral .temp/codegraph/');
   assert.ok(devPlanWorkflow.includes('codegraph_explore'), 'development-plan workflow must reference codegraph_explore');
 });
 
 test('material feature and use-case writes offer a non-blocking development plan handoff', () => {
   for (const workflowName of ['feature', 'use-case']) {
-    const workflow = readFileSync(path.join(root, `skills/plan-product/workflows/${workflowName}.md`), 'utf8');
+    const workflow = readFileSync(path.join(root, `skills/plan-product/references/workflow-${workflowName}.md`), 'utf8');
     assert.ok(workflow.includes('### 4. Optional Development Plan Handoff'), workflowName);
     assert.ok(workflow.includes('Would you like to update the development plan now?'), workflowName);
     assert.ok(workflow.includes('Would you like to create the development plan now?'), workflowName);
-    assert.ok(workflow.includes('If the user says yes, load `workflows/development-plan.md` in the same conversation.'), workflowName);
+    assert.ok(workflow.includes('If the user says yes, load `references/workflow-development-plan.md` in the same conversation.'), workflowName);
     assert.ok(workflow.includes('Do not treat development plan work as a blocking condition'), workflowName);
     assert.ok(workflow.includes('Do not ask after a read-only review, an unchanged write, or a cancelled update.'), workflowName);
   }
@@ -284,9 +287,10 @@ test('release package ships Scale A src/ runtime and initializes without depende
     ]
   );
   assert.deepEqual(
-    files.filter(file => file.startsWith('skills/plan-product/workflows/')),
-    workflowNames.map(w => `skills/plan-product/workflows/${w}.md`)
+    files.filter(file => file.startsWith('skills/plan-product/references/')),
+    ['skills/plan-product/references/configuration-and-paths.md', ...workflowNames.map(w => `skills/plan-product/references/workflow-${w}.md`)].sort()
   );
+  assert.deepEqual(files.filter(file => file.startsWith('skills/plan-product/workflows/')), []);
   assert.ok(files.includes('skills/plan-product/SKILL.md'));
   assert.ok(files.includes('skills/plan-product/assets/config.json'));
   assert.ok(files.includes('skills/plan-product/assets/schema.json'));

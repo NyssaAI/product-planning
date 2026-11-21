@@ -4,11 +4,11 @@ argument-hint: "[repo_root or upgrade scope]"
 ---
 
 > [!IMPORTANT] Scope Directive
-> Entrypoint command for maintenance and model migrations. Invokes the `plan-product` facade skill and executes its internal `workflows/maintain.md` runbook.
+> Entrypoint command for maintenance and model migrations. Invokes the `plan-product` facade skill and executes its internal `references/workflow-maintain.md` runbook.
 
 # plan-maintain - upgrade and maintain planning docs
 
-Load the `plan-product` skill and execute its `workflows/maintain.md` runbook. The workflow owns model version detection, deterministic migration coordination, and document verification; this command file is only the entry point.
+Load the `plan-product` skill and execute its `references/workflow-maintain.md` runbook. The workflow owns model version detection, deterministic migration coordination, and document verification; this command file is only the entry point.
 
 Inspect `repo_root` planning configuration and documents. If legacy Model v1 patterns (`.plan-product/`, `version: 1`, `F-Nxx`, `UC-nnn`, `R-NNN`) or legacy pre-rename layouts (`docs/roadmap.md`, `R-pp.ss`, concept `type:`, `.nyssa-ai/plan-product/usage/`) are present, invoke the migration script to upgrade to zero-footprint canonical Model v2 (`docs/GLOSSARY.md`, `F-gg.nn`, `UC-gg.nn.uu`, `docs/plans/development-plan.md`, `DP-pp.ss`, concept `kind:`, `.nyssa-ai/plan-product/runtime/usage/`, pruning copied schemas/templates and retaining sparse `.nyssa-ai/plan-product/config.json` only when custom non-default paths exist), then verify link and schema integrity.
 

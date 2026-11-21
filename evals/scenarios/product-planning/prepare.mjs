@@ -7,9 +7,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const cases = JSON.parse(await readFile(join(here, 'cases.json'), 'utf8'));
 const source = resolve(process.argv[2] || join(here, '../../..'));
 
-const workflows = (await readdir(join(source, 'skills/plan-product/workflows'), { withFileTypes: true }))
-  .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
-  .map(entry => entry.name.replace(/\.md$/, ''))
+const workflows = (await readdir(join(source, 'skills/plan-product/references'), { withFileTypes: true }))
+  .filter(entry => entry.isFile() && entry.name.startsWith('workflow-') && entry.name.endsWith('.md'))
+  .map(entry => entry.name.replace(/^workflow-/, '').replace(/\.md$/, ''))
   .sort();
 assert.deepEqual(cases.routing.map(row => row.workflow).sort(), workflows);
 

@@ -28,7 +28,7 @@ Keeping plugin code, runtime state, and large SQLite graphs out of consuming rep
 
 ```mermaid
 flowchart TB
-    REG["Tessl Registry (nyssa-ai/plan-product)"] -->|global or ephemeral install| CACHE["Read-Only plugin_root (skills/plan-product/{workflows,assets,scripts})"]
+    REG["Tessl Registry (nyssa-ai/plan-product)"] -->|global or ephemeral install| CACHE["Read-Only plugin_root (skills/plan-product/{references,assets,scripts})"]
     HOME["user_home (~/.nyssa-ai/plan-product/, optional overrides)"] -.->|Layer #1 defaults| REPO
     CACHE -.->|zero-footprint defaults & scripts| REPO["Clean Consumer repo_root (AGENTS.md, thin tessl.json, docs/, src/, .gitignore)"]
     REPO --- IGNORED["Strictly Ignored (.*/, .temp/plan-product/, .temp/codegraph/, codegraph.db*, **/docs/code-map/, launch-result.json, /.mcp.json)"]
@@ -43,7 +43,7 @@ flowchart TB
 
 ### 2. On-Demand Ephemeral CodeGraph Consumption Boundary
 - **Ownership Split:** `dev-standards` owns CodeGraph indexing (`codegraph-mcp.mjs` + `codegraph-preload.cjs` writing exclusively to gitignored `<repo_root>/.temp/codegraph/<unit-slug>/codegraph.db`), local git refresh hooks, and `dev-delivery` Stage 0 / Step 5 sync triggers (see `dev-standards` `C-01`).
-- **On-Demand Planning Consumption:** `plan-product` (`workflows/development-plan.md`) **never** requires committed `docs/code-map/codegraph.db` snapshots, **never** invokes bare `codegraph`, and **never** creates `.codegraph/` or `docs/code-map/`. When repository source code exists and `codegraph_explore` MCP or `dev-standards`'s `codegraph-mcp.mjs` is available, `plan-development` warms/queries ephemeral `.temp/codegraph/` on demand to populate `- Anchors:` and coupling `- Gotchas:`; on greenfield repos or hosts without `dev-standards`, it bypasses cleanly with zero errors or warnings and omits `- Anchors:`.
+- **On-Demand Planning Consumption:** `plan-product` (`references/workflow-development-plan.md`) **never** requires committed `docs/code-map/codegraph.db` snapshots, **never** invokes bare `codegraph`, and **never** creates `.codegraph/` or `docs/code-map/`. When repository source code exists and `codegraph_explore` MCP or `dev-standards`'s `codegraph-mcp.mjs` is available, `plan-development` warms/queries ephemeral `.temp/codegraph/` on demand to populate `- Anchors:` and coupling `- Gotchas:`; on greenfield repos or hosts without `dev-standards`, it bypasses cleanly with zero errors or warnings and omits `- Anchors:`.
 
 ### 3. Deterministic `<plugin_root>` & 5-Root Precedence
 - **Scripts:** Derive `plugin_root` self-relative via `import.meta.url` (supporting both local `src/` and Tessl-mirrored `skills/plan-product/scripts/`).

@@ -78,6 +78,12 @@ function validateRetiredAgentAndCodexTrees(repoRoot, fail) {
           `Retired 'skills/${skillEntry.name}/agents/' directory detected (including legacy openai.yaml); use plural 'skills/${skillEntry.name}/sub-agents/' or '.codex-plugin/plugin.json'`
         );
       }
+      const retiredWorkflowsDir = path.join(skillDir, 'workflows');
+      if (existsSync(retiredWorkflowsDir)) {
+        fail(
+          `Retired 'skills/${skillEntry.name}/workflows/' directory detected; place workflow runbooks directly under 'skills/${skillEntry.name}/references/workflow-*.md'`
+        );
+      }
       function scanSkillSubtree(currentDir) {
         for (const item of readdirSync(currentDir, { withFileTypes: true })) {
           const itemFull = path.join(currentDir, item.name);
@@ -442,11 +448,11 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
     console.log('\n--- 2. Validating Scope Directives & Cognitive Formatting ---');
     const markdownFiles = [
       ...(existsSync(path.join(repoRoot, 'skills/plan-product/SKILL.md')) ? ['skills/plan-product/SKILL.md'] : []),
-      ...(existsSync(path.join(repoRoot, 'skills/plan-product/workflows'))
-        ? readdirSync(path.join(repoRoot, 'skills/plan-product/workflows'))
+      ...(existsSync(path.join(repoRoot, 'skills/plan-product/references'))
+        ? readdirSync(path.join(repoRoot, 'skills/plan-product/references'))
             .filter(f => f.endsWith('.md'))
             .sort()
-            .map(f => `skills/plan-product/workflows/${f}`)
+            .map(f => `skills/plan-product/references/${f}`)
         : []),
       ...(existsSync(path.join(repoRoot, 'commands'))
         ? readdirSync(path.join(repoRoot, 'commands'))
@@ -493,7 +499,7 @@ export function validate(repoRoot = PLUGIN_ROOT, options = {}) {
         fail(`${rel} exceeds 500 line limit (${lines.length} lines)`);
       }
 
-      if (rel === 'skills/plan-product/SKILL.md' || rel.startsWith('skills/plan-product/workflows/')) {
+      if (rel === 'skills/plan-product/SKILL.md' || /^skills\/plan-product\/references\/workflow-.*\.md$/.test(rel)) {
         const proseOnly = stripFencedCodeBlocks(content);
         if (!VERIFICATION_HEADING_REGEX.test(proseOnly) || !proseOnly.includes('- [ ]')) {
           fail(`${rel} missing '## Verification' section (/^##\\s+(?:\\d+\\.\\s+)?Verification\\b/m) with '- [ ]' checklist items`);

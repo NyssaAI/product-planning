@@ -363,7 +363,7 @@
         },
         {
           "name": "Migration execution path",
-          "description": "Directs user to workflows/maintain.md or src/migration/migrate.mjs to perform deterministic migration of .plan-product/ to .nyssa-ai/plan-product/ and F-101 to F-01.01.",
+          "description": "Directs user to references/workflow-maintain.md or scripts/migration/migrate.mjs (or src/migration/migrate.mjs) to perform deterministic migration of .plan-product/ to .nyssa-ai/plan-product/ and F-101 to F-01.01.",
           "weight": 50
         }
       ]

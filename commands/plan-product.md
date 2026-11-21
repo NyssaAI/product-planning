@@ -4,11 +4,11 @@ argument-hint: "[what to define or update]"
 ---
 
 > [!IMPORTANT] Scope Directive
-> Entrypoint command for defining core product docs. Invokes the `plan-product` facade skill and executes its internal `workflows/product.md` runbook.
+> Entrypoint command for defining core product docs. Invokes the `plan-product` facade skill and executes its internal `references/workflow-product.md` runbook.
 
 # plan-product - define product docs
 
-Load the `plan-product` skill and execute its `workflows/product.md` runbook. The workflow owns the interview flow, product capsule confirmation, Ubiquitous Language seeding, feature-ID banding, and merge-by-heading preservation rules; this command file is only the entry point.
+Load the `plan-product` skill and execute its `references/workflow-product.md` runbook. The workflow owns the interview flow, product capsule confirmation, Ubiquitous Language seeding, feature-ID banding, and merge-by-heading preservation rules; this command file is only the entry point.
 
 Interview the user and create or update plan-product's core product docs.
 Resolve paths and starter templates via zero-footprint 3-layer precedence (`plugin_root` defaults -> `~/.nyssa-ai/plan-product/` -> optional `<repo_root>/.nyssa-ai/plan-product/` override, never writing `.nyssa-ai/plan-product/` into `repo_root` unless explicitly requested) and read each resolved template immediately before writing.

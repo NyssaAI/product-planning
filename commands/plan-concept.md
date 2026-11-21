@@ -4,11 +4,11 @@ argument-hint: "[concept id or name, e.g. C-01 or Order Fulfillment]"
 ---
 
 > [!IMPORTANT] Scope Directive
-> Entrypoint command for defining core domain concepts and cross-feature macro-flows. Invokes the `plan-product` facade skill and executes its internal `workflows/concept.md` runbook.
+> Entrypoint command for defining core domain concepts and cross-feature macro-flows. Invokes the `plan-product` facade skill and executes its internal `references/workflow-concept.md` runbook.
 
 # plan-concept - define a concept or macro-flow
 
-Load the `plan-product` skill and execute its `workflows/concept.md` runbook. The workflow owns the **Concept Kind** selection (`kind: flow` vs `kind: domain-model` — no `*Type`), boundary enforcement against microscopic UI steps and technical implementation, and bi-directional cross-linking with `product.md` and participating `feature.md` guides; this command file is only the entry point.
+Load the `plan-product` skill and execute its `references/workflow-concept.md` runbook. The workflow owns the **Concept Kind** selection (`kind: flow` vs `kind: domain-model` — no `*Type`), boundary enforcement against microscopic UI steps and technical implementation, and bi-directional cross-linking with `product.md` and participating `feature.md` guides; this command file is only the entry point.
 
 Interview the user and create or update one atomic concept or macro-flow document under `docs/concepts/`. Confirm the concept model and invariants before writing, then synchronize links across `docs/product.md` and participating feature guides.
 

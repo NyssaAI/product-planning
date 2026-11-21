@@ -4,13 +4,14 @@ Same content as `CLAUDE.md`. Authoritative domain terms and 5-root filesystem bo
 
 ## Capabilities
 
-- `plan-product` facade: unified conversational planning entrypoint dispatching to internal workflows.
-  - `workflows/product.md`: Product Vision, Ubiquitous Language (`docs/GLOSSARY.md`), feature inventory, and descriptive technology context.
-  - `workflows/concept.md`: atomic domain models and cross-feature macro-flows (`C-nn`, `kind: domain-model` | `flow`).
-  - `workflows/feature.md`: feature identity (`F-gg.nn`), user need, boundaries, acceptance checks, and dependencies.
-  - `workflows/use-case.md`: actor workflows (`UC-gg.nn.uu`), entry routes, process trees, alternatives, and failures.
-  - `workflows/development-plan.md`: phased development plan (`docs/plans/development-plan.md`), stable step IDs (`DP-pp.ss`), dependencies, and `- Verify:` checkpoints.
-  - `workflows/maintain.md`: model versioning, legacy migration (`v1` and `docs/roadmap.md` to `v2`), and reference reconciliation.
+- `plan-product` facade: unified conversational planning entrypoint dispatching to internal workflow references.
+  - `references/workflow-product.md`: Product Vision, Ubiquitous Language (`docs/GLOSSARY.md`), feature inventory, and descriptive technology context.
+  - `references/workflow-concept.md`: atomic domain models and cross-feature macro-flows (`C-nn`, `kind: domain-model` | `flow`).
+  - `references/workflow-feature.md`: feature identity (`F-gg.nn`), user need, boundaries, acceptance checks, and dependencies.
+  - `references/workflow-use-case.md`: actor workflows (`UC-gg.nn.uu`), entry routes, process trees, alternatives, and failures.
+  - `references/workflow-development-plan.md`: phased development plan (`docs/plans/development-plan.md`), stable step IDs (`DP-pp.ss`), dependencies, and `- Verify:` checkpoints.
+  - `references/workflow-maintain.md`: model versioning, legacy migration (`v1` and `docs/roadmap.md` to `v2`), and reference reconciliation.
+  - `references/configuration-and-paths.md`: zero-footprint config/template precedence, 5-root `runtime_root`, opt-in telemetry, and script resolution.
 - Matching slash commands in `commands/`: `plan-product`, `plan-concept`, `plan-feature`, `plan-use-case`, `plan-development`, `plan-maintain`.
 
 ## Repository contract
@@ -25,7 +26,7 @@ Preserve user-authored documents, local notes, custom templates, and stable iden
 - `src/migration/`: deterministic Model v1 and legacy roadmap migrator (`migrate.mjs`).
 - `src/validation/`: repository structure, `harness-adapter`, and planning contract validator (`validate.mjs`).
 - `scripts/assemble.mjs`: maintainer build script projecting `plugin.json` into host `harness-adapter` manifests.
-- `skills/plan-product/`: unified facade skill (`SKILL.md`), bundled `assets/`, and six encapsulated workflows (`workflows/`).
+- `skills/plan-product/`: unified facade skill (`SKILL.md`), bundled `assets/`, deterministic `scripts/`, and `references/` (`configuration-and-paths.md` + six `workflow-*.md` runbooks).
 - `commands/`: matching command entrypoints.
 - `docs/`: `GLOSSARY.md`, `product.md`, `features.md`, `tech-stack.md`, `concepts/`, `features/`, and `plans/development-plan.md` (zero `docs/code-map/`; CodeGraph stays strictly ephemeral in gitignored `.temp/codegraph/`).
 - `test/unit/` & `test/use_case/`: fast isolated unit tests and end-to-end CLI workflow tests.

@@ -319,14 +319,14 @@ export function assemble(mode = 'check', options = {}) {
     .filter(f => f.endsWith('.md'))
     .map(f => `commands/${f}`)
     .sort();
-  const workflowFiles = readdirSync(path.join(targetRoot, 'skills/plan-product/workflows'))
-    .filter(f => f.endsWith('.md'))
-    .map(f => f.replace(/\.md$/, ''))
+  const workflowFiles = readdirSync(path.join(targetRoot, 'skills/plan-product/references'))
+    .filter(f => f.startsWith('workflow-') && f.endsWith('.md'))
+    .map(f => f.replace(/^workflow-/, '').replace(/\.md$/, ''))
     .sort();
   const expectedCommands = workflowFiles.map(commandNameForWorkflow).sort();
   if (JSON.stringify(commandFiles) !== JSON.stringify(expectedCommands)) {
     throw new Error(
-      `commands/ (${commandFiles.join(', ')}) does not match skills/plan-product/workflows/ (${expectedCommands.join(', ')})`
+      `commands/ (${commandFiles.join(', ')}) does not match skills/plan-product/references/workflow-*.md (${expectedCommands.join(', ')})`
     );
   }
 
